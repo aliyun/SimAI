@@ -2,4 +2,4 @@
 build/
 test/log/
 *.log
-.cu*
+.cur*
