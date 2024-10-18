@@ -1,5 +1,5 @@
 .vscode
-build/
+astra-sim-alibabacloud/build/simai_analytical/build/
 test/log/
 *.log
 .cur*
