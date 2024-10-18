@@ -66,6 +66,8 @@ $ cd ./SimAI/
 
 # Clone submodules
 $ git submodule update --init --recursive
+# Make sure use the newest commit
+$ git submodule update --remote
 
 # Compile SimAI-Analytical
 $ ./scripts/build.sh -c analytical
