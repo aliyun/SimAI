@@ -1,0 +1,16 @@
+test
+TP:
+allreduce,16384: 200
+allgather,134217728: 200
+reducescatter,134217728: 200
+alltoall,0: null
+DP:
+allreduce,0: null
+allgather,6401032192: 45
+reducescatter,12802064384: 45
+alltoall,0: null
+EP:
+allreduce,0: null
+allgather,0: null
+reducescatter,0: null
+alltoall,0: null
