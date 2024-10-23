@@ -1,3 +1,12 @@
+# SimAI Components
+
+<pre>
+        |--- <a href="https://github.com/aliyun/aicb">AICB</a>
+SimAI --|--- <a href="https://github.com/aliyun/SimCCL">SimCCL</a>
+        |--- <a href="https://github.com/aliyun/SimAI/tree/master/astra-sim-alibabacloud">astra-sim-alibabacloud</a>
+        |--- <a href="https://github.com/aliyun/ns-3-alibabacloud">ns-3-alibabacloud</a>
+</pre>
+
 # Table of Contents
 - [SimAI Overview](#simai-overview)
   - [Introduction](#introduction)
@@ -25,16 +34,16 @@
   - Scale-up/out network topology modifications
   - ...
 
-Building on pure simulation capabilities, SimAI has evolved into a versatile full-stack toolkit comprising four components ([aicb](https://github.com/aliyun/aicb), [SimCCL](https://github.com/aliyun/SimCCL), [astra-sim-alibabacloud](https://github.com/aliyun/SimAI), [ns-3-alibabacloud](https://github.com/aliyun/ns-3-alibabacloud)). These components can be combined in various ways to achieve different functionalities. Below, we present the six main usage scenarios for SimAI. We encourage users to explore even more possibilities with this powerful tool.
+Building on pure simulation capabilities, SimAI has evolved into a versatile full-stack toolkit comprising four components ([aicb](https://github.com/aliyun/aicb), [SimCCL](https://github.com/aliyun/SimCCL), [astra-sim-alibabacloud](https://github.com/aliyun/SimAI/tree/master/astra-sim-alibabacloud), [ns-3-alibabacloud](https://github.com/aliyun/ns-3-alibabacloud)). These components can be combined in various ways to achieve different functionalities. Below, we present the six main usage scenarios for SimAI. We encourage users to explore even more possibilities with this powerful tool.
 
 | Scenario | Description | Component Combination |
 |----------|-------------|------------------------|
-| 1. AICB Test Suite | Run communication patterns on GPU clusters using AICB Test suite | AICB |
-| 2. AICB/AIOB Workload | Model compute/communication patterns of training process to generate workload | AICB |
-| 3. Collective Comm Analyze | Break down collective communication operations into point-to-point communication sets | SimCCL |
-| 4. Collective Comm w/o GPU | Perform RDMA collective communication traffic on non-GPU clusters | AICB + SimCCL + astra-sim-alibabacloud(physical) |
-| 5. SimAI-Analytical | Conduct rapid AICB workload analysis and simulation on any server (ignoring underlying network details) | AICB + astra-sim-alibabacloud(analytical) |
-| 6. SimAI-Simulation | Perform full simulation on any server | AICB + SimCCL + astra-sim-alibabacloud(simulation) + ns-3-alibabacloud |
+| 1. AICB Test Suite | Run communication patterns on GPU clusters using AICB Test suite | [AICB](https://github.com/aliyun/aicb) |
+| 2. AICB/AIOB Workload | Model compute/communication patterns of training process to generate workload | [AICB](https://github.com/aliyun/aicb) |
+| 3. Collective Comm Analyze | Break down collective communication operations into point-to-point communication sets | [SimCCL](https://github.com/aliyun/SimCCL) |
+| 4. Collective Comm w/o GPU | Perform RDMA collective communication traffic on non-GPU clusters | [AICB](https://github.com/aliyun/aicb) + [SimCCL](https://github.com/aliyun/SimCCL) + [astra-sim-alibabacloud](https://github.com/aliyun/SimAI/tree/master/astra-sim-alibabacloud)(physical) |
+| 5. SimAI-Analytical | Conduct rapid AICB workload analysis and simulation on any server (ignoring underlying network details) | [AICB](https://github.com/aliyun/aicb) + [astra-sim-alibabacloud](https://github.com/aliyun/SimAI/tree/master/astra-sim-alibabacloud)(analytical) |
+| 6. SimAI-Simulation | Perform full simulation on any server | [AICB](https://github.com/aliyun/aicb) + [SimCCL](https://github.com/aliyun/SimCCL) + [astra-sim-alibabacloud](https://github.com/aliyun/SimAI/tree/master/astra-sim-alibabacloud)(simulation) + [ns-3-alibabacloud](https://github.com/aliyun/ns-3-alibabacloud) |
 
 Below is the architecture diagram of the SimAI Simulator:
 ![SimAI_Arc](./docs/images/SimAI_Arc.png)
