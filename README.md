@@ -52,9 +52,11 @@ astra-sim-alibabacloud is extended from [astra-sim](https://github.com/astra-sim
 
 ## Citation
 
-SimAI work has been accepted by NSDI'25 Spring, and it'll be showcased soon.
+SimAI work has been accepted by NSDI'25 Spring, for more details, please refer to our paper below:
 
-Paper name is "SimAI: Unifying Architecture Design and Performance Tunning for Large-Scale Large Language Model Training with Scalability and Precision"  [pdf]() / [slides]() / [video]()
+*SimAI: Unifying Architecture Design and Performance Tunning for Large-Scale Large Language Model Training with Scalability and Precision.*
+
+[[pdf](https://ennanzhai.github.io/pub/nsdi25spring-simai.pdf)] / [slides] / [video]
 
 # Usage
 
@@ -102,4 +104,15 @@ $ python3 ./astra-sim-alibabacloud/inputs/topo/gen_HPN_7.0_topo_mulgpus_one_link
 $ AS_SEND_LAT=3 AS_NVLS_ENABLE=1 ./bin/SimAI_simulator -t 16 -w ./example/microAllReduce.txt -n ./HPN_7_0_128_gpus_8_in_one_server_with_400Gbps_A100
 
 ```
+
+# Contact us
+
+Welcome to join the SimAI community chat groups, with the DingTalk group on the left and the WeChat group on the right.
+
+<div style="display: flex; justify-content: flex-start; align-items: center; gap: 20px; margin-left: 20px;">
+    <img src="./docs/images/simai_dingtalk.jpg" alt="SimAI DingTalk" style="width: 300px; height: auto;">
+    <img src="./docs/images/simai_wechat.jpg" alt="SimAI WeChat" style="width: 300px; height: auto;">
+</div>
+
+<br/>
 
