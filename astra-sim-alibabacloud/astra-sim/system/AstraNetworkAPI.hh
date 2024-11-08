@@ -59,7 +59,7 @@ struct ncclFlowTag {
       uint64_t _flow_size,
       void* _pQps,
       int _tag_id,
-      int _nvls_on)
+      bool _nvls_on)
       : channel_id(_channel_id),
         chunk_id(_chunk_id),
         current_flow_id(_current_flow_id),
