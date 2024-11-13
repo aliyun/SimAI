@@ -682,6 +682,7 @@ void SetConfig() {
     IntHeader::mode = IntHeader::NORMAL;
   else if (cc_mode == 10) 
     IntHeader::mode = IntHeader::PINT;
+  else
     IntHeader::mode = IntHeader::NONE;
 
   if (cc_mode == 10) {
