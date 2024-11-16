@@ -1,3 +1,30 @@
+# Lastest News
+
+<div align="center">
+🎯 <b>Events & Community Engagement</b> 🎯
+
+### 📅 Upcoming Events
+
+| Date | Event | Location | Content | Type |
+|:----:|:------|:---------|:--------|:----:|
+| **Dec 5, 2024** | [**Bench'24 Conference**](https://mp.weixin.qq.com/s/STic_E12xMhZRxhzK9wRnw) | 📍 Guangzhou | SimAI Tutorial & Deep-dive Session | 🎓 On-site |
+| Nov 22, 2024 *(tentative)* | SimAI Community Live Stream | 🌐 Online | Interactive Technical Discussion & Demo | 💻 Virtual |
+
+### 🌟 Past Events
+
+| Date | Event | Location | Content | Type |
+|:----:|:------|:---------|:--------|:----:|
+| Nov 15, 2024 | Technical Workshop | 📍 Thousand Island Lake | SimAI Offline Technical Exchange | 🎯 On-site |
+| Oct 18, 2024 | Guest Lecture | 📍 Fudan University | SimAI Tutorial & Public Course | 🎓 On-site |
+| Sept 24-26, 2024 | CCF HPC China 2024 | 📍 Wuhan | SimAI Introduction & Technical Presentation | 🎤 Conference |
+
+### 💫 Join Our Next Major Event! 
+Don't miss our comprehensive session at **Bench'24**
+[Register Now →](https://mp.weixin.qq.com/s/STic_E12xMhZRxhzK9wRnw)
+</div>
+
+---
+
 # SimAI Components
 
 <pre>
@@ -60,7 +87,7 @@ SimAI work has been accepted by NSDI'25 Spring, for more details, please refer t
 
 # Usage
 
-Here are some simple examples, SimAI full tutorials can be found here: [**SimAI@Tutorial**](docs/Tutorial.md), [**aicb@Tutorial**](https://github.com/aliyun/aicb/blob/master/training/tutorial.md), [SimCCL@Tutorial], [ns-3-alibabacloud@Tutorial]
+Here are some simple examples, SimAI full tutorials can be found here: [**SimAI@Tutorial**], [**aicb@Tutorial**](https://github.com/aliyun/aicb/blob/master/training/tutorial.md), [SimCCL@Tutorial], [ns-3-alibabacloud@Tutorial]
 
 ## Setup
 
@@ -106,6 +133,8 @@ $ AS_SEND_LAT=3 AS_NVLS_ENABLE=1 ./bin/SimAI_simulator -t 16 -w ./example/microA
 ```
 
 # Contact us
+
+Please email Gang Lu (yunding.lg@alibaba-inc.com) or Qingxu Li (qingxu.lqx@alibaba-inc.com) if you have any questions.
 
 Welcome to join the SimAI community chat groups, with the DingTalk group on the left and the WeChat group on the right.
 
