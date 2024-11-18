@@ -2,7 +2,7 @@ SCRIPT_DIR=$(dirname "$(realpath $0)")
 ROOT_DIR=$(realpath "${SCRIPT_DIR:?}"/..)
 NS3_DIR="${ROOT_DIR:?}"/ns-3-alibabacloud
 SIMAI_DIR="${ROOT_DIR:?}"/astra-sim-alibabacloud
-SOURCE_NS3_BIN_DIR="${SIMAI_DIR:?}"/extern/network_backend/ns3-interface/simulation/build/scratch/ns3.36.1-AstraSimNetwork-debug
+SOURCE_NS3_BIN_DIR="${ROOT_DIR:?}"/ns-3-alibabacloud/simulation/build/AstraSimNetworkNs3
 SOURCE_ANA_BIN_DIR="${SIMAI_DIR:?}"/build/simai_analytical/build/simai_analytical/SimAI_analytical
 SOURCE_PHY_BIN_DIR="${SIMAI_DIR:?}"/build/simai_phy/build/simai_phynet/SimAI_phynet
 
@@ -12,9 +12,9 @@ function compile {
     case "$option" in
     "ns3")
         mkdir -p "${TARGET_BIN_DIR:?}"
-        rm -rf "${SIMAI_DIR:?}"/extern/network_backend/ns3-interface/
-        mkdir -p "${SIMAI_DIR:?}"/extern/network_backend/ns3-interface
-        cp -r "${NS3_DIR:?}"/* "${SIMAI_DIR:?}"/extern/network_backend/ns3-interface
+#        rm -rf "${SIMAI_DIR:?}"/extern/network_backend/ns3-interface/
+#        mkdir -p "${SIMAI_DIR:?}"/extern/network_backend/ns3-interface
+#        cp -r "${NS3_DIR:?}"/* "${SIMAI_DIR:?}"/extern/network_backend/ns3-interface
         cd "${SIMAI_DIR:?}"
         ./build.sh -lr ns3
         ./build.sh -c ns3    
@@ -40,7 +40,7 @@ function cleanup_build {
     case "$option" in
     "ns3")
         rm  "${TARGET_BIN_DIR:?}"/SimAI_simulator
-        rm -rf "${SIMAI_DIR:?}"/extern/network_backend/ns3-interface/
+#        rm -rf "${SIMAI_DIR:?}"/extern/network_backend/ns3-interface/
         cd "${SIMAI_DIR:?}"
         ./build.sh -lr ns3;;
     "phy")

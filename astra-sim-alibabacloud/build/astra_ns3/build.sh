@@ -8,7 +8,7 @@ echo $SCRIPT_DIR
 GEM5_DIR="${SCRIPT_DIR:?}"/../../extern/network_backend/garnet/gem5_astra/
 ASTRA_SIM_DIR="${SCRIPT_DIR:?}"/../../astra-sim
 INPUT_DIR="${SCRIPT_DIR:?}"/../../inputs
-NS3_DIR="${SCRIPT_DIR:?}"/../../extern/network_backend/ns3-interface
+NS3_DIR="${SCRIPT_DIR:?}"/../../../ns-3-alibabacloud
 NS3_APPLICATION="${NS3_DIR:?}"/simulation/src/applications/
 SIM_LOG_DIR=/etc/astra-sim
 BUILD_DIR="${SCRIPT_DIR:?}"/build/
@@ -35,34 +35,26 @@ function cleanup_result {
     rm -rf "${RESULT_DIR}"
 }
 
-function compile_astrasim {
-    cd "${BUILD_DIR}" || exit
-    cmake ..
-    make
-}
-
 function compile {
     # Only compile & Run the AstraSimNetwork ns3program
     if [ ! -f '"${INPUT_DIR}"/inputs/config/SimAI.conf' ]; then
         echo ""${INPUT_DIR}"/config/SimAI.conf is not exist"
         cp "${INPUT_DIR}"/config/SimAI.conf "${SIM_LOG_DIR}"/config/SimAI.conf
     fi
-    cp "${ASTRA_SIM_DIR}"/network_frontend/ns3/AstraSimNetwork.cc "${NS3_DIR}"/simulation/scratch/
-    cp "${ASTRA_SIM_DIR}"/network_frontend/ns3/*.h "${NS3_DIR}"/simulation/scratch/
-    rm -rf "${NS3_APPLICATION}"/astra-sim 
-    cp -r "${ASTRA_SIM_DIR}" "${NS3_APPLICATION}"/
     cd "${NS3_DIR}/simulation"
     # CC='gcc-4.9' CXX='g++-4.9' 
-    CC='gcc' CXX='g++' 
-    ./ns3 configure -d debug --enable-mtp
-    ./ns3 build
-
+    CC='gcc' CXX='g++'
+    mkdir build
+    cd build
+    cmake ..
+    make -j12 AstraSimNetworkNs3
     cd "${SCRIPT_DIR:?}"
 }
 
+# this cannot work; should use cmake to debug, neither waf nor ns3
 function debug {
-    cp "${ASTRA_SIM_DIR}"/network_frontend/ns3/AstraSimNetwork.cc "${NS3_DIR}"/simulation/scratch/
-    cp "${ASTRA_SIM_DIR}"/network_frontend/ns3/*.h "${NS3_DIR}"/simulation/scratch/
+#    cp "${ASTRA_SIM_DIR}"/network_frontend/ns3/AstraSimNetwork.cc "${NS3_DIR}"/simulation/scratch/
+#    cp "${ASTRA_SIM_DIR}"/network_frontend/ns3/*.h "${NS3_DIR}"/simulation/scratch/
     cd "${NS3_DIR}/simulation"
     CC='gcc-4.9' CXX='g++-4.9' 
     ./waf configure
@@ -82,10 +74,9 @@ case "$1" in
     cleanup_result;;
 -d|--debug)
     setup
-    debug;;
+    debug;; # todo: remove?
 -c|--compile)
     setup
-    compile_astrasim
     compile;;
 -r|--run)
     setup
