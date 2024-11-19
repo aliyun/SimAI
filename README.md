@@ -25,18 +25,11 @@ Don't miss our comprehensive session at **Bench'24**
 
 ---
 
-# SimAI Components
-
-<pre>
-        |--- <a href="https://github.com/aliyun/aicb">AICB</a>
-SimAI --|--- <a href="https://github.com/aliyun/SimCCL">SimCCL</a>
-        |--- <a href="https://github.com/aliyun/SimAI/tree/master/astra-sim-alibabacloud">astra-sim-alibabacloud</a>
-        |--- <a href="https://github.com/aliyun/ns-3-alibabacloud">ns-3-alibabacloud</a>
-</pre>
-
 # Table of Contents
 - [SimAI Overview](#simai-overview)
   - [Introduction](#introduction)
+  - [Components](#components)
+  - [Scenario](#scenario)
   - [Citation](#citation)
 - [Usage](#usage)
   - [Setup](#setup)
@@ -61,7 +54,31 @@ SimAI --|--- <a href="https://github.com/aliyun/SimCCL">SimCCL</a>
   - Scale-up/out network topology modifications
   - ...
 
+## Components
+
+<pre>
+        |--- <a href="https://github.com/aliyun/aicb">AICB</a>
+SimAI --|--- <a href="https://github.com/aliyun/SimCCL">SimCCL</a>
+        |--- <a href="https://github.com/aliyun/SimAI/tree/master/astra-sim-alibabacloud">astra-sim-alibabacloud</a>
+        |--- <a href="https://github.com/aliyun/ns-3-alibabacloud">ns-3-alibabacloud</a>
+</pre>
+
 Building on pure simulation capabilities, SimAI has evolved into a versatile full-stack toolkit comprising four components ([aicb](https://github.com/aliyun/aicb), [SimCCL](https://github.com/aliyun/SimCCL), [astra-sim-alibabacloud](https://github.com/aliyun/SimAI/tree/master/astra-sim-alibabacloud), [ns-3-alibabacloud](https://github.com/aliyun/ns-3-alibabacloud)). These components can be combined in various ways to achieve different functionalities. Below, we present the six main usage scenarios for SimAI. We encourage users to explore even more possibilities with this powerful tool.
+
+Below is the architecture diagram of the SimAI Simulator:
+![SimAI_Arc](./docs/images/SimAI_Arc.png)
+
+astra-sim-alibabacloud is extended from [astra-sim](https://github.com/astra-sim/astra-sim/tree/ASTRA-sim-1.0). We are grateful to the astra-sim team for their excellent work and open-source contribution. We have integrated NCCL algorithms and added some new features.
+
+## Scenario
+
+SimAI supports three major operation modes to meet different simulation requirements:
+
+**SimAI-Analytical** offers fast simulation by abstracting network communication details using bus bandwidth (busbw) to estimate collective communication time. While it currently supports user-defined busbw, automatic busbw calculation feature is coming soon.
+
+**SimAI-Simulation** provides full-stack simulation with fine-grained network communication modeling. It leverages NS3 or other network simulators (NS3 currently open-sourced) to achieve detailed simulation of all communication behaviors, aiming for high-fidelity reproduction of actual training environments.
+
+**SimAI-Physical** *(Beta)* enables physical traffic generation for CPU RDMA cluster environments. This mode generates NCCL-like traffic patterns, allowing in-depth study of NIC behaviors during LLM training. It is currently in internal testing phase.
 
 | Scenario | Description | Component Combination |
 |----------|-------------|------------------------|
@@ -72,10 +89,6 @@ Building on pure simulation capabilities, SimAI has evolved into a versatile ful
 | 5. SimAI-Analytical | Conduct rapid AICB workload analysis and simulation on any server (ignoring underlying network details) | [AICB](https://github.com/aliyun/aicb) + [astra-sim-alibabacloud](https://github.com/aliyun/SimAI/tree/master/astra-sim-alibabacloud)(analytical) |
 | 6. SimAI-Simulation | Perform full simulation on any server | [AICB](https://github.com/aliyun/aicb) + [SimCCL](https://github.com/aliyun/SimCCL) + [astra-sim-alibabacloud](https://github.com/aliyun/SimAI/tree/master/astra-sim-alibabacloud)(simulation) + [ns-3-alibabacloud](https://github.com/aliyun/ns-3-alibabacloud) |
 
-Below is the architecture diagram of the SimAI Simulator:
-![SimAI_Arc](./docs/images/SimAI_Arc.png)
-
-astra-sim-alibabacloud is extended from [astra-sim](https://github.com/astra-sim/astra-sim/tree/ASTRA-sim-1.0), we have integrated NCCL algorithms and added some new features.
 
 ## Citation
 
