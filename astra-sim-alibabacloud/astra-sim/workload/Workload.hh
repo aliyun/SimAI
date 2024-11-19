@@ -78,6 +78,7 @@ class Workload : Callable {
   int pipeline_model_parallelism; //PP Size
   int GA;                         //Ga_Size
   int all_gpus;
+  int vpp;
   ParallelismPolicy parallelismPolicy;
   Tick waiting_for_comm;
   Workload(

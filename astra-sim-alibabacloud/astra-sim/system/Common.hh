@@ -16,12 +16,12 @@ enum class GPUType { A100, A800, H100, H800, NONE };
 namespace AstraSim {
 #define CLOCK_PERIOD 1
 #define FREQ (1000.0 / CLOCK_PERIOD)
-#define GBps 1.0 / (1000 * 1000 * 1000)
+#define GBps 1.0 / (1024 * 1024 * 1024)
 typedef unsigned long long Tick;
 enum class ComType {
   None,
   Reduce_Scatter,
-  All_Gatehr,
+  All_Gather,
   All_Reduce,
   All_to_All,
   All_Reduce_All_to_All,

@@ -30,6 +30,7 @@ class CSVWriter {
   CSVWriter(std::string path, std::string name);
   void write_cell(int row, int column, std::string data);
   void write_line(std::string data);
+  void write_res(std::string data);
   std::string path;
   std::string name;
   ~CSVWriter() {

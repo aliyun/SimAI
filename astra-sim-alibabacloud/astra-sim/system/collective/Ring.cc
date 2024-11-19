@@ -64,7 +64,7 @@ Ring::Ring(
     default:
       stream_count = nodes_in_ring - 1;
   }
-  if (type == ComType::All_to_All || type == ComType::All_Gatehr) {
+  if (type == ComType::All_to_All || type == ComType::All_Gather) {
     max_count = 0;
   } else {
     max_count = nodes_in_ring - 1;
@@ -76,7 +76,7 @@ Ring::Ring(
       this->final_data_size = data_size;
       this->msg_size = data_size / nodes_in_ring;
       break;
-    case ComType::All_Gatehr:
+    case ComType::All_Gather:
       this->final_data_size = data_size * nodes_in_ring;
       this->msg_size = data_size;
       break;

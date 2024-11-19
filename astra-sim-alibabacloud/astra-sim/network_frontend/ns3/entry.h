@@ -371,11 +371,11 @@ void send_finish(FILE *fout, Ptr<RdmaQueuePair> q) {
   notify_sender_sending_finished(sid, did, all_sent_chunksize, flowTag);
 }
 
-int main1(string network_topo) {
+int main1(string network_topo,string network_conf) {
   clock_t begint, endt;
   begint = clock();
 
-  if (!ReadConf(network_topo))
+  if (!ReadConf(network_topo,network_conf))
     return -1;
   SetConfig();
   SetupNetwork(qp_finish,send_finish);

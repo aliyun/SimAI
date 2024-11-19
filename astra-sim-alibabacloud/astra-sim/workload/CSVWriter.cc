@@ -16,6 +16,26 @@ void CSVWriter::write_line(std::string data){
   }
   myFile << data << std::endl;
   }
+void CSVWriter::write_res(std::string data) {
+  myFile.close(); 
+  myFile.open(path + name, std::ios::in); 
+
+
+  std::string current_content;
+  std::string line;
+  while (std::getline(myFile, line)) {
+      current_content += line + "\n"; 
+      
+  }
+  myFile.close(); 
+
+  myFile.open(path + name, std::ios::out | std::ios::trunc); 
+  myFile << data<<std::endl;
+  myFile << current_content; 
+  
+
+  myFile.close();
+}
 void CSVWriter::initialize_csv(int rows, int cols) {
   std::cout << "CSV path and filename: " << path + name << std::endl;
   int trial = 10000;

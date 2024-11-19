@@ -106,7 +106,7 @@ NcclTreeFlowModel::NcclTreeFlowModel(
     case ComType::All_Reduce:
       this->final_data_size = data_size;
       break;
-    case ComType::All_Gatehr:
+    case ComType::All_Gather:
       this->final_data_size = data_size * nodes_in_ring;
       break;
     case ComType::Reduce_Scatter:

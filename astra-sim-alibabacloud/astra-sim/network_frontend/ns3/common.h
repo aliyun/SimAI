@@ -43,8 +43,6 @@
 #include <ns3/nvswitch-node.h>
 #include <atomic>
 
-#define AS_CONFIG_PATH "/etc/astra-sim/config/SimAI.conf"
-
 using namespace ns3;
 using namespace std;
 
@@ -459,10 +457,10 @@ uint64_t get_nic_rate(NodeContainer &n) {
           .GetBitRate();
 }
 
-bool ReadConf(string network_topo) {
+bool ReadConf(string network_topo,string network_conf) {
 
     std::ifstream conf;
-    conf.open(AS_CONFIG_PATH);
+    conf.open(network_conf);
     topology_file = network_topo;
     while (!conf.eof()) {
       std::string key;
@@ -628,16 +626,16 @@ bool ReadConf(string network_topo) {
         conf >> buffer_size;
       } else if (key.compare("QLEN_MON_FILE") == 0){
 				conf >> qlen_mon_file;
-				qlen_mon_file = get_output_file_name(AS_CONFIG_PATH, qlen_mon_file);
+				qlen_mon_file = get_output_file_name(network_conf, qlen_mon_file);
 			}else if(key.compare("BW_MON_FILE") == 0){
 				conf >> bw_mon_file;
-				bw_mon_file = get_output_file_name(AS_CONFIG_PATH, bw_mon_file);
+				bw_mon_file = get_output_file_name(network_conf, bw_mon_file);
 			}else if(key.compare("RATE_MON_FILE") == 0){
 				conf >> rate_mon_file;
-				rate_mon_file = get_output_file_name(AS_CONFIG_PATH, rate_mon_file);
+				rate_mon_file = get_output_file_name(network_conf, rate_mon_file);
 			}else if(key.compare("CNP_MON_FILE") == 0){
 				conf >> cnp_mon_file;
-				cnp_mon_file = get_output_file_name(AS_CONFIG_PATH, cnp_mon_file);
+				cnp_mon_file = get_output_file_name(network_conf, cnp_mon_file);
 			}else if (key.compare("MON_START") == 0){
 				conf >> mon_start;
 			}else if (key.compare("MON_END") == 0){

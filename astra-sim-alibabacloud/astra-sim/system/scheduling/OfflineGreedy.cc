@@ -110,7 +110,7 @@ std::vector<int> OfflineGreedy::get_chunk_scheduling(
       comm_type = ComType::Reduce_Scatter;
     }
     std::sort(dim_elapsed_time.begin(), dim_elapsed_time.end());
-    if (comm_type == ComType::All_Gatehr) {
+    if (comm_type == ComType::All_Gather) {
       std::reverse(dim_elapsed_time.begin(), dim_elapsed_time.end());
     }
     std::vector<int> result;
@@ -147,7 +147,7 @@ std::vector<int> OfflineGreedy::get_chunk_scheduling(
           chunk_size = get_chunk_size_from_elapsed_time(
               load_difference,
               dim_elapsed_time[lastIndex],
-              ComType::All_Gatehr);
+              ComType::All_Gather);
           lastIndex--;
           while (dim_elapsed_time_pointer <= lastIndex) {
             if (dimensions_involved[dim_elapsed_time[lastIndex].dim_num] &&
@@ -179,7 +179,7 @@ std::vector<int> OfflineGreedy::get_chunk_scheduling(
             }
           }
           dim_elapsed_time = myReordered;
-          if (comm_type == ComType::All_Gatehr) {
+          if (comm_type == ComType::All_Gather) {
             std::reverse(dim_elapsed_time.begin(), dim_elapsed_time.end());
           }
           for (int myDim = 0; myDim < dim_elapsed_time.size(); myDim++) {
@@ -228,7 +228,7 @@ std::vector<int> OfflineGreedy::get_chunk_scheduling(
           diff_size = get_chunk_size_from_elapsed_time(
               load_difference,
               dim_elapsed_time[lastIndex],
-              ComType::All_Gatehr);
+              ComType::All_Gather);
           lastIndex--;
           while (dim_elapsed_time_pointer <= lastIndex) {
             if (dimensions_involved[dim_elapsed_time[lastIndex].dim_num] &&
@@ -255,7 +255,7 @@ std::vector<int> OfflineGreedy::get_chunk_scheduling(
             }
           }
           dim_elapsed_time = myReordered;
-          if (comm_type == ComType::All_Gatehr) {
+          if (comm_type == ComType::All_Gather) {
             std::reverse(dim_elapsed_time.begin(), dim_elapsed_time.end());
           }
           for (int myDim = 0; myDim < dim_elapsed_time.size(); myDim++) {

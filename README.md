@@ -131,7 +131,7 @@ $ ./scripts/build.sh -c ns3
 ## Use SimAI-Analytical
 
 ```bash
-$  ./bin/SimAI_analytical -w example/workload_analytical.txt -g 1024 -g_p_s 8 -r results/test- -busbw example/busbw.yaml
+$  ./bin/SimAI_analytical -w example/workload_analytical.txt -g 9216 -g_p_s 8 -r test- -busbw example/busbw.yaml
 ```
 
 ## Use SimAI-Simulation

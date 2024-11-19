@@ -325,7 +325,7 @@ namespace MockNccl {
     switch (op) {
       case AstraSim::ComType::All_Reduce:
         return genAllReduceFlowModels(type,rank,data_size);
-      case AstraSim::ComType::All_Gatehr:
+      case AstraSim::ComType::All_Gather:
         return genAllGatherFlowModels(type,rank,data_size);
       case AstraSim::ComType::Reduce_Scatter:
         return genReduceScatterFlowModels(type,rank,data_size);
@@ -2091,7 +2091,7 @@ namespace MockNccl {
             info->algorithm = NCCL_ALGO_RING;
           }
           break;
-      case AstraSim::ComType::All_Gatehr:
+      case AstraSim::ComType::All_Gather:
       case AstraSim::ComType::Reduce_Scatter:
       default:
           info->algorithm = NCCL_ALGO_RING;

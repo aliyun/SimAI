@@ -490,13 +490,16 @@ LayerData Layer::report(
     double& total_exposed,
     double& pre_bubble_time,
     double& DP_comm,
+    double& DP_EP_comm,
     double& Expose_TP_comm,
+    double& Expose_EP_comm,
     bool seprate_log) {
   LayerData layerData;
   take_stream_stats_average();
   int TP_size = workload->model_parallel_npu_group;
   int PP_size = workload->pipeline_model_parallelism;
-  int DP_size = workload->all_gpus / (TP_size * PP_size);
+  int vpp = workload->vpp;
+  int DP_size = generator->all_gpus[0] / (TP_size * PP_size);
   int GA = workload->GA;
   int EP_size = workload->expert_parallel_npu_group;
   int fwd_pass_group_size ;
@@ -512,11 +515,11 @@ LayerData Layer::report(
                                                              : DP_size;
   if(param->mode == ModeType::ANALYTICAL){
     
-    total_fwd_comm = compute_time(fwd_pass_comm_type,TP_size,fwd_pass_group_size,fwd_pass_comm_size,fwd_pass_group_type,generator->all_gpus[0]);
-    total_weight_grad_comm = compute_time(weight_grad_comm_type,TP_size,weight_grad_group_size,weight_grad_comm_size,weight_grad_group_type,generator->all_gpus[0]);
-    total_input_grad_comm = compute_time(input_grad_comm_type,TP_size,input_grad_group_size,input_grad_comm_size,input_grad_group_type,generator->all_gpus[0]);
-    total_waiting_for_fwd_comm = total_fwd_comm;
-    total_waiting_for_ig_comm = total_input_grad_comm;
+    total_fwd_comm = compute_time(fwd_pass_comm_type,TP_size,fwd_pass_group_size,fwd_pass_comm_size,fwd_pass_group_type,generator->all_gpus[0],EP_size);
+    total_weight_grad_comm = compute_time(weight_grad_comm_type,TP_size,weight_grad_group_size,weight_grad_comm_size,weight_grad_group_type,generator->all_gpus[0],EP_size);
+    total_input_grad_comm = compute_time(input_grad_comm_type,TP_size,input_grad_group_size,input_grad_comm_size,input_grad_group_type,generator->all_gpus[0],EP_size);
+    total_waiting_for_fwd_comm = total_fwd_comm; //tp forward
+    total_waiting_for_ig_comm = total_input_grad_comm;  //tp backward
     total_waiting_for_wg_comm = total_weight_grad_comm;
     
 
@@ -524,8 +527,25 @@ LayerData Layer::report(
   if (id != "embedding_layer"){
       pre_bubble_time += ((total_waiting_for_fwd_comm + total_forward_pass_compute + total_weight_grad_compute + total_input_grad_compute + total_waiting_for_ig_comm) / FREQ);
     }
-  DP_comm += (total_waiting_for_wg_comm / FREQ);
-  Expose_TP_comm += ((total_waiting_for_fwd_comm + total_waiting_for_ig_comm) / FREQ);
+  if(weight_grad_group_type == MockNccl::GroupType::DP_EP){
+    total_waiting_for_wg_comm *= (1-param->net_work_param.dp_overlap_ratio);
+    DP_EP_comm += (total_waiting_for_wg_comm / FREQ);
+  }
+  else{
+    total_waiting_for_wg_comm *= (1-param->net_work_param.dp_overlap_ratio);
+    DP_comm += (total_waiting_for_wg_comm / FREQ);
+  }
+  if(fwd_pass_group_type == MockNccl::GroupType::EP){
+    total_waiting_for_fwd_comm *= (1-param->net_work_param.ep_overlap_ratio);
+    total_waiting_for_ig_comm *= (1-param->net_work_param.ep_overlap_ratio);
+    Expose_EP_comm += ((total_waiting_for_fwd_comm + total_waiting_for_ig_comm) / FREQ);
+  }
+  else{
+    total_waiting_for_fwd_comm *= (1-param->net_work_param.tp_overlap_ratio);
+    total_waiting_for_ig_comm *= (1-param->net_work_param.tp_overlap_ratio);
+    Expose_TP_comm += ((total_waiting_for_fwd_comm + total_waiting_for_ig_comm) / FREQ);
+  }
+
   total_compute += (total_forward_pass_compute / FREQ);
   total_compute += (total_weight_grad_compute / FREQ);
   total_compute += (total_input_grad_compute / FREQ);
@@ -555,143 +575,188 @@ LayerData Layer::report(
   #else
   if (seprate_log) 
   #endif
-  { 
+  {
     std::string data;
     std::pair<float, float> total_bw;
     std::cout << "*******************" << std::endl;
     std::cout << "Layer id: " << id << std::endl;
-    std::cout << "Total collectives issued for this layer: "
-              << collective_counter << std::endl;
-    std::cout << "*************************  Workload stats  "
-                 "************************* "
-              << id << std::endl;
-    if(stat_row == 0 && layer_num == 0) {
+    std::cout << "Total collectives issued for this layer: " << collective_counter << std::endl;
+    std::cout << "*************************  Workload stats  ************************* " << id << std::endl;
 
-      data = "layer_name,"+run_name+",fwd compute,wg compute,ig compute,fwd exposed comm,wg exposed comm,ig exposed comm,fwd total comm,algbw,busbw,wg total comm,algbw,busbw,ig total comm,algbw,busbw,workload finished at";
-      EndToEnd->write_line(data);
+    if (stat_row == 0 && layer_num == 0) {
+        data = "layer_name," + run_name + ",fwd compute,wg compute,ig compute,fwd exposed comm,wg exposed comm,ig exposed comm,fwd total comm,algbw,busbw,wg total comm,algbw,busbw,ig total comm,algbw,busbw";
+        EndToEnd->write_line(data);
     }
     data = "";
-    if(stat_row == 0){
-      data += id;
+    if (stat_row == 0) {
+        data += id;
     }
     data = data + "," + run_name;
+
+    auto format_value = [](double value) {
+        std::ostringstream stream;
+       if (std::isfinite(value)) {
+           stream << std::fixed << std::setprecision(0) << value;
+       } else {
+           stream << "NaN or Inf";
+       }
+        return stream.str();
+    };
+    auto format_value_bs = [](double value) {
+        std::ostringstream stream;
+        stream << std::fixed << std::setprecision(2) << value;
+        return stream.str();
+    };
+
     std::cout << "id: " << id << " ,Total cycles spent on fwd pass compute: "
-              << total_forward_pass_compute << std::endl;
-    data = data + "," + std::to_string(total_forward_pass_compute/FREQ);
+              << format_value(total_forward_pass_compute / FREQ ) << std::endl;
+    data = data + "," + format_value(total_forward_pass_compute / FREQ );
+
     std::cout << "id: " << id << " ,Total cycles spent on weight grad compute: "
-              << total_weight_grad_compute << std::endl;
-    data = data + "," + to_string(total_weight_grad_compute/FREQ);
+              << format_value(total_weight_grad_compute / FREQ ) << std::endl;
+    data = data + "," + format_value(total_weight_grad_compute / FREQ );
+
     std::cout << "id: " << id << " ,Total cycles spent on input grad compute: "
-              << total_input_grad_compute << std::endl;
-    data = data + "," + to_string(total_input_grad_compute/FREQ);
+              << format_value(total_input_grad_compute / FREQ ) << std::endl;
+    data = data + "," + format_value(total_input_grad_compute / FREQ );
+
     std::cout << "id: " << id
               << " ,Total cycles spent idle waiting for fwd finish: "
-              << total_waiting_for_fwd_comm << std::endl;
-    data = data + "," + to_string(total_waiting_for_fwd_comm/FREQ);
+              << format_value(total_waiting_for_fwd_comm / FREQ ) << std::endl;
+    data = data + "," + format_value(total_waiting_for_fwd_comm / FREQ );
+
     std::cout << "id: " << id
               << " ,Total cycles spent idle waiting for weight grad finish: "
-              << total_waiting_for_wg_comm << std::endl;
-    data = data + "," + to_string(total_waiting_for_wg_comm / FREQ);
+              << format_value(total_waiting_for_wg_comm / FREQ ) << std::endl;
+    data = data + "," + format_value(total_waiting_for_wg_comm / FREQ );
+
     std::cout << "id: " << id
               << " ,Total cycles spent idle waiting for input grad finish: "
-              << total_waiting_for_ig_comm << std::endl;
-    data = data + "," + to_string(total_waiting_for_ig_comm / FREQ);
-    std::cout << "id: " << id
-              << " ,Total cycles spent on fwd pass comm: " << total_fwd_comm
-              << std::endl;
-    total_bw = compute_busbw(fwd_pass_comm_type, fwd_pass_group_size, fwd_pass_comm_size, total_fwd_comm);
-    data = data + "," + to_string(total_fwd_comm / FREQ);
-    data = data + "," + to_string(total_bw.first);
-    data = data + "," + to_string(total_bw.second);
-    std::cout << "id: " << id << " ,Total cycles spent on weight grad comm: "
-              << total_weight_grad_comm << std::endl;
-    total_bw = compute_busbw(weight_grad_comm_type,weight_grad_group_size,weight_grad_comm_size,total_weight_grad_comm);
-    data = data + "," + to_string(total_weight_grad_comm / FREQ);
-    data = data + "," + to_string(total_bw.first);
-    data = data + "," + to_string(total_bw.second);
-    std::cout << "id: " << id << " ,Total cycles spent on input grad comm: "
-              << total_input_grad_comm << std::endl;
-    total_bw = compute_busbw(input_grad_comm_type,input_grad_group_size,input_grad_comm_size,total_input_grad_comm);
-    data = data + "," + to_string(total_input_grad_comm / FREQ);
-    data = data + "," + to_string(total_bw.first);
-    data = data + "," + to_string(total_bw.second);
-    data = data + "," + to_string(((double)Sys::boostedTick()) / FREQ);
-    EndToEnd->write_line(data);
-    
-    if (layer_num == workload->SIZE - 1) {
-      if (param->mode != ModeType::ANALYTICAL) {
-        total_exposed = (((double)Sys::boostedTick()) / FREQ) - total_compute;
-        
-      }
-       
-      pre_bubble_time *= static_cast<double>(PP_size - 1) / (GA * PP_size);
-      double total_time = total_compute + total_exposed + pre_bubble_time;
-      data = "DP comm," + to_string(DP_comm) + ",Expose TP comm," + to_string(Expose_TP_comm) + 
-          ",total exposed comm," + to_string(total_exposed) + ",total comp," + to_string(total_compute) + 
-          ",bubble time," + to_string(pre_bubble_time) + ",Total time," + to_string(total_time);
-      EndToEnd->write_line(data);
-     std::string chart_path = EndToEnd->path;
-     std::ofstream htmlFile(chart_path + "chart.html");
-     std::string file_name = getFileName(chart_path); 
-    htmlFile << "<!DOCTYPE html>\n";
-    htmlFile << "<html>\n<head>\n";
-    htmlFile << "<script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>\n";
-    htmlFile << "<style>\n";
-    htmlFile << "body { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 50vh; margin: 0; padding-top: 10%; }\n";
-    htmlFile << "canvas { width: 50%; max-width: 400px; height: auto; }\n"; 
-    htmlFile << "h2 { margin: 5px 0; }\n"; 
-    htmlFile << "</style>\n";
-    htmlFile << "</head>\n<body>\n";
-    htmlFile << "<canvas id=\"myPieChart\"></canvas>\n";
-    htmlFile << "<h2>Total Time: " << to_string(total_time) << " ns</h2>\n"; 
-    htmlFile << "<h2>model: " << file_name << " </h2>\n"; 
-    htmlFile << "<script>\n";
-    htmlFile << "var ctx = document.getElementById('myPieChart').getContext('2d');\n";
-    htmlFile << "var myPieChart = new Chart(ctx, {\n";
-    htmlFile << "    type: 'pie',\n";
-    htmlFile << "    data: {\n";
-    htmlFile << "        labels: ['DP comm', 'Expose TP comm', 'Total compute', 'PP Bubble time'],\n";
-    htmlFile << "        datasets: [{\n";
-    htmlFile << "            data: [" 
-            << DP_comm << ", " 
-            << Expose_TP_comm << ", " 
-            << total_compute << ", " 
-            << pre_bubble_time << "],\n";
-    htmlFile << "            backgroundColor: ['red', 'green', 'blue', 'magenta'],\n";
-    htmlFile << "        }]\n";
-    htmlFile << "    },\n";
-    htmlFile << "    options: {\n";
-    htmlFile << "        responsive: true,\n";
-    htmlFile << "        maintainAspectRatio: true,\n";
-    htmlFile << "        plugins: {\n";
-    htmlFile << "            tooltip: {\n";
-    htmlFile << "                callbacks: {\n";
-    htmlFile << "                    label: function(context) {\n";
-    htmlFile << "                        var label = context.label || '';\n";
-    htmlFile << "                        if (label) {\n";
-    htmlFile << "                            label += ': ';\n";
-    htmlFile << "                        }\n";
-    htmlFile << "                        if (context.parsed !== null) {\n";
-    htmlFile << "                            label += context.parsed + ' ns';\n";
-    htmlFile << "                        }\n";
-    htmlFile << "                        return label;\n";
-    htmlFile << "                    }\n";
-    htmlFile << "                }\n";
-    htmlFile << "            }\n";
-    htmlFile << "        }\n";
-    htmlFile << "    }\n";
-    htmlFile << "});\n";
-    htmlFile << "</script>\n";
-    htmlFile << "</body>\n</html>";
+              << format_value(total_waiting_for_ig_comm / FREQ ) << std::endl;
+    data = data + "," + format_value(total_waiting_for_ig_comm / FREQ );
 
-    htmlFile.close();
-    std::cout << "HTML file created" << std::endl;
+    std::cout << "id: " << id
+              << " ,Total cycles spent on fwd pass comm: " << format_value(total_fwd_comm / FREQ ) << std::endl;
+    total_bw = compute_busbw(fwd_pass_comm_type, fwd_pass_group_size, fwd_pass_comm_size, total_fwd_comm);
+    data = data + "," + format_value(total_fwd_comm / FREQ );
+    data = data + "," + format_value_bs(total_bw.first);
+    data = data + "," + format_value_bs(total_bw.second);
+
+    std::cout << "id: " << id << " ,Total cycles spent on weight grad comm: "
+              << format_value(total_weight_grad_comm / FREQ ) << std::endl;
+    total_bw = compute_busbw(weight_grad_comm_type, weight_grad_group_size, weight_grad_comm_size, total_weight_grad_comm);
+    data = data + "," + format_value(total_weight_grad_comm / FREQ );
+    data = data + "," + format_value_bs(total_bw.first);
+    data = data + "," + format_value_bs(total_bw.second);
+
+    std::cout << "id: " << id << " ,Total cycles spent on input grad comm: "
+              << format_value(total_input_grad_comm / FREQ ) << std::endl;
+    total_bw = compute_busbw(input_grad_comm_type, input_grad_group_size, input_grad_comm_size, total_input_grad_comm);
+    data = data + "," + format_value(total_input_grad_comm / FREQ );
+    data = data + "," + format_value_bs(total_bw.first);
+    data = data + "," + format_value_bs(total_bw.second);
+
+    // data = data + "," + format_value(((double)Sys::boostedTick()) / FREQ );
+    EndToEnd->write_line(data);
+
+    if (layer_num == workload->SIZE - 1) {
+        if (param->mode != ModeType::ANALYTICAL) {
+            total_exposed = (((double)Sys::boostedTick()) / FREQ ) - total_compute;
+        }
+
+        int Vpp_size = vpp;
+        pre_bubble_time *= static_cast<double>(PP_size - 1) * (1 - param->net_work_param.pp_overlap_ratio)/ (GA * Vpp_size);
+        double total_time = total_compute + total_exposed + pre_bubble_time;
+        auto format_percentage = [&](double value) {
+        double percentage = (value / total_time) * 100;
+        std::ostringstream stream;
+        stream << std::fixed << std::setprecision(2) << percentage;
+        return stream.str() + "%";
+        };
+      std::string file_name = param->res;
+      size_t last_slash_pos = param->res.find_last_of('/');
+      std::string result;
+      if (last_slash_pos != std::string::npos) {
+          file_name = param->res.substr(last_slash_pos + 1); // 取 '/' 后面的部分
+      }
+      std::string keys = "File name, Expose DP comm, Expose DP_EP comm, Expose TP comm, Expose_EP_comm, bubble time, total comp, total exposed comm, Total time";
+      std::string values = file_name + ", " +
+                          format_value(DP_comm) + " (" + format_percentage(DP_comm) + "), " +
+                          format_value(DP_EP_comm) + " (" + format_percentage(DP_EP_comm) + "), " +
+                          format_value(Expose_TP_comm) + " (" + format_percentage(Expose_TP_comm) + "), " +
+                          format_value(Expose_EP_comm) + " (" + format_percentage(Expose_EP_comm) + "), " +
+                          format_value(pre_bubble_time) + " (" + format_percentage(pre_bubble_time) + "), " +
+                          format_value(total_compute) + " (" + format_percentage(total_compute) + "), " +
+                          format_value(total_exposed) + " (" + format_percentage(total_exposed) + "), " +
+                          format_value(total_time);
+
+      data = keys + "\n" + values;
+      EndToEnd->write_res(data);
+    if(param->net_work_param.visual){
+      std::string chart_path = EndToEnd->path;
+      std::ofstream htmlFile(chart_path + "chart.html");
+      std::string file_name = getFileName(chart_path); 
+      htmlFile << "<!DOCTYPE html>\n";
+      htmlFile << "<html>\n<head>\n";
+      htmlFile << "<script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>\n";
+      htmlFile << "<style>\n";
+      htmlFile << "body { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 50vh; margin: 0; padding-top: 10%; }\n";
+      htmlFile << "canvas { width: 50%; max-width: 400px; height: auto; }\n"; 
+      htmlFile << "h2 { margin: 5px 0; }\n"; 
+      htmlFile << "</style>\n";
+      htmlFile << "</head>\n<body>\n";
+      htmlFile << "<canvas id=\"myPieChart\"></canvas>\n";
+      htmlFile << "<h2>Total Time: " << to_string(total_time) << " ns</h2>\n"; 
+      htmlFile << "<h2>model: " << file_name << " </h2>\n"; 
+      htmlFile << "<script>\n";
+      htmlFile << "var ctx = document.getElementById('myPieChart').getContext('2d');\n";
+      htmlFile << "var myPieChart = new Chart(ctx, {\n";
+      htmlFile << "    type: 'pie',\n";
+      htmlFile << "    data: {\n";
+      htmlFile << "        labels: ['DP comm', 'Expose TP comm', 'Total compute', 'PP Bubble time'],\n";
+      htmlFile << "        datasets: [{\n";
+      htmlFile << "            data: [" 
+              << DP_comm << ", " 
+              << Expose_TP_comm << ", " 
+              << total_compute << ", " 
+              << pre_bubble_time << "],\n";
+      htmlFile << "            backgroundColor: ['red', 'green', 'blue', 'magenta'],\n";
+      htmlFile << "        }]\n";
+      htmlFile << "    },\n";
+      htmlFile << "    options: {\n";
+      htmlFile << "        responsive: true,\n";
+      htmlFile << "        maintainAspectRatio: true,\n";
+      htmlFile << "        plugins: {\n";
+      htmlFile << "            tooltip: {\n";
+      htmlFile << "                callbacks: {\n";
+      htmlFile << "                    label: function(context) {\n";
+      htmlFile << "                        var label = context.label || '';\n";
+      htmlFile << "                        if (label) {\n";
+      htmlFile << "                            label += ': ';\n";
+      htmlFile << "                        }\n";
+      htmlFile << "                        if (context.parsed !== null) {\n";
+      htmlFile << "                            label += context.parsed + ' ns';\n";
+      htmlFile << "                        }\n";
+      htmlFile << "                        return label;\n";
+      htmlFile << "                    }\n";
+      htmlFile << "                }\n";
+      htmlFile << "            }\n";
+      htmlFile << "        }\n";
+      htmlFile << "    }\n";
+      htmlFile << "});\n";
+      htmlFile << "</script>\n";
+      htmlFile << "</body>\n</html>";
+
+      htmlFile.close();
+      std::cout << "HTML file created" << std::endl;
+    }
+
       
     }
-  }
+  } 
+
   return layerData;
 }
-
 static std::pair<int, int> binarySearch(const std::vector<long>& arr, long target) {
     int low = 0;
     int high = arr.size() - 1;
@@ -721,40 +786,14 @@ Tick Layer::compute_time(
     int nranks,
     uint64_t data_size,
     MockNccl::GroupType group_type,
-    int all_gpus) {
+    int all_gpus,
+    int ep_size) {
   UserParam* param = UserParam::getInstance();
   Tick comp_time = 0;
   if (comtype == ComType::None) {
     return 0;
   }
-  std::vector<long> data_size_list = {
-      4096,
-      8192,
-      16384,
-      32768,
-      65536,
-      131072,
-      262144,
-      524288,
-      1048576,
-      2097152,
-      4194304,
-      8388608,
-      16777216,
-      33554432,
-      67108864,
-      134217728,
-      268435456,
-      536870912,
-      1073741824,
-      2147483648,
-      4294967296,
-      8389934592};
-    std::unordered_map<GPUType, std::vector<int>> gpu_bw = {
-        {GPUType::A100, {2400, 100}}, //Gbps per nic
-        {GPUType::A800, {1600, 100}},
-        {GPUType::H100, {3600, 400}},
-        {GPUType::H800, {1700, 400}}};
+
     bool DP_comm_inside = false;
     bool TP_comm_inside = false;
     bool EP_comm_inside = false;
@@ -763,6 +802,7 @@ Tick Layer::compute_time(
     uint32_t  gpus_per_server = param->net_work_param.gpus_per_server;
     GPUType gpu_type = param->net_work_param.gpu_type;
     float tp_ar = param->net_work_param.tp_ar;
+    float tp_ag = param->net_work_param.tp_ag;
     float tp_ata = param->net_work_param.tp_ata;
     float ep_ata = param->net_work_param.ep_ata;
     float dp_ag = param->net_work_param.dp_ag;
@@ -784,75 +824,55 @@ Tick Layer::compute_time(
     }
     if (TP_comm_inside || DP_comm_inside) {
       if (comtype == ComType::All_Reduce) {
-        for (const auto& gpu_bw_pair : gpu_bw) {
-          if (gpu_type == gpu_bw_pair.first) {
-            comp_time = data_size * GBps / tp_ar * 1e9 * 2 * //tp2 ep8 164.8 tp16 218 
-                (nranks - 1) / (nranks / 1.0);
-          }
-        }
-      } else if (group_type == MockNccl::GroupType::TP && (
-          comtype == ComType::All_Gatehr || comtype == ComType::Reduce_Scatter )) {
-        for (const auto& gpu_bw_pair : gpu_bw) {
-          if (gpu_type == gpu_bw_pair.first) {
-            comp_time = data_size * GBps / tp_ar * 1e9 * 
-                (nranks - 1) / (nranks / 1.0);
-          }
-        }
+        comp_time = data_size * GBps / tp_ar * 1e9 * 2 * //tp2 ep8 164.8 tp16 218 
+            (nranks - 1) / (nranks / 1.0);
+      }
+       else if (group_type == MockNccl::GroupType::TP && (
+          comtype == ComType::All_Gather || comtype == ComType::Reduce_Scatter )) {
+          comp_time = data_size * GBps / tp_ag * 1e9 * 
+              (nranks - 1) / (nranks / 1.0);
+
       } else if (group_type == MockNccl::GroupType::TP && (
           comtype == ComType::All_to_All)) {
-        for (const auto& gpu_bw_pair : gpu_bw) {
-          if (gpu_type == gpu_bw_pair.first) {
             comp_time = data_size * GBps / tp_ata * 1e9 * 
                 (nranks - 1) / (nranks / 1.0);
-          }
-        }
       }else if (group_type == MockNccl::GroupType::EP && 
         comtype == ComType::All_to_All) {
-        for (const auto& gpu_bw_pair : gpu_bw) {
-          if (gpu_type == gpu_bw_pair.first) {
+
             comp_time = data_size * GBps / ep_ata * 1e9 * 
                 (nranks - 1) / (nranks / 1.0);
-          }
-        }
+
       }else {
         comp_time = 0;
       }
     } else if (!TP_comm_inside && group_type == MockNccl::GroupType::TP) {
       if (comtype == ComType::All_Reduce) {
-        for (const auto& gpu_bw_pair : gpu_bw) {
-          if (gpu_type == gpu_bw_pair.first)
             comp_time = data_size  * GBps /
                 tp_ar * 1e9 * 2 *
                 (nranks - 1) / (nranks / 1.0);
-        }
       } else if (
-          comtype == ComType::All_Gatehr || comtype == ComType::Reduce_Scatter || comtype == ComType::All_to_All) {
-        for (const auto& gpu_bw_pair : gpu_bw) {
-          if (gpu_type == gpu_bw_pair.first)
+          comtype == ComType::All_Gather || comtype == ComType::Reduce_Scatter) {
+            comp_time = data_size * GBps /
+                tp_ag * 1e9 *
+                (nranks - 1) / (nranks / 1.0);
+      } else if (
+          comtype == ComType::All_to_All) {
             comp_time = data_size * GBps /
                 tp_ata * 1e9 *
                 (nranks - 1) / (nranks / 1.0);
-        }
       } else {
         comp_time = 0;
       }
     } else if (
         !DP_comm_inside &&
-        (group_type == MockNccl::GroupType::DP ||
-        group_type == MockNccl::GroupType::EP )) {
+        (group_type == MockNccl::GroupType::DP)) {
       if (comtype == ComType::All_Reduce) {
-        for (const auto& gpu_bw_pair : gpu_bw) {
-          if (gpu_type == gpu_bw_pair.first)
             comp_time = data_size  * GBps / dp_ar * 1e9 * 
                 2 * (nranks - 1) / (nranks / 1.0);
-        }
       } else if (
-          comtype == ComType::All_Gatehr || comtype == ComType::Reduce_Scatter || comtype == ComType::All_to_All) {
-        for (const auto& gpu_bw_pair : gpu_bw) {
-          if (gpu_type == gpu_bw_pair.first)
+          comtype == ComType::All_Gather || comtype == ComType::Reduce_Scatter || comtype == ComType::All_to_All) {
             comp_time = data_size * GBps / dp_ag * 1e9 * //tp2 ep8 48.5
                 (nranks - 1) / (nranks / 1.0);
-        }
       } else {
         comp_time = 0;
       }
@@ -860,18 +880,12 @@ Tick Layer::compute_time(
         !DP_comm_inside &&
         ( group_type == MockNccl::GroupType::DP_EP)) {
       if (comtype == ComType::All_Reduce) {
-        for (const auto& gpu_bw_pair : gpu_bw) {
-          if (gpu_type == gpu_bw_pair.first)
             comp_time = data_size * GBps / ep_ar* 1e9 * 
                 2 * (nranks - 1) / (nranks / 1.0);
-        }
       } else if (
-          comtype == ComType::All_Gatehr || comtype == ComType::Reduce_Scatter || comtype == ComType::All_to_All) {
-        for (const auto& gpu_bw_pair : gpu_bw) {
-          if (gpu_type == gpu_bw_pair.first)
+          comtype == ComType::All_Gather || comtype == ComType::Reduce_Scatter || comtype == ComType::All_to_All) {
             comp_time = data_size * GBps / ep_ag * 1e9 * //tp2 ep8 48.5
                 (nranks - 1) / (nranks / 1.0);
-        }
       } else {
         comp_time = 0;
       }
@@ -885,7 +899,7 @@ std::pair<float,float> Layer::compute_busbw(ComType comtype, int nranks, uint64_
   if (comtype == ComType::All_Reduce) {
     busbw = algbw * 2 * (nranks - 1) / (nranks / 1.0);
   } else if (
-      comtype == ComType::All_Gatehr || comtype == ComType::Reduce_Scatter ||
+      comtype == ComType::All_Gather || comtype == ComType::Reduce_Scatter ||
       comtype == ComType::All_to_All) {
     busbw = algbw * (nranks - 1) / (nranks / 1.0);
   } else {
@@ -986,7 +1000,7 @@ void Layer::issue_forward_pass_comm(
                 << id << ",";
       print_involved_dimensions(fwd_pass_comm_involved_dimensions);
     }
-  } else if (fwd_pass_comm_type == ComType::All_Gatehr) {
+  } else if (fwd_pass_comm_type == ComType::All_Gather) {
     #ifdef PHY_MTP
     fp = generator->generate_all_gather(
         fwd_pass_comm_size,
@@ -1167,7 +1181,7 @@ void Layer::issue_input_grad_comm(
                 << id << ",";
       print_involved_dimensions(input_grad_comm_involved_dimensions);
     }
-  } else if (input_grad_comm_type == ComType::All_Gatehr) {
+  } else if (input_grad_comm_type == ComType::All_Gather) {
     #ifdef PHY_MTP
     ig = generator->generate_all_gather(
         input_grad_comm_size,
@@ -1349,7 +1363,7 @@ void Layer::issue_weight_grad_comm(
                 << id << " with size: " << weight_grad_comm_size << ",";
       print_involved_dimensions(weight_grad_comm_involved_dimensions);
     }
-  } else if (weight_grad_comm_type == ComType::All_Gatehr) {
+  } else if (weight_grad_comm_type == ComType::All_Gather) {
     if(generator->id == 0) std::cout << "Layer issue wg all gather at tick: " << Sys::boostedTick() << std::endl;
     #ifdef PHY_MTP
     wg = generator->generate_all_gather(

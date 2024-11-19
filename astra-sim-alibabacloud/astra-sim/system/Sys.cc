@@ -289,6 +289,7 @@ Sys::Sys(
         "Unable to initialize the workload layer because it can not open the workload file");
     return;
   }
+  #ifdef NS3_MTP 
   result = mock_nccl_grobal_group_init();
   if(result == false) {
     sys_panic(
@@ -299,6 +300,19 @@ Sys::Sys(
     sys_panic(
         "Unable to initialize the system mockncclComm because the file can not be openned");
   }
+  #endif
+  #ifdef NS3_MPI
+  result = mock_nccl_grobal_group_init();
+  if(result == false) {
+    sys_panic(
+        "Unable to initialize the system grobal group because the file can not be openned");
+  }
+  result = mock_nccl_comms_init();
+  if (result == false) {
+    sys_panic(
+        "Unable to initialize the system mockncclComm because the file can not be openned");
+  }
+  #endif
   if (inter_dimension_scheduling == InterDimensionScheduling::OfflineGreedy ||
       inter_dimension_scheduling ==
           InterDimensionScheduling::OfflineGreedyFlex) {
@@ -1046,7 +1060,7 @@ DataSet* Sys::generate_all_gather(
       logical_topologies["AllGather"],
       all_gather_implementation_per_dimension,
       involved_dimensions,
-      ComType::All_Gatehr,
+      ComType::All_Gather,
       pref_scheduling,
       event,
       layer_ptr);
@@ -1483,7 +1497,7 @@ DataSet* Sys::generate_collective(
     chunk_size=std::min(chunk_size,size); 
     std::vector<int> dim_mapper(topology->get_num_of_dimensions());
     std::iota(std::begin(dim_mapper), std::end(dim_mapper), 0);
-    if (collective_type == ComType::All_Gatehr) {
+    if (collective_type == ComType::All_Gather) {
       std::reverse(dim_mapper.begin(), dim_mapper.end());
     }
     if (inter_dimension_scheduling == InterDimensionScheduling::RoundRobin) {
@@ -1583,10 +1597,10 @@ DataSet* Sys::generate_collective(
         std::pair<int, RingTopology::Direction> queue =
             vLevels->get_next_queue_at_level(dim_mapper[dim]);
         phase = generate_collective_phase(
-            ComType::All_Gatehr,
+            ComType::All_Gather,
             layer_num,
             topology->get_basic_topology_at_dimension(
-                dim_mapper[dim], ComType::All_Gatehr),
+                dim_mapper[dim], ComType::All_Gather),
             tmp,
             queue.first,
             queue.second,
@@ -1658,10 +1672,10 @@ DataSet* Sys::generate_collective(
         std::pair<int, RingTopology::Direction> queue =
             vLevels->get_next_queue_at_level(dim_mapper[dim]);
         phase = generate_collective_phase(
-            ComType::All_Gatehr,
+            ComType::All_Gather,
             layer_num,
             topology->get_basic_topology_at_dimension(
-                dim_mapper[dim], ComType::All_Gatehr),
+                dim_mapper[dim], ComType::All_Gather),
             tmp,
             queue.first,
             queue.second,
@@ -1862,8 +1876,8 @@ void Sys::insert_stream(std::list<BaseStream*>* queue, BaseStream* baseStream) {
         continue;
       } else if (
           (last == ComType::Reduce_Scatter &&
-           one_to_last == ComType::All_Gatehr) ||
-          (last == ComType::All_Gatehr &&
+           one_to_last == ComType::All_Gather) ||
+          (last == ComType::All_Gather &&
            one_to_last == ComType::Reduce_Scatter)) {
         std::advance(it, 1);
         continue;

@@ -145,7 +145,9 @@ class Layer : public Callable, public StreamStat {
       double& total_exposed,
       double& pre_bubble_time,
       double& DP_comm,
+      double& DP_EP_comm,
       double& Expose_TP_comm,
+      double& Expose_EP_comm,
       bool seprate_log);
   void issue_forward_pass_comm(
       SchedulingPolicy pref_scheduling,
@@ -158,7 +160,7 @@ class Layer : public Callable, public StreamStat {
       CollectiveBarrier barrier);
   void print_involved_dimensions(std::vector<bool>& involved_dimensions);
   std::pair<float,float> compute_busbw(ComType comtype, int nranks,uint64_t data_size,Tick total_comm);
-  Tick compute_time(ComType comtype, int tp_size,int nranks , uint64_t data_size, MockNccl::GroupType group_type, int all_gpus);
+  Tick compute_time(ComType comtype, int tp_size,int nranks , uint64_t data_size, MockNccl::GroupType group_type, int all_gpus,int ep_size);
 };
 } // namespace AstraSim
 #endif

@@ -214,17 +214,19 @@ struct user_param {
   int thread;
   string workload;
   string network_topo;
+  string network_conf;
   user_param() {
     thread = 1;
     workload = "";
     network_topo = "";
+    network_conf = "";
   };
   ~user_param(){};
 };
 
 static int user_param_prase(int argc,char * argv[],struct user_param* user_param){
   int opt;
-  while ((opt = getopt(argc,argv,"ht:w:g:s:n:"))!=-1){
+  while ((opt = getopt(argc,argv,"ht:w:g:s:n:c:"))!=-1){
     switch (opt)
     {
     case 'h':
@@ -232,6 +234,8 @@ static int user_param_prase(int argc,char * argv[],struct user_param* user_param
       std::cout<<"-t    number of threads,default 1"<<std::endl;
       std::cout<<"-w    workloads default none "<<std::endl;
       std::cout<<"-n    network topo"<<std::endl;
+      std::cout<<"-c    network_conf"<<std::endl;
+      return 1;
       break;
     case 't':
       user_param->thread = stoi(optarg);
@@ -242,7 +246,11 @@ static int user_param_prase(int argc,char * argv[],struct user_param* user_param
     case 'n':
       user_param->network_topo = optarg;
       break;
+    case 'c':
+      user_param->network_conf = optarg;
+      break;
     default:
+      std::cerr<<"-h    help message"<<std::endl;
       return 1;
     }
   }
@@ -253,16 +261,15 @@ int main(int argc, char *argv[]) {
   struct user_param user_param;
   MockNcclLog::set_log_name("SimAI.log");
   MockNcclLog* NcclLog = MockNcclLog::getInstance();
-  NcclLog->writeLog(NcclLogLevel::DEBUG," init SimAI.log ");
+  NcclLog->writeLog(NcclLogLevel::INFO," init SimAI.log ");
   if(user_param_prase(argc,argv,&user_param)){
-    std::cerr<<"-h    help message"<<std::endl;
-    return -1;
+    return 0;
   }
   #ifdef NS3_MTP
   MtpInterface::Enable(user_param.thread);
   #endif
   
-  main1(user_param.network_topo);
+  main1(user_param.network_topo,user_param.network_conf);
   int nodes_num = node_num - switch_num;
   int gpu_num = node_num - nvswitch_num - switch_num;
 

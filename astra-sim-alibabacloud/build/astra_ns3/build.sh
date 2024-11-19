@@ -43,16 +43,15 @@ function compile_astrasim {
 
 function compile {
     # Only compile & Run the AstraSimNetwork ns3program
-    if [ ! -f '"${INPUT_DIR}"/inputs/config/SimAI.conf' ]; then
-        echo ""${INPUT_DIR}"/config/SimAI.conf is not exist"
-        cp "${INPUT_DIR}"/config/SimAI.conf "${SIM_LOG_DIR}"/config/SimAI.conf
-    fi
+    # if [ ! -f '"${INPUT_DIR}"/inputs/config/SimAI.conf' ]; then
+    #     echo ""${INPUT_DIR}"/config/SimAI.conf is not exist"
+    #     cp "${INPUT_DIR}"/config/SimAI.conf "${SIM_LOG_DIR}"/config/SimAI.conf
+    # fi
     cp "${ASTRA_SIM_DIR}"/network_frontend/ns3/AstraSimNetwork.cc "${NS3_DIR}"/simulation/scratch/
     cp "${ASTRA_SIM_DIR}"/network_frontend/ns3/*.h "${NS3_DIR}"/simulation/scratch/
     rm -rf "${NS3_APPLICATION}"/astra-sim 
     cp -r "${ASTRA_SIM_DIR}" "${NS3_APPLICATION}"/
     cd "${NS3_DIR}/simulation"
-    # CC='gcc-4.9' CXX='g++-4.9' 
     CC='gcc' CXX='g++' 
     ./ns3 configure -d debug --enable-mtp
     ./ns3 build

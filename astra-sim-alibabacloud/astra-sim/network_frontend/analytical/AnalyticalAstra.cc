@@ -67,8 +67,8 @@ struct user_param {
 
 int main(int argc,char *argv[]) {
   UserParam* param = UserParam::getInstance();
-  if (param->parse(argc,argv)) {
-    std::cerr << "-h,     --help              Help message" << std::endl;
+  if (param->parseArg(argc,argv)) {
+    std::cerr << "-h,       --help                Help message" << std::endl;
     return -1;
   }
   param->mode = ModeType::ANALYTICAL;
@@ -95,53 +95,44 @@ int main(int argc,char *argv[]) {
   physical_dims[0][0] += param->net_work_param.nvswitch_num;
   using_num_gpus += param->net_work_param.nvswitch_num;
 
-  std::vector<AnalyticalNetWork *> analytical_network(using_num_gpus, nullptr);
-  std::vector<AstraSim::Sys *> systems(using_num_gpus, nullptr);
-  int npu_offset = 0;
-  for (int i = 0; i < physical_dims.size(); i++) {
-    std::vector<int> queues_per_dim(physical_dims[i].size(), 1);
-    int job_npus = 1;
-    for (auto dim : physical_dims[i]) {
-        job_npus *= dim;
-      }
-    
-    for (int j = 0; j < job_npus; j++) {
-      analytical_network[j] = new AnalyticalNetWork(j + npu_offset);
-      systems[j + npu_offset] = new AstraSim::Sys(
-        analytical_network[j + npu_offset],
-        nullptr,
-        j,
-        npu_offset,
-        1,
-        physical_dims[i],
-        queues_per_dim,
-        "",
-        WORKLOAD_PATH + param->workload[i],
-        param->comm_scale,
-        1,
-        1,
-        1,
-        0,
-        param->res[i],
-        "Analytical_test",
-        true,
-        false,
-        param->net_work_param.gpu_type,
-        param->gpus,
-        param->net_work_param.NVswitchs,
-        param->net_work_param.gpus_per_server
-      );
-      systems[j + npu_offset]->nvswitch_id = node2nvswitch[j];
-      systems[j + npu_offset]->num_gpus = using_num_gpus - param->net_work_param.nvswitch_num;
+  std::vector<int> queues_per_dim(physical_dims[0].size(), 1);
+  int job_npus = 1;
+  for (auto dim : physical_dims[0]) {
+      job_npus *= dim;
     }
-    npu_offset += job_npus;
-    
-  }
-  for (int i = 0; i < using_num_gpus; i++) {
-    systems[i]->workload->fire();
-  }
-  std::cout << "SimAI-Analytical begin run." << std::endl;
+  
+  
+  AnalyticalNetWork *analytical_network = new AnalyticalNetWork(0);
+  AstraSim::Sys *systems = new AstraSim::Sys(
+    analytical_network,
+    nullptr,
+    0,
+    0,
+    1,
+    physical_dims[0],
+    queues_per_dim,
+    "",
+    WORKLOAD_PATH + param->workload,
+    param->comm_scale,
+    1,
+    1,
+    1,
+    0,
+    RESULT_PATH + param->res,
+    "Analytical_test",
+    true,
+    false,
+    param->net_work_param.gpu_type,
+    param->gpus,
+    param->net_work_param.NVswitchs,
+    param->net_work_param.gpus_per_server
+  );
+  systems->nvswitch_id = node2nvswitch[0];
+  systems->num_gpus = using_num_gpus - param->net_work_param.nvswitch_num;
+  
 
+  systems->workload->fire();
+  std::cout << "SimAi begin run Analytical" << std::endl;
   AnaSim::Run();
   AnaSim::Stop();
   AnaSim::Destroy();

@@ -48,7 +48,7 @@ HalvingDoubling::HalvingDoubling(
     default:
       stream_count = log2(nodes_in_ring);
   }
-  if (type == ComType::All_Gatehr) {
+  if (type == ComType::All_Gather) {
     max_count = 0;
   } else {
     max_count = log2(nodes_in_ring);
@@ -62,7 +62,7 @@ HalvingDoubling::HalvingDoubling(
       this->rank_offset = 1;
       this->offset_multiplier = 2;
       break;
-    case ComType::All_Gatehr:
+    case ComType::All_Gather:
       this->final_data_size = data_size * nodes_in_ring;
       this->msg_size = data_size;
       this->rank_offset = nodes_in_ring / 2;
