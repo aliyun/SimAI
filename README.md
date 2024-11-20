@@ -8,7 +8,7 @@
 | Date | Event | Location | Content | Type |
 |:----:|:------|:---------|:--------|:----:|
 | **Dec 5, 2024** | [**Bench'24 Conference**](https://mp.weixin.qq.com/s/STic_E12xMhZRxhzK9wRnw) | 📍 Guangzhou | SimAI Tutorial & Deep-dive Session | 🎓 On-site |
-| Nov 22, 2024 *(tentative)* | SimAI Community Live Stream | 🌐 Online | Interactive Technical Discussion & Demo | 💻 Virtual |
+| Nov 26, 2024 *(tentative)* | SimAI Community Live Stream | 🌐 Online | Interactive Technical Discussion & Demo | 💻 Virtual |
 
 ### 🌟 Past Events
 
@@ -110,6 +110,8 @@ You can follow the instrucitons below to quickly set up the environtments and ru
 
 The following code has been successfully tested on GCC/G++ 9.4.0, python 3.8.10 in Ubuntu 20.04
 
+You can use the official Ubuntu 20.04 image, and do not install ninja.
+
 ```bash
 # Clone the repository
 $ git clone https://github.com/aliyun/SimAI.git
@@ -138,10 +140,10 @@ $  ./bin/SimAI_analytical -w example/workload_analytical.txt -g 9216 -g_p_s 8 -r
 
 ```bash
 # Create network topo
-$ python3 ./astra-sim-alibabacloud/inputs/topo/gen_HPN_7.0_topo_mulgpus_one_link.py -g 128 -gt A100 -bw 400Gbps -nvbw 2400Gbps
+$ python3 ./astra-sim-alibabacloud/inputs/topo/gen_HPN_7.0_topo_mulgpus_one_link.py -g 128 -gt A100 -bw 100Gbps -nvbw 2400Gbps
 
 # Running
-$ AS_SEND_LAT=3 AS_NVLS_ENABLE=1 ./bin/SimAI_simulator -t 16 -w ./example/microAllReduce.txt -n ./HPN_7_0_128_gpus_8_in_one_server_with_400Gbps_A100
+$ AS_SEND_LAT=3 AS_NVLS_ENABLE=1 ./bin/SimAI_simulator -t 16 -w ./example/microAllReduce.txt -n ./HPN_7_0_128_gpus_8_in_one_server_with_400Gbps_A100 -c astra-sim-alibabacloud/inputs/config/SimAI.conf
 
 ```
 
