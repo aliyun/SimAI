@@ -18,6 +18,7 @@
 #include<iostream>
 #include<queue>
 #include<list>
+#include<cstdint>
 
 using namespace std;
 
