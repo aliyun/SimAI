@@ -7,3 +7,4 @@ results/
 test/log/
 *.log
 .cur*
+.DS_Store

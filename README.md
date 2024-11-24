@@ -8,7 +8,7 @@
 | Date | Event | Location | Content | Type |
 |:----:|:------|:---------|:--------|:----:|
 | **Dec 5, 2024** | [**Bench'24 Conference**](https://mp.weixin.qq.com/s/STic_E12xMhZRxhzK9wRnw) | 📍 Guangzhou | SimAI Tutorial & Deep-dive Session | 🎓 On-site |
-| Nov 26, 2024 *(tentative)* | SimAI Community Live Stream | 🌐 Online | Interactive Technical Discussion & Demo | 💻 Virtual |
+| **Nov 26, 2024 19:00-20:00 (UTC+8)** | SimAI Community Live Stream | 🌐 Online | Interactive Technical Discussion & Demo | 💻 Virtual |
 
 ### 🌟 Past Events
 
@@ -21,6 +21,9 @@
 ### 💫 Join Our Next Major Event! 
 Don't miss our comprehensive session at **Bench'24**
 [Register Now →](https://mp.weixin.qq.com/s/STic_E12xMhZRxhzK9wRnw)
+
+And join our **Nov 26th Community Live Stream**!  
+Scan the QR code below to join our DingTalk group for live stream access and latest updates.
 </div>
 
 ---
@@ -98,9 +101,11 @@ SimAI work has been accepted by NSDI'25 Spring, for more details, please refer t
 
 [[pdf](https://ennanzhai.github.io/pub/nsdi25spring-simai.pdf)] / [slides] / [video]
 
-# Usage
+We encourage innovative research and extensions based on SimAI. Welcome to join our community group or reach out via email for discussion. We may provide technical support.
 
-Here are some simple examples, SimAI full tutorials can be found here: [**SimAI@Tutorial**], [**aicb@Tutorial**](https://github.com/aliyun/aicb/blob/master/training/tutorial.md), [SimCCL@Tutorial], [ns-3-alibabacloud@Tutorial]
+# Quick Start
+
+Here are some simple examples, SimAI full tutorials can be found here: [**SimAI@Tutorial**](./docs/Tutorial.md), [**aicb@Tutorial**](https://github.com/aliyun/aicb/blob/master/training/tutorial.md), [SimCCL@Tutorial], [ns-3-alibabacloud@Tutorial]
 
 ## Setup
 
@@ -111,6 +116,8 @@ You can follow the instrucitons below to quickly set up the environtments and ru
 The following code has been successfully tested on GCC/G++ 9.4.0, python 3.8.10 in Ubuntu 20.04
 
 You can use the official Ubuntu 20.04 image, and do not install ninja.
+
+(For generation workloads, it's recommended to leverage NGC container images directly.)
 
 ```bash
 # Clone the repository
@@ -159,4 +166,3 @@ Welcome to join the SimAI community chat groups, with the DingTalk group on the 
 </div>
 
 <br/>
-
