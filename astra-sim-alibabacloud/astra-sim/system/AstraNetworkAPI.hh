@@ -39,15 +39,15 @@ struct ncclFlowTag {
   std::vector<int> tree_flow_list;
   bool nvls_on;
   ncclFlowTag():
-    channel_id(0),
-    chunk_id(0),
-    current_flow_id(0),
-    child_flow_id(0),
-    sender_node(0),
-    receiver_node(0),
-    flow_size(0),
+    channel_id(-1),
+    chunk_id(-1),
+    current_flow_id(-1),
+    child_flow_id(-1),
+    sender_node(-1),
+    receiver_node(-1),
+    flow_size(-1),
     pQps(nullptr),
-    tag_id(0),
+    tag_id(-1),
     nvls_on(false){};
   ncclFlowTag(
       int _channel_id,
