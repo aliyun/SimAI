@@ -170,6 +170,5 @@ int main(int argc,char *argv[]){
   notify_all_thread_finished();
   PhyNetSim::Destory();
   MPI_Finalize();
-  global_sys->~Sys();
   return 0;
 };
