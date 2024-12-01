@@ -367,14 +367,11 @@ bool NcclTreeFlowModel::recv_ready(int channel_id, int flow_id) {
 
 void NcclTreeFlowModel::release_packets(int channel_id, int flow_id, uint64_t message_size) {
   MockNcclLog* NcclLog = MockNcclLog::getInstance();
-  for (auto packet : locked_packets) {
-    packet->set_notifier(this);
-  }
   if (NPU_to_MA == true) {
     (new PacketBundle(
          stream->owner,
          stream,
-         locked_packets,
+         {},
          processed,
          send_back,
          message_size,
@@ -386,7 +383,7 @@ void NcclTreeFlowModel::release_packets(int channel_id, int flow_id, uint64_t me
     (new PacketBundle(
          stream->owner,
          stream,
-         locked_packets,
+         {},
          processed,
          send_back,
          message_size,
@@ -396,7 +393,6 @@ void NcclTreeFlowModel::release_packets(int channel_id, int flow_id, uint64_t me
         ->send_to_NPU();
   }
   NcclLog->writeLog(NcclLogLevel::DEBUG,"id:  %d finish release_packets",id);
-  locked_packets.clear();
 }
 
 void NcclTreeFlowModel::process_stream_count(int channel_id) {
@@ -475,7 +471,6 @@ void NcclTreeFlowModel::insert_packets(int channel_id, int flow_id) {
         flow_id));
     packets[std::make_pair(channel_id, flow_id)].back().set_flow_id(flow_id);
     packets[std::make_pair(channel_id, flow_id)].back().sender = nullptr;
-    locked_packets.push_back(&packets[std::make_pair(channel_id, flow_id)].back());
     processed = false;
     send_back = false;
     NPU_to_MA = true;
@@ -495,7 +490,6 @@ void NcclTreeFlowModel::insert_packets(int channel_id, int flow_id) {
         flow_id)); 
     packets[std::make_pair(channel_id, flow_id)].back().set_flow_id(flow_id);
     packets[std::make_pair(channel_id, flow_id)].back().sender = nullptr;
-    locked_packets.push_back(&packets[std::make_pair(channel_id, flow_id)].back());
     if (comType == ComType::Reduce_Scatter ||
         (comType == ComType::All_Reduce && toggle)) {
       processed = true;
@@ -632,9 +626,6 @@ void NcclTreeFlowModel::exit() {
   for(std::pair<std::pair<int, int>, std::list<MyPacket>> packet: packets) {
   if(packet.second.size() != 0)
     packet.second.clear();
-  }
-  if (locked_packets.size() != 0) {
-    locked_packets.clear();
   }
   #endif
   stream->owner->proceed_to_next_vnet_baseline((StreamBaseline*)stream);
