@@ -289,19 +289,7 @@ Sys::Sys(
         "Unable to initialize the workload layer because it can not open the workload file");
     return;
   }
-  #ifdef NS3_MTP 
-  result = mock_nccl_grobal_group_init();
-  if(result == false) {
-    sys_panic(
-        "Unable to initialize the system grobal group because the file can not be openned");
-  }
-  result = mock_nccl_comms_init();
-  if (result == false) {
-    sys_panic(
-        "Unable to initialize the system mockncclComm because the file can not be openned");
-  }
-  #endif
-  #ifdef NS3_MPI
+  #if defined(NS3_MTP) || defined(NS3_MPI) || defined(PHY_MTP)
   result = mock_nccl_grobal_group_init();
   if(result == false) {
     sys_panic(
