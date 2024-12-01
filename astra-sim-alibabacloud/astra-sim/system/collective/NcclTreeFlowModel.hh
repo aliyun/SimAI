@@ -52,7 +52,6 @@ class NcclTreeFlowModel : public Algorithm {
   std::map<std::pair<int, int>, std::list<MyPacket>> packets; 
   bool toggle;
   std::map<std::pair<int,int>, int> free_packets; 
-  std::list<MyPacket*> locked_packets;
   bool processed;   
   bool send_back;
   bool NPU_to_MA;
