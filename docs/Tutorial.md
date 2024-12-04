@@ -189,7 +189,7 @@ python3 ./astra-sim-alibabacloud/inputs/topo/gen_HPN_7.0_topo_mulgpus_one_link.p
 | `-psn  --psw_switch_num` | Number of PSW switches                   | 120           |
 | `-nsps  --nv_switch_per_server` | NV switch per server                 | 1             |
 | `--dp`                    | Enable dual plane, default single plane  | false         |
-| `--st`                    | Enable HPN_6_2 architecture, default HPN_7_0 | false     |
+| `--st`                    | Enable DCN architecture, default HPN_7_0 | false     |
 
 ## 🖥️ SimAI-NS3 Simulation
 
