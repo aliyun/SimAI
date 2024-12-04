@@ -164,7 +164,7 @@ def gen_HPN_7_0_multi_plane(args):
                 f.write(line)
                 f.write('\n')
 
-def gen_HPN_6_2_single_plane(args):
+def gen_DCN_single_plane(args):
     asw_switch_num = args.asw_switch_num
     nv_switch_num = (int)(args.gpu / args.gpu_per_server) * args.nv_switch_per_server
     nodes_per_2asw = args.nics_per_aswitch # 每个asw下行连接数
@@ -175,7 +175,7 @@ def gen_HPN_6_2_single_plane(args):
 
     # for verification
     gpu_to_links = {}
-    file_name = "HPN_6_2_"+str(args.gpu)+"_gpus_"+str(args.gpu_per_server)+"_in_one_server_with_single_plane_"+args.bandwidth+"_"+args.gpu_type
+    file_name = "DCN_"+str(args.gpu)+"_gpus_"+str(args.gpu_per_server)+"_in_one_server_with_single_plane_"+args.bandwidth+"_"+args.gpu_type
 
     with open(file_name, 'w') as f:
         print(file_name)
@@ -234,7 +234,7 @@ def gen_HPN_6_2_single_plane(args):
                 f.write(line)
                 f.write('\n')
 
-def gen_HPN_6_2_multi_plane(args):
+def gen_DCN_multi_plane(args):
     asw_switch_num = args.asw_switch_num
     nv_switch_num = (int)(args.gpu / args.gpu_per_server) * args.nv_switch_per_server
     nodes_per_2asw = args.nics_per_aswitch # 每个asw下行连接数
@@ -245,7 +245,7 @@ def gen_HPN_6_2_multi_plane(args):
     # for verification
     gpu_to_links = {}
 
-    file_name = "HPN_6_2_"+str(args.gpu)+"_gpus_"+str(args.gpu_per_server)+"_in_one_server_with_multi_plane"+args.bandwidth+"_"+args.gpu_type
+    file_name = "DCN_"+str(args.gpu)+"_gpus_"+str(args.gpu_per_server)+"_in_one_server_with_multi_plane"+args.bandwidth+"_"+args.gpu_type
     with open(file_name, 'w') as f:
         print(file_name)
         first_line = str(nodes)+" "+str(args.gpu_per_server)+" "+str(nv_switch_num)+" "+str(switch_nodes-nv_switch_num)+" "+str(int(links))+" "+str(args.gpu_type)
@@ -339,13 +339,13 @@ def main():
     parser.add_argument('-nsps','--nv_switch_per_server',type=int,default=1,help='nv_switch_per_server,default 1')
     parser.add_argument('-npa','--nics_per_aswitch',type=int,default=128,help='nnics per asw,default 128')
     parser.add_argument('--dp', action='store_true', help='enable dual_plane, default single plane')
-    parser.add_argument('--st', action='store_true', help='enable HPN_6_2 architecture , default HPN_7_0')
+    parser.add_argument('--st', action='store_true', help='enable DCN architecture , default HPN_7_0')
     args = parser.parse_args()
     if args.st:
         if args.dp:
-            gen_HPN_6_2_multi_plane(args)
+            gen_DCN_multi_plane(args)
         else:
-            gen_HPN_6_2_single_plane(args)
+            gen_DCN_single_plane(args)
     else:
         if args.dp:
             gen_HPN_7_0_multi_plane(args)
