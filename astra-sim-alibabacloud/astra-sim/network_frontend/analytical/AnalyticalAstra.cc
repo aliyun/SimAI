@@ -132,7 +132,7 @@ int main(int argc,char *argv[]) {
   
 
   systems->workload->fire();
-  std::cout << "SimAi begin run Analytical" << std::endl;
+  std::cout << "SimAI begin run Analytical" << std::endl;
   AnaSim::Run();
   AnaSim::Stop();
   AnaSim::Destroy();
