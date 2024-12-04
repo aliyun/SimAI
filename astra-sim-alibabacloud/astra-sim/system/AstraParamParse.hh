@@ -58,10 +58,11 @@ struct NetWorkParam{
   float ep_ag = -1.0f; 
   float ep_rs = -1.0f; 
   float ep_ata = -1.0f; 
+  float pp = -1.0f; 
   float dp_overlap_ratio = 0;
   float tp_overlap_ratio = 0;
   float ep_overlap_ratio = 0;
-  float pp_overlap_ratio = 0;
+  float pp_overlap_ratio = 1;
   std::vector<int> NVswitchs;
   std::vector<std::vector<int>> all_gpus;
   int visual = 0;
@@ -146,6 +147,8 @@ public:
                             else if (key == "allgather") params.ep_ag = value;
                             else if (key == "reducescatter") params.ep_rs = value;
                             else if (key == "alltoall") params.ep_ata = value;
+                        } else if (currentSection == "PP") {
+                            if (key == "busbw") params.pp = value;
                         }
                     }
                 }
@@ -169,7 +172,7 @@ public:
         std::cout << "-dp_o,    --dp-overlap-ratio    DP overlap ratio [float: 0.0-1.0] (Default: 0.0)" << std::endl;
         std::cout << "-ep_o,    --ep-overlap-ratio    EP overlap ratio [float: 0.0-1.0] (Default: 0.0)" << std::endl;
         std::cout << "-tp_o,    --tp-overlap-ratio    TP overlap ratio [float: 0.0-1.0] (Default: 0.0)" << std::endl;
-        std::cout << "-pp_o,    --pp-overlap-ratio    PP overlap ratio [float: 0.0-1.0] (Default: 0.0)" << std::endl;
+        std::cout << "-pp_o,    --pp-overlap-ratio    PP overlap ratio [float: 0.0-1.0] (Default: 1.0)" << std::endl;
     }
 
     int printError(const std::string& arg) const {
@@ -216,8 +219,7 @@ public:
                 if (++i < argc) this->net_work_param.pp_overlap_ratio = std::stof(argv[i]);
                 else return printError(arg);
             } else if (arg == "-v" || arg == "--visual") {
-                if (++i < argc) this->net_work_param.visual = std::stoi(argv[i]);
-                else return printError(arg);
+                this->net_work_param.visual = 1;
             }
             else {
                 return printUnknownOption(arg);

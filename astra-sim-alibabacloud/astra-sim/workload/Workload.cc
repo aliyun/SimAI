@@ -1219,7 +1219,16 @@ bool Workload::initialize_workload(std::string name) {
   }
   std::map<std::string, std::vector<bool>> general_involved_dimensions =
       decode_involved_dimensions(parallelismPolicy, model_parallel_npu_group);
-  inFile >> lines;
+  pp_commsize = 0;
+  std::string tmp;
+  inFile >> tmp;
+  if (std::isdigit(tmp[0])) {
+    lines = std::stoi(tmp);
+  }
+  else{
+      inFile >> pp_commsize;
+      inFile >> lines;
+  }
   run_type = type;
   SIZE = lines;
   layers = new Layer*[SIZE];

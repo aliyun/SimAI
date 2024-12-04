@@ -79,6 +79,7 @@ class Workload : Callable {
   int GA;                         //Ga_Size
   int all_gpus;
   int vpp;
+  uint32_t pp_commsize;
   ParallelismPolicy parallelismPolicy;
   Tick waiting_for_comm;
   Workload(

@@ -499,6 +499,7 @@ LayerData Layer::report(
   int TP_size = workload->model_parallel_npu_group;
   int PP_size = workload->pipeline_model_parallelism;
   int vpp = workload->vpp;
+  uint32_t pp_commsize = workload->pp_commsize;
   int DP_size = generator->all_gpus[0] / (TP_size * PP_size);
   int GA = workload->GA;
   int EP_size = workload->expert_parallel_npu_group;
@@ -663,10 +664,13 @@ LayerData Layer::report(
         if (param->mode != ModeType::ANALYTICAL) {
             total_exposed = (((double)Sys::boostedTick()) / FREQ ) - total_compute;
         }
-
-        int Vpp_size = vpp;
-        pre_bubble_time *= static_cast<double>(PP_size - 1) * (1 - param->net_work_param.pp_overlap_ratio)/ (GA * Vpp_size);
-        double total_time = total_compute + total_exposed + pre_bubble_time;
+        //pp commtime
+        Tick Expose_PP_time = (2 * vpp * GA * (pp_commsize * GBps / (param->net_work_param.pp) * 1e9) / FREQ );
+        Expose_PP_time *= (1-param->net_work_param.pp_overlap_ratio) ;
+        //pp bubble time
+        pre_bubble_time *= static_cast<double>(PP_size - 1) / (GA * vpp);
+        //total time
+        double total_time = total_compute + total_exposed + pre_bubble_time + Expose_PP_time;
         auto format_percentage = [&](double value) {
         double percentage = (value / total_time) * 100;
         std::ostringstream stream;
@@ -679,12 +683,13 @@ LayerData Layer::report(
       if (last_slash_pos != std::string::npos) {
           file_name = param->res.substr(last_slash_pos + 1); // 取 '/' 后面的部分
       }
-      std::string keys = "File name, Expose DP comm, Expose DP_EP comm, Expose TP comm, Expose_EP_comm, bubble time, total comp, total exposed comm, Total time";
+      std::string keys = "File name, Expose DP comm, Expose DP_EP comm, Expose TP comm, Expose_EP_comm, Expose_PP_comm, bubble time, total comp, total exposed comm, Total time";
       std::string values = file_name + ", " +
                           format_value(DP_comm) + " (" + format_percentage(DP_comm) + "), " +
                           format_value(DP_EP_comm) + " (" + format_percentage(DP_EP_comm) + "), " +
                           format_value(Expose_TP_comm) + " (" + format_percentage(Expose_TP_comm) + "), " +
                           format_value(Expose_EP_comm) + " (" + format_percentage(Expose_EP_comm) + "), " +
+                          format_value(Expose_PP_time) + " (" + format_percentage(Expose_PP_time) + "), " +
                           format_value(pre_bubble_time) + " (" + format_percentage(pre_bubble_time) + "), " +
                           format_value(total_compute) + " (" + format_percentage(total_compute) + "), " +
                           format_value(total_exposed) + " (" + format_percentage(total_exposed) + "), " +
@@ -713,14 +718,17 @@ LayerData Layer::report(
       htmlFile << "var myPieChart = new Chart(ctx, {\n";
       htmlFile << "    type: 'pie',\n";
       htmlFile << "    data: {\n";
-      htmlFile << "        labels: ['DP comm', 'Expose TP comm', 'Total compute', 'PP Bubble time'],\n";
+      htmlFile << "        labels: ['Expose DP comm', 'Expose DP_EP comm','Expose TP comm', 'Expose_EP_comm','Total compute', 'PP Bubble time', 'Expose PP comm'],\n";
       htmlFile << "        datasets: [{\n";
       htmlFile << "            data: [" 
               << DP_comm << ", " 
+              << DP_EP_comm << ", "
               << Expose_TP_comm << ", " 
+              << Expose_EP_comm << ", " 
               << total_compute << ", " 
-              << pre_bubble_time << "],\n";
-      htmlFile << "            backgroundColor: ['red', 'green', 'blue', 'magenta'],\n";
+              << pre_bubble_time << ", " 
+              << Expose_PP_time << "],\n";
+      htmlFile << "            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40','#FF5733'],\n";
       htmlFile << "        }]\n";
       htmlFile << "    },\n";
       htmlFile << "    options: {\n";

@@ -14,3 +14,5 @@ allreduce,: null
 allgather,: 45
 reducescatter,: 45
 alltoall,: 80
+PP:
+busbw: 47.5
