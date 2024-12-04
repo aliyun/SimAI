@@ -211,8 +211,145 @@ $ AS_SEND_LAT=3 AS_NVLS_ENABLE=1 ./bin/SimAI_simulator -t 16 -w ./example/microA
 | `-w  --workload`          | Path to workload                         | `./microAllReduce.txt`                                             |
 | `-n  --network-topo`      | Network topology path                    | None    
 
-## Result Analyze
+## RING VS NVLS
+### workload
+```bash
+HYBRID_TRANSFORMER_FWD_IN_BCKWD model_parallel_NPU_group: 8 ep: 1 pp: 1 vpp: 8 ga: 1 all_gpus: 32 checkpoints: 0 checkpoint_initiates: 0
+6
+embedding_layer     -1 556000  ALLREDUCE   16777216      1       NONE 0        1      NONE   0      1 
+embedding_layer     -1 556000  ALLREDUCE   33554432      1       NONE 0        1      NONE   0      1 
+embedding_layer     -1 556000  ALLREDUCE   67108864      1       NONE 0        1      NONE   0      1 
+embedding_layer     -1 556000  ALLREDUCE   134217728      1       NONE 0        1      NONE   0      1 
+embedding_layer     -1 556000  ALLREDUCE   268435456      1       NONE 0        1      NONE   0      1 
+embedding_layer     -1 556000  ALLREDUCE   536870912      1       NONE 0        1      NONE   0      1 
 
-Same as SimAI-Analytical
+```
+### NVLS topo file && RUN
+```bash
+cd SimAI
+./scripts/build.sh -c ns3
+python3 ./astra-sim-alibabacloud/inputs/topo/gen_HPN_7.0_topo_mulgpus_one_link.py -g 32 -gt H800 -bw 400Gbps -nvbw 1360Gbps
+AS_SEND_LAT=12 AS_NVLS_ENABLE=1 ./bin/SimAI_simulator -t 8 -w ./example/microAllReduce.txt -n HPN_7_0_32_gpus_8_in_one_server_with_single_plane_400Gbps_H800 -c ./astra-sim-alibabacloud/inputs/config/SimAI.conf
+```
+### RING topo file && RUN
+```bash
+python3 ./astra-sim-alibabacloud/inputs/topo/gen_HPN_7.0_topo_mulgpus_one_link.py -g 32 -gt H800 -bw 400Gbps -nvbw 1440Gbps
+AS_SEND_LAT=2 AS_PXN_ENABLE=1 ./bin/SimAI_simulator -t 8 -w ./example/microAllReduce.txt -n ./HPN_7_0_32_gpus_8_in_one_server_with_single_plane_400Gbps_H800 -c ./astra-sim-alibabacloud/inputs/config/SimAI.conf
+```
+### result
+| msg size | NVLS  | RING  |
+|----------|-------|-------|
+| 16M      | 148.88| 141.84|
+| 32M      | 178.04| 153.68|
+| 64M      | 197.38| 160.60|
+| 128M     | 208.70| 163.85|
+| 256M     | 214.87| 165.72|
+| 512M     | 218.09| 166.68|
+| 1G       | 219.73| 167.16|
+| 2G       | 220.57| 167.40|
 
-# SimAI-Physical Usage (TODO)
+## HPN 7.0 architecture VS DCN+ architecture
+### workload
+```bash
+HYBRID_TRANSFORMER_FWD_IN_BCKWD model_parallel_NPU_group: 8 ep: 1 pp: 1 vpp: 8 ga: 1 all_gpus: 256 checkpoints: 0 checkpoint_initiates: 0
+1
+embedding_layer     -1 556000         NONE 0        1      NONE   0      1 ALLREDUCE   536870912      1
+```
+### Network Topofile
+```bash
+# DCN+ topofile
+python3 ./astra-sim-alibabacloud/inputs/topo/gen_HPN_7.0_topo_mulgpus_one_link.py -g 256 -gt H800 -bw 400Gbps -nvbw 1440Gbps -asn 2 --st
+# HPN7.0 topofile
+python3 ./astra-sim-alibabacloud/inputs/topo/gen_HPN_7.0_topo_mulgpus_one_link.py -g 256 -gt H800 -bw 400Gbps -nvbw 1440Gbps
+```
+### RUN
+```bash
+# DCN+ run command
+AS_SEND_LAT=2 ./bin/SimAI_simulator -t 8 -w ./example/microAllReduce.txt -n ./DCN_256_gpus_8_in_one_server_with_single_plane_400Gbps_H800 -c ./astra-sim-alibabacloud/inputs/config/SimAI.conf
+# HPN7.0 run command
+AS_SEND_LAT=2 ./bin/SimAI_simulator -t 8 -w ./example/microAllReduce.txt -n ./HPN_7_0_256_gpus_8_in_one_server_with_single_plane_400Gbps_H800 -c ./astra-sim-alibabacloud/inputs/config/SimAI.conf
+```
+| msg size | HPN 7.0 | DCN   |
+|----------|---------|-------|
+| 16M      | 33.09   | 28.48 |
+| 32M      | 38.57   | 33.80 |
+| 64M      | 42.05   | 37.23 |
+| 128M     | 44.04   | 38.39 |
+| 256M     | 45.10   | 32.033|
+| 512M     | 45.67   | 38.37 |
+
+# SimAI-Physical Usage
+The current simulator is compatible with the ns3 discrete event simulator as the network backend, as well as the physical network backend for physical packet injection.
+
+## Compile
+SimAI-Phy currently uses the roceV2 protocol for traffic generation. The compilation process requires dependencies on libverbs related to the RDMA physical device, as well as the MPI program. Before compilation, please verify that your environment can successfully run the basic RDMA perfetest traffic generation tool and that it supports the related MPI program.
+```bash
+# Clone the repository
+$ git clone https://github.com/aliyun/SimAI.git
+$ cd ./SimAI/
+
+# Clone submodules
+$ git submodule update --init --recursive
+# Make sure to use the newest commit
+$ git submodule update --remote
+
+# Compile SimAI-Analytical
+$ ./scripts/build.sh -c analytical
+
+# Compile SimAI-Simulation (ns3)
+$ ./scripts/build.sh -c ns3
+
+# Compile SimAI-phynet (phynet)
+$ sudo yum install openmpi openmpi-devel
+$ export MPI_INCLUDE_PATH=/usr/include/openmpi-x86_64/ 
+$ export MPI_BIN_PATH=/usr/lib64/openmpi/bin/mpic++	
+$ ./scripts/build.sh -c Phy
+```
+## Workload Generate
+The workload required for SimAI-Phy physical traffic generation is the same as that for Sim-Simulation, and it is generated through AICB.
+
+### Example workload
+```bash
+HYBRID_TRANSFORMER_FWD_IN_BCKWD model_parallel_NPU_group: 2 ep: 1 pp: 1 vpp: 8 ga: 1 all_gpus: 2 checkpoints: 0 checkpoint_initiates: 0
+10
+mlp_norm    	    -1	1055000	 ALLGATHER	  1073741824	1055000	      NONE	         0	1055000	      NONE	         0	       100
+mlp_norm    	    -1	1055000	 ALLGATHER	  1073741824	1055000	      NONE	         0	1055000	      NONE	         0	       100
+mlp_norm    	    -1	1055000	 ALLGATHER	  1073741824	1055000	      NONE	         0	1055000	      NONE	         0	       100
+mlp_norm    	    -1	1055000	 ALLGATHER	  1073741824	1055000	      NONE	         0	1055000	      NONE	         0	       100
+mlp_norm    	    -1	1055000	 ALLGATHER	  1073741824	1055000	      NONE	         0	1055000	      NONE	         0	       100
+mlp_norm    	    -1	1055000	 ALLGATHER	  1073741824	1055000	      NONE	         0	1055000	      NONE	         0	       100
+mlp_norm    	    -1	1055000	 ALLGATHER	  1073741824	1055000	      NONE	         0	1055000	      NONE	         0	       100
+mlp_norm    	    -1	1055000	 ALLGATHER	  1073741824	1055000	      NONE	         0	1055000	      NONE	         0	       100
+mlp_norm    	    -1	1055000	 ALLGATHER	  1073741824	1055000	      NONE	         0	1055000	      NONE	         0	       100
+mlp_norm    	    -1	1055000	 ALLGATHER	  1073741824	1055000	      NONE	         0	1055000	      NONE	         0	       100
+```
+## Prepare the hostlist
+Here the main task is to prepare the iplist required to start the MPI program, which is different from nccl-test. The number of IPs here should match the actual number of network cards involved in the physical traffic generation, rather than the number of nodes participating in the physical traffic generation.
+```bash
+33.255.199.130
+33.255.199.129
+```
+## RUN
+### MPI Run
+```bash 
+/usr/lib64/openmpi/bin/mpirun -np 2 -host 33.255.199.130,33.255.199.129 --allow-run-as-root -x AS_LOG_LEVEL=0  ./bin/SimAI_phynet ./hostlist -g 2 -w ./example/microAllReduce.txt
+```
+The following output indicates that the program has finished running.
+
+<img src="./images/Sim-phynet_finished.png" alt="Sim-phynet_finished" width="40%">
+
+## Setting of MPI program parameters
+
+| Parameter        | Description                                           | Default Value |
+|------------------|-------------------------------------------------------|---------------|
+| -np              | The number of processes.                              | NULL          |
+| -host            | IP list                                               | NULL          |
+| --allow-run-as-root | Allow MPI programs to run with root privileges.      | FALSE         |
+##  Setting of SimAI-phynet parameters
+
+| Parameter        | Description                  | Default Value                                           |
+|------------------|------------------------------|----------------------------------------------------------|
+| hostlist         | Host IP list                 | NULL                                                     |
+| -w --workload    | Path to workload             | ./microAllReduce.txt                                     |
+| -i --gid_index   | Network topology path        | 0                                                        |
+| -g --gpus        | Number of GPUs               | 8 (should be consistent with the number of IPs in the host IP list) |
