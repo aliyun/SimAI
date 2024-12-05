@@ -15,16 +15,16 @@
 
 #ifdef PHY_MTP
 #include<mpi.h>
-#include "astra-sim/system/PhyMultiThread.hh"
+#include "../PhyMultiThread.hh"
 #endif
 #include<chrono>
 
 #include "NcclTreeFlowModel.hh"
-#include "astra-sim/system/PacketBundle.hh"
-#include "astra-sim/system/RecvPacketEventHadndlerData.hh"
-#include "astra-sim/system/MockNcclLog.h"
+#include "../PacketBundle.hh"
+#include "../RecvPacketEventHadndlerData.hh"
+#include "../MockNcclLog.h"
 #ifdef PHY_RDMA
-#include "astra-sim/system/SimAiFlowModelRdma.hh"
+#include "../SimAiFlowModelRdma.hh"
 extern FlowPhyRdma flow_rdma; 
 #endif
 

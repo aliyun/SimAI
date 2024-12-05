@@ -20,7 +20,7 @@ LICENSE file in the root directory of this source tree.
 #include <vector>
 #include "ComplexLogicalTopology.hh"
 #include "RingTopology.hh"
-#include "astra-sim/system/Common.hh"
+#include "../Common.hh"
 
 namespace AstraSim {
 class Torus3D : public ComplexLogicalTopology {

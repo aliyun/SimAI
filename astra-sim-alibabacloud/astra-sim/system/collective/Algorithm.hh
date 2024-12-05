@@ -18,11 +18,11 @@ LICENSE file in the root directory of this source tree.
 #include <sstream>
 #include <tuple>
 #include <vector>
-#include "astra-sim/system/BaseStream.hh"
-#include "astra-sim/system/CallData.hh"
-#include "astra-sim/system/Callable.hh"
-#include "astra-sim/system/Common.hh"
-#include "astra-sim/system/topology/LogicalTopology.hh"
+#include "../BaseStream.hh"
+#include "../CallData.hh"
+#include "../Callable.hh"
+#include "../Common.hh"
+#include "../topology/LogicalTopology.hh"
 
 namespace AstraSim {
 class Algorithm : public Callable {

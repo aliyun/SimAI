@@ -20,7 +20,7 @@ LICENSE file in the root directory of this source tree.
 #include <vector>
 #include "AstraNetworkAPI.hh"
 #include "QueueLevelHandler.hh"
-#include "astra-sim/system/topology/RingTopology.hh"
+#include "./topology/RingTopology.hh"
 
 namespace AstraSim {
 class QueueLevels {

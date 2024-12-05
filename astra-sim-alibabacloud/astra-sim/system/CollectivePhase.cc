@@ -4,7 +4,7 @@ LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
 #include "CollectivePhase.hh"
-#include "astra-sim/system/collective/Algorithm.hh"
+#include "./collective/Algorithm.hh"
 namespace AstraSim {
 CollectivePhase::CollectivePhase(
     Sys* generator,

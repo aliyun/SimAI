@@ -19,7 +19,7 @@ LICENSE file in the root directory of this source tree.
 #include <tuple>
 #include <vector>
 #include "ComputeNode.hh"
-#include "astra-sim/system/Common.hh"
+#include "../Common.hh"
 
 namespace AstraSim {
 class Node : public ComputeNode {
