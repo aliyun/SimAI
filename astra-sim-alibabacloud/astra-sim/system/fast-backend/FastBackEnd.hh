@@ -21,7 +21,7 @@
 #include <map>
 #include <tuple>
 
-#include "astra-sim/system/AstraNetworkAPI.hh"
+#include "../AstraNetworkAPI.hh"
 namespace AstraSim {
 class FastBackEnd;
 

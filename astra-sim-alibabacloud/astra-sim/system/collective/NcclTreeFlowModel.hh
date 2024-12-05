@@ -31,11 +31,11 @@
 #include <vector>
 #include<condition_variable>
 #include "Algorithm.hh"
-#include "astra-sim/system/Common.hh"
-#include "astra-sim/system/MemBus.hh"
-#include "astra-sim/system/MyPacket.hh"
-#include "astra-sim/system/topology/RingTopology.hh"
-#include  "astra-sim/system/MockNcclQps.h"
+#include "../Common.hh"
+#include "../MemBus.hh"
+#include "../MyPacket.hh"
+#include "../topology/RingTopology.hh"
+#include "../MockNcclQps.h"
 
 namespace AstraSim {
 class NcclTreeFlowModel : public Algorithm {

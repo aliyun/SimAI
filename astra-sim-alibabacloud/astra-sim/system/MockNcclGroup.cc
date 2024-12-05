@@ -19,7 +19,7 @@
 #include<set>
 #include <queue>
 #include<cmath>
-#include "astra-sim/system/MockNcclLog.h"
+#include "MockNcclLog.h"
 using namespace std;
 namespace MockNccl {
   MockNcclGroup::MockNcclGroup(std::vector<int>ngpus,int TP_size,int gpus_per_nodes,std::vector<int> _NVSwitch,GPUType _gpu_type):g_flow_id(0),gpu_type(_gpu_type){

@@ -17,7 +17,7 @@ LICENSE file in the root directory of this source tree.
 #include <iostream>
 #include <map>
 #include <tuple>
-#include "astra-sim/system/Callable.hh"
+#include "../system/Callable.hh"
 
 namespace AstraSim {
 class Workload;
@@ -27,8 +27,8 @@ class Layer;
 class CSVWriter;
 } // namespace AstraSim
 
-#include "astra-sim/system/AstraSimDataAPI.hh"
-#include "astra-sim/system/Sys.hh"
+#include "../system/AstraSimDataAPI.hh"
+#include "../system/Sys.hh"
 
 namespace AstraSim {
 enum class ParallelismPolicy {
