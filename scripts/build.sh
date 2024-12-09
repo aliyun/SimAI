@@ -1,3 +1,5 @@
+#!/bin/bash
+
 SCRIPT_DIR=$(dirname "$(realpath $0)")
 ROOT_DIR=$(realpath "${SCRIPT_DIR:?}"/..)
 NS3_DIR="${ROOT_DIR:?}"/ns-3-alibabacloud
