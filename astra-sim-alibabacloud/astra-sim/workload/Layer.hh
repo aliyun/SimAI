@@ -19,9 +19,9 @@ LICENSE file in the root directory of this source tree.
 #include <tuple>
 #include "CSVWriter.hh"
 #include "Workload.hh"
-#include "astra-sim/system/StreamStat.hh"
-#include "astra-sim/system/Sys.hh"
-#include"astra-sim/system/MockNcclGroup.h"
+#include "../system/StreamStat.hh"
+#include "../system/Sys.hh"
+#include "../system/MockNcclGroup.h"
 
 namespace AstraSim {
 class DataSet;

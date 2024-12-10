@@ -5,8 +5,8 @@ LICENSE file in the root directory of this source tree.
 
 #ifndef __SIMPLEMEMORY_HH__
 #define __SIMPLEMEMORY_HH__
-#include "astra-sim/system/AstraMemoryAPI.hh"
-#include "astra-sim/system/AstraNetworkAPI.hh"
+#include "../AstraMemoryAPI.hh"
+#include "../AstraNetworkAPI.hh"
 namespace AstraSim {
 class SimpleMemory : public AstraMemoryAPI {
  public:

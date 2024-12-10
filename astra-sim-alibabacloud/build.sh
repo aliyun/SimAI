@@ -3,7 +3,10 @@ SCRIPT_DIR=$(dirname "$(realpath $0)")
 NS3_BUILD_DIR="${SCRIPT_DIR:?}"/build/astra_ns3
 SIMAI_PHY_BUILD_DIR="${SCRIPT_DIR:?}"/build/simai_phy
 SIMAI_ANALYTICAL_BUILD_DIR="${SCRIPT_DIR:?}"/build/simai_analytical
-SIM_LOG_DIR=/etc/astra-sim
+SIM_LOG_DIR="${SCRIPT_DIR:?}"/../logs
+if [ ! -d "${SIM_LOG_DIR}" ]; then
+    mkdir -p "${SIM_LOG_DIR}"
+fi
 
 # Functions
 function cleanup_build {

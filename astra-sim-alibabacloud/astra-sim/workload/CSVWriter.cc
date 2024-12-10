@@ -4,7 +4,7 @@ LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
 #include "CSVWriter.hh"
-#include "astra-sim/system/Common.hh"
+#include "../system/Common.hh"
 namespace AstraSim {
 CSVWriter::CSVWriter(std::string path, std::string name) {
   this->path = path;

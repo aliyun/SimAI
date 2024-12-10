@@ -4,8 +4,8 @@ LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
 #include "Ring.hh"
-#include "astra-sim/system/PacketBundle.hh"
-#include "astra-sim/system/RecvPacketEventHadndlerData.hh"
+#include "../PacketBundle.hh"
+#include "../RecvPacketEventHadndlerData.hh"
 namespace AstraSim {
 Ring::Ring(
     ComType type,

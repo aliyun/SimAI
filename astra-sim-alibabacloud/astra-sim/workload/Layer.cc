@@ -4,10 +4,10 @@ LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
 #include "Layer.hh"
-#include "astra-sim/system/DataSet.hh"
-#include "astra-sim/system/IntData.hh"
-#include "astra-sim/system/MockNcclLog.h"
-#include "astra-sim/system/AstraParamParse.hh"
+#include "../system/DataSet.hh"
+#include "../system/IntData.hh"
+#include "../system/MockNcclLog.h"
+#include "../system/AstraParamParse.hh"
 
 
 #ifdef NS3_MPI
