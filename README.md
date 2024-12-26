@@ -7,24 +7,18 @@
 
 | Date | Event | Location | Content | Type |
 |:----:|:------|:---------|:--------|:----:|
-| **Dec 6, 2024** | **HKUST Technical Workshop** | 📍 HKUST(GZ) | SimAI Technical Sharing & Discussion | 🎓 On-site |
-| **Dec 5, 2024** | [**Bench'24 Conference**](https://mp.weixin.qq.com/s/STic_E12xMhZRxhzK9wRnw) | 📍 Guangzhou | SimAI Tutorial & Deep-dive Session | 🎓 On-site |
+| **Dec 27, 2024** | **SimAI Technical Presentation** | 📍 Beihang University | SimAI Technical Sharing & Discussion | 🎓 On-site |
 
 ### 🌟 Past Events
 
 | Date | Event | Location | Content | Type |
 |:----:|:------|:---------|:--------|:----:|
+| Dec 6, 2024 | HKUST Technical Workshop | 📍 HKUST(GZ) | SimAI Technical Sharing & Discussion | 🎓 On-site |
+| Dec 5, 2024 | [Bench'24 Conference](https://mp.weixin.qq.com/s/STic_E12xMhZRxhzK9wRnw) | 📍 Guangzhou | SimAI Tutorial & Deep-dive Session | 🎓 On-site |
 | Nov 26, 2024 | SimAI Community Live Stream | 🌐 Online | Interactive Technical Discussion & Demo (400+ Attendees) | 💻 Virtual |
 | Nov 15, 2024 | Technical Workshop | 📍 Thousand Island Lake | SimAI Offline Technical Exchange | 🎯 On-site |
 | Oct 18, 2024 | Guest Lecture | 📍 Fudan University | SimAI Tutorial & Public Course | 🎓 On-site |
 | Sept 24-26, 2024 | CCF HPC China 2024 | 📍 Wuhan | SimAI Introduction & Technical Presentation | 🎤 Conference |
-
-### 💫 Join Our Next Major Event! 
-Don't miss our comprehensive session at **Bench'24**
-[Register Now →](https://mp.weixin.qq.com/s/STic_E12xMhZRxhzK9wRnw)
-
-And join our **Nov 26th Community Live Stream**!  
-Scan the QR code below to join our DingTalk group for live stream access and latest updates.
 </div>
 
 ---
