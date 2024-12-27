@@ -194,7 +194,7 @@ python3 ./astra-sim-alibabacloud/inputs/topo/gen_HPN_7.0_topo_mulgpus_one_link.p
 ## 🖥️ SimAI-NS3 Simulation
 
 ```bash
-$ AS_SEND_LAT=3 AS_NVLS_ENABLE=1 ./bin/SimAI_simulator -t 16 -w ./example/microAllReduce.txt -n ./HPN_7_0_128_gpus_8_in_one_server_with_100Gbps_A100 -c astra-sim-alibabacloud/inputs/config/SimAI.conf
+$ AS_SEND_LAT=3 AS_NVLS_ENABLE=1 ./bin/SimAI_simulator -t 16 -w ./example/microAllReduce.txt -n  ./HPN_7_0_128_gpus_8_in_one_server_with_single_plane_100Gbps_A100  -c astra-sim-alibabacloud/inputs/config/SimAI.conf
 ```
 
 | Environment Variable Name | Description                      | Default Value                             |
