@@ -199,8 +199,6 @@ If the number of GPUs exceeds the number of GPUs in a segment, you should set th
 python3 ./astra-sim-alibabacloud/inputs/topo/gen_HPN_7.0_topo_mulgpus_one_link.py -g 4096 -gt A100 -bw 100Gbps -nvbw 2400Gbps -asn 32
 ```
 
-
-
 ## 🖥️ SimAI-NS3 Simulation
 
 ```bash
