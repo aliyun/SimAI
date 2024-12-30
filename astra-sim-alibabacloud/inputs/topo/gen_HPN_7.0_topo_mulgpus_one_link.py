@@ -6,13 +6,24 @@ import argparse
 # NVLINK Bandwidth - A100: 2400Gbps, H200: 1700Gbps, H100/H20: 3600Gbps
 
 def gen_HPN_7_0_single_plane(args):
-    asw_switch_num = args.gpu_per_server
+    
+    #dual ps. single as
+
+    nodes_per_asw = args.nics_per_aswitch
+    asw_switch_num_per = args.gpu_per_server
+    if(args.gpu % (nodes_per_asw * asw_switch_num_per) == 0):
+        segment_num = (int)(args.gpu / (nodes_per_asw * asw_switch_num_per))
+    else:
+        segment_num = (int)(args.gpu / (nodes_per_asw * asw_switch_num_per))+1
+        
+    if(segment_num != args.asw_switch_num / asw_switch_num_per):
+        raise ValueError("Error relations between total GPU Nums and total aws_switch_num")
     nv_switch_num = (int)(args.gpu / args.gpu_per_server) * args.nv_switch_per_server
     asws_per_node = args.gpu_per_server
-    nodes = (int) (args.gpu + asw_switch_num + args.psw_switch_num + nv_switch_num) # 
+    nodes = (int) (args.gpu + args.asw_switch_num + args.psw_switch_num + nv_switch_num) # 
     servers = args.gpu / args.gpu_per_server
-    switch_nodes = (int)(args.psw_switch_num + asw_switch_num + nv_switch_num) # 
-    links = (int)((args.psw_switch_num / 2) * asw_switch_num + servers * asw_switch_num+ servers * args.nv_switch_per_server * args.gpu_per_server) # 
+    switch_nodes = (int)(args.psw_switch_num + args.asw_switch_num + nv_switch_num) # 
+    links = (int)((args.psw_switch_num / 2) * args.asw_switch_num + servers * asw_switch_num_per+ servers * args.nv_switch_per_server * args.gpu_per_server) # 
     # for verification
     gpu_to_links = {}
 
@@ -32,7 +43,7 @@ def gen_HPN_7_0_single_plane(args):
             sec_line = sec_line + str(i) + " "
             if len(nv_switch) < nv_switch_num:
                 nv_switch.append(i)
-            elif len(asw_switch) < asw_switch_num:
+            elif len(asw_switch) < args.asw_switch_num:
                 asw_switch.append(i)
             elif len(psw_switch_1) < args.psw_switch_num / 2:
                 psw_switch_1.append(i)
@@ -44,26 +55,33 @@ def gen_HPN_7_0_single_plane(args):
         ind_asw = 0
         ind_asw2 = 0
         curr_node = 0
+        group_num = 0
+        group_account = 0
         ind_nv = 0
-        cnt = 0
-        a_s_cnt = 0
+        # cnt = 0
+        # a_s_cnt = 0
         for i in range(args.gpu):
             curr_node = curr_node + 1
             if curr_node > args.gpu_per_server:
                 curr_node = 1
                 ind_nv = ind_nv + args.nv_switch_per_server
             for j in range(0, args.nv_switch_per_server):
-                cnt += 1
+                #cnt += 1
                 line = str(i)+" "+str(nv_switch[ind_nv+j])+" "+args.nvlink_bw+" "+args.nv_latency+" "+args.error_rate
                 f.write(line)
                 f.write('\n')
-            line = str(i)+" "+str(asw_switch[ind_asw])+" "+args.bandwidth+" "+args.latency+" "+args.error_rate
+            line = str(i)+" "+str(asw_switch[group_num*asw_switch_num_per+ind_asw])+" "+args.bandwidth+" "+args.latency+" "+args.error_rate
             f.write(line)
             f.write('\n')
             ind_asw = ind_asw + 1
+            group_account = group_account + 1
+            
             if ind_asw == asws_per_node:
                 ind_asw = 0
-            a_s_cnt += 2
+            if group_account == (args.gpu_per_server * args.nics_per_aswitch):
+                group_num = group_num + 1
+                group_account = 0
+            # a_s_cnt += 2
         a_p_cnt = 0
         for i in asw_switch: # asw - psw
             for j in psw_switch_1:
@@ -73,18 +91,27 @@ def gen_HPN_7_0_single_plane(args):
                 f.write('\n')
 
 def gen_HPN_7_0_multi_plane(args):
-    asw_switch_num = args.gpu_per_server * 2
+    nodes_per_asw = args.nics_per_aswitch
+    asw_switch_num_per = args.gpu_per_server * 2
+
+    if(args.gpu % (nodes_per_asw * int(asw_switch_num_per/2)) == 0):
+        segment_num = (int)(args.gpu / (nodes_per_asw * int(asw_switch_num_per/2)))
+    else:
+        segment_num = (int)(args.gpu / (nodes_per_asw * int(asw_switch_num_per/2)))+1
+        
+    if(segment_num != args.asw_switch_num / asw_switch_num_per):
+        raise ValueError("Error relations between total GPU Nums and total aws_switch_num")
     nv_switch_num = (int)(args.gpu / args.gpu_per_server) * args.nv_switch_per_server
     asws_per_node = args.gpu_per_server
-    nodes = (int) (args.gpu + asw_switch_num + args.psw_switch_num + nv_switch_num) # 1024gpus+904switches
+    nodes = (int) (args.gpu + args.asw_switch_num + args.psw_switch_num + nv_switch_num) # 1024gpus+904switches
     servers = args.gpu / args.gpu_per_server
-    switch_nodes = (int)(args.psw_switch_num + asw_switch_num + nv_switch_num) # psw(120)+asw(16)+nv(768=128*6)
-    links = (int)((args.psw_switch_num / 2) * asw_switch_num + servers * asw_switch_num + servers * args.nv_switch_per_server * args.gpu_per_server) # a-p(16*60=960)+s-a(128*16=2048)+nv(128*6*8=6144)
+    switch_nodes = (int)(args.psw_switch_num + args.asw_switch_num + nv_switch_num) # psw(120)+asw(16)+nv(768=128*6)
+    links = (int)((args.psw_switch_num / 2) * args.asw_switch_num + servers * asw_switch_num_per+ servers * args.nv_switch_per_server * args.gpu_per_server) # a-p(16*60=960)+s-a(128*16=2048)+nv(128*6*8=6144)
 
     # for verification
     gpu_to_links = {}
 
-    file_name = "HPN_7_0_"+str(args.gpu)+"_gpus_"+str(args.gpu_per_server)+"_in_one_server_with_multi_plane"+args.bandwidth+"_"+args.gpu_type
+    file_name = "HPN_7_0_"+str(args.gpu)+"_gpus_"+str(args.gpu_per_server)+"_in_one_server_with_multi_plane_"+args.bandwidth+"_"+args.gpu_type
     with open(file_name, 'w') as f:
         print(file_name)
         first_line = str(nodes)+" "+str(args.gpu_per_server)+" "+str(nv_switch_num)+" "+str(switch_nodes-nv_switch_num)+" "+str(int(links))+" "+str(args.gpu_type)
@@ -101,9 +128,9 @@ def gen_HPN_7_0_multi_plane(args):
             sec_line = sec_line + str(i) + " "
             if len(nv_switch) < nv_switch_num:
                 nv_switch.append(i)
-            elif len(asw_switch_1) < asw_switch_num / 2:
+            elif len(asw_switch_1) < args.asw_switch_num / 2:
                 asw_switch_1.append(i)
-            elif len(asw_switch_2) < asw_switch_num / 2:
+            elif len(asw_switch_2) < args.asw_switch_num / 2:
                 asw_switch_2.append(i)
             elif len(psw_switch_1) < args.psw_switch_num / 2:
                 psw_switch_1.append(i)
@@ -116,6 +143,8 @@ def gen_HPN_7_0_multi_plane(args):
         ind_asw2 = 0
         curr_node = 0
         ind_nv = 0
+        group_num = 0
+        group_account = 0
 
         cnt = 0
         a_s_cnt = 0
@@ -131,11 +160,11 @@ def gen_HPN_7_0_multi_plane(args):
                 f.write(line)
                 f.write('\n')
 
-            line = str(i)+" "+str(asw_switch_1[ind_asw1])+" "+args.bandwidth+" "+args.latency+" "+args.error_rate
+            line = str(i)+" "+str(asw_switch_1[group_num*asws_per_node+ind_asw1])+" "+args.bandwidth+" "+args.latency+" "+args.error_rate
             f.write(line)
             f.write('\n')
             
-            line = str(i)+" "+str(asw_switch_2[ind_asw2])+" "+args.bandwidth+" "+args.latency+" "+args.error_rate
+            line = str(i)+" "+str(asw_switch_2[group_num*asws_per_node+ind_asw2])+" "+args.bandwidth+" "+args.latency+" "+args.error_rate
             f.write(line)
             f.write('\n')
 
@@ -146,6 +175,11 @@ def gen_HPN_7_0_multi_plane(args):
             ind_asw2 = ind_asw2 + 1
             if ind_asw2 == asws_per_node:
                 ind_asw2 = 0
+
+            if group_account == (args.gpu_per_server * args.nics_per_aswitch):
+                print(group_account)
+                group_num = group_num + 1
+                group_account = 0
 
             a_s_cnt += 2
         a_p_cnt = 0
@@ -167,10 +201,14 @@ def gen_HPN_7_0_multi_plane(args):
 def gen_DCN_single_plane(args):
     asw_switch_num = args.asw_switch_num
     nv_switch_num = (int)(args.gpu / args.gpu_per_server) * args.nv_switch_per_server
-    nodes_per_2asw = args.nics_per_aswitch # 每个asw下行连接数
+    nodes_per_asw = args.nics_per_aswitch # 每个asw下行连接数
+
     nodes = (int) (args.gpu + asw_switch_num + args.psw_switch_num + nv_switch_num) # 
     servers = args.gpu / args.gpu_per_server
+    if(args.gpu != asw_switch_num * nodes_per_asw):
+        raise ValueError("Error relations between total GPU Nums and total aws_switch_num")
     switch_nodes = (int)(args.psw_switch_num + asw_switch_num + nv_switch_num) # 
+    
     links = (int)((args.psw_switch_num / 2) * asw_switch_num + servers * args.gpu_per_server+ servers * args.nv_switch_per_server * args.gpu_per_server) # 
 
     # for verification
@@ -219,7 +257,7 @@ def gen_DCN_single_plane(args):
                 f.write(line)
                 f.write('\n')
 
-            if asw_node > nodes_per_2asw:
+            if asw_node > nodes_per_asw:
                 asw_node = 1
                 ind_asw1 = ind_asw1 + 1
 
@@ -237,15 +275,17 @@ def gen_DCN_single_plane(args):
 def gen_DCN_multi_plane(args):
     asw_switch_num = args.asw_switch_num
     nv_switch_num = (int)(args.gpu / args.gpu_per_server) * args.nv_switch_per_server
-    nodes_per_2asw = args.nics_per_aswitch # 每个asw下行连接数
+    nodes_per_asw = args.nics_per_aswitch # 每个asw下行连接数
     nodes = (int) (args.gpu + asw_switch_num + args.psw_switch_num + nv_switch_num) # 
     servers = args.gpu / args.gpu_per_server
     switch_nodes = (int)(args.psw_switch_num + asw_switch_num + nv_switch_num) # 
-    links = (int)((args.psw_switch_num * asw_switch_num) / 2 + servers * 8 * 2 + servers * args.nv_switch_per_server * args.gpu_per_server) 
+    if(args.gpu != int(asw_switch_num * nodes_per_asw /2)):
+        raise ValueError("Error relations between total GPU Nums and total aws_switch_num")
+    links = (int)((args.psw_switch_num * asw_switch_num) / 2 + servers * args.gpu_per_server * 2 + servers * args.nv_switch_per_server * args.gpu_per_server) 
     # for verification
     gpu_to_links = {}
 
-    file_name = "DCN_"+str(args.gpu)+"_gpus_"+str(args.gpu_per_server)+"_in_one_server_with_multi_plane"+args.bandwidth+"_"+args.gpu_type
+    file_name = "DCN_"+str(args.gpu)+"_gpus_"+str(args.gpu_per_server)+"_in_one_server_with_multi_plane_"+args.bandwidth+"_"+args.gpu_type
     with open(file_name, 'w') as f:
         print(file_name)
         first_line = str(nodes)+" "+str(args.gpu_per_server)+" "+str(nv_switch_num)+" "+str(switch_nodes-nv_switch_num)+" "+str(int(links))+" "+str(args.gpu_type)
@@ -293,7 +333,7 @@ def gen_DCN_multi_plane(args):
                 f.write(line)
                 f.write('\n')
 
-            if asw_node > nodes_per_2asw:
+            if asw_node > nodes_per_asw:
                 asw_node = 1
                 ind_asw1 = ind_asw1 + 1
                 ind_asw2 = ind_asw2 + 1
@@ -335,7 +375,7 @@ def main():
     parser.add_argument('-gt','--gpu_type',type=str,default='H800',help='gpu_type,default H800')
     parser.add_argument('-gps','--gpu_per_server',type=int,default=8,help='gpu_per_server,default 8')
     parser.add_argument('-psn','--psw_switch_num',type=int,default=120,help='psw_switch_num,default 120')
-    parser.add_argument('-asn','--asw_switch_num',type=int,default=64,help='asw_switch_num,default 64')
+    parser.add_argument('-asn','--asw_switch_num',type=int,default=8,help='asw_switch_num,default 8')
     parser.add_argument('-nsps','--nv_switch_per_server',type=int,default=1,help='nv_switch_per_server,default 1')
     parser.add_argument('-npa','--nics_per_aswitch',type=int,default=128,help='nnics per asw,default 128')
     parser.add_argument('--dp', action='store_true', help='enable dual_plane, default single plane')

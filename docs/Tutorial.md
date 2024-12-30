@@ -190,6 +190,14 @@ python3 ./astra-sim-alibabacloud/inputs/topo/gen_HPN_7.0_topo_mulgpus_one_link.p
 | `-nsps  --nv_switch_per_server` | NV switch per server                 | 1             |
 | `--dp`                    | Enable dual plane, default single plane  | false         |
 | `--st`                    | Enable DCN architecture, default HPN_7_0 | false     |
+| `--asn`                   | ASW number                               | 8            |
+| `--psn`                   | PSW number                               | 120          |
+
+If the number of GPUs exceeds the number of GPUs in a segment, you should set the number of asn. For example, if you want to generate 4096 GPUs, the number of asn should be 32.
+
+```bash
+python3 ./astra-sim-alibabacloud/inputs/topo/gen_HPN_7.0_topo_mulgpus_one_link.py -g 4096 -gt A100 -bw 100Gbps -nvbw 2400Gbps -asn 32
+```
 
 ## 🖥️ SimAI-NS3 Simulation
 
