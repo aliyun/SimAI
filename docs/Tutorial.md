@@ -167,7 +167,19 @@ As shown in the figure below, the first row represents various parameters: `node
 | `link_num`         | Total number of connections                     |
 | `gpu_type_str`     | Type of GPU                                     |
 
+The following command generates the topology shown in the image:
+```bash
+python3 ./astra-sim-alibabacloud/inputs/topo/gen_HPN_7.0_topo_mulgpus_one_link.py -g 8 -gt A100 -bw 400Gbps -nvbw 2400Gbps -psn 1 
+```
 <img src="./images/simai_topo.png" alt="simai_topo" width="30%">
+
+The `link_num` is `20` because each ASW (Aggregation Switch) is connected to a single PSW (Pod Switch, node 17). Since the topology uses `-psn 1` (single-plane topology), only one plane of PSWs is utilized, limiting the connections to `4` between ASWs and PSWs.
+
+To increase the `link_num` to `24`, you need to enable a dual-plane topology by setting `-ps`n to `2` in the command. This will activate both planes of PSWs, doubling the connections between ASWs and PSWs. For example:
+
+```bash
+python3 ./astra-sim-alibabacloud/inputs/topo/gen_HPN_7.0_topo_mulgpus_one_link.py -g 8 -gt A100 -bw 400Gbps -nvbw 2400Gbps -psn 2
+```
 
 You can choose to customize any `topo` following the format shown above. Of course, we also provide a script to directly generate a `topo` for the HPN architecture.
 
