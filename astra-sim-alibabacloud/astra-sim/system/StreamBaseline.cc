@@ -5,7 +5,7 @@ LICENSE file in the root directory of this source tree.
 
 #include "StreamBaseline.hh"
 #include "MockNcclLog.h"
-#include "astra-sim/system/collective/Algorithm.hh"
+#include "./collective/Algorithm.hh"
 namespace AstraSim {
 StreamBaseline::StreamBaseline(
     Sys* owner,

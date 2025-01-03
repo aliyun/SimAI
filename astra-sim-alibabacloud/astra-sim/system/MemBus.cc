@@ -6,7 +6,7 @@ LICENSE file in the root directory of this source tree.
 #include "MemBus.hh"
 #include "LogGP.hh"
 #include "Sys.hh"
-#include "astra-sim/system/MockNcclLog.h"
+#include "MockNcclLog.h"
 namespace AstraSim {
 MemBus::~MemBus() {
   delete NPU_side;

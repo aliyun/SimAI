@@ -25,14 +25,14 @@ LICENSE file in the root directory of this source tree.
 #include "Common.hh"
 #include "SendPacketEventHandlerData.hh"
 #include "UsageTracker.hh"
-#include "astra-sim/system/MockNcclChannel.h"
-#include "astra-sim/system/topology/RingTopology.hh"
-#include "astra-sim/workload/Workload.hh"
+#include "MockNcclChannel.h"
+#include "./topology/RingTopology.hh"
+#include "../workload/Workload.hh"
 #ifdef NS3_MTP
 #include "ns3/mtp-interface.h"
 #endif
 #include <atomic>
-#include "astra-sim/system/MockNcclGroup.h"
+#include "MockNcclGroup.h"
 
 namespace AstraSim {
 class MemBus;

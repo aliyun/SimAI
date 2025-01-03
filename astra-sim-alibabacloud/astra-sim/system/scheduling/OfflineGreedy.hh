@@ -5,8 +5,8 @@ LICENSE file in the root directory of this source tree.
 
 #ifndef __OFFLINEGREEDY_HH__
 #define __OFFLINEGREEDY_HH__
-#include "astra-sim/system/Common.hh"
-#include "astra-sim/system/Sys.hh"
+#include "../Common.hh"
+#include "../Sys.hh"
 #include "vector"
 namespace AstraSim {
 class DimElapsedTime {

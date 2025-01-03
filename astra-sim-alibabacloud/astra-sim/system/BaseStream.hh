@@ -24,7 +24,7 @@ LICENSE file in the root directory of this source tree.
 #include "DataSet.hh"
 #include "StreamStat.hh"
 #include "Sys.hh"
-#include "astra-sim/system/topology/LogicalTopology.hh"
+#include "./topology/LogicalTopology.hh"
 
 namespace AstraSim {
 class RecvPacketEventHadndlerData;

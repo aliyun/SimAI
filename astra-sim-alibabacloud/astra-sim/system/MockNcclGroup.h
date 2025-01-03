@@ -22,8 +22,8 @@
 #include <memory>
 #include <map>
 #include <unordered_map>
-#include "astra-sim/system/Common.hh"
-#include"astra-sim/system/MockNccl.h"
+#include "Common.hh"
+#include"MockNccl.h"
 using namespace std;
 
 namespace MockNccl {

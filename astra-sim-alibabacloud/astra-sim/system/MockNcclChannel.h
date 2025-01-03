@@ -18,7 +18,7 @@
 #include <vector>
 #include <map>
 #include <memory>
-#include "astra-sim/system/Common.hh"
+#include "Common.hh"
 #include "MockNcclGroup.h"
 
 namespace MockNccl {

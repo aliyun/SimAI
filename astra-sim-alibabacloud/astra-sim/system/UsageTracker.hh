@@ -21,7 +21,7 @@ LICENSE file in the root directory of this source tree.
 #include "Callable.hh"
 #include "Common.hh"
 #include "Usage.hh"
-#include "astra-sim/workload/CSVWriter.hh"
+#include "../workload/CSVWriter.hh"
 
 namespace AstraSim {
 class UsageTracker {
