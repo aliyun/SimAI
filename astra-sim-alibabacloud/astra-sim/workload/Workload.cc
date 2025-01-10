@@ -1141,95 +1141,133 @@ bool Workload::initialize_workload(std::string name) {
       std::cout << "Success in opening workload file" << std::endl;
     }
   }
-  std::string type;
-  int lines;
-  inFile >> type; // HYBRID_TRANSFORMER_FWD_IN_BCKWD
-  parallelismPolicy = decode_parallelsim(type);
+ std::string firstline;
+  std::getline(inFile,firstline);
+  // std::cout << "First line is : '" << firstline << "'" << std::endl;
+  std::istringstream iss(firstline);
+  std:string token;
+  std::vector<std::string> tokens;
+  // bool findparallesimPolcy = false;
+  
+  while (iss >> token) {
+        tokens.push_back(token);
+        // std::cout << "Token is : '" << token << "'" << std::endl;
+    }
+
+
+
+  if(!tokens.empty()){
+    parallelismPolicy = decode_parallelsim(tokens[0]);
+  }
+
   if (parallelismPolicy == ParallelismPolicy::TransformerFwdInBckwd ||
       parallelismPolicy == ParallelismPolicy::Transformer) {
-    std::string tmp;
-    int i;
-    inFile >> tmp; // model_parallel_NPU_group: 
-    inFile >> model_parallel_npu_group;
-    if (generator->id == 0) {
-      std::cout << tmp << " is: " << model_parallel_npu_group << std::endl;
-    }
-    inFile >> tmp; // ep:
-    inFile >> expert_parallel_npu_group;
-    inFile >> tmp; // pp:
-    inFile >> pipeline_model_parallelism;
-    inFile >> tmp; // vpp:
-    inFile >> vpp;
-    inFile >> tmp; // ga:
-    inFile >> GA;
-    inFile >> tmp; // all_gpus:
-    inFile >> all_gpus;
-    // Other options are currently not in use in SimAI-Analytical like 'checkpoints' and 'checkpoint_initiates'
-    if (parallelismPolicy == ParallelismPolicy::TransformerFwdInBckwd) {
-      inFile >> tmp;
-      inFile >> i;
-      if (generator->id == 0) {
-        std::cout << "checkpoints layers are: ";
-      }
-      while (i-- > 0) {
-        int layer;
-        inFile >> layer;
-        chekpoints[layer] = true;
-        if (generator->id == 0) {
-          std::cout << layer << ", ";
+        for (size_t i = 1; i < tokens.size(); i = i+1){
+          if(tokens[i]=="model_parallel_NPU_group:"){
+            model_parallel_npu_group = std::stoi(tokens[i+1]);
+            if (generator->id == 0) {
+              std::cout <<"model_parallel_NPU_group is " << model_parallel_npu_group << std::endl;
+            }
+          }else if(tokens[i]=="ep:"){
+            expert_parallel_npu_group = std::stoi(tokens[i+1]);
+          }else if(tokens[i]== "pp:"){
+            pipeline_model_parallelism = std::stoi(tokens[i+1]);
+          }else if(tokens[i]=="vpp:"){
+            vpp = std::stoi(tokens[i+1]);
+          }else if(tokens[i]=="ga:"){
+            GA = std::stoi(tokens[i+1]);
+          }else if(tokens[i]=="all_gpus:"){
+            all_gpus = std::stoi(tokens[i+1]);
+          }
         }
-      }
-      if (generator->id == 0) {
-        std::cout << std::endl;
-        std::cout << "layers initiating fwd_in_bckwd are: ";
-      }
-      inFile >> tmp;
-      inFile >> i;
-      while (i-- > 0) {
-        int layer;
-        inFile >> layer;
-        need_checkpoint_initiation[layer] = true;
-        if (generator->id == 0) {
-          std::cout << layer << ", ";
-        }
-      }
-      if (generator->id == 0) {
-        std::cout << std::endl;
-      }
-    }
-  } else if (
-      parallelismPolicy == ParallelismPolicy::DLRM ||
-      parallelismPolicy == ParallelismPolicy::DLRMEnhanced) {
-    inFile >> DLRM_LAST_BOTTOM_LAYER;
-    if (generator->id == 0) {
-      std::cout
-          << "****************** info: DLRM workload last bottom layer is: "
-          << DLRM_LAST_BOTTOM_LAYER << std::endl;
-    }
-  } else if (parallelismPolicy == ParallelismPolicy::None) {
-    #ifndef PHY_MTP
-    std::cerr << "######### Exiting because unable to decode the workload "
+
+        if(parallelismPolicy == ParallelismPolicy::TransformerFwdInBckwd){
+          if (generator->id == 0) {
+            std::cout << "checkpoints layers are: ";
+          }
+          for(size_t i = 1; i < tokens.size(); i = i+1){
+            if(tokens[i]=="checkpoints:"){
+              int account = std::stoi(tokens[i+1]);
+              while(account-- >0){
+                int j = 2;
+                int layer = std::stoi(tokens[i+j]);
+                chekpoints[layer] = true;
+                if (generator->id == 0) {
+                  std::cout << layer << ", ";
+                }
+                j++;
+              }
+                
+            }else if(tokens[i]=="checkpoint_initiates:"){
+                if (generator->id == 0) {
+                  std::cout << std::endl;
+                  std::cout << "layers initiating fwd_in_bckwd are: ";
+                }
+                int account = std::stoi(tokens[i+1]);
+                while(account-- >0){
+                  int j = 2;
+                  int layer = std::stoi(tokens[i+j]);
+                  chekpoints[layer] = true;
+                  if (generator->id == 0) {
+                    std::cout << layer << ", ";
+                  }
+                  j++;
+                }
+                if (generator->id == 0) {
+                  std::cout << std::endl;
+                }
+              }
+            }
+          }
+      }else if(parallelismPolicy == ParallelismPolicy::DLRM ||
+                parallelismPolicy == ParallelismPolicy::DLRMEnhanced){
+                  for (size_t i = 1; i < tokens.size(); i = i+1){
+                    if(tokens[i]=="DLRM_LAST_BOTTOM_LAYER:"){
+                      DLRM_LAST_BOTTOM_LAYER = std::stoi(tokens[i+1]);
+                    }
+                  }
+                if (generator->id == 0) {
+                  std::cout
+                  << "****************** info: DLRM workload last bottom layer is: "
+                  << DLRM_LAST_BOTTOM_LAYER << std::endl;
+                }
+        }else if (parallelismPolicy == ParallelismPolicy::None) {
+          #ifndef PHY_MTP
+          std::cerr << "######### Exiting because unable to decode the workload "
                  "parallelization strategy #########"
-              << std::endl;
-    inFile.close();
-    exit(1);
-    #else
-    parallelismPolicy = ParallelismPolicy::TransformerFwdInBckwd;
-    #endif
+                  << std::endl;
+          inFile.close();
+          exit(1);
+          #else
+          parallelismPolicy = ParallelismPolicy::TransformerFwdInBckwd;
+          #endif
   }
   std::map<std::string, std::vector<bool>> general_involved_dimensions =
       decode_involved_dimensions(parallelismPolicy, model_parallel_npu_group);
   pp_commsize = 0;
-  std::string tmp;
-  inFile >> tmp;
-  if (std::isdigit(tmp[0])) {
-    lines = std::stoi(tmp);
+  for (size_t i = 1; i < tokens.size(); i = i+1){
+    if(tokens[i]=="pp_comm"||tokens[i]=="pp_comm:"){
+      pp_commsize = std::stoi(tokens[i+1]);
+    }
   }
-  else{
-      inFile >> pp_commsize;
-      inFile >> lines;
+  if (generator->id == 0) {
+      std::cout <<"pp_commize:"<< pp_commsize << std::endl;
   }
-  run_type = type;
+  if(generator->id == 0){
+    if (model_parallel_npu_group == 0 || expert_parallel_npu_group == 0 || pipeline_model_parallelism == 0 
+        || vpp==0 || GA == 0 || all_gpus == 0 ||(pipeline_model_parallelism !=1 && pp_commsize ==0)||(pipeline_model_parallelism == 1 && pp_commsize !=0)){
+          std::cerr << "*****Warining: Input workload format mismatch. It may cause simulation error. Pleased use the latest AICB to generate.*****" << std::endl;
+      }
+  }        
+  run_type = tokens[0];
+  std::string secondline;
+  std::getline(inFile,secondline);
+
+  int lines;
+  // std::cout << "Second line content: '" << secondline << "'" << std::endl;
+  lines = std::stoi(secondline);
+
+
   SIZE = lines;
   layers = new Layer*[SIZE];
   for (int i = 0; i < lines; i++) {
@@ -1532,7 +1570,7 @@ bool Workload::initialize_workload(std::string name) {
     layers[i] = l;
   }
   if (generator->id == 0) {
-    std::cout << "type: " << type << " ,num passes: " << TOTAL_PASS
+    std::cout << "type: " << run_type << " ,num passes: " << TOTAL_PASS
               << " ,lines: " << lines
               << " compute scale: " << generator->compute_scale
               << " ,comm scale: " << generator->comm_scale << std::endl;
