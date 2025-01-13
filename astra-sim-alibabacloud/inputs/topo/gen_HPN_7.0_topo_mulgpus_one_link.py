@@ -374,7 +374,7 @@ def main():
     parser.add_argument('-g','--gpu',type=int,default=32,help='gpus num,default 32')
     parser.add_argument('-gt','--gpu_type',type=str,default='H800',help='gpu_type,default H800')
     parser.add_argument('-gps','--gpu_per_server',type=int,default=8,help='gpu_per_server,default 8')
-    parser.add_argument('-psn','--psw_switch_num',type=int,default=120,help='psw_switch_num,default 120')
+    parser.add_argument('-psn','--psw_switch_num',type=int,default=120,help='psw_switch_num (halved in single plane case),default 120')
     parser.add_argument('-asn','--asw_switch_num',type=int,default=8,help='asw_switch_num,default 8')
     parser.add_argument('-nsps','--nv_switch_per_server',type=int,default=1,help='nv_switch_per_server,default 1')
     parser.add_argument('-npa','--nics_per_aswitch',type=int,default=128,help='nnics per asw,default 128')
