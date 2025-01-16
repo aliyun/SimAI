@@ -347,6 +347,17 @@ LayerData Layer::report(
     vector<double>& total_ig_time) {
   LayerData layerData;
   take_stream_stats_average();
+  int TP_size = workload->model_parallel_npu_group;
+  int PP_size = workload->pipeline_model_parallelism;
+  int DP_size = workload->all_gpus / (TP_size * PP_size);
+  int EP_size = workload->expert_parallel_npu_group;
+  int input_grad_group_size =
+      input_grad_group_type == MockNccl::GroupType::EP ? EP_size : TP_size;
+  int fwd_pass_group_size =
+      fwd_pass_group_type == MockNccl::GroupType::EP ? EP_size : TP_size;
+  int weight_grad_group_size =
+      weight_grad_group_type == MockNccl::GroupType::DP_EP ? DP_size / EP_size
+                                                           : DP_size;
   total_compute += (total_forward_pass_compute / FREQ);
   total_compute += (total_weight_grad_compute / FREQ);
   total_compute += (total_input_grad_compute / FREQ);
@@ -384,10 +395,6 @@ LayerData Layer::report(
   {
     std::string data;
     std::pair<float, float> total_bw;
-    int TP_size = workload->model_parallel_npu_group == 0
-        ? generator->total_nodes
-        : workload->model_parallel_npu_group;
-    int DP_size = generator->total_nodes / TP_size;
     std::cout << "*******************" << std::endl;
     std::cout << "Layer id: " << id << std::endl;
     std::cout << "Total collectives issued for this layer: "
@@ -436,7 +443,7 @@ LayerData Layer::report(
               << " ,Total cycles spent on fwd pass comm: " << total_fwd_comm
               << std::endl;
  
-    total_bw = compute_busbw(fwd_pass_comm_type, TP_size, fwd_pass_comm_size, total_fwd_comm);
+    total_bw = compute_busbw(fwd_pass_comm_type, fwd_pass_group_size, fwd_pass_comm_size, total_fwd_comm);
     data = data + "," + to_string(total_fwd_comm / FREQ);
     data = data + "," + to_string(total_bw.first);
     data = data + "," + to_string(total_bw.second);
@@ -444,7 +451,7 @@ LayerData Layer::report(
     std::cout << "id: " << id << " ,Total cycles spent on weight grad comm: "
               << total_weight_grad_comm << std::endl;
 
-    total_bw = compute_busbw(weight_grad_comm_type,DP_size,weight_grad_comm_size,total_weight_grad_comm);
+    total_bw = compute_busbw(weight_grad_comm_type,weight_grad_group_size,weight_grad_comm_size,total_weight_grad_comm);
     data = data + "," + to_string(total_weight_grad_comm / FREQ);
     data = data + "," + to_string(total_bw.first);
     data = data + "," + to_string(total_bw.second);
@@ -452,7 +459,7 @@ LayerData Layer::report(
     std::cout << "id: " << id << " ,Total cycles spent on input grad comm: "
               << total_input_grad_comm << std::endl;
     
-    total_bw = compute_busbw(input_grad_comm_type,TP_size,input_grad_comm_size,total_input_grad_comm);
+    total_bw = compute_busbw(input_grad_comm_type,input_grad_group_size,input_grad_comm_size,total_input_grad_comm);
     data = data + "," + to_string(total_input_grad_comm / FREQ);
     data = data + "," + to_string(total_bw.first);
     data = data + "," + to_string(total_bw.second);
@@ -832,6 +839,7 @@ Tick Layer::compute_time(
     }
     if (TP_comm_inside || DP_comm_inside) {
       if (comtype == ComType::All_Reduce) {
+
         comp_time = data_size * GBps / tp_ar * 1e9 * 2 * //tp2 ep8 164.8 tp16 218 
             (nranks - 1) / (nranks / 1.0);
       }
@@ -839,7 +847,6 @@ Tick Layer::compute_time(
           comtype == ComType::All_Gather || comtype == ComType::Reduce_Scatter )) {
           comp_time = data_size * GBps / tp_ag * 1e9 * 
               (nranks - 1) / (nranks / 1.0);
-
       } else if (group_type == MockNccl::GroupType::TP && (
           comtype == ComType::All_to_All)) {
             comp_time = data_size * GBps / tp_ata * 1e9 * 
