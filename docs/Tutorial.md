@@ -175,7 +175,7 @@ The following command generates the Spectrum-X topology with 8 GPUs shown in the
 ```bash
 python3 ./astra-sim-alibabacloud/inputs/topo/gen_Topo_Template.py -topo Spectrum-X -g 8 -psn 1
 ```
-<img src="./images/Spectrum8gpus1psn.png" alt="Spectrum8gpus1psn" width="50%">
+<img src="./images/Spectrun8gpus1psn.png" alt="Spectrun8gpus1psn" width="50%">
 
 The following tables give the description of parameters in layer level, and show the default parameters of each template. Users can change the `-topo` name and corresponding `-g` to generate topology of corresponding structure. Notice that if the gpu num is not enter, then the topology of one Pod will be generated. And if `-g` is less than one host, none asw and psw will be used, for gpu number less than one segment,  none psw will be used. What's more, for users who want to generate AlibabaHPN_Dual_Plane, `--dp` must be added. 
 (Gpus more than one pod is not supported for AlibabaHPN and DCN+ right now.)
@@ -310,7 +310,7 @@ AS_SEND_LAT=2 ./bin/SimAI_simulator -t 8 -w ./example/microAllReduce.txt -n ./Sp
 |----------|-------------|--------------|
 | 16M      | 33.095585   | 23.332048    |
 | 32M      | 38.572166   | 25.762846    |
-| 64M      | 42.049648   | 0.848813     |
+| 64M      | 42.049648   | 23.677116    |
 | 128M     | 44.036110   | 35.209461    |
 | 256M     | 45.101425   | 36.205692    |
 | 512M     | 45.653648   | 36.242008    |
