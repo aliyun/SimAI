@@ -23,15 +23,13 @@ def gen_SingleToR(args):
     nv_switch_num = (int)(args.gpu / args.gpu_per_server) * args.nv_switch_per_server
     
     if segment_num <= 1:
-        args.psw_switch_num = 0
+        # args.psw_switch_num = 0
         dsw_switch_num = 0
         pod_num = 1
+        print("psw_switch_num: " + str(args.psw_switch_num))
     elif 1< segment_num <= int(args.asw_per_psw /  asw_switch_num_per):
         pod_num = 1
-        if pod_num != int(args.psw_switch_num / args.asw_per_psw):
-            warnings.warn("Error relations between total GPU Nums and total aws_switch_num.\n \
-                         The correct psw_switch_num is set to "+str(pod_num * args.asw_per_psw))
-            args.psw_switch_num = pod_num * args.asw_per_psw
+        print("psw_switch_num: " + str(args.psw_switch_num))
         dsw_switch_num = 0
     else:  #More Than one Pod  
         if segment_num % (int(args.asw_per_psw /  asw_switch_num_per)) == 0 :
@@ -115,7 +113,13 @@ def gen_SingleToR(args):
         ind_psw = 0
         pod_ind = 0
         pod_account = 0
-        if args.psw_switch_num != 0:
+        if dsw_switch_num == 0:
+            for i in asw_switch: # asw - psw
+                for j in psw_switch:
+                    line = str(i) + " " + str(j) +" "+ args.ap_bandwidth+" " + args.latency+" " +args.error_rate
+                    f.write(line)
+                    f.write('\n')
+        else:
             for i in asw_switch: 
                 for j in range(args.asw_per_psw):
                     line = str(i)+" "+str(psw_switch[pod_ind*args.asw_per_psw+j])+" "+args.ap_bandwidth+" "+args.latency+" "+args.error_rate
@@ -127,7 +131,6 @@ def gen_SingleToR(args):
                     pod_ind = pod_ind +1
                     pod_account = 0
 
-        if dsw_switch_num != 0:
             for k in range(len(dsw_switch)):
                 for q in range(pod_num):
                     line = str(dsw_switch[k])+" "+str(psw_switch[q * args.asw_per_psw + int(k/pod_num)])+" "+args.pd_bandwidth+" "+args.latency+" "+args.error_rate
@@ -152,13 +155,14 @@ def gen_DualToR_SinglePlane(args):
     nv_switch_num = (int)(args.gpu / args.gpu_per_server) * args.nv_switch_per_server
     
     if segment_num <= 1:
-        args.psw_switch_num = 0
+        # args.psw_switch_num = 0
         dsw_switch_num = 0
         pod_num = 1
+        print("psw_switch_num: " + str(args.psw_switch_num))
     elif 1< segment_num <= int(args.asw_per_psw /  (asw_switch_num_per /2)):
         pod_num = 1
-        if pod_num != int(args.psw_switch_num / int(args.asw_per_psw/2)):
-            raise ValueError("Error relations between total GPU Nums and total pws_switch_num with asw_per_psw.")
+        # if pod_num != int(args.psw_switch_num / int(args.asw_per_psw/2)):
+        #     raise ValueError("Error relations between total GPU Nums and total pws_switch_num with asw_per_psw.")
         print("psw_switch_num: " + str(args.psw_switch_num))
         dsw_switch_num = 0
     else:  #More Than one Pod
@@ -233,7 +237,19 @@ def gen_DualToR_SinglePlane(args):
         ind_psw = 0
         pod_ind = 0
         pod_account = 0
-        if args.psw_switch_num != 0:
+        if dsw_switch_num == 0:
+            for i in asw_switch_1: # asw - psw
+                for j in psw_switch:
+                    line = str(i) + " " + str(j) +" "+ args.ap_bandwidth+" " + args.latency+" " +args.error_rate
+                    f.write(line)
+                    f.write('\n') 
+            for i in asw_switch_2: # asw - psw
+                for j in psw_switch:
+                    line = str(i) + " " + str(j) +" "+ args.ap_bandwidth+" " + args.latency+" " +args.error_rate
+                    f.write(line)
+                    f.write('\n')
+
+        else:
             for i in asw_switch_1: 
                 # print("print:"+str(int(args.asw_per_psw/2)))
                 for j in range(int(args.asw_per_psw/2)):
@@ -242,12 +258,11 @@ def gen_DualToR_SinglePlane(args):
                     f.write(line)
                     f.write('\n')
                 pod_account = pod_account +1
-                # print("This is j: " + str(j) +"This is pod_account: " + str(pod_account))
 
                 if pod_account == args.asw_per_psw/2:
                     pod_ind = pod_ind +1
                     pod_account = 0
-                # print("Pod Index:" + str(pod_ind))
+
             for i in asw_switch_2: 
                 pod_ind = 0
                 for j in range(int(args.asw_per_psw/2)):
@@ -278,13 +293,12 @@ def gen_DualToR_DualPlane(args):
     nv_switch_num = (int)(args.gpu / args.gpu_per_server) * args.nv_switch_per_server
     
     if segment_num <= 1:
-        args.psw_switch_num = 0
+        # args.psw_switch_num = 0
         dsw_switch_num = 0
         pod_num = 1
+        print("psw_switch_num: " + str(args.psw_switch_num))
     elif 1< segment_num <= int(args.asw_per_psw /  (asw_switch_num_per /2)):
         pod_num = 1
-        if pod_num != int(args.psw_switch_num / int(args.asw_per_psw)):
-            raise ValueError("Error relations between total GPU Nums and total pws_switch_num with asw per psw.")
         print("psw_switch_num: " + str(args.psw_switch_num))
         dsw_switch_num = 0
     else:  #More Than one Pod
@@ -296,8 +310,6 @@ def gen_DualToR_DualPlane(args):
     switch_nodes = (int)(args.psw_switch_num + args.asw_switch_num + nv_switch_num + dsw_switch_num) # 
     links = (int)(int(args.psw_switch_num/pod_num/2) * args.asw_switch_num + servers * asw_switch_num_per + servers * args.nv_switch_per_server * args.gpu_per_server \
                   + dsw_switch_num * pod_num) # 
-    # print(args.psw_switch_num/pod_num/2 * args.asw_switch_num)
-    # print(args.psw_switch_num/pod_num/2 * args.asw_switch_num + servers * asw_switch_num_per+ servers * args.nv_switch_per_server * args.gpu_per_server)
     file_name = "AlibabaHPN_"+str(args.gpu)+"g_"+str(args.gpu_per_server)+"gps_DualPlane_"+args.bandwidth+"_"+args.gpu_type
     with open(file_name, 'w') as f:
         print(file_name)
@@ -362,7 +374,19 @@ def gen_DualToR_DualPlane(args):
         ind_psw = 0
         pod_ind = 0
         pod_account = 0
-        if args.psw_switch_num != 0:
+        if dsw_switch_num == 0:
+            for i in asw_switch_1: # asw - psw
+                for j in psw_switch_1:
+                    line = str(i) + " " + str(j) +" "+ args.ap_bandwidth+" " + args.latency+" " +args.error_rate
+                    f.write(line)
+                    f.write('\n')
+
+            for i in asw_switch_2: # asw - psw
+                for j in psw_switch_2:
+                    line = str(i) + " " + str(j) +" "+ args.ap_bandwidth+" " + args.latency+" " +args.error_rate
+                    f.write(line)
+                    f.write('\n')
+        else:
             for i in asw_switch_1: 
                 # print("print:"+str(int(args.asw_per_psw/2)))
                 for j in range(int(args.asw_per_psw/2)):
@@ -403,9 +427,10 @@ def DCN_DualToR(args):
     nv_switch_num = (int)(args.gpu / args.gpu_per_server) * args.nv_switch_per_server
     
     if segment_num <= 1:
-        args.psw_switch_num = 0
+        # args.psw_switch_num = 0
         dsw_switch_num = 0
         pod_num = 1
+        print("psw_switch_num: " + str(args.psw_switch_num))
     elif 1< segment_num <= int(args.asw_per_psw / asw_switch_num_per):
         pod_num = 1
         # if pod_num != int(args.psw_switch_num / args.asw_per_psw):
@@ -486,7 +511,18 @@ def DCN_DualToR(args):
         ind_psw = 0
         pod_ind = 0
         pod_account = 0
-        if args.psw_switch_num != 0:
+        if dsw_switch_num == 0:
+            for i in asw_switch_1: # asw - psw
+                for j in psw_switch:
+                    line = str(i) + " " + str(j) +" "+ args.ap_bandwidth+" " + args.latency+" " +args.error_rate
+                    f.write(line)
+                    f.write('\n') 
+            for i in asw_switch_2: # asw - psw
+                for j in psw_switch:
+                    line = str(i) + " " + str(j) +" "+ args.ap_bandwidth+" " + args.latency+" " +args.error_rate
+                    f.write(line)
+                    f.write('\n')
+        else:
             for i in asw_switch_1: 
                 # print("print:"+str(int(args.asw_per_psw/2)))
                 for j in range(args.asw_per_psw):
@@ -512,7 +548,121 @@ def DCN_DualToR(args):
                 if pod_account == args.asw_per_psw:
                     pod_ind = pod_ind +1
                     pod_account = 0
+                    
+def DCN_SingleToR(args):
+    print("DCN+SingleToR")
+    nodes_per_asw = args.nics_per_aswitch
+    asw_switch_num_per = 1
+    if(args.gpu % (nodes_per_asw) == 0):
+        segment_num = (int)(args.gpu / (nodes_per_asw * asw_switch_num_per))
+    else:
+        segment_num = (int)(args.gpu / (nodes_per_asw * asw_switch_num_per))+1
+        
+    if(segment_num != args.asw_switch_num / asw_switch_num_per):
+        warnings.warn("Error relations between total GPU Nums and total aws_switch_num.\n \
+                         The correct asw_switch_num is set to "+str(segment_num * asw_switch_num_per))
+        args.asw_switch_num = segment_num * asw_switch_num_per
+    print("asw_switch_num: " + str(args.asw_switch_num))
+    nv_switch_num = (int)(args.gpu / args.gpu_per_server) * args.nv_switch_per_server
+    
+    if segment_num <= 1:
+        args.psw_switch_num = 0
+        dsw_switch_num = 0
+        pod_num = 1
+    elif 1< segment_num <= int(args.asw_per_psw / asw_switch_num_per):
+        pod_num = 1
+        # if pod_num != int(args.psw_switch_num / args.asw_per_psw):
+        #     raise ValueError("Error relations between total GPU Nums and total pws_switch_num with asw per psw.")
+        print("psw_switch_num: " + str(args.psw_switch_num))
+        dsw_switch_num = 0
+    else:  #More Than one Pod
+        raise ValueError("Number of GPUs exceed one Pod") 
+    print("Creating Topology of totally " + str(segment_num) + " segment(s), totally "+ str(pod_num) + " pod(s)." )  
+        
+    nodes = (int) (args.gpu + args.asw_switch_num + args.psw_switch_num + nv_switch_num + dsw_switch_num) # 
+    servers = args.gpu / args.gpu_per_server
+    switch_nodes = (int)(args.psw_switch_num + args.asw_switch_num + nv_switch_num + dsw_switch_num) # 
+    links = (int)(int(args.psw_switch_num/pod_num) * args.asw_switch_num + servers * args.gpu_per_server + servers * args.nv_switch_per_server * args.gpu_per_server \
+                  + dsw_switch_num * pod_num) # 
+    file_name = "DCN+SingleToR_"+str(args.gpu)+"g_"+str(args.gpu_per_server)+"gps_"+args.bandwidth+"_"+args.gpu_type
+    with open(file_name, 'w') as f:
+        print(file_name)
+        first_line = str(nodes)+" "+str(args.gpu_per_server)+" "+str(nv_switch_num)+" "+str(switch_nodes-nv_switch_num)+" "+str(int(links))+" "+str(args.gpu_type)
+        f.write(first_line)
+        f.write('\n')
+        nv_switch = []
+        asw_switch = []
+        psw_switch = []
+        dsw_switch = []
+        sec_line = ""
+        nnodes = nodes - switch_nodes
+        nnodes = nodes - switch_nodes
+        for i in range(nnodes, nodes):
+            sec_line = sec_line + str(i) + " "
+            if len(nv_switch) < nv_switch_num:
+                nv_switch.append(i)
+            elif len(asw_switch) < args.asw_switch_num:
+                asw_switch.append(i)
+            elif len(psw_switch) < args.psw_switch_num:
+                psw_switch.append(i)
+            else:
+                dsw_switch.append(i)
+        f.write(sec_line)
+        f.write('\n')
+        ind_asw = 0
+        curr_node = 0
+        group_num = 0
+        group_account = 0
+        asw_node = 0
+        ind_nv = 0
+        for i in range(args.gpu):
+            curr_node = curr_node + 1
+            asw_node = asw_node + 1
+            if curr_node > args.gpu_per_server:
+                curr_node = 1
+                ind_nv = ind_nv + args.nv_switch_per_server
+            for j in range(0, args.nv_switch_per_server):
+                #cnt += 1
+                line = str(i)+" "+str(nv_switch[ind_nv+j])+" "+args.nvlink_bw+" "+args.nv_latency+" "+args.error_rate
+                f.write(line)
+                f.write('\n')
+            
+            line = str(i)+" "+str(asw_switch[group_num*asw_switch_num_per+ind_asw])+" "+args.bandwidth+" "+args.latency+" "+args.error_rate
+            f.write(line)
+            f.write('\n')
+            
+            group_account = group_account + 1
+            
+            if asw_node == nodes_per_asw:
+                ind_asw = ind_asw+1
+                asw_node = 0
+            if group_account == (args.gpu_per_server * args.nics_per_aswitch):
+                group_num = group_num + 1
+                group_account = 0
+        ind_psw = 0
+        pod_ind = 0
+        pod_account = 0
+        if dsw_switch_num == 0:
+            for i in asw_switch: # asw - psw
+                for j in psw_switch:
+                    line = str(i) + " " + str(j) +" "+ args.ap_bandwidth+" " + args.latency+" " +args.error_rate
+                    f.write(line)
+                    f.write('\n')
+        else:
+            for i in asw_switch: 
+                # print("print:"+str(int(args.asw_per_psw/2)))
+                for j in range(args.asw_per_psw):
+                    # print("This is "+ str(j))
+                    line = str(i)+" "+str(psw_switch[pod_ind*int(args.asw_per_psw)+j])+" "+args.ap_bandwidth+" "+args.latency+" "+args.error_rate
+                    f.write(line)
+                    f.write('\n')
+                pod_account = pod_account +1
+                # print("This is j: " + str(j) +"This is pod_account: " + str(pod_account))
 
+                if pod_account == args.asw_per_psw:
+                    pod_ind = pod_ind +1
+                    pod_account = 0
+                # print("Pod Index:" + str(pod_ind))
 
 def main():
     parser = argparse.ArgumentParser(description='Python script for generate the AlibabaHPN network topo')
@@ -527,9 +677,9 @@ def main():
 
     #Intra-Host Parameters:
     parser.add_argument('-gps','--gpu_per_server',type=int,default=8,help='gpu_per_server,default 8')
-    parser.add_argument('-gt','--gpu_type',type=str,default='H800',help='gpu_type,default H800')
+    parser.add_argument('-gt','--gpu_type',type=str,default='H100',help='gpu_type,default H100')
     parser.add_argument('-nsps','--nv_switch_per_server',type=int,default=1,help='nv_switch_per_server,default 1')
-    parser.add_argument('-nvbw','--nvlink_bw',type=str,default='1700Gbps',help='nvlink_bw,default 1700Gbps')
+    parser.add_argument('-nvbw','--nvlink_bw',type=str,default='2880Gbps',help='nvlink_bw,default 2880Gbps')
     parser.add_argument('-nl','--nv_latency',type=str,default='0.000025ms',help='nv switch latency,default 0.000025ms')
     parser.add_argument('-l','--latency',type=str,default='0.0005ms',help='nic latency,default 0.0005ms')
     #Intra-Segment Parameters:
@@ -550,19 +700,18 @@ def main():
 
     if args.gpu == 0:
         raise ValueError("Please enter GPU Num or Template Name")
-    if args.enableDualToR == 0:
-        gen_SingleToR(args)
-    else:
-        if args.st: #Not use rail-optimized:
+    if args.st: #Not use rail-optimized:
+        if args.enableDualToR == 1:
             DCN_DualToR(args)
-        else: #Use rail-optimized,Dual_Plane:
-            if args.dp:
-                gen_DualToR_DualPlane(args)
-            else:
-                gen_DualToR_SinglePlane(args)
-        
-
-
+        else:
+            DCN_SingleToR(args)
+    elif args.dp:
+        if args.enableDualToR == 1:
+            gen_DualToR_DualPlane(args)
+        else:
+            gen_DualToR_SinglePlane(args)
+    else:
+        gen_SingleToR(args)
 
 def topo_template(args):
     if args.topology == 'AlibabaHPN':
@@ -570,21 +719,25 @@ def topo_template(args):
     elif args.topology == 'Spectrum-X':
         SpectrumXTem(args)
     elif args.topology == 'DCN+':
-        DCNTem(args)
+        if args.enableDualToR == 1:
+            DCNDualToR(args)
+        else:
+            DCNSingleToR(args)
     else:
         print('No Template is used.')
 
-def DCNTem(args):
+def DCNSingleToR(args):
+    print("SingleDCN")
     args.st = True
-    args.enableDualToR = 1
+    args.enableDualToR = 0
     args.gpu_per_server = 8
-    args.gpu_type = 'H800'
+    args.gpu_type = 'H100'
     args.nv_switch_per_server = 1
-    args.nvlink_bw = '2400Gbps'
+    args.nvlink_bw = '2880Gbps'
     args.nv_latency = '0.000025ms'
     args.latency = '0.0005ms'
+    args.bandwidth = '400Gbps'
 
-    args.bandwidth = '200Gbps'
     if args.gpu == 0:
         print("Complete DCN+ with 512 GPU in one Pod")
         args.gpu = 512
@@ -595,7 +748,54 @@ def DCNTem(args):
     else:
         segment_num = int(args.gpu / segment_num_gpu) + 1
        
+    args.asw_switch_num  = segment_num
+
+    if(segment_num % 4 == 0):
+        pod_num = int(segment_num /4)
+    else:
+        pod_num = int(segment_num / 4 + 1)
+
+    args.ap_bandwidth = '400Gbps'
+        
+    if pod_num > 1:
+        args.psw_per_dsw = 128
+        if pod_num > args.psw_per_dsw:
+            raise ValueError("Number of GPU exceeds the capacity of DCN+")
+        print("Creating DCN+ with " + pod_num + "pods.")
+        args.pd_bandwidth = '400Gbps'
+        args.psw_switch_num = 4 * pod_num
+        args.asw_per_psw = 4
+        args.dsw_switch_num = 4
+    else:
+        args.dsw_switch_num = 0
+        args.psw_switch_num = 4 * pod_num
+        args.asw_per_psw = 4
+        args.dsw_switch_num = 4
+
+
+def DCNDualToR(args):
+    args.st = True
+    args.enableDualToR = 1
+    args.gpu_per_server = 8
+    args.gpu_type = 'H100'
+    args.nv_switch_per_server = 1
+    args.nvlink_bw = '2880Gbps'
+    args.nv_latency = '0.000025ms'
+    args.latency = '0.0005ms'
+
+    args.bandwidth = '200Gbps'
+    if args.gpu == 0:
+        print("Complete DCN+ with 512 GPU in one Pod")
+        args.gpu = 512
+    args.nics_per_aswitch = 64
+    segment_num_gpu = args.nics_per_aswitch
+    if(args.gpu % segment_num_gpu == 0):
+        segment_num = int(args.gpu / segment_num_gpu)
+    else:
+        segment_num = int(args.gpu / segment_num_gpu) + 1
+       
     args.asw_switch_num  = segment_num * 2
+
 
     if(segment_num % 4 == 0):
         pod_num = int(segment_num /4)
@@ -623,9 +823,9 @@ def AlibabaHPNTem(args):
     #Dual-ToR for both single plane and dual plane
     args.enableDualToR = True
     args.gpu_per_server = 8
-    args.gpu_type = 'H800'
+    args.gpu_type = 'H100'
     args.nv_switch_per_server = 1
-    args.nvlink_bw = '2400Gbps'
+    args.nvlink_bw = '2880Gbps'
     args.nv_latency = '0.000025ms'
     args.latency = '0.0005ms'
 
@@ -680,7 +880,7 @@ def SpectrumXTem(args):
     args.dp = False
     args.gpu_type = 'H100'
     args.nv_switch_per_server = 1
-    args.nvlink_bw = '2400Gbps'
+    args.nvlink_bw = '2880Gbps'
     args.nv_latency = '0.000025ms'
     args.latency = '0.0005ms'
     args.bandwidth = '400Gbps'
