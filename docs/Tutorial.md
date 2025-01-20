@@ -171,30 +171,12 @@ To enhance convenience, we provide 5 templates for common architectures, includi
   </tr>
 </table>
 
-<<<<<<< HEAD
 The following command generates the Spectrum-X topology with 8 GPUs shown in the image:
-=======
-Before running SimAI-Simulator, you need to generate a `topo` file that can be recognized by `ns-3-alibabacloud`.
-
-The figure below shows an example of a topology file; the first row represents various parameters: `node_num` is the total number of nodes, `gpus_per_server` refers to the number of GPUs per server (currently, we bind each NIC to a GPU as a single node), `nvswitch_num` indicates the number of NVSwitch nodes (specifically used to implement the NVLS algorithm), `switch_num` is the number of switches, `link_num` is the total number of connections, and `gpu_type_str` describes the type of GPU.
-
-| Abbreviation       | Description                                     |
-|--------------------|-------------------------------------------------|
-| `node_num`         | Total number of nodes                           |
-| `gpus_per_server`  | Number of GPUs per server                       |
-| `nvswitch_num`     | Number of NVSwitch nodes (for NVLS algorithm)   |
-| `switch_num`       | Number of switches                              |
-| `link_num`         | Total number of connections                     |
-| `gpu_type_str`     | Type of GPU                                     |
-
-The following command generates the topology shown in the image:
->>>>>>> ed5c490eb82052c340c91292760c9b3355d6b174
 ```bash
 python3 ./astra-sim-alibabacloud/inputs/topo/gen_Topo_Template.py -topo Spectrum-X -g 8 -psn 1
 ```
 <img src="./images/Spectrum.jpg" alt="Spectrum" style="width:50%">
 
-<<<<<<< HEAD
 The following tables give the description of parameters in layer level, and show the default parameters of each template. Users can change the `-topo` name and corresponding `-g` to generate topology of corresponding structure. Notice that if the gpu num is not enter, then the topology of one Pod will be generated. And if `-g` is less than one host, none asw and psw will be used, for gpu number less than one segment,  none psw will be used. What's more, for users who want to generate AlibabaHPN_Dual_Plane, `--dp` must be added. 
 (Gpus more than one pod is not supported for AlibabaHPN and DCN+ right now.)
 
@@ -245,49 +227,6 @@ The following tables give the description of parameters in layer level, and show
 The user can customize the topology themselves. For example, if you want to construct a single ToR topology with 32 GPUs and 200Gbps bandwidth with A100 and 8psn, you can enter the following command:
 ```bash
 python3 ./astra-sim-alibabacloud/inputs/topo/gen_Topo_Template.py -g 32 -bw 200Gbps -gt A100 -psn 8
-=======
-> 💡 **Important Note**: note that the generated file features a mismatch between `link_num` in the first line (i.e., `20`), and the number 
-> of links described below, which are `24` instead. Hence, the last `4` links will be ignored by the simulator. 
-> In particular, only half of the links between ASWs and the PSW are actually used. This happens because the topology 
-> generator script assumes that parameter `-psn` refers to the total number of PSW switches in the case of dual plane 
-> topology; however, by default the script generates a single plane topology, halving the links to PSW switches.
->
-> Therefore, when generating single plane topologies, please set parameter `-psn` to the double of the desired number of PSW (e.g., to create one PSW, set it to `2` instead). This will enable
-> all the generated links (in the example, it will increase `link_num` from `20` to `24`).
->
->```bash
->python3 ./astra-sim-alibabacloud/inputs/topo/gen_HPN_7.0_topo_mulgpus_one_link.py -g 8 -gt A100 -bw 400Gbps -nvbw 2400Gbps -psn 2
->```
-
-You can choose to customize any `topo` following the format shown above. Of course, we also provide a script to directly generate a `topo` for the HPN architecture.
-
-```bash
-python3 ./astra-sim-alibabacloud/inputs/topo/gen_HPN_7.0_topo_mulgpus_one_link.py -g 128 -gt A100 -bw 100Gbps -nvbw 2400Gbps
-```
-
-| Parameter        | Description                                | Default Value |
-|------------------|--------------------------------------------|---------------|
-| `-l  --latency`          | NIC latency                              | 0.0005ms      |
-| `-nl  --nv_latency`      | NV switch latency                        | 0.000025ms    |
-| `-bw  --bandwidth`       | NIC to ASW bandwidth                     | 100Gbps       |
-| `-apbw  --ap_bandwidth`  | ASW to PSW bandwidth                     | 400Gbps       |
-| `-nvbw  --nvlink_bw`     | NVLink bandwidth                         | 1700Gbps      |
-| `-er  --error_rate`      | Error rate                               | 0             |
-| `-g  --gpu`              | Number of GPUs                           | 32            |
-| `-gt  --gpu_type`        | GPU type                                 | H800          |
-| `-gps  --gpu_per_server` | GPUs per server                          | 8             |
-| `-psn  --psw_switch_num` | Number of PSW switches                   | 120           |
-| `-nsps  --nv_switch_per_server` | NV switch per server                 | 1             |
-| `--dp`                    | Enable dual plane, default single plane  | false         |
-| `--st`                    | Enable DCN architecture, default HPN_7_0 | false     |
-| `--asn`                   | ASW number                               | 8            |
-| `--psn`                   | PSW number                               | 120          |
-
-If the number of GPUs exceeds the number of GPUs in a segment, you should set the number of asn. For example, if you want to generate 4096 GPUs, the number of asn should be 32.
-
-```bash
-python3 ./astra-sim-alibabacloud/inputs/topo/gen_HPN_7.0_topo_mulgpus_one_link.py -g 4096 -gt A100 -bw 100Gbps -nvbw 2400Gbps -asn 32
->>>>>>> ed5c490eb82052c340c91292760c9b3355d6b174
 ```
 
 ## 🖥️ SimAI-NS3 Simulation
