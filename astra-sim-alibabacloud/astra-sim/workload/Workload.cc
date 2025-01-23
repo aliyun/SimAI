@@ -1307,7 +1307,6 @@ bool Workload::initialize_workload(std::string name) {
     MockNccl::GroupType fp_group_type = MockNccl::GroupType::NONE;
     MockNccl::GroupType ig_group_type = MockNccl::GroupType::NONE;
     MockNccl::GroupType wg_group_type = MockNccl::GroupType::NONE;
-    #ifdef ANALYTI
     if (wg_comm_type_s.substr(0,9) == "ALLREDUCE") {
       wg_type = ComType::All_Reduce;
       if(wg_comm_type_s == "ALLREDUCE"){
@@ -1480,44 +1479,6 @@ bool Workload::initialize_workload(std::string name) {
         fp_group_type = MockNccl::GroupType::NONE;
       }
     }
-    #else
-    if (wg_comm_type_s == "ALLREDUCE") {
-      wg_type = ComType::All_Reduce;
-    } else if (wg_comm_type_s == "ALLTOALL") {
-      wg_type = ComType::All_to_All;
-    } else if (wg_comm_type_s == "ALLREDUCEALLTOALL") {
-      wg_type = ComType::All_Reduce_All_to_All;
-    } else if (wg_comm_type_s == "ALLGATHER") {
-      wg_type = ComType::All_Gather;
-    } else if (wg_comm_type_s == "REDUCESCATTER") {
-      wg_type = ComType::Reduce_Scatter;
-    }
-
-    if (ig_comm_type_s == "ALLREDUCE") {
-      ig_type = ComType::All_Reduce;
-    } else if (ig_comm_type_s == "ALLTOALL") {
-      ig_type = ComType::All_to_All;
-    } else if (ig_comm_type_s == "ALLREDUCEALLTOALL") {
-      ig_type = ComType::All_Reduce_All_to_All;
-    } else if (ig_comm_type_s == "ALLGATHER") {
-      ig_type = ComType::All_Gather;
-    } else if (ig_comm_type_s == "REDUCESCATTER") {
-      ig_type = ComType::Reduce_Scatter;
-    }
-
-    if (fp_comm_type_s == "ALLREDUCE") {
-      fp_type = ComType::All_Reduce;
-    } else if (fp_comm_type_s == "ALLTOALL") {
-      fp_type = ComType::All_to_All;
-    } else if (fp_comm_type_s == "ALLREDUCEALLTOALL") {
-      fp_type = ComType::All_Reduce_All_to_All;
-    } else if (fp_comm_type_s == "ALLGATHER") {
-      fp_type = ComType::All_Gather;
-    } else if (fp_comm_type_s == "REDUCESCATTER") {
-      fp_type = ComType::Reduce_Scatter;
-    }
-
-    #endif
     if (generator->id == 0) {
       std::cout << "id: " << id << " , depen: " << depen
                 << " , wg_comp_time: " << wg_compute_time << std::endl;
