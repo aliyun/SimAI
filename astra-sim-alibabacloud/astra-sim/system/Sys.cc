@@ -188,10 +188,10 @@ Sys::Sys(
   active_chunks_per_dimension = 1;
   preferred_dataset_splits = 1;
   inp_boost_mode = 0;
-  inp_all_reduce_implementation = "ncclRingFlowModel";
-  inp_all_gather_implementation = "ncclRingFlowModel";
-  inp_reduce_scatter_implementation = "ncclRingFlowModel";
-  inp_all_to_all_implementation = "direct";
+  inp_all_reduce_implementation = "NcclFlowModel";
+  inp_all_gather_implementation = "NcclFlowModel";
+  inp_reduce_scatter_implementation = "NcclFlowModel";
+  inp_all_to_all_implementation = "NcclFlowModel";
   inp_collective_optimization = "baseline";
   bool result = post_process_inputs();
 
@@ -686,9 +686,9 @@ std::vector<CollectiveImplementation*> Sys::
     } else if (dimension_input == "oneHalvingDoubling") {
       result.push_back(new CollectiveImplementation(
           CollectiveImplementationType::OneHalvingDoubling));
-    } else if(dimension_input == "ncclRingFlowModel") {
+    } else if(dimension_input == "NcclFlowModel") {
       result.push_back(new CollectiveImplementation(
-          CollectiveImplementationType::NcclRingFlowModel));
+          CollectiveImplementationType::NcclFlowModel));
     } else if(dimension_input == "ncclRingTreeModel") {
       result.push_back(new CollectiveImplementation(
           CollectiveImplementationType::NcclTreeFlowModel));
@@ -1162,7 +1162,7 @@ CollectivePhase Sys::generate_collective_phase(
                     data_size,
                     boost_mode));
                     return vn;
-          } else if(collective_implementation->type == CollectiveImplementationType::NcclRingFlowModel) {
+          } else if(collective_implementation->type == CollectiveImplementationType::NcclFlowModel) {
               ParallelStrategy  comm_ps;
               if (workload->current_state == Workload::LoopState::Forward_Pass){
                 comm_ps = static_cast<ParallelStrategy> (workload->layers[workload->index]->fwd_pass_group_type);

@@ -331,10 +331,63 @@ namespace MockNccl {
         return genAllGatherFlowModels(type,rank,data_size);
       case AstraSim::ComType::Reduce_Scatter:
         return genReduceScatterFlowModels(type,rank,data_size);
+      case AstraSim::ComType::All_to_All:
+        return genAlltoAllFlowModels(type,rank,data_size);
       default:
         break;
     }
     return {};
+  }
+
+  std::map<int,std::shared_ptr<FlowModels>> MockNcclGroup::genAlltoAllFlowModels(GroupType type, int rank, uint64_t data_size){
+    FlowModels result = {};
+    std::map<int,FlowModels>rank2flowmodels;
+    std::map<int,std::shared_ptr<FlowModels>>rank2pflowmodels;
+    SingleFlow tmp_result;
+    uint64_t chunksize;
+    uint64_t send_size;
+    int nranks;
+    int chunkcount;
+    int chunkid;
+    GroupInfo gp_info;
+    int gp_idx;
+    RingChannels ringchannels;
+    MockNcclLog* NcclLog = MockNcclLog::getInstance();
+    if(GroupIndex.count(std::make_pair(rank,type))==0){
+      NcclLog->writeLog(NcclLogLevel::ERROR,"There is no corresponding group info and group ring channel, resulting in an error in generating the flow model.");
+      return {};
+    } else {
+      gp_idx = GroupIndex[std::make_pair(rank,type)];
+      ringchannels = Allringchannels[gp_idx];
+      gp_info = AllGroups[gp_idx];
+    }
+    nranks = gp_info.nRanks;
+    chunkcount = nranks - 1;
+    chunksize = data_size / nranks;
+    data_size = data_size / nranks;
+    for (int i = 0; i < gp_info.Ranks.size(); i++) {
+      std::vector<int> prev;
+      for(int j = 0;j<gp_info.Ranks.size();j++) {
+        if(i == j) continue;
+        else prev.push_back(gp_info.Ranks[j]);  
+      }
+      for(int j=0;j<gp_info.Ranks.size();j++){
+        if(i == j ) continue;
+        tmp_result = SingleFlow(g_flow_id,gp_info.Ranks[i],gp_info.Ranks[j],chunksize,prev,{},{},0,0,1,"RING");
+        result[std::make_pair(0, g_flow_id)] = tmp_result;
+        g_flow_id++;
+      }
+    }
+    for(auto flow_models_it = result.begin();flow_models_it!=result.end();flow_models_it++){
+      int src = flow_models_it->second.src;
+      int dst = flow_models_it->second.dest;
+      rank2flowmodels[src][std::make_pair(flow_models_it->first.first,flow_models_it->first.second)]=flow_models_it->second;
+      rank2flowmodels[dst][std::make_pair(flow_models_it->first.first,flow_models_it->first.second)]=flow_models_it->second;
+    }
+    for(auto it = rank2flowmodels.begin();it!=rank2flowmodels.end();it++){
+      rank2pflowmodels[it->first] = std::make_shared<FlowModels>(it->second);
+    }
+    return rank2pflowmodels;
   }
 
   std::map<int,std::shared_ptr<FlowModels>> MockNcclGroup::genReduceScatterFlowModels(
@@ -2037,6 +2090,7 @@ namespace MockNccl {
           break;
       case AstraSim::ComType::All_Gather:
       case AstraSim::ComType::Reduce_Scatter:
+      case AstraSim::ComType::All_to_All:
       default:
           info->algorithm = NCCL_ALGO_RING;
           break;
