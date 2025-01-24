@@ -346,7 +346,6 @@ def No_Rail_Opti_SingleToR(parameters):
         curr_node = 0
         group_num = 0
         group_account = 0
-        asw_node = 0
         ind_nv = 0
         for i in range(parameters['gpu']):
             curr_node = curr_node + 1
@@ -363,10 +362,7 @@ def No_Rail_Opti_SingleToR(parameters):
             f.write('\n')
             group_account = group_account + 1
             
-            if asw_node == nodes_per_asw:
-                ind_asw = ind_asw+1
-                asw_node = 0
-            if group_account == (parameters['gpu_per_server'] * parameters['nics_per_aswitch']):
+            if group_account == nodes_per_asw:
                 group_num = group_num + 1
                 group_account = 0
 
@@ -434,7 +430,6 @@ def No_Rail_Opti_DualToR(parameters):
         curr_node = 0
         group_num = 0
         group_account = 0
-        asw_node = 0
         ind_nv = 0
         for i in range(parameters['gpu']):
             curr_node = curr_node + 1
@@ -454,11 +449,8 @@ def No_Rail_Opti_DualToR(parameters):
             f.write(line)
             f.write('\n')
             group_account = group_account + 1
-            
-            if asw_node == nodes_per_asw:
-                ind_asw = ind_asw+1
-                asw_node = 0
-            if group_account == (parameters['gpu_per_server'] * parameters['nics_per_aswitch']):
+
+            if group_account == nodes_per_asw:
                 group_num = group_num + 1
                 group_account = 0
 
@@ -475,28 +467,28 @@ def No_Rail_Opti_DualToR(parameters):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Python script for generate topology for SimAI')
+    parser = argparse.ArgumentParser(description='Python script for generating a topology for SimAI')
 
     #Whole Structure Parameters:
     parser.add_argument('-topo','--topology', type=str, default=None,help='Template for AlibabaHPN, Spectrum-X, DCN+')
-    parser.add_argument('--ro', action='store_true',help='not use rail-optimized structure')
+    parser.add_argument('--ro', action='store_true',help='use rail-optimized structure')
     parser.add_argument('--dt',action='store_true', help='enable dual ToR, only for DCN+')
     parser.add_argument('--dp', action='store_true', help='enable dual_plane, only for AlibabaHPN')
-    parser.add_argument('-g','--gpu',type=int,default=None,help='gpus num,default 0')
-    parser.add_argument('-er','--error_rate',type=str,default=None,help='error_rate,default 0')
+    parser.add_argument('-g','--gpu',type=int,default=None,help='gpus num, default 32')
+    parser.add_argument('-er','--error_rate',type=str,default=None,help='error_rate, default 0')
     #Intra-Host Parameters:
-    parser.add_argument('-gps','--gpu_per_server',type=int,default=None,help='gpu_per_server,default 8')
-    parser.add_argument('-gt','--gpu_type',type=str,default=None,help='gpu_type,default H100')
-    parser.add_argument('-nsps','--nv_switch_per_server',type=int,default=None,help='nv_switch_per_server,default 1')
-    parser.add_argument('-nvbw','--nvlink_bw',type=str,default=None,help='nvlink_bw,default 2880Gbps')
-    parser.add_argument('-nl','--nv_latency',type=str,default=None,help='nv switch latency,default 0.000025ms')
-    parser.add_argument('-l','--latency',type=str,default=None,help='nic latency,default 0.0005ms')
+    parser.add_argument('-gps','--gpu_per_server',type=int,default=None,help='gpu_per_server, default 8')
+    parser.add_argument('-gt','--gpu_type',type=str,default=None,help='gpu_type, default H100')
+    parser.add_argument('-nsps','--nv_switch_per_server',type=int,default=None,help='nv_switch_per_server, default 1')
+    parser.add_argument('-nvbw','--nvlink_bw',type=str,default=None,help='nvlink_bw, default 2880Gbps')
+    parser.add_argument('-nl','--nv_latency',type=str,default=None,help='nv switch latency, default 0.000025ms')
+    parser.add_argument('-l','--latency',type=str,default=None,help='nic latency, default 0.0005ms')
     #Intra-Segment Parameters:
-    parser.add_argument('-bw','--bandwidth',type=str,default=None,help='nic to asw bandwidth,default 100Gbps')
-    parser.add_argument('-asn','--asw_switch_num',type=int,default=None,help='asw_switch_num,default 8')
-    parser.add_argument('-npa','--nics_per_aswitch',type=int,default=None,help='nnics per asw,default 64')
+    parser.add_argument('-bw','--bandwidth',type=str,default=None,help='nic to asw bandwidth, default 400Gbps')
+    parser.add_argument('-asn','--asw_switch_num',type=int,default=None,help='asw_switch_num, default 8')
+    parser.add_argument('-npa','--nics_per_aswitch',type=int,default=None,help='nnics per asw, default 64')
     #Intra-Pod Parameters:
-    parser.add_argument('-psn','--psw_switch_num',type=int,default=None,help='psw_switch_num,default 64')
+    parser.add_argument('-psn','--psw_switch_num',type=int,default=None,help='psw_switch_num, default 64')
     parser.add_argument('-apbw','--ap_bandwidth',type=str,default=None,help='asw to psw bandwidth,default 400Gbps')   
     parser.add_argument('-app','--asw_per_psw',type=int,default=None,help='asw for psw')
     args = parser.parse_args()
