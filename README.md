@@ -93,9 +93,9 @@ SimAI supports three major operation modes to meet different simulation requirem
 
 SimAI work has been accepted by NSDI'25 Spring, for more details, please refer to our paper below:
 
-*SimAI: Unifying Architecture Design and Performance Tunning for Large-Scale Large Language Model Training with Scalability and Precision.*
+*SimAI: Unifying Architecture Design and Performance Tuning for Large-Scale Large Language Model Training with Scalability and Precision.*
 
-[[pdf](https://ennanzhai.github.io/pub/nsdi25spring-simai.pdf)] / [[slides](./docs/SimAI_Intro_Online.pdf)] / [video]
+[[pdf](https://ennanzhai.github.io/pub/nsdi25spring-simai.pdf)] / [[slides](./docs/SimAI_Intro_Online.pdf)] / [[video](https://n.dingtalk.com/dingding/live-room/index.html?roomId=OF5BkBUXVxmgsK7x&liveUuid=305736cd-aa70-498b-8003-2b471a53decd)]
 
 We encourage innovative research and extensions based on SimAI. Welcome to join our community group or reach out via email for discussion. We may provide technical support.
 
