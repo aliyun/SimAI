@@ -39,7 +39,14 @@ namespace MockNccl {
   typedef std::map<int,std::map<int,std::vector<int>>> RingChannels; 
   typedef std::map<int,std::map<int,std::vector<ncclChannelNode*>>> NVLStreechannels;  
   typedef std::map<int,std::map<int,ncclTree>> TreeChannels;
-  enum GroupType { TP, DP,DP_EP,EP,NONE };
+  enum GroupType {
+    TP,
+    DP,
+    PP,
+    EP,
+    DP_EP,
+    NONE
+  };
   struct ncclInfo {
     ncclFunc_t coll;
     TuneInfo_t tuneinfo;
@@ -112,30 +119,16 @@ namespace MockNccl {
     };
    public:
     MockNcclGroup(){}
-    MockNcclGroup(std::vector<int>ngpus,int TP_size,int gpus_per_nodes,std::vector<int> _NVSwitch,GPUType _gpu_type);
-    MockNcclGroup(
-        std::map<int, GroupInfo> _TPGroups,
-        std::map<int, GroupInfo> _DPGroups);
+    MockNcclGroup(int _ngpus,int _gpus_per_nodes, int _TP_size,int _DP_size,int _PP_size,int _EP_size,int _DP_EP_size,std::vector<int>_NVSwitch,GPUType _gpu_type);
     ~MockNcclGroup(){};
 
-    std::map<int, GroupInfo> TPGroups;
-    std::map<int, GroupInfo> DPGroups;
-    std::map<int, std::vector<int>> TPlocalrings;
-    std::map<int, std::vector<int>> DPlocalrings;
-    std::map<int, int> TPrank2group; 
-    std::map<int, int> DPrank2group; 
+    std::map<std::pair<int,GroupType>,int> GroupIndex;
+    std::map<int,GroupInfo> AllGroups;
 
-    std::map<int,RingChannels> TPringchannels;
-    std::map<int,RingChannels> DPringchannels;
-
-    std::map<int,TreeChannels> TPtreechannels;
-    std::map<int,TreeChannels> DPtreechannels;
-
-    std::map<int,NVLStreechannels> TPNVLStreechannels;
-    std::map<int,NVLStreechannels> DPNVLStreechannels;
-
-    std::map<int,TreeChannels> DPNVLSchannels;
-    std::map<int,TreeChannels> TPNVLSchannels;
+    std::map<int,RingChannels> Allringchannels;
+    std::map<int,NVLStreechannels> AllNVLStreechannels;
+    std::map<int,TreeChannels> Alltreechannels;
+    std::map<int,TreeChannels> AllNVLSchannels;
 
     int g_flow_id;
     GPUType gpu_type;
@@ -144,9 +137,9 @@ namespace MockNccl {
     std::map<std::string ,struct ncclInfo*> nccl_infos;  
     std::shared_ptr<void> getFlowModels(GroupType type , int rank, AstraSim::ComType op,uint64_t data_size,int layer_num,State loopstate);
    private:
-    bool  get_group_info(GroupType type,int rank,GroupInfo & group_info);
     std::map<int,std::shared_ptr<FlowModels>> genFlowModels(GroupType type , int rank, AstraSim::ComType op,uint64_t data_size);
-    std::map<int,std::shared_ptr<FlowModels>>genReduceScatterFlowModels(GroupType type , int rank, uint64_t data_size);
+    std::map<int,std::shared_ptr<FlowModels>> genReduceScatterFlowModels(GroupType type , int rank, uint64_t data_size);
+    std::map<int,std::shared_ptr<FlowModels>> genAlltoAllFlowModels(GroupType type, int rank, uint64_t data_size);
     std::map<int,std::shared_ptr<FlowModels>> genAllReduceFlowModels(GroupType type , int rank,uint64_t data_size);
     std::map<int,std::shared_ptr<FlowModels>> genAllReduceRingFlowModels(GroupType type , int rank,uint64_t data_size);
     std::map<int,std::shared_ptr<FlowModels>> genAllreduceNVLSFlowModels(
@@ -164,14 +157,11 @@ namespace MockNccl {
     DoubleBinaryTreeNode* InterDouBinTreeShift(DoubleBinaryTreeNode* root,std::vector<int>nodes);
     void ConnInterIntraTree(DoubleBinaryTreeNode*root,std::map<int,std::vector<int>>node2ranks,std::map<int,ncclTree>&TreeChannel);
    public:
-    void setlocalrings(
-        std::map<int, std::vector<int>> localrings,
-        GroupType type);
     void generateringchannels(
         std::map<int, std::vector<int>> localrings,
         MockNccl::GroupInfo* groupInfo,
         std::map<int, std::map<int, std::vector<int>>>& ringchannels);
-    std::map<int, std::vector<int>> genlocalrings(int rank, GroupType type);
+    std::map<int, std::vector<int>> gen_local_ring(int rank, GroupType type);
     RingChannels genringchannels(
         int rank,
         GroupType type);

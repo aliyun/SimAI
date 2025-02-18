@@ -18,114 +18,145 @@
 #include<map>
 #include<set>
 #include <queue>
-#include<cmath>
+#include <cmath>
+#include <algorithm>
 #include "astra-sim/system/MockNcclLog.h"
 using namespace std;
 namespace MockNccl {
-  MockNcclGroup::MockNcclGroup(std::vector<int>ngpus,int TP_size,int gpus_per_nodes,std::vector<int> _NVSwitch,GPUType _gpu_type):g_flow_id(0),gpu_type(_gpu_type){
-    MockNcclLog* NcclLog = MockNcclLog::getInstance();
-    int nNodes = ngpus.size() > 1 ? ngpus[1] : ngpus[0] / gpus_per_nodes;
-    int nlocalranks = ngpus.size() > 1 ? ngpus[0] : gpus_per_nodes;
-    int nNodesPerTPGroup;
-    int nNodesPerDPGroup;
-    int TP_nums = (nNodes * nlocalranks) / TP_size;
-    int DP_size;
-    int DP_nums;
-    std::vector<int> Ranks;
-    nNodesPerTPGroup = TP_size / nlocalranks + (TP_size % nlocalranks > 0 ? 1 : 0);
-    if(TP_size > 1) {
-      int nvswitch_idx=0;
-
-      for(int i =0 ;i < TP_nums; i++) {
-        Ranks = {};
-        for(int j = 0; j < TP_size; j++) {
-          Ranks.push_back(i * TP_size + j);
+  MockNcclGroup::MockNcclGroup(int _ngpus,int _gpus_per_nodes,int _TP_size,int _DP_size,int _PP_size,int _EP_size,int _DP_EP_size,std::vector<int>_NVSwitch,GPUType _gpu_type):g_flow_id(0),gpu_type(_gpu_type){
+    /*init groups
+    */
+    MockNcclLog *NcclLog = MockNcclLog::getInstance();
+    if (_ngpus % _gpus_per_nodes != 0 || _ngpus / _gpus_per_nodes <= 0){
+      NcclLog->writeLog(NcclLogLevel::ERROR,"The number of GPUs used is not a multiple of the number of GPUs per node.");
+      return;
+    }
+    int all_group_idx = 0;
+    int nNodes = _ngpus/_gpus_per_nodes;
+    int nlocalranks = _gpus_per_nodes;
+    int TP_nums = _ngpus/_TP_size;
+    int DP_nums = _ngpus/_DP_size;
+    int PP_nums = _ngpus/_PP_size;
+    int EP_nums = _ngpus/_EP_size;
+    int DP_EP_nums = _ngpus/_DP_EP_size;
+    if (TP_nums <= 0 || DP_nums <= 0 || PP_nums <= 0 || EP_nums <= 0 || DP_EP_nums <= 0 || (_TP_size * _DP_size * _PP_size != _ngpus) || (_EP_size * _DP_EP_size != _DP_size)){
+      NcclLog->writeLog(NcclLogLevel::ERROR,"The group division method is incorrect.");
+      return;
+    }
+    int nNodesPerTPGroup = _TP_size / nlocalranks + (_TP_size % nlocalranks > 0 ? 1 : 0);
+    std::vector<int>ranks;
+    std::vector<int>NVSwitchs;
+    // init TP group 
+    if(_TP_size>1){
+      std::set<int>TPnodes;
+      for(int i =0;i<TP_nums;i++){
+        ranks.clear();
+        TPnodes.clear();
+        for(int j =0;j<_TP_size;j++){
+          int rank = i*_TP_size+j;
+          ranks.push_back(rank);
+          GroupIndex[std::make_pair(rank, TP)] = all_group_idx;
+          int node_idx = rank / _gpus_per_nodes;
+          TPnodes.insert(node_idx);
         }
-        std::vector<int>NVSwitch;
-        for(int k = 0;k<nNodesPerTPGroup;k++){
-          NVSwitch.push_back(_NVSwitch[nvswitch_idx]);
-          nvswitch_idx++;
+        NVSwitchs.clear();
+        for(int idx:TPnodes){
+          NVSwitchs.push_back(_NVSwitch[idx]);
+          GroupIndex[std::make_pair(_NVSwitch[idx],TP)] = all_group_idx;
         }
-        TPGroups[i] = GroupInfo(i,TP,nNodesPerTPGroup,TP_size,Ranks,NVSwitch);
-        for(auto nv:NVSwitch){
-          TPrank2group[nv] = i;
-        }
+        AllGroups[all_group_idx]=GroupInfo(all_group_idx,TP,nNodesPerTPGroup,_TP_size,ranks,NVSwitchs);
+        all_group_idx ++;
       }
     }
-    DP_size = TP_nums;
-    DP_nums = TP_size;
-    nNodesPerDPGroup = nNodes/nNodesPerTPGroup;
-    if(DP_size >1) {
-      int nvswitch_idx = 0;
-      for(int i = 0; i < DP_nums; i++) {
-        Ranks = {};
-        std::set<int>DPnodes;
-        for(int j = 0; j < DP_size; j++) {
-          int rank = i + j * DP_nums;
-          Ranks.push_back(rank);
-          int node_idx = rank / gpus_per_nodes;
+    // init DP group
+    if(_DP_size>1){
+      std::set<int>DPnodes;
+      for(int i =0;i<DP_nums;i++){
+        ranks.clear();
+        DPnodes.clear();
+        for(int j =0;j<_DP_size;j++){
+          int rank = i+j*DP_nums;
+          ranks.push_back(rank);
+          GroupIndex[std::make_pair(rank, DP)] = all_group_idx;
+          int node_idx = rank/_gpus_per_nodes;
           DPnodes.insert(node_idx);
         }
-        std::vector<int>NVSwitch;
+        NVSwitchs.clear();
         for(int idx:DPnodes){
-          NVSwitch.push_back(_NVSwitch[idx]);
+          NVSwitchs.push_back(_NVSwitch[idx]);
+          GroupIndex[std::make_pair(_NVSwitch[idx],DP)] = all_group_idx;
         }
-        DPGroups[i] =  GroupInfo(i,DP,nNodesPerDPGroup,DP_size,Ranks,NVSwitch);
-        for(auto nv:NVSwitch){
-          DPrank2group[nv]=i;
-        }
+        AllGroups[all_group_idx]=GroupInfo(all_group_idx,DP,DPnodes.size(),_DP_size,ranks,NVSwitchs);
+        all_group_idx ++;
       }
     }
-    std::map<int,GroupInfo>::iterator group_it;
-    for(group_it = TPGroups.begin(); group_it != TPGroups.end(); group_it++){
-      for(int i : group_it->second.Ranks){
-        TPrank2group[i] = group_it->first;
-        NcclLog->writeLog(NcclLogLevel::DEBUG," rank %dto TPgroup %d",i,group_it->first);
-      }
-    }
-    for(group_it = DPGroups.begin(); group_it != DPGroups.end(); group_it++){
-      for(int i : group_it->second.Ranks){
-        DPrank2group[i] = group_it->first;
-        NcclLog->writeLog(NcclLogLevel::DEBUG," rank %dto DPgroup %d",i,group_it->first);
-      }
-    }
-  }
-  
-  MockNcclGroup::MockNcclGroup(std::map<int,GroupInfo> _TPGroups,std::map<int,GroupInfo> _DPGroups)
-      :TPGroups(_TPGroups)
-      ,DPGroups(_DPGroups)
-      ,g_flow_id(0){
-    std::map<int,GroupInfo>::iterator group_it;
-    for(group_it = TPGroups.begin(); group_it != TPGroups.end(); group_it++){
-      for(int i : group_it->second.Ranks)
-        TPrank2group[i] = group_it->first;
-    }
-    for(group_it = DPGroups.begin(); group_it != DPGroups.end(); group_it++){
-      for(int i : group_it->second.Ranks)
-        DPrank2group[i] = group_it->first;
-    }
-  }
+    // init PP group
+    if(_PP_size > 1){
 
-  bool MockNcclGroup::get_group_info(GroupType type,int rank,GroupInfo & group_info){
-    switch (type){
-      case TP:
-        if(!TPrank2group.count(rank)||!TPGroups.count(TPrank2group[rank])){
-          return false;
-        } else{
-          group_info = TPGroups[TPrank2group[rank]];
-          return true;
-        }
-      case DP:
-        if(!DPrank2group.count(rank)||!DPGroups.count(DPrank2group[rank])){
-          return false;
-        } else{
-          group_info = DPGroups[DPrank2group[rank]];
-          return true;
-        }
-      default:
-        return false;
     }
-    return false;
+    // init EP
+    std::map<int,GroupInfo> AllTPGroups;
+    for(auto it = AllGroups.begin();it!=AllGroups.end();it++){
+      if(it->second.type==TP){
+        AllTPGroups[it->second.group_index]=it->second;
+      }
+    }
+    if(_EP_size>1){
+      int TP_idx=0;
+      std::set<int> EPnodes;
+      for (int i = 0; i < TP_nums / _EP_size; i++){
+        TP_idx = i*_EP_size;
+        for(int j =0;j<_EP_size;j++){
+          for(int k = 0;k<AllTPGroups[TP_idx].Ranks.size();k++){
+            ranks.clear();
+            EPnodes.clear();
+            for(int l = TP_idx;l<TP_idx+_EP_size;l++){
+              int tmp_rank = AllTPGroups[l].Ranks[k];
+              int node_idx = tmp_rank/_gpus_per_nodes;
+              ranks.push_back(tmp_rank);
+              GroupIndex[std::make_pair(tmp_rank, EP)] = all_group_idx;
+              EPnodes.insert(node_idx);
+            }
+            NVSwitchs.clear();
+            for(int idx:EPnodes){
+              NVSwitchs.push_back(_NVSwitch[idx]);
+              GroupIndex[std::make_pair(_NVSwitch[idx],EP)] = all_group_idx;
+            }
+            AllGroups[all_group_idx] = GroupInfo(all_group_idx,EP,EPnodes.size(),_EP_size,ranks,NVSwitchs);
+            all_group_idx++;
+          }
+        }
+      }
+    }
+    //init EP_DP
+    if (_DP_EP_size > 1){
+      int TP_idx = 0;
+      std::set<int> DP_EP_nodes;
+      for (int i = 0; i < TP_nums / _DP_EP_size; i++){
+        TP_idx = i;
+        for (int j = 0; j < _DP_EP_size; j++){
+          for (int k = 0; k < AllTPGroups[TP_idx].Ranks.size(); k++){
+            ranks.clear();
+            DP_EP_nodes.clear();
+            for (int l = TP_idx; l < TP_idx + _DP_EP_size * _EP_size; l += _EP_size){
+              int tmp_rank = AllTPGroups[l].Ranks[k];
+              int node_idx = tmp_rank / _gpus_per_nodes;
+              ranks.push_back(tmp_rank);
+              GroupIndex[std::make_pair(tmp_rank, DP_EP)] = all_group_idx;
+              DP_EP_nodes.insert(node_idx);
+            }
+            NVSwitchs.clear();
+            for (int idx : DP_EP_nodes){
+              NVSwitchs.push_back(_NVSwitch[idx]);
+              GroupIndex[std::make_pair(_NVSwitch[idx], DP_EP)] = all_group_idx;
+            }
+            AllGroups[all_group_idx] = GroupInfo(all_group_idx, DP_EP, DP_EP_nodes.size(), _DP_EP_size, ranks, NVSwitchs);
+            all_group_idx++;
+          }
+        }
+      }
+    }
+    return;
   }
   
   void MockNcclGroup::generateringchannels(std::map<int, std::vector<int>> localrings, MockNccl::GroupInfo* groupInfo, std::map<int, std::map<int, std::vector<int>>>& ringchannels) {
@@ -163,62 +194,44 @@ namespace MockNccl {
     }
   }
 
-  void MockNcclGroup::setlocalrings(std::map<int,std::vector<int>>localrings,GroupType type){
-    switch (type) {
-      case TP:
-        TPlocalrings = localrings;
-        break;
-      case DP:
-        DPlocalrings = localrings;
-        break;
-      default:
-        break;
+  std::map<int, std::vector<int>> MockNcclGroup::gen_local_ring(int rank, GroupType type){
+    GroupInfo gp_info;
+    int gp_idx;
+    std::vector<int>ranks;
+    std::vector<int>localranks;
+    std::map<int,std::vector<int>>localrings;
+    int nNodes;
+    int nlocalranks;
+    MockNcclLog* NcclLog = MockNcclLog::getInstance();
+    if(GroupIndex.count(std::make_pair(rank,type)) == 0){
+      NcclLog->writeLog(NcclLogLevel::ERROR,"There is no relevant group info, resulting in an error in gen_local_ring");
+      return {};
+    } 
+    gp_idx = GroupIndex[std::make_pair(rank,type)];
+    gp_info = AllGroups[gp_idx];
+    ranks = gp_info.Ranks;
+    nNodes = gp_info.nNodes;
+    nlocalranks = ranks.size()/nNodes;
+    std::sort(ranks.begin(), ranks.end());
+    for (int i = 0; i < nlocalranks; i++){
+      localranks.push_back(ranks[i]);
     }
-  }
-
-  std::map<int,std::vector<int>> MockNcclGroup::genlocalrings(int rank,GroupType type){
-    GroupInfo pgroupinfo;
-    int groupIndex;
-    int delta;
-    std::map<int,std::vector<int>>rings;
-    std::map<int,std::vector<int>>result;
-    switch (type) {
-      case TP:
-        pgroupinfo = TPGroups[TPrank2group[rank]];
-        rings = TPlocalrings;
-        delta = pgroupinfo.Ranks[0] - TPGroups[0].Ranks[0];
-        groupIndex  = TPrank2group[rank];
-        break;
-      case DP:
-        pgroupinfo = DPGroups[DPrank2group[rank]];
-        rings = DPlocalrings;
-        delta = pgroupinfo.Ranks[0] - DPGroups[0].Ranks[0];
-        groupIndex = DPrank2group[rank];
-        break;
-      default:
-        break;
-    }
-    if(groupIndex > 0){
-      std::map<int,std::vector<int>>::iterator ring_it;
-      for(ring_it = rings.begin(); ring_it != rings.end(); ring_it++) {
-        for(int i = 0; i < ring_it->second.size(); i++) {
-          if(result.count(ring_it->first) > 0)
-            result[ring_it->first].push_back(ring_it->second[i] + delta);
-          else
-            result[ring_it->first] = {ring_it->second[i] + delta};
-        }
+    for(int i =0;i<nlocalranks;i++){
+      std::vector<int> vec;
+      for (int j = 0; j < nlocalranks; ++j) {
+        vec.push_back(localranks[(i + j) % nlocalranks]);
       }
-      return result;
-    } else {
-      return rings;
+      localrings[i] = vec;
     }
+    return localrings;
   }
 
   RingChannels MockNcclGroup::genringchannels(int rank, MockNccl::GroupType type) {
     std::map<int,std::map<int,std::vector<int>>>ringchannels;
     std::map<int,std::vector<int>>localrings;
     std::map<int,std::vector<int>>::iterator ring_it;
-    GroupInfo pgroupinfo;
+    GroupInfo gp_info;
+    int gp_idx;
     MockNcclLog* NcclLog = MockNcclLog::getInstance();
 
     int current;
@@ -228,21 +241,16 @@ namespace MockNccl {
     int nNodes;
     int nlocalRanks;
     int delta;
-    switch (type) {
-      case TP:
-        pgroupinfo = TPGroups[TPrank2group[rank]];
-        break;
-      case DP:
-        pgroupinfo = DPGroups[DPrank2group[rank]];
-        break;
-      default:
-        break;
+    if(GroupIndex.count(std::make_pair(rank,type))==0){
+      NcclLog->writeLog(NcclLogLevel::ERROR,"No corresponding group information is generated, and there is an error in creating the ring channel.");
     }
-    nNodes = pgroupinfo.nNodes;
-    nlocalRanks = pgroupinfo.nRanks/nNodes;
-    localrings = genlocalrings(rank,type);
+    gp_idx = GroupIndex[std::make_pair(rank,type)];
+    gp_info = AllGroups[GroupIndex[std::make_pair(rank,type)]];
+    nNodes = gp_info.nNodes;
+    nlocalRanks = gp_info.nRanks/nNodes;
+    localrings = gen_local_ring(rank,type);
 
-    delta = nNodes > 1 ? pgroupinfo.Ranks[nlocalRanks]-pgroupinfo.Ranks[0] : 0;
+    delta = nNodes > 1 ? gp_info.Ranks[nlocalRanks]-gp_info.Ranks[0] : 0;
     for(ring_it = localrings.begin();ring_it != localrings.end();ring_it++) {
       prev = -1;
       next = -1;
@@ -266,45 +274,39 @@ namespace MockNccl {
       ringchannels[ring_it->first][ring_it->second[0]][0] = end_rank;
       ringchannels[ring_it->first][end_rank][1] = ring_it->second[0];
     }
-    switch (type)
-    {
-      case TP:
-        TPringchannels[TPrank2group[rank]] = ringchannels;
-        break;
-      case DP:
-        DPringchannels[DPrank2group[rank]] = ringchannels;
-      default:
-        break;
-    }
-    if (rank == 0 && type ==TP) {
-      for (const auto& outer_pair : ringchannels) {
-        for (const auto& inner_pair : outer_pair.second) {
-          NcclLog->writeLog(NcclLogLevel::DEBUG,"channel_id :  %did:  %d",outer_pair.first,inner_pair.first);
-          for (int value : inner_pair.second) {
-            NcclLog->writeLog(NcclLogLevel::DEBUG," %d ",value);
-          }
-        }
-      }
-    }
-
+    Allringchannels[gp_idx]=ringchannels;
     return ringchannels;
   }
   
   std::shared_ptr<void> MockNcclGroup::getFlowModels(GroupType type , int rank, AstraSim::ComType op,uint64_t data_size,int layer_num,State loopstate){
     std::string flow_model_name;
-    GroupInfo pgroupinfo;
-    int group_index;
+    GroupInfo gp_info;
+    int gp_idx;
     int end_rank;
-    if (type == GroupType::TP) {
-      flow_model_name = "TP";
-      group_index = TPrank2group[rank];
-      pgroupinfo = TPGroups[group_index];
-    } else if (type == GroupType::DP) {
-      flow_model_name = "DP";
-      group_index = DPrank2group[rank];
-      pgroupinfo = DPGroups[group_index];
+    MockNcclLog* NcclLog = MockNcclLog::getInstance();
+    if(GroupIndex.count(std::make_pair(rank,type))==0){
+      NcclLog->writeLog(NcclLogLevel::ERROR,"There is no corresponding group info and group ring channel, resulting in an error in generating the flow model.");
+      return nullptr;
     }
-    flow_model_name = flow_model_name + "_" + std::to_string(group_index) + "_" + std::to_string(layer_num) + "_" + std::to_string(static_cast<int>(loopstate)) + "_" + std::to_string(static_cast<int>(op)) + "_" + std::to_string(data_size);
+    gp_idx = GroupIndex[std::make_pair(rank,type)];
+    gp_info = AllGroups[gp_idx];
+    switch (type){
+      case TP:
+        flow_model_name = "TP";
+        break;
+      case DP:
+        flow_model_name = "DP";
+        break;
+      case EP:
+        flow_model_name = "EP";
+        break;
+      case DP_EP:
+        flow_model_name = "DP_EP";
+        break;
+      default:
+        break;
+    }
+    flow_model_name = flow_model_name + "_" + std::to_string(gp_idx) + "_" + std::to_string(layer_num) + "_" + std::to_string(static_cast<int>(loopstate)) + "_" + std::to_string(static_cast<int>(op)) + "_" + std::to_string(data_size);
     if(flow_models.count(flow_model_name)){
       FlowName2nums[flow_model_name] ++;
       std::shared_ptr<void> presult;
@@ -329,10 +331,63 @@ namespace MockNccl {
         return genAllGatherFlowModels(type,rank,data_size);
       case AstraSim::ComType::Reduce_Scatter:
         return genReduceScatterFlowModels(type,rank,data_size);
+      case AstraSim::ComType::All_to_All:
+        return genAlltoAllFlowModels(type,rank,data_size);
       default:
         break;
     }
     return {};
+  }
+
+  std::map<int,std::shared_ptr<FlowModels>> MockNcclGroup::genAlltoAllFlowModels(GroupType type, int rank, uint64_t data_size){
+    FlowModels result = {};
+    std::map<int,FlowModels>rank2flowmodels;
+    std::map<int,std::shared_ptr<FlowModels>>rank2pflowmodels;
+    SingleFlow tmp_result;
+    uint64_t chunksize;
+    uint64_t send_size;
+    int nranks;
+    int chunkcount;
+    int chunkid;
+    GroupInfo gp_info;
+    int gp_idx;
+    RingChannels ringchannels;
+    MockNcclLog* NcclLog = MockNcclLog::getInstance();
+    if(GroupIndex.count(std::make_pair(rank,type))==0){
+      NcclLog->writeLog(NcclLogLevel::ERROR,"There is no corresponding group info and group ring channel, resulting in an error in generating the flow model.");
+      return {};
+    } else {
+      gp_idx = GroupIndex[std::make_pair(rank,type)];
+      ringchannels = Allringchannels[gp_idx];
+      gp_info = AllGroups[gp_idx];
+    }
+    nranks = gp_info.nRanks;
+    chunkcount = nranks - 1;
+    chunksize = data_size / nranks;
+    data_size = data_size / nranks;
+    for (int i = 0; i < gp_info.Ranks.size(); i++) {
+      std::vector<int> prev;
+      for(int j = 0;j<gp_info.Ranks.size();j++) {
+        if(i == j) continue;
+        else prev.push_back(gp_info.Ranks[j]);  
+      }
+      for(int j=0;j<gp_info.Ranks.size();j++){
+        if(i == j ) continue;
+        tmp_result = SingleFlow(g_flow_id,gp_info.Ranks[i],gp_info.Ranks[j],chunksize,prev,{},{},0,0,1,"RING");
+        result[std::make_pair(0, g_flow_id)] = tmp_result;
+        g_flow_id++;
+      }
+    }
+    for(auto flow_models_it = result.begin();flow_models_it!=result.end();flow_models_it++){
+      int src = flow_models_it->second.src;
+      int dst = flow_models_it->second.dest;
+      rank2flowmodels[src][std::make_pair(flow_models_it->first.first,flow_models_it->first.second)]=flow_models_it->second;
+      rank2flowmodels[dst][std::make_pair(flow_models_it->first.first,flow_models_it->first.second)]=flow_models_it->second;
+    }
+    for(auto it = rank2flowmodels.begin();it!=rank2flowmodels.end();it++){
+      rank2pflowmodels[it->first] = std::make_shared<FlowModels>(it->second);
+    }
+    return rank2pflowmodels;
   }
 
   std::map<int,std::shared_ptr<FlowModels>> MockNcclGroup::genReduceScatterFlowModels(
@@ -350,20 +405,17 @@ namespace MockNccl {
     int nranks;
     int chunkcount;
     int chunkid;
-    GroupInfo pgroupinfo;
+    GroupInfo gp_info;
+    int gp_idx;
     RingChannels ringchannels;
-    switch (type) {
-      case GroupType::TP:
-        /* code */
-        pgroupinfo = TPGroups[TPrank2group[rank]];
-        ringchannels = TPringchannels[TPrank2group[rank]];
-        break;
-      case GroupType::DP:
-        pgroupinfo = DPGroups[DPrank2group[rank]];
-        ringchannels = DPringchannels[DPrank2group[rank]];
-        break;
-      default:
-        break;
+    MockNcclLog* NcclLog = MockNcclLog::getInstance();
+    if(GroupIndex.count(std::make_pair(rank,type))==0){
+      NcclLog->writeLog(NcclLogLevel::ERROR,"There is no corresponding group info and group ring channel, resulting in an error in generating the flow model.");
+      return {};
+    } else {
+      gp_idx = GroupIndex[std::make_pair(rank,type)];
+      ringchannels = Allringchannels[gp_idx];
+      gp_info = AllGroups[gp_idx];
     }
     bool PXN_ENABLE = false;
     const char* PXN_ENV = std::getenv("AS_PXN_ENABLE");
@@ -372,7 +424,7 @@ namespace MockNccl {
     } else {
       PXN_ENABLE = false;
     }
-    nranks = pgroupinfo.nRanks;
+    nranks = gp_info.nRanks;
     chunkcount = nranks - 1;
     chunksize = data_size / nranks / ringchannels.size();
     data_size = data_size / nranks / ringchannels.size();
@@ -399,7 +451,7 @@ namespace MockNccl {
             curnodesendrank = rank_it->second[3];
           }
           if (rank_it->second[3] == cur_rank &&
-              rank_it->second[2] != cur_rank && pgroupinfo.nNodes > 1 &&
+              rank_it->second[2] != cur_rank && gp_info.nNodes > 1 &&
               PXN_ENABLE) { 
             prevranks.clear();
             if (rank_it->second[0] != -1)
@@ -440,7 +492,7 @@ namespace MockNccl {
             g_flow_id++;
           } else if (
               rank_it->second[2] == cur_rank &&
-              rank_it->second[3] != cur_rank && pgroupinfo.nNodes > 1 &&
+              rank_it->second[3] != cur_rank && gp_info.nNodes > 1 &&
               PXN_ENABLE) {
             prevranks.clear();
             if(prenoderecvrank!=-1){
@@ -501,7 +553,7 @@ namespace MockNccl {
             int cur_rank = rank_it->first;
             int partner_flow_id = task_list[rank_it->second[0]].flow_id;
             if (rank_it->second[3] == cur_rank &&
-                rank_it->second[2] != cur_rank && pgroupinfo.nNodes > 1 &&
+                rank_it->second[2] != cur_rank && gp_info.nNodes > 1 &&
                 PXN_ENABLE) { 
               prevranks.clear();
               if (rank_it->second[0] != -1) {
@@ -544,7 +596,7 @@ namespace MockNccl {
               g_flow_id++;
             } else if (
                 rank_it->second[2] == cur_rank &&
-                rank_it->second[3] != cur_rank && pgroupinfo.nNodes > 1 &&
+                rank_it->second[3] != cur_rank && gp_info.nNodes > 1 &&
                 PXN_ENABLE) {
               prevranks.clear();
               if (prenoderecvrank != -1) {
@@ -627,28 +679,20 @@ namespace MockNccl {
       int rank,
       uint64_t data_size) {
     MockNcclLog* NcclLog = MockNcclLog::getInstance();
-    GroupInfo groupinfo;
-    int groupindex;
+    GroupInfo gp_info;
+    int gp_idx;
     int chunk_count = 1;
     int chunk_size;
     NVLStreechannels nvlstreechannels;
     NVLStreechannels::iterator nvlstree;
     FlowModels result = {};
-
-    switch (type) {
-      case TP:
-        groupindex = TPrank2group[rank];
-        groupinfo = TPGroups[groupindex];
-        nvlstreechannels=TPNVLStreechannels[groupindex];
-        break;
-      case DP:
-        groupindex = DPrank2group[rank];
-        groupinfo = DPGroups[groupindex];
-        nvlstreechannels=DPNVLStreechannels[groupindex];
-        break;
-      default:
-        break;
-    }
+    if(GroupIndex.count(std::make_pair(rank,type)) == 0){
+      NcclLog->writeLog(NcclLogLevel::ERROR,"There is no relevant group info, resulting in an error in generating genallReduceNVLSTreeFlowModels.");
+      return nullptr;
+    } 
+    gp_idx = GroupIndex[std::make_pair(rank,type)];
+    gp_info = AllGroups[gp_idx];
+    nvlstreechannels = AllNVLStreechannels[gp_idx];
     NcclLog->writeLog(NcclLogLevel::DEBUG," nvlstreechannels.size()  %d",nvlstreechannels.size());
     chunk_size = data_size / nvlstreechannels.size() / chunk_count;
     for (nvlstree = nvlstreechannels.begin();
@@ -832,29 +876,23 @@ namespace MockNccl {
   }
 
   std::map<int,std::shared_ptr<FlowModels>> MockNcclGroup::genAllreduceNVLSFlowModels(GroupType type,int rank,uint64_t data_size){
-    GroupInfo groupinfo;
-    int groupindx;
+    GroupInfo gp_info;
+    int gp_idx;
     int chunk_count = 4;
     std::map<int,FlowModels>rank2flowmodels;
     std::map<int,std::shared_ptr<FlowModels>>rank2pflowmodels;
-    switch (type) {
-      case TP:
-        /* code */
-        groupindx = TPrank2group[rank];
-        groupinfo = TPGroups[groupindx];
-        break;
-      case DP:
-        groupindx = DPrank2group[rank];
-        groupinfo = DPGroups[groupindx];
-        break;
-      default:
-        break;
+    MockNcclLog* NcclLog = MockNcclLog::getInstance();
+    if(GroupIndex.count(std::make_pair(rank,type))==0){
+      NcclLog->writeLog(NcclLogLevel::ERROR,"There is no corresponding group info , resulting in an error in genAllreduceNVLSFlowModels.");
+      return {};
     }
+    gp_idx = GroupIndex[std::make_pair(rank,type)];
+    gp_info = AllGroups[gp_idx];
     FlowModels result={};
     SingleFlow treeflow;
-    if(groupinfo.nNodes == 1){  
-      std::vector<int>NVswitchs = groupinfo.NVSwitchs;
-      std::vector<int>ranks = groupinfo.Ranks;
+    if(gp_info.nNodes == 1){  
+      std::vector<int>NVswitchs = gp_info.NVSwitchs;
+      std::vector<int>ranks = gp_info.Ranks;
       int chunk_size = data_size / chunk_count;
       for(int ck =0;ck<chunk_count;ck++){
         for(int j = 0;j<NVswitchs.size();j++){
@@ -901,22 +939,18 @@ namespace MockNccl {
     FlowModels result = {};
     std::map<int,int> task_list = {}; 
     std::map<int,std::map<int,ncclTree>>::iterator tree;
-    GroupInfo pgroupinfo;
+    GroupInfo gp_info;
+    int gp_idx;
     TreeChannels treechannels;
+    MockNcclLog* NcclLog = MockNcclLog::getInstance();
 
-    switch (type)
-    {
-      case GroupType::TP:
-        pgroupinfo = TPGroups[TPrank2group[rank]];
-        treechannels = TPtreechannels[TPrank2group[rank]];
-        break;
-      case GroupType::DP:
-        pgroupinfo = DPGroups[DPrank2group[rank]];
-        treechannels = DPtreechannels[DPrank2group[rank]];
-        break;
-      default:
-        break;
+    if(GroupIndex.count(std::make_pair(rank,type))==0||Alltreechannels.count(gp_idx)==0){
+      NcclLog->writeLog(NcclLogLevel::ERROR,"There is no corresponding group info , resulting in an error in genAllreduceNVLSFlowModels.");
+      return {};
     }
+    gp_idx = GroupIndex[std::make_pair(rank,type)];
+    gp_info = AllGroups[gp_idx];
+    treechannels = Alltreechannels[gp_idx];
     chunk_size = data_size / treechannels.size() / chunk_count;
     for(tree = treechannels.begin(); tree !=treechannels.end(); tree++) {
       std::unordered_map<int, int> upinDegree;
@@ -1020,24 +1054,19 @@ namespace MockNccl {
     uint64_t chunksize;
     uint64_t send_size;
     int nranks;
-    
-    GroupInfo pgroupinfo;
+    GroupInfo gp_info;
+    int gp_idx;
     RingChannels ringchannels;
-    switch (type)
-    {
-      case GroupType::TP:
-        /* code */
-        pgroupinfo = TPGroups[TPrank2group[rank]];
-        ringchannels = TPringchannels[TPrank2group[rank]];
-        break;
-      case GroupType::DP:
-        pgroupinfo = DPGroups[DPrank2group[rank]];
-        ringchannels = DPringchannels[DPrank2group[rank]];
-        break;
-      default:
-        break;
+    MockNcclLog* NcclLog = MockNcclLog::getInstance();
+    if(GroupIndex.count(std::make_pair(rank,type))==0){
+      NcclLog->writeLog(NcclLogLevel::ERROR,"There is no corresponding group info and group ring channel, resulting in an error in generating the flow model.");
+      return {};
+    } else {
+      gp_idx = GroupIndex[std::make_pair(rank,type)];
+      ringchannels = Allringchannels[gp_idx];
+      gp_info = AllGroups[gp_idx];
     }
-    nranks = pgroupinfo.nRanks;
+    nranks = gp_info.nRanks;
     bool PXN_ENABLE = false;
     const char* PXN_ENV = std::getenv("AS_PXN_ENABLE");
     if (PXN_ENV && strcmp(PXN_ENV, "1") == 0) {
@@ -1047,7 +1076,7 @@ namespace MockNccl {
     }
     chunksize = data_size / nranks / ringchannels.size();
     data_size = data_size / nranks / ringchannels.size();
-    int chunkcout = 2*(pgroupinfo.nRanks-1);
+    int chunkcout = 2*(gp_info.nRanks-1);
 
     for(auto it = ringchannels.begin(); it !=ringchannels.end(); it++) {
       auto ring = it->second;
@@ -1073,7 +1102,7 @@ namespace MockNccl {
             curnodesendrank = rank_it->second[3];
           }
           if (rank_it->second[3] == cur_rank &&
-              rank_it->second[2] != cur_rank && pgroupinfo.nNodes > 1 &&
+              rank_it->second[2] != cur_rank && gp_info.nNodes > 1 &&
               PXN_ENABLE) { 
             prevranks.clear();
             if(rank_it->second[0]!=-1){
@@ -1112,7 +1141,7 @@ namespace MockNccl {
             g_flow_id++;
           } else if (
               rank_it->second[2] == cur_rank &&
-              rank_it->second[3] != cur_rank && pgroupinfo.nNodes > 1 &&
+              rank_it->second[3] != cur_rank && gp_info.nNodes > 1 &&
               PXN_ENABLE) {
             prevranks.clear();
             if (prenoderecvrank != -1) {
@@ -1173,7 +1202,7 @@ namespace MockNccl {
             int cur_rank = rank_it->first;
             int partner_flow_id = task_list[rank_it->second[0]].flow_id;
             if (rank_it->second[3] == cur_rank &&
-                rank_it->second[2] != cur_rank && pgroupinfo.nNodes > 1 &&
+                rank_it->second[2] != cur_rank && gp_info.nNodes > 1 &&
                 PXN_ENABLE) { 
               prevranks.clear();
               if (rank_it->second[0] != -1) {
@@ -1213,7 +1242,7 @@ namespace MockNccl {
               g_flow_id++;
             } else if (
                 rank_it->second[2] == cur_rank &&
-                rank_it->second[3] != cur_rank && pgroupinfo.nNodes > 1 &&
+                rank_it->second[3] != cur_rank && gp_info.nNodes > 1 &&
                 PXN_ENABLE) {
               prevranks.clear();
               if(prenoderecvrank!=-1){
@@ -1279,7 +1308,7 @@ namespace MockNccl {
             int cur_rank = rank_it->first;
             int partner_flow_id = task_list[rank_it->second[0]].flow_id;
             if (rank_it->second[3] == cur_rank &&
-                rank_it->second[2] != cur_rank && pgroupinfo.nNodes > 1 &&
+                rank_it->second[2] != cur_rank && gp_info.nNodes > 1 &&
                 PXN_ENABLE) { 
               prevranks.clear();
               if(rank_it->second[0]!=-1){
@@ -1321,7 +1350,7 @@ namespace MockNccl {
               g_flow_id++;
             } else if (
                 rank_it->second[2] == cur_rank &&
-                rank_it->second[3] != cur_rank && pgroupinfo.nNodes > 1 &&
+                rank_it->second[3] != cur_rank && gp_info.nNodes > 1 &&
                 PXN_ENABLE) {
               prevranks.clear();
               if(prenoderecvrank!=-1){
@@ -1397,27 +1426,22 @@ namespace MockNccl {
     int nranks;
     int chunkcount;
     int chunkid;
-    GroupInfo pgroupinfo;
+    GroupInfo gp_info;
+    int gp_idx;
     RingChannels ringchannels;
     MockNcclLog* NcclLog = MockNcclLog::getInstance();
 
-    switch (type)
-    {
-      case GroupType::TP:
-        /* code */
-        pgroupinfo = TPGroups[TPrank2group[rank]];
-        ringchannels = TPringchannels[TPrank2group[rank]];
-        break;
-      case GroupType::DP:
-        pgroupinfo = DPGroups[DPrank2group[rank]];
-        ringchannels = DPringchannels[DPrank2group[rank]];
-        break;
-      default:
-        break;
+    if(GroupIndex.count(std::make_pair(rank,type))==0){
+      NcclLog->writeLog(NcclLogLevel::ERROR,"There is no corresponding group info and group ring channel, resulting in an error in generating the flow model.");
+      return {};
+    } else {
+      gp_idx = GroupIndex[std::make_pair(rank,type)];
+      ringchannels = Allringchannels[gp_idx];
+      gp_info = AllGroups[gp_idx];
     }
 
-    nranks = pgroupinfo.nRanks;
-    chunkcount = pgroupinfo.nRanks-1;
+    nranks = gp_info.nRanks;
+    chunkcount = gp_info.nRanks-1;
     chunksize = data_size / nranks / ringchannels.size();
     data_size = data_size / nranks / ringchannels.size();
     bool PXN_ENABLE = false;
@@ -1450,7 +1474,7 @@ namespace MockNccl {
             curnodesendrank = rank_it->second[3];
           }
           if (rank_it->second[3] == cur_rank &&
-              rank_it->second[2] != cur_rank && pgroupinfo.nNodes > 1 &&
+              rank_it->second[2] != cur_rank && gp_info.nNodes > 1 &&
               PXN_ENABLE) { 
             prevranks.clear();
             if(rank_it->second[0]!=-1){
@@ -1491,7 +1515,7 @@ namespace MockNccl {
             g_flow_id++;
           } else if (
               rank_it->second[2] == cur_rank &&
-              rank_it->second[3] != cur_rank && pgroupinfo.nNodes > 1 &&
+              rank_it->second[3] != cur_rank && gp_info.nNodes > 1 &&
               PXN_ENABLE) {
             prevranks.clear();
             if(prenoderecvrank!=-1){
@@ -1552,7 +1576,7 @@ namespace MockNccl {
             int cur_rank = rank_it->first;
             int partner_flow_id = task_list[rank_it->second[0]].flow_id;
             if (rank_it->second[3] == cur_rank &&
-                rank_it->second[2] != cur_rank && pgroupinfo.nNodes > 1 &&
+                rank_it->second[2] != cur_rank && gp_info.nNodes > 1 &&
                 PXN_ENABLE) { 
               prevranks.clear();
               if(rank_it->second[0]!=-1){
@@ -1594,7 +1618,7 @@ namespace MockNccl {
               g_flow_id++;
             } else if (
                 rank_it->second[2] == cur_rank &&
-                rank_it->second[3] != cur_rank && pgroupinfo.nNodes > 1 &&
+                rank_it->second[3] != cur_rank && gp_info.nNodes > 1 &&
                 PXN_ENABLE) {
               prevranks.clear();
               if(prenoderecvrank!=-1){
@@ -1656,6 +1680,7 @@ namespace MockNccl {
     }
     return rank2pflowmodels;
   }
+  
   ncclChannelNode* MockNcclGroup::gen_nvls_tree_intra_channels(std::vector<int> intra_topo,std::map<int, vector<ncclChannelNode*>> &nvlstreechannel){
     ncclChannelNode* root = new ncclChannelNode(-1,intra_topo[0],nullptr,{});
     nvlstreechannel[root->rank].push_back(root);
@@ -1671,43 +1696,28 @@ namespace MockNccl {
   }
 
   TreeChannels MockNcclGroup::get_nvls_channels(int rank,GroupType type){
-    GroupInfo pgroupinfo;
-    int groupindex;
+    GroupInfo gp_info;
+    int gp_idx;
     TreeChannels nvlschannel;
     MockNcclLog* NcclLog = MockNcclLog::getInstance();
-
-    switch (type) {
-      case TP:
-        groupindex = TPrank2group[rank];
-        pgroupinfo = TPGroups[groupindex];
-        break;
-      case DP:
-        groupindex = DPrank2group[rank];
-        pgroupinfo = DPGroups[groupindex];
-      default:
-        break;
+    if(GroupIndex.count(std::make_pair(rank,type))==0){
+      NcclLog->writeLog(NcclLogLevel::ERROR,"There is no corresponding group info and group ring channel, resulting in an error in get_nvls_channels.");
+      return {};
     }
-    if (pgroupinfo.nNodes > 1) {
+    gp_idx = GroupIndex[std::make_pair(rank,type)];
+    gp_info = AllGroups[gp_idx];
+    if (gp_info.nNodes > 1) {
       NcclLog->writeLog(NcclLogLevel::DEBUG," %d","error NVLS ALGO dont");
       return {};
     } else {
-      std::vector<int> ranks = pgroupinfo.Ranks;
-      int NVswitch = pgroupinfo.NVSwitchs[0];
+      std::vector<int> ranks = gp_info.Ranks;
+      int NVswitch = gp_info.NVSwitchs[0];
       for (int i = 0; i < ranks.size(); i++) {
         nvlschannel[0][ranks[i]] = ncclTree(-1, ranks[i], NVswitch, {});
       }
       nvlschannel[0][ranks.size()] = ncclTree(-1, NVswitch, -1, ranks);
     }
-    switch (type) {
-      case TP:
-        TPNVLSchannels[groupindex] = nvlschannel;
-        break;
-      case DP:
-        DPNVLSchannels[groupindex] = nvlschannel;
-      default:
-        break;
-    }
-
+    AllNVLSchannels[gp_idx] = nvlschannel;
     return nvlschannel;
   }
 
@@ -1715,33 +1725,29 @@ namespace MockNccl {
     std::map<int,std::map<int,std::vector<ncclChannelNode*>>> nvlstreechannels;
     std::map<int,std::vector<int>>localrings;
     std::map<int,std::vector<int>>::iterator ring_it;
-    GroupInfo pgroupinfo;
+    GroupInfo gp_info;
     MockNcclLog* NcclLog = MockNcclLog::getInstance();
     int current;
     int nNodes;
     int nlocalRanks;
     int delta;
-    switch (type)
-    {
-      case TP:
-        pgroupinfo = TPGroups[TPrank2group[rank]];
-        if(TPNVLStreechannels.count(TPrank2group[rank]))  return TPNVLStreechannels[TPrank2group[rank]];
-        break;
-      case DP:
-        pgroupinfo = DPGroups[DPrank2group[rank]];
-        if(DPNVLStreechannels.count(DPrank2group[rank]))  return DPNVLStreechannels[DPrank2group[rank]];
-        break;
-      default:
-        break;
+    int gp_idx;
+    if(GroupIndex.count(std::make_pair(rank,type))==0){
+      NcclLog->writeLog(NcclLogLevel::ERROR,"There is no corresponding group info , resulting in an error in get_nvls_tree_channels.");
+      return {};
     }
-
+    gp_idx = GroupIndex[std::make_pair(rank,type)];
+    gp_info = AllGroups[gp_idx];
+    if(AllNVLStreechannels.count(gp_idx)){
+      return AllNVLStreechannels[gp_idx];
+    }
     std::vector<DoubleBinaryTreeNode*>roots;
-    roots = genInterDouBinTree(pgroupinfo);
+    roots = genInterDouBinTree(gp_info);
 
-    nNodes = pgroupinfo.nNodes;
-    nlocalRanks = pgroupinfo.nRanks/nNodes;
-    localrings = genlocalrings(rank,type);
-    delta = nNodes > 1 ? pgroupinfo.Ranks[nlocalRanks]-pgroupinfo.Ranks[0] : 0;
+    nNodes = gp_info.nNodes;
+    nlocalRanks = gp_info.nRanks/nNodes;
+    localrings = gen_local_ring(rank,type);
+    delta = nNodes > 1 ? gp_info.Ranks[nlocalRanks]-gp_info.Ranks[0] : 0;
     std::map<int,std::vector<int>>rings;
     for(ring_it = localrings.begin();ring_it != localrings.end();ring_it++) {
       for(int i = 0; i < nNodes; i++) {
@@ -1754,8 +1760,8 @@ namespace MockNccl {
     std::map<int, std::map<int, std::vector<int>>>
         allnode2ranks; 
     for (ring_it = rings.begin(); ring_it != rings.end(); ring_it++) {
-      int nrankspernode = pgroupinfo.nRanks / nNodes;
-      for (int i = 0; i < pgroupinfo.nNodes; i++) {
+      int nrankspernode = gp_info.nRanks / nNodes;
+      for (int i = 0; i < gp_info.nNodes; i++) {
         for (int j = 0; j < nrankspernode; j++) {
           allnode2ranks[ring_it->first][i].push_back(
               ring_it->second[i * nrankspernode + j]);
@@ -1774,7 +1780,7 @@ namespace MockNccl {
           std::vector<int> noderanks = node2ranks[i];
           std::vector<int> intra_topo;
           intra_topo.push_back(noderanks[index]);
-          intra_topo.push_back(pgroupinfo.NVSwitchs[i]);
+          intra_topo.push_back(gp_info.NVSwitchs[i]);
           intra_topo.insert(
               intra_topo.end(), noderanks.begin(), noderanks.end());
           NcclLog->writeLog(NcclLogLevel::DEBUG," node  %d intra_topo",i);
@@ -1812,16 +1818,7 @@ namespace MockNccl {
         channel_id++;
       }
     }
-    switch (type) {
-      case TP:
-        TPNVLStreechannels[TPrank2group[rank]] = nvlstreechannels;
-        break;
-      case DP:
-        DPNVLStreechannels[DPrank2group[rank]] = nvlstreechannels;
-        break;
-      default:
-        break;
-    }
+    AllNVLStreechannels[gp_idx] = nvlstreechannels;
     return nvlstreechannels;
   }
 
@@ -1858,28 +1855,27 @@ namespace MockNccl {
     TreeChannels treechannels;
     std::map<int,std::vector<int>>localrings;
     std::map<int,std::vector<int>>::iterator ring_it;
-    GroupInfo pgroupinfo;
+    GroupInfo gp_info;
+    int gp_idx;
     int current;
     int nNodes;
     int nlocalRanks;
     int delta;
-    switch (type) {
-      case TP:
-        pgroupinfo = TPGroups[TPrank2group[rank]];
-        if(TPtreechannels.count(TPrank2group[rank]))  return TPtreechannels[TPrank2group[rank]];
-        break;
-      case DP:
-        pgroupinfo = DPGroups[DPrank2group[rank]];
-        if(DPtreechannels.count(DPrank2group[rank]))  return DPtreechannels[DPrank2group[rank]];
-        break;
-      default:
-        break;
+    MockNcclLog* NcclLog = MockNcclLog::getInstance();
+    if(GroupIndex.count(std::make_pair(rank,type))==0){
+      NcclLog->writeLog(NcclLogLevel::ERROR,"There is no corresponding group info and group ring channel, resulting in an error in gettreechannels.");
+      return {};
+    }
+    gp_idx = GroupIndex[std::make_pair(rank,type)];
+    gp_info = AllGroups[gp_idx];
+    if(Alltreechannels.count(gp_idx)){
+      return Alltreechannels[gp_idx];
     }
   
-    nNodes = pgroupinfo.nNodes;
-    nlocalRanks = pgroupinfo.nRanks/nNodes;
-    localrings = genlocalrings(rank,type);
-    delta = nNodes > 1 ? pgroupinfo.Ranks[nlocalRanks]-pgroupinfo.Ranks[0] : 0;
+    nNodes = gp_info.nNodes;
+    nlocalRanks = gp_info.nRanks/nNodes;
+    localrings = gen_local_ring(rank,type);
+    delta = nNodes > 1 ? gp_info.Ranks[nlocalRanks]-gp_info.Ranks[0] : 0;
     std::map<int,std::vector<int>>rings;
     for(ring_it = localrings.begin();ring_it != localrings.end();ring_it++) {
       for(int i = 0; i < nNodes; i++) {
@@ -1890,12 +1886,12 @@ namespace MockNccl {
       }
     }
     std::vector<DoubleBinaryTreeNode*> roots;
-    roots = genInterDouBinTree(pgroupinfo);
+    roots = genInterDouBinTree(gp_info);
     std::map<int, std::map<int, std::vector<int>>>
         allnode2ranks; 
     for (ring_it = rings.begin(); ring_it != rings.end(); ring_it++) {
-      int nrankspernode = pgroupinfo.nRanks / nNodes;
-      for (int i = 0; i < pgroupinfo.nNodes; i++) {
+      int nrankspernode = gp_info.nRanks / nNodes;
+      for (int i = 0; i < gp_info.nNodes; i++) {
         for (int j = 0; j < nrankspernode; j++) {
           allnode2ranks[ring_it->first][i].push_back(
               ring_it->second[i * nrankspernode + j]);
@@ -1910,7 +1906,7 @@ namespace MockNccl {
       std::map<int, std::vector<int>> node2ranks = allnode2ranks_it->second;
       for (DoubleBinaryTreeNode* root : roots) {
         std::map<int, ncclTree> treechannel;
-        for (int rank : pgroupinfo.Ranks) {
+        for (int rank : gp_info.Ranks) {
           ncclTree cur =  ncclTree(-1, rank, -1, {});
           treechannel[rank] = cur;
         }
@@ -1918,16 +1914,7 @@ namespace MockNccl {
         treechannels[channel_id] = treechannel;
         channel_id++;
       }
-      switch (type) {
-        case TP:
-          TPtreechannels[TPrank2group[rank]] = treechannels;
-          break;
-        case DP:
-          DPtreechannels[DPrank2group[rank]] = treechannels;
-          break;
-        default:
-          break;
-      }
+      Alltreechannels[gp_idx] = treechannels;
     }
     return treechannels;
   }
@@ -1960,11 +1947,11 @@ namespace MockNccl {
     }
   }
 
-  std::vector<MockNcclGroup::DoubleBinaryTreeNode*> MockNcclGroup::genInterDouBinTree(GroupInfo pgroupinfo){
+  std::vector<MockNcclGroup::DoubleBinaryTreeNode*> MockNcclGroup::genInterDouBinTree(GroupInfo gp_info){
     vector<DoubleBinaryTreeNode*> q;
     vector<DoubleBinaryTreeNode*> tmp_q;
     vector<DoubleBinaryTreeNode*> result;
-    int nNodes = pgroupinfo.nNodes; 
+    int nNodes = gp_info.nNodes; 
     std::vector<int> nodes;
     for(int i = 0;i < nNodes; i++)
       nodes.push_back(i);
@@ -2044,16 +2031,26 @@ namespace MockNccl {
       AstraSim::ComType op,
       uint64_t data_size) {
     std::string ncclInfoName ;
-    GroupInfo pgroupinfo;
+    GroupInfo gp_info;
+    MockNcclLog* NcclLog = MockNcclLog::getInstance();
+    if(GroupIndex.count(std::make_pair(rank,type))==0){
+      NcclLog->writeLog(NcclLogLevel::ERROR,"There is no corresponding group info, resulting in an error with get_algo_proto_info.");
+      return nullptr;
+    }
+    gp_info = AllGroups[GroupIndex[std::make_pair(rank,type)]];
     switch (type)
     {
     case TP:
       ncclInfoName = "TP";
-      pgroupinfo = TPGroups[TPrank2group[rank]];
       break;
     case DP:
       ncclInfoName = "DP";
-      pgroupinfo = DPGroups[DPrank2group[rank]];
+      break;
+    case EP:
+      ncclInfoName = "EP";
+      break;
+    case DP_EP:
+      ncclInfoName = "DP_EP";
       break;
     default:
       break;
@@ -2079,7 +2076,7 @@ namespace MockNccl {
             if(gpu_type==GPUType::A100||gpu_type==GPUType::A800){
               info->algorithm = NCCL_ALGO_RING;
             }else if(gpu_type==GPUType::H100||gpu_type==GPUType::H800){
-              if (pgroupinfo.nRanks >= 8 && NVLSenable) {
+              if (gp_info.nRanks >= 8 && NVLSenable) {
                 info->algorithm = NCCL_ALGO_NVLS;
               } else {
                 info->algorithm = NCCL_ALGO_RING;
@@ -2093,6 +2090,7 @@ namespace MockNccl {
           break;
       case AstraSim::ComType::All_Gather:
       case AstraSim::ComType::Reduce_Scatter:
+      case AstraSim::ComType::All_to_All:
       default:
           info->algorithm = NCCL_ALGO_RING;
           break;

@@ -49,6 +49,10 @@ class OfflineGreedy;
 enum ParallelStrategy {
     TP,
     DP,
+    PP,
+    EP,
+    DP_EP,
+    NONE
 };
 class Sys : public Callable {
  public:
@@ -397,7 +401,6 @@ class Sys : public Callable {
   struct MockNccl::ncclInfo* get_nccl_Info(ParallelStrategy comm_ps, uint64_t data_size, ComType collective_type);
   bool mock_nccl_comms_init();
   bool mock_nccl_grobal_group_init();
-  std::map<int,std::vector<int>>gen_local_ring(std::vector<int> nums);
 };
 } // namespace AstraSim
 #endif

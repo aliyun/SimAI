@@ -27,6 +27,7 @@ LICENSE file in the root directory of this source tree.
 #include "astra-sim/system/topology/LocalRingNodeA2AGlobalDBT.hh"
 #include "astra-sim/system/topology/Torus3D.hh"
 #include "astra-sim/system/MockNcclLog.h"
+#include "astra-sim/workload/Layer.hh"
 
 #include <algorithm>
 #include <cmath>
@@ -187,10 +188,10 @@ Sys::Sys(
   active_chunks_per_dimension = 1;
   preferred_dataset_splits = 1;
   inp_boost_mode = 0;
-  inp_all_reduce_implementation = "ncclRingFlowModel";
-  inp_all_gather_implementation = "ncclRingFlowModel";
-  inp_reduce_scatter_implementation = "ncclRingFlowModel";
-  inp_all_to_all_implementation = "direct";
+  inp_all_reduce_implementation = "NcclFlowModel";
+  inp_all_gather_implementation = "NcclFlowModel";
+  inp_reduce_scatter_implementation = "NcclFlowModel";
+  inp_all_to_all_implementation = "NcclFlowModel";
   inp_collective_optimization = "baseline";
   bool result = post_process_inputs();
 
@@ -685,9 +686,9 @@ std::vector<CollectiveImplementation*> Sys::
     } else if (dimension_input == "oneHalvingDoubling") {
       result.push_back(new CollectiveImplementation(
           CollectiveImplementationType::OneHalvingDoubling));
-    } else if(dimension_input == "ncclRingFlowModel") {
+    } else if(dimension_input == "NcclFlowModel") {
       result.push_back(new CollectiveImplementation(
-          CollectiveImplementationType::NcclRingFlowModel));
+          CollectiveImplementationType::NcclFlowModel));
     } else if(dimension_input == "ncclRingTreeModel") {
       result.push_back(new CollectiveImplementation(
           CollectiveImplementationType::NcclTreeFlowModel));
@@ -1161,16 +1162,16 @@ CollectivePhase Sys::generate_collective_phase(
                     data_size,
                     boost_mode));
                     return vn;
-          } else if(collective_implementation->type == CollectiveImplementationType::NcclRingFlowModel) {
+          } else if(collective_implementation->type == CollectiveImplementationType::NcclFlowModel) {
               ParallelStrategy  comm_ps;
               if (workload->current_state == Workload::LoopState::Forward_Pass){
-                comm_ps = ParallelStrategy::TP;
+                comm_ps = static_cast<ParallelStrategy> (workload->layers[workload->index]->fwd_pass_group_type);
               }
               else if(workload->current_state == Workload::LoopState::Input_Gradient){
-                comm_ps = ParallelStrategy::TP;
+                comm_ps = static_cast<ParallelStrategy> (workload->layers[workload->index]->input_grad_group_type);
               }
               else if(workload->current_state == Workload::LoopState::Weight_Gradient){
-                comm_ps = ParallelStrategy::DP;
+                comm_ps = static_cast<ParallelStrategy> (workload->layers[workload->index]->weight_grad_group_type);
               }
               MockNccl::ncclInfo *nccl_info;
               std::shared_ptr<void> ptr_FlowModels;
@@ -1345,19 +1346,6 @@ std::map<std::pair<int,int>, MockNccl::SingleFlow> Sys::generate_nvl_test_flow_m
   return result;
 }
 
-std::map<int, std::vector<int>> Sys::gen_local_ring(std::vector<int> gpus) {
-  std::map<int, std::vector<int>> localrings;
-  int n = gpus.size();
-  for (int i = 0; i < n; ++i) {
-    std::vector<int> vec;
-    for (int j = 0; j < n; ++j) {
-      vec.push_back(gpus[(i + j) % n]);
-    }
-    localrings[i] = vec;
-  }
-  return localrings;
-}
-
 bool Sys::mock_nccl_grobal_group_init(){
   if (GlobalGroup != nullptr)
     return true;
@@ -1366,39 +1354,11 @@ bool Sys::mock_nccl_grobal_group_init(){
     int TP_size = workload->model_parallel_npu_group == 0
         ? total_nodes
         : workload->model_parallel_npu_group;
-    GlobalGroup =
-        new MockNccl::MockNcclGroup(all_gpus, TP_size, ngpus_per_node, NVSwitchs,gpu_type);
-    
-    std::map<int,std::vector<int>>TP_localring;
-    std::map<int,std::vector<int>>DP_localring;
-
-    if (TP_size <= ngpus_per_node) {
-      std::vector<int> TP_gpus;
-      for (int i = 0; i < TP_size; i++) {
-        TP_gpus.push_back(i);
-      }
-      TP_localring = gen_local_ring(TP_gpus);
-    } else {
-      std::vector<int> TP_gpus;
-      for (int i = 0; i < ngpus_per_node; i++) {
-        TP_gpus.push_back(i);
-      }
-      TP_localring = gen_local_ring(TP_gpus);
-    }
-
-    if (TP_size <= ngpus_per_node) {
-      std::vector<int> DP_gpus;
-      for (int i = 0; i < ngpus_per_node / TP_size; i++) {
-        DP_gpus.push_back(i * TP_size);
-      }
-      DP_localring = gen_local_ring(DP_gpus);
-    } else {
-      std::vector<int> DP_gpus;
-      DP_gpus.push_back(0);
-      DP_localring = gen_local_ring(DP_gpus);
-    }
-    GlobalGroup->setlocalrings(TP_localring, MockNccl::GroupType::TP);
-    GlobalGroup->setlocalrings(DP_localring, MockNccl::GroupType::DP);
+    int PP_size = 1;
+    int DP_size = all_gpus[0] / (TP_size * PP_size);
+    int EP_size = workload->expert_parallel_npu_group;
+    int DP_EP_size = DP_size / EP_size;
+    GlobalGroup = new MockNccl::MockNcclGroup(all_gpus[0],ngpus_per_node,TP_size,DP_size,PP_size,EP_size,DP_EP_size,NVSwitchs,gpu_type);
     return true;
   }
 }
@@ -1407,7 +1367,10 @@ bool Sys::mock_nccl_comms_init(){
     int TP_size = workload->model_parallel_npu_group == 0
        ? total_nodes
        : workload->model_parallel_npu_group;
-    int DP_size = total_nodes / TP_size;
+    int PP_size = 1;
+    int DP_size = total_nodes / (TP_size * PP_size);
+    int EP_size = workload->expert_parallel_npu_group;
+    int DP_EP_size = DP_size / EP_size;
     MockNccl::MockNcclComm* pComm;
     if (TP_size > 1) {
       pComm = new MockNccl::MockNcclComm(id,MockNccl::GroupType::TP,GlobalGroup);
@@ -1417,6 +1380,14 @@ bool Sys::mock_nccl_comms_init(){
       pComm = new MockNccl::MockNcclComm(id,MockNccl::GroupType::DP,GlobalGroup);
       mock_nccl_comms[DP] = pComm;
     }
+    if(EP_size > 1 ){
+      pComm = new MockNccl::MockNcclComm(id,MockNccl::GroupType::EP,GlobalGroup);
+      mock_nccl_comms[EP] = pComm;
+    }
+    if(DP_EP_size > 1){
+      pComm = new MockNccl::MockNcclComm(id,MockNccl::GroupType::DP_EP,GlobalGroup);
+      mock_nccl_comms[DP_EP] = pComm;
+    }
     return true;
 }
 
@@ -1425,12 +1396,6 @@ struct MockNccl::ncclInfo* Sys::get_nccl_Info(ParallelStrategy comm_ps, uint64_t
 }
 
 std::shared_ptr<void> Sys::generate_flow_model(ParallelStrategy comm_ps, uint64_t data_size, ComType collective_type) {
-    std::string flow_model_name;
-    if (comm_ps == ParallelStrategy::TP) {
-        flow_model_name = "TP";
-    } else if (comm_ps == ParallelStrategy::DP) {
-        flow_model_name = "DP";
-    }
     MockNccl::MockNcclComm* pComm = mock_nccl_comms[comm_ps];
     MockNccl::State current_state;
     switch (this->workload->current_state) {

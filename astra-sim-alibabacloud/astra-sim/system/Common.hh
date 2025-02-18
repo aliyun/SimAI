@@ -40,7 +40,7 @@ enum class CollectiveImplementationType {
   DoubleBinaryTree,
   HalvingDoubling,  
   OneHalvingDoubling,
-  NcclRingFlowModel,
+  NcclFlowModel,
   NcclTreeFlowModel,
 };
 enum class CollectiveBarrier { Blocking, Non_Blocking };

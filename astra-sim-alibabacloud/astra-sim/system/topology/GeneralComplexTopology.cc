@@ -45,7 +45,7 @@ GeneralComplexTopology::GeneralComplexTopology(
         collective_implementation[dim]->type ==
             CollectiveImplementationType::HalvingDoubling ||
         collective_implementation[dim]->type ==
-            CollectiveImplementationType::NcclRingFlowModel || 
+            CollectiveImplementationType::NcclFlowModel || 
         collective_implementation[dim]->type ==
             CollectiveImplementationType::NcclTreeFlowModel) {
       RingTopology* ring = new RingTopology(
