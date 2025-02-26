@@ -120,13 +120,13 @@ void Workload::call(EventType event, CallData* data) {
 void Workload::report() {
   double total_compute = 0;
   double total_exposed = 0;
-  #ifdef ANALYTI
+  // #ifdef ANALYTI
   double pre_bubble_time = 0;
   double DP_comm = 0;
   double DP_EP_comm = 0;
   double Expose_TP_comm = 0;
   double Expose_EP_comm = 0;
-  #endif
+  // #endif
   std::vector<double> total_fwd_time = {0, 0, 0};
   std::vector<double> total_wg_time = {0, 0, 0};
   std::vector<double> total_ig_time = {0, 0, 0};
@@ -165,7 +165,12 @@ void Workload::report() {
         this->seprate_log,
         total_fwd_time,
         total_wg_time,
-        total_ig_time));
+        total_ig_time,
+        pre_bubble_time,
+        DP_comm,
+        DP_EP_comm,
+        Expose_TP_comm,
+        Expose_EP_comm));
     #endif
   }
   astraSimDataAPI.total_compute = total_compute;
@@ -803,6 +808,9 @@ void Workload::iterate_hybrid_parallel_Transformer_fwd_in_bckwd() {
     }
     if (!collective_issued) {
       collective_issued = true;
+      if(layers[index]->fwd_pass_comm_size < 4096 && layers[index]->fwd_pass_comm_size >0){
+        layers[index]->fwd_pass_comm_size = 4096;
+      }
       layers[index]->issue_forward_pass_comm(
           SchedulingPolicy::None, CollectiveBarrier::Blocking);
       return;

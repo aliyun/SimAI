@@ -133,7 +133,12 @@ class Layer : public Callable, public StreamStat {
       bool seprate_log,
       vector<double>& total_fwd_time,
       vector<double>& total_wg_time,
-      vector<double>& total_ig_time);
+      vector<double>& total_ig_time,
+      double& pre_bubble_time,
+      double& DP_comm,
+      double& DP_EP_comm,
+      double& Expose_TP_comm,
+      double& Expose_EP_comm);
   LayerData report(
       std::string run_name,
       int layer_num,
