@@ -198,7 +198,7 @@ The following tables give the description of parameters in layer level, and show
 |                 | `-l`       | NIC latency |
 | Intra-Segment   | `-bw`      | NIC to ASW bandwidth |
 |                 | `-asw`     | ASW switch num |
-|                 | `-nps`     | NICs per switch |
+|                 | `-nps`     | NICs per switch (Connected GPUs per ASW) |
 | Intra-Pod       | `-psn`     | PSW switch num |
 |                 | `-apbw`    | ASW to PSW bandwidth |
 |                 | `-app`     | ASW per PSW |
@@ -297,7 +297,7 @@ AS_SEND_LAT=2 AS_PXN_ENABLE=1 ./bin/SimAI_simulator -t 8 -w ./example/microAllRe
 | 512M     | 218.09 | 166.68 |
 
 
-## HPN 7.0 architecture VS DCN+ architecture
+## Spectrum-X architecture VS DCN+ architecture
 ### workload
 ```bash
 HYBRID_TRANSFORMER_FWD_IN_BCKWD model_parallel_NPU_group: 8 ep: 1 pp: 1 vpp: 8 ga: 1 all_gpus: 256 checkpoints: 0 checkpoint_initiates: 0

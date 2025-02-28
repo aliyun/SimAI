@@ -344,13 +344,22 @@ LayerData Layer::report(
     bool seprate_log,
     vector<double>& total_fwd_time,
     vector<double>& total_wg_time,
-    vector<double>& total_ig_time) {
+    vector<double>& total_ig_time,
+    double& pre_bubble_time,
+    double& DP_comm,
+    double& DP_EP_comm,
+    double& Expose_TP_comm,
+    double& Expose_EP_comm) {
   LayerData layerData;
   take_stream_stats_average();
   int TP_size = workload->model_parallel_npu_group;
   int PP_size = workload->pipeline_model_parallelism;
   int DP_size = workload->all_gpus / (TP_size * PP_size);
   int EP_size = workload->expert_parallel_npu_group;
+  int vpp = workload->vpp;
+  uint32_t pp_commsize = workload->pp_commsize;
+  int GA = workload->GA;
+  UserParam* param = UserParam::getInstance();
   int input_grad_group_size =
       input_grad_group_type == MockNccl::GroupType::EP ? EP_size : TP_size;
   int fwd_pass_group_size =
@@ -358,6 +367,21 @@ LayerData Layer::report(
   int weight_grad_group_size =
       weight_grad_group_type == MockNccl::GroupType::DP_EP ? DP_size / EP_size
                                                            : DP_size;
+  if (id != "embedding_layer"){
+      pre_bubble_time += ((total_waiting_for_fwd_comm + total_forward_pass_compute + total_weight_grad_compute + total_input_grad_compute + total_waiting_for_ig_comm) / FREQ);
+    }
+  if(weight_grad_group_type == MockNccl::GroupType::DP_EP){
+    DP_EP_comm += (total_waiting_for_wg_comm / FREQ);
+  }
+  else{
+    DP_comm += (total_waiting_for_wg_comm / FREQ);
+  }
+  if(fwd_pass_group_type == MockNccl::GroupType::EP){
+    Expose_EP_comm += ((total_waiting_for_fwd_comm + total_waiting_for_ig_comm) / FREQ);
+  }
+  else{
+    Expose_TP_comm += ((total_waiting_for_fwd_comm + total_waiting_for_ig_comm) / FREQ);
+  }
   total_compute += (total_forward_pass_compute / FREQ);
   total_compute += (total_weight_grad_compute / FREQ);
   total_compute += (total_input_grad_compute / FREQ);
@@ -474,6 +498,39 @@ LayerData Layer::report(
       double total_time = total_compute + total_exposed;
       data = "total exposed comm," + to_string(total_exposed) + ",total comp," + to_string(total_compute) + ",total time," + to_string(total_time);
       EndToEnd->write_line(data);
+
+      Tick Expose_PP_time = (2 * vpp * GA * (pp_commsize * GBps / (param->net_work_param.pp) * 1e9) / FREQ );
+      Expose_PP_time *= (1-param->net_work_param.pp_overlap_ratio) ;
+      //pp bubble time
+      pre_bubble_time *= static_cast<double>(PP_size - 1) / (GA * vpp);
+      auto format_value = [](double value) {
+        std::ostringstream stream;
+       if (std::isfinite(value)) {
+           stream << std::fixed << std::setprecision(0) << value;
+       } else {
+           stream << "NaN or Inf";
+       }
+        return stream.str();
+      };
+      auto format_percentage = [&](double value) {
+        double percentage = (value / total_time) * 100;
+        std::ostringstream stream;
+        stream << std::fixed << std::setprecision(2) << percentage;
+        return stream.str() + "%";
+        };
+      std::string keys = "File name, Expose DP comm, Expose DP_EP comm, Expose TP comm, Expose_EP_comm, Expose_PP_comm, bubble time, total comp, total exposed comm, Total time";
+      std::string values = run_name + ", " +
+                          format_value(DP_comm) + " (" + format_percentage(DP_comm) + "), " +
+                          format_value(DP_EP_comm) + " (" + format_percentage(DP_EP_comm) + "), " +
+                          format_value(Expose_TP_comm) + " (" + format_percentage(Expose_TP_comm) + "), " +
+                          format_value(Expose_EP_comm) + " (" + format_percentage(Expose_EP_comm) + "), " +
+                          format_value(Expose_PP_time) + " (" + format_percentage(Expose_PP_time) + "), " +
+                          format_value(pre_bubble_time) + " (" + format_percentage(pre_bubble_time) + "), " +
+                          format_value(total_compute) + " (" + format_percentage(total_compute) + "), " +
+                          format_value(total_exposed) + " (" + format_percentage(total_exposed) + "), " +
+                          format_value(total_time);
+      data = keys + "\n" + values;
+      EndToEnd->write_res(data);
     }
   }
   return layerData;
