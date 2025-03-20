@@ -1215,7 +1215,7 @@ bool Workload::initialize_workload(std::string name) {
                 while(account-- >0){
                   int j = 2;
                   int layer = std::stoi(tokens[i+j]);
-                  chekpoints[layer] = true;
+                  need_checkpoint_initiation[layer] = true;
                   if (generator->id == 0) {
                     std::cout << layer << ", ";
                   }
