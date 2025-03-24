@@ -352,7 +352,7 @@ $ ./scripts/build.sh -c ns3
 $ sudo yum install openmpi openmpi-devel
 $ export MPI_INCLUDE_PATH=/usr/include/openmpi-x86_64/ 
 $ export MPI_BIN_PATH=/usr/lib64/openmpi/bin/mpic++	
-$ ./scripts/build.sh -c Phy
+$ ./scripts/build.sh -c phy
 ```
 ## Workload Generate
 The workload required for SimAI-Phy physical traffic generation is the same as that for Sim-Simulation, and it is generated through AICB.
