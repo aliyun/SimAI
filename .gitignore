@@ -13,3 +13,4 @@ test/log/
 
 **/build
 **/cmake-cache
+!astra-sim-alibabacloud/build
