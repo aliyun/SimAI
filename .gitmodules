@@ -1,7 +1,3 @@
-[submodule "SimCCL"]
-	path = SimCCL
-	url = https://github.com/aliyun/SimCCL
-	branch = master
 [submodule "aicb"]
 	path = aicb
 	url = https://github.com/aliyun/aicb
