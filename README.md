@@ -1,5 +1,6 @@
 # Lastest News
-
+### Update of SimCCL
+The code of SimCCL is first released in the branch [SimCCL](https://github.com/aliyun/SimAI/tree/SimCCL) and will be released in SimCCL repository soon.
 <div align="center">
 🎯 <b>Events & Community Engagement</b> 🎯
 
