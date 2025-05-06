@@ -23,7 +23,7 @@
 #include <iostream>
 #include <time.h>
 #include <unordered_map>
-
+#include "config.h"
 #include "ns3/applications-module.h"
 #include "ns3/core-module.h"
 #include "ns3/error-model.h"
@@ -47,11 +47,14 @@ using namespace ns3;
 using namespace std;
 
 NS_LOG_COMPONENT_DEFINE("GENERIC_SIMULATION");
-
-uint32_t cc_mode = 1;
-bool enable_qcn = true, use_dynamic_pfc_threshold = true;
-uint32_t packet_payload_size = 1000, l2_chunk_size = 0, l2_ack_interval = 0;
-double pause_time = 5, simulator_stop_time = 3.01;
+class ConfigBase;
+extern std::unordered_map<std::string, std::unique_ptr<ConfigBase>> config_map;
+extern std::unordered_map<std::string, std::unique_ptr<ConfigBase>> config_map_ns3; // 存储用户配置的ns3配置用于读取
+EventId monitor_qlen_event;
+EventId monitor_bw_event;
+EventId monitor_qp_rate_event;
+EventId monitor_qp_cnp_num_event;
+double simulator_stop_time = 3.01;
 std::string data_rate, link_delay, topology_file, flow_file, trace_file,
     trace_output_file;
 std::string fct_output_file = "fct.txt";
@@ -83,10 +86,11 @@ int nic_total_pause_time =
 uint32_t ack_high_prio = 0;
 uint64_t link_down_time = 0;
 uint32_t link_down_A = 0, link_down_B = 0;
-
+vector<uint64_t> link_down; 
 uint32_t enable_trace = 1;
 
 uint32_t buffer_size = 16;
+double sw_forward_delay = 0.0;
 
 uint32_t node_num, switch_num, link_num, trace_num, nvswitch_num, gpus_per_server;
 GPUType gpu_type;
@@ -182,18 +186,20 @@ void monitor_qlen(FILE* qlen_output, NodeContainer *n){
 }
 void monitor_bw(FILE* bw_output, NodeContainer *n){
 	for (uint32_t i = 0; i < n->GetN(); i++){
-		if(n->Get(i)->GetNodeType() == 1){ 
+		if(n->Get(i)->GetNodeType() == 1){ // is switch
 			Ptr<SwitchNode> sw = DynamicCast<SwitchNode>(n->Get(i));
 			sw->PrintSwitchBw(bw_output, bw_mon_interval);
-		}else if(n->Get(i)->GetNodeType() == 2){ 
+		}else if(n->Get(i)->GetNodeType() == 2){ // is nvswitch
 			Ptr<NVSwitchNode> sw = DynamicCast<NVSwitchNode>(n->Get(i));
 			sw->PrintSwitchBw(bw_output, bw_mon_interval);
-		}else{ 
+		}else{ // is host
 			Ptr<Node> host = n->Get(i);
 			host->GetObject<RdmaDriver>()->m_rdma->PrintHostBW(bw_output, bw_mon_interval);
 		}
 	}
-	Simulator::Schedule(MicroSeconds(bw_mon_interval), &monitor_bw, bw_output, n);
+	if (bw_mon_interval + Simulator::Now().GetMicroSeconds() < mon_end) {
+    monitor_bw_event = Simulator::Schedule(MicroSeconds(bw_mon_interval), &monitor_bw, bw_output, n);
+  }
 }
 void monitor_qp_rate(FILE* rate_output, NodeContainer *n){
 	for(uint32_t i = 0; i < n->GetN(); i++){
@@ -219,7 +225,6 @@ void schedule_monitor(){
 	fprintf(qlen_output, "%s, %s, %s, %s, %s, %s\n", "time", "sw_id", "port_id", "q_id", "q_len", "port_len");
 	fflush(qlen_output);
 	Simulator::Schedule(MicroSeconds(mon_start), &monitor_qlen, qlen_output, &n);
-
 	FILE* bw_output = fopen(bw_mon_file.c_str(), "w");
 	assert(bw_output != nullptr);
 	fprintf(bw_output, "%s, %s, %s, %s\n", "time", "node_id", "port_id", "bandwidth");
@@ -260,8 +265,9 @@ void CalculateRoute(Ptr<Node> host) {
       if (dis.find(next) == dis.end()) {
         dis[next] = d + 1;
         delay[next] = delay[now] + it->second.delay;
+        uint32_t payload = get_config_value_ns3<uint64_t>("ns3::RdmaHw::Mtu");
         txDelay[next] = txDelay[now] +
-                        packet_payload_size * 1000000000lu * 8 / it->second.bw;
+                        payload * 1000000000lu * 8 / it->second.bw;
         bw[next] = std::min(bw[now], it->second.bw);
         if (next->GetNodeType() == 1 || next->GetNodeType() == 2) {
           q.push_back(next);
@@ -456,224 +462,181 @@ uint64_t get_nic_rate(NodeContainer &n) {
           ->GetDataRate()
           .GetBitRate();
 }
+void InitConfigMap() {
+  /************************************************
+   * Value Config
+   ***********************************************/
+  config_map["SIMULATOR_STOP_TIME"] =
+      std::make_unique<ConfigVar<double>>(simulator_stop_time);
+  config_map["DATA_RATE"] = std::make_unique<ConfigVar<std::string>>(data_rate);
+  config_map["LINK_DELAY"] =
+      std::make_unique<ConfigVar<std::string>>(link_delay);
+  config_map["TOPOLOGY_FILE"] =
+      std::make_unique<ConfigVar<std::string>>(topology_file);
+  config_map["FLOW_FILE"] = std::make_unique<ConfigVar<std::string>>(flow_file);
+  config_map["TRACE_FILE"] =
+      std::make_unique<ConfigVar<std::string>>(trace_file);
+  config_map["TRACE_OUTPUT_FILE"] =
+      std::make_unique<ConfigVar<std::string>>(trace_output_file);
+  config_map["FCT_OUTPUT_FILE"] =
+      std::make_unique<ConfigVar<std::string>>(fct_output_file);
+  config_map["PFC_OUTPUT_FILE"] =
+      std::make_unique<ConfigVar<std::string>>(pfc_output_file);
+  config_map["SEND_OUTPUT_FILE"] =
+      std::make_unique<ConfigVar<std::string>>(send_output_file);
+  config_map["ERROR_RATE_PER_LINK"] =
+      std::make_unique<ConfigVar<double>>(error_rate_per_link);
+  config_map["HAS_WIN"] = std::make_unique<ConfigVar<uint32_t>>(has_win);
+  config_map["GLOBAL_T"] = std::make_unique<ConfigVar<uint32_t>>(global_t);
+  config_map["PINT_LOG_BASE"] =
+      std::make_unique<ConfigVar<double>>(pint_log_base);
+  config_map["INT_MULTI"] = std::make_unique<ConfigVar<uint32_t>>(int_multi);
+  config_map["ACK_HIGH_PRIO"] =
+      std::make_unique<ConfigVar<uint32_t>>(ack_high_prio);
+  config_map["LINK_DOWN"] =
+      std::make_unique<ConfigVar<vector<uint64_t>>>(link_down);
+  config_map["ENABLE_TRACE"] =
+      std::make_unique<ConfigVar<uint32_t>>(enable_trace);
+  config_map["BUFFER_SIZE"] =
+      std::make_unique<ConfigVar<uint32_t>>(buffer_size);
+  config_map["SWITCH_FORWARD_DELAY"] =
+      std::make_unique<ConfigVar<double>>(sw_forward_delay);
+  config_map["QP_MON_INTERVAL"] =
+      std::make_unique<ConfigVar<uint32_t>>(qp_mon_interval);
+  config_map["QLEN_MON_INTERVAL"] =
+      std::make_unique<ConfigVar<uint32_t>>(qlen_mon_interval);
+  config_map["BW_MON_INTERVAL"] = 
+      std::make_unique<ConfigVar<uint32_t>>(bw_mon_interval);
+  config_map["MON_START"] = std::make_unique<ConfigVar<uint64_t>>(mon_start);
+  config_map["MON_END"] = std::make_unique<ConfigVar<uint64_t>>(mon_end);
+  config_map["QLEN_MON_FILE"] =
+      std::make_unique<ConfigVar<string>>(qlen_mon_file);
+  config_map["BW_MON_FILE"] = std::make_unique<ConfigVar<string>>(bw_mon_file);
+  // config_map["TX_BW_MON_FILE"] = std::make_unique<ConfigVar<string>>(tx_bw_mon_file);
+  // config_map["RX_BW_MON_FILE"] = std::make_unique<ConfigVar<string>>(rx_bw_mon_file);
+  config_map["RATE_MON_FILE"] =
+      std::make_unique<ConfigVar<string>>(rate_mon_file);
+  config_map["CNP_MON_FILE"] =
+      std::make_unique<ConfigVar<string>>(cnp_mon_file);
+  config_map["KMAX_MAP"] =
+      std::make_unique<ConfigVar<unordered_map<uint64_t, uint32_t>>>(rate2kmax);
+  config_map["KMIN_MAP"] =
+      std::make_unique<ConfigVar<unordered_map<uint64_t, uint32_t>>>(rate2kmin);
+  config_map["PMAX_MAP"] =
+      std::make_unique<ConfigVar<unordered_map<uint64_t, double>>>(rate2pmax);
 
+  /************************************************
+   * NS3 Config
+   ***********************************************/
+  // QbbNetDevice
+  config_map["ENABLE_QCN"] =
+      std::make_unique<ConfigNs3<bool>>("ns3::QbbNetDevice::QcnEnabled", true);
+  config_map["USE_DYNAMIC_PFC_THRESHOLD"] = std::make_unique<ConfigNs3<bool>>(
+      "ns3::QbbNetDevice::DynamicThreshold", true);
+  config_map["PAUSE_TIME"] =
+      std::make_unique<ConfigNs3<uint32_t>>("ns3::QbbNetDevice::PauseTime", 5);
+  // RdmaHw
+  config_map["CC_MODE"] =
+      std::make_unique<ConfigNs3<uint32_t>>("ns3::RdmaHw::CcMode", 1);
+  config_map["PACKET_PAYLOAD_SIZE"] =
+      std::make_unique<ConfigNs3<uint32_t>>("ns3::RdmaHw::Mtu", 1000);
+  config_map["L2_CHUNK_SIZE"] =
+      std::make_unique<ConfigNs3<uint32_t>>("ns3::RdmaHw::L2ChunkSize", 0);
+  config_map["L2_ACK_INTERVAL"] =
+      std::make_unique<ConfigNs3<uint32_t>>("ns3::RdmaHw::L2AckInterval", 0);
+  config_map["L2_BACK_TO_ZERO"] =
+      std::make_unique<ConfigNs3<bool>>("ns3::RdmaHw::L2BackToZero", false);
+  config_map["RATE_AI"] =
+      std::make_unique<ConfigNs3<std::string>>("ns3::RdmaHw::RateAI");
+  config_map["RATE_HAI"] =
+      std::make_unique<ConfigNs3<std::string>>("ns3::RdmaHw::RateHAI");
+  config_map["MIN_RATE"] = std::make_unique<ConfigNs3<std::string>>(
+      "ns3::RdmaHw::MinRate", "100Mb/s");
+  config_map["VAR_WIN"] =
+      std::make_unique<ConfigNs3<bool>>("ns3::RdmaHw::VarWin", false);
+  config_map["RATE_BOUND"] =
+      std::make_unique<ConfigNs3<bool>>("ns3::RdmaHw::RateBound", true);
+  config_map["NIC_TOTAL_PAUSE_TIME"] = std::make_unique<ConfigNs3<uint32_t>>(
+      "ns3::RdmaHw::TotalPauseTime",
+      0); // slightly less than finish time without inefficiency in us
+  // MellanoxDcqcn
+  config_map["ALPHA_RESUME_INTERVAL"] = std::make_unique<ConfigNs3<double>>(
+      "ns3::MellanoxDcqcn::AlphaResumInterval", 55.0);
+  config_map["RP_TIMER"] =
+      std::make_unique<ConfigNs3<double>>("ns3::MellanoxDcqcn::RPTimer", 0.01);
+  config_map["EWMA_GAIN"] = std::make_unique<ConfigNs3<double>>(
+      "ns3::MellanoxDcqcn::EwmaGain", 1 / 16);
+  config_map["RATE_DECREASE_INTERVAL"] = std::make_unique<ConfigNs3<double>>(
+      "ns3::MellanoxDcqcn::RateDecreaseInterval", 4);
+  config_map["FAST_RECOVERY_TIMES"] = std::make_unique<ConfigNs3<uint32_t>>(
+      "ns3::MellanoxDcqcn::FastRecoveryTimes", 5);
+  config_map["CLAMP_TARGET_RATE"] = std::make_unique<ConfigNs3<bool>>(
+      "ns3::MellanoxDcqcn::ClampTargetRate", false);
+  // Dctcp
+  config_map["DCTCP_RATE_AI"] = std::make_unique<ConfigNs3<std::string>>(
+      "ns3::Dctcp::DctcpRateAI", "1000Mb/s");
+  // Hpcc
+  config_map["MI_THRESH"] =
+      std::make_unique<ConfigNs3<uint32_t>>("ns3::Hpcc::MiThresh", 5);
+  config_map["FAST_REACT"] =
+      std::make_unique<ConfigNs3<bool>>("ns3::Hpcc::FastReact", true);
+  config_map["MULTI_RATE"] =
+      std::make_unique<ConfigNs3<bool>>("ns3::Hpcc::MultiRate", true);
+  config_map["SAMPLE_FEEDBACK"] =
+      std::make_unique<ConfigNs3<bool>>("ns3::Hpcc::SampleFeedback", false);
+  config_map["U_TARGET"] =
+      std::make_unique<ConfigNs3<double>>("ns3::Hpcc::TargetUtil", 0.95);
+  // HpccPint
+  config_map["PINT_PROB"] =
+      std::make_unique<ConfigNs3<double>>("ns3::HpccPint::PintProb", 1.0);
+}
 bool ReadConf(string network_topo,string network_conf) {
 
     std::ifstream conf;
     conf.open(network_conf);
+    InitConfigMap();
+    string line;
     topology_file = network_topo;
     while (!conf.eof()) {
+      std::getline(conf, line);
+      if(line == "" || line == "\n"){
+        continue;
+      }
+      if(line[0] == '#'){ // comment. Now only support comment at the beginning
+        continue;
+      }
+      std::istringstream iss(line);
       std::string key;
-      conf >> key;
-
-      if (key.compare("ENABLE_QCN") == 0) {
-        uint32_t v;
-        conf >> v;
-        enable_qcn = v;
-      } else if (key.compare("USE_DYNAMIC_PFC_THRESHOLD") == 0) {
-        uint32_t v;
-        conf >> v;
-        use_dynamic_pfc_threshold = v;
-      } else if (key.compare("CLAMP_TARGET_RATE") == 0) {
-        uint32_t v;
-        conf >> v;
-        clamp_target_rate = v;
-      } else if (key.compare("PAUSE_TIME") == 0) {
-        double v;
-        conf >> v;
-        pause_time = v;
-      } else if (key.compare("DATA_RATE") == 0) {
-        std::string v;
-        conf >> v;
-        data_rate = v;
-      } else if (key.compare("LINK_DELAY") == 0) {
-        std::string v;
-        conf >> v;
-        link_delay = v;
-      } else if (key.compare("PACKET_PAYLOAD_SIZE") == 0) {
-        uint32_t v;
-        conf >> v;
-        packet_payload_size = v;
-      } else if (key.compare("L2_CHUNK_SIZE") == 0) {
-        uint32_t v;
-        conf >> v;
-        l2_chunk_size = v;
-      } else if (key.compare("L2_ACK_INTERVAL") == 0) {
-        uint32_t v;
-        conf >> v;
-        l2_ack_interval = v;
-      } else if (key.compare("L2_BACK_TO_ZERO") == 0) {
-        uint32_t v;
-        conf >> v;
-        l2_back_to_zero = v;
-      } else if (key.compare("FLOW_FILE") == 0) {
-        std::string v;
-        conf >> v;
-        flow_file = v;
-      } else if (key.compare("TRACE_FILE") == 0) {
-        std::string v;
-        conf >> v;
-        trace_file = v;
-      } else if (key.compare("TRACE_OUTPUT_FILE") == 0) {
-        std::string v;
-        conf >> v;
-        trace_output_file = v;
-      } else if (key.compare("SIMULATOR_STOP_TIME") == 0) {
-        double v;
-        conf >> v;
-        simulator_stop_time = v;
-      } else if (key.compare("ALPHA_RESUME_INTERVAL") == 0) {
-        double v;
-        conf >> v;
-        alpha_resume_interval = v;
-      } else if (key.compare("RP_TIMER") == 0) {
-        double v;
-        conf >> v;
-        rp_timer = v;
-      } else if (key.compare("EWMA_GAIN") == 0) {
-        double v;
-        conf >> v;
-        ewma_gain = v;
-      } else if (key.compare("FAST_RECOVERY_TIMES") == 0) {
-        uint32_t v;
-        conf >> v;
-        fast_recovery_times = v;
-      } else if (key.compare("RATE_AI") == 0) {
-        std::string v;
-        conf >> v;
-        rate_ai = v;
-      } else if (key.compare("RATE_HAI") == 0) {
-        std::string v;
-        conf >> v;
-        rate_hai = v;
-      } else if (key.compare("ERROR_RATE_PER_LINK") == 0) {
-        double v;
-        conf >> v;
-        error_rate_per_link = v;
-      } else if (key.compare("CC_MODE") == 0) {
-        conf >> cc_mode;
-      } else if (key.compare("RATE_DECREASE_INTERVAL") == 0) {
-        double v;
-        conf >> v;
-        rate_decrease_interval = v;
-      } else if (key.compare("MIN_RATE") == 0) {
-        conf >> min_rate;
-      } else if (key.compare("FCT_OUTPUT_FILE") == 0) {
-        conf >> fct_output_file;
-      } else if (key.compare("HAS_WIN") == 0) {
-        conf >> has_win;
-      } else if (key.compare("GLOBAL_T") == 0) {
-        conf >> global_t;
-        global_t = 1;
-      } else if (key.compare("MI_THRESH") == 0) {
-        conf >> mi_thresh;
-      } else if (key.compare("VAR_WIN") == 0) {
-        uint32_t v;
-        conf >> v;
-        var_win = v;
-      } else if (key.compare("FAST_REACT") == 0) {
-        uint32_t v;
-        conf >> v;
-        fast_react = v;
-      } else if (key.compare("U_TARGET") == 0) {
-        conf >> u_target;
-      } else if (key.compare("INT_MULTI") == 0) {
-        conf >> int_multi;
-      } else if (key.compare("RATE_BOUND") == 0) {
-        uint32_t v;
-        conf >> v;
-        rate_bound = v;
-      } else if (key.compare("ACK_HIGH_PRIO") == 0) {
-        conf >> ack_high_prio;
-      } else if (key.compare("DCTCP_RATE_AI") == 0) {
-        conf >> dctcp_rate_ai;
-      } else if (key.compare("NIC_TOTAL_PAUSE_TIME") == 0) {
-        conf >> nic_total_pause_time;
-      } else if (key.compare("PFC_OUTPUT_FILE") == 0) {
-        conf >> pfc_output_file;
-      } else if (key.compare("LINK_DOWN") == 0) {
-        conf >> link_down_time >> link_down_A >> link_down_B;
-      } else if (key.compare("ENABLE_TRACE") == 0) {
-        conf >> enable_trace;
-      } else if (key.compare("KMAX_MAP") == 0) {
-        int n_k;
-        conf >> n_k;
-        for (int i = 0; i < n_k; i++) {
-          uint64_t rate;
-          uint32_t k;
-          conf >> rate >> k;
-          rate2kmax[rate] = k;
-        }
-      } else if (key.compare("KMIN_MAP") == 0) {
-        int n_k;
-        conf >> n_k;
-        for (int i = 0; i < n_k; i++) {
-          uint64_t rate;
-          uint32_t k;
-          conf >> rate >> k;
-          rate2kmin[rate] = k;
-        }
-      } else if (key.compare("PMAX_MAP") == 0) {
-        int n_k;
-        conf >> n_k;
-        for (int i = 0; i < n_k; i++) {
-          uint64_t rate;
-          double p;
-          conf >> rate >> p;
-          rate2pmax[rate] = p;
-        }
-      } else if (key.compare("BUFFER_SIZE") == 0) {
-        conf >> buffer_size;
-      } else if (key.compare("QLEN_MON_FILE") == 0){
-				conf >> qlen_mon_file;
-				qlen_mon_file = get_output_file_name(network_conf, qlen_mon_file);
-			}else if(key.compare("BW_MON_FILE") == 0){
-				conf >> bw_mon_file;
-				bw_mon_file = get_output_file_name(network_conf, bw_mon_file);
-			}else if(key.compare("RATE_MON_FILE") == 0){
-				conf >> rate_mon_file;
-				rate_mon_file = get_output_file_name(network_conf, rate_mon_file);
-			}else if(key.compare("CNP_MON_FILE") == 0){
-				conf >> cnp_mon_file;
-				cnp_mon_file = get_output_file_name(network_conf, cnp_mon_file);
-			}else if (key.compare("MON_START") == 0){
-				conf >> mon_start;
-			}else if (key.compare("MON_END") == 0){
-				conf >> mon_end;
-			}else if(key.compare("QP_MON_INTERVAL") == 0){
-				conf >> qp_mon_interval;
-			}else if(key.compare("BW_MON_INTERVAL") == 0){
-				conf >> bw_mon_interval;
-			}else if(key.compare("QLEN_MON_INTERVAL") == 0){
-				conf >> qlen_mon_interval;
-      } else if (key.compare("MULTI_RATE") == 0) {
-        int v;
-        conf >> v;
-        multi_rate = v;
-      } else if (key.compare("SAMPLE_FEEDBACK") == 0) {
-        int v;
-        conf >> v;
-        sample_feedback = v;
-      } else if (key.compare("PINT_LOG_BASE") == 0) {
-        conf >> pint_log_base;
-      } else if (key.compare("PINT_PROB") == 0) {
-        conf >> pint_prob;
+      if (!(iss >> key)) {
+        continue;
+      }
+      std::string value;
+      std::getline(iss, value);
+      if (!value.empty() && value.front() == ' ') {
+        value.erase(0, 1);
+      }
+      // 去除value结尾的\r
+      if (value.back() == '\r') {
+        value.pop_back();
+      }
+      if(config_map.find(key) != config_map.end()){
+        config_map[key]->set_value(value);
+      }else if(key.substr(0, 5) == "ns3::"){
+        // Try to set ns3 config directly
+        Ns3ConfigMethods::ParseAndSetConfigDefault(key, value);
+      }else {
+        std::cout << "Error: key not found: " << key << std::endl;
       }
       fflush(stdout);
     }
+    std::cout << "read config done!" << std::endl;
     conf.close();
     return true;
 }
 
 void SetConfig() {
-  bool dynamicth = use_dynamic_pfc_threshold;
-
-  Config::SetDefault("ns3::QbbNetDevice::PauseTime", UintegerValue(pause_time));
-  Config::SetDefault("ns3::QbbNetDevice::QcnEnabled", BooleanValue(enable_qcn));
-  Config::SetDefault("ns3::QbbNetDevice::DynamicThreshold",
-                     BooleanValue(dynamicth));
-
   IntHop::multi = int_multi;
+  uint32_t cc_mode = get_config_value_ns3<uint64_t>("ns3::RdmaHw::CcMode");
   if (cc_mode == 7) 
     IntHeader::mode = IntHeader::TS;
   else if (cc_mode == 3) 
@@ -691,7 +654,11 @@ void SetConfig() {
   }
 }
 
-void SetupNetwork(void (*qp_finish)(FILE *, Ptr<RdmaQueuePair>),void (*send_finish)(FILE *, Ptr<RdmaQueuePair>)) {
+void SetupNetwork(
+    void (*qp_finish)(FILE *, Ptr<RdmaQueuePair>),
+    void (*message_finish)(FILE*, Ptr<RdmaQueuePair>, uint64_t, uint64_t),
+    void (*send_finish)(FILE *, Ptr<RdmaQueuePair>, uint64_t, uint64_t)
+    ) {
 
   topof.open(topology_file.c_str());
   flowf.open(flow_file.c_str());
@@ -732,7 +699,8 @@ void SetupNetwork(void (*qp_finish)(FILE *, Ptr<RdmaQueuePair>),void (*send_fini
 		else if(node_type[i] == 1){
 			Ptr<SwitchNode> sw = CreateObject<SwitchNode>();
 			n.Add(sw);
-			sw->SetAttribute("EcnEnabled", BooleanValue(enable_qcn));
+			sw->SetAttribute("EcnEnabled", BooleanValue(get_config_value_ns3<bool>("ns3::QbbNetDevice::QcnEnabled")));
+      sw->SetAttribute("ForwardDelay", DoubleValue(sw_forward_delay));
 		}else if(node_type[i] == 2){
 			Ptr<NVSwitchNode> sw = CreateObject<NVSwitchNode>();
 			n.Add(sw);
@@ -839,6 +807,7 @@ void SetupNetwork(void (*qp_finish)(FILE *, Ptr<RdmaQueuePair>),void (*send_fini
   }
 
   nic_rate = get_nic_rate(n);
+  uint32_t payload = get_config_value_ns3<uint64_t>("ns3::RdmaHw::Mtu");
   for (uint32_t i = 0; i < node_num; i++) {
     if (n.Get(i)->GetNodeType() == 1) { 
       Ptr<SwitchNode> sw = DynamicCast<SwitchNode>(n.Get(i));
@@ -858,7 +827,7 @@ void SetupNetwork(void (*qp_finish)(FILE *, Ptr<RdmaQueuePair>),void (*send_fini
         uint64_t delay = DynamicCast<QbbChannel>(dev->GetChannel())
                              ->GetDelay()
                              .GetTimeStep();
-        uint32_t headroom = rate * delay / 8 / 1000000000 * 3;
+        uint32_t headroom = rate * delay / 8 / 1000000000 * 3  + payload * 2;  // BDP + 2 packet
         sw->m_mmu->ConfigHdrm(j, headroom);
         sw->m_mmu->pfc_a_shift[j] = shift;
         while (rate > nic_rate && sw->m_mmu->pfc_a_shift[j] > 0) {
@@ -871,7 +840,7 @@ void SetupNetwork(void (*qp_finish)(FILE *, Ptr<RdmaQueuePair>),void (*send_fini
       sw->m_mmu->node_id = sw->GetId();
     } else if(n.Get(i)->GetNodeType() == 2){ 
 			Ptr<NVSwitchNode> sw = DynamicCast<NVSwitchNode>(n.Get(i));
-      uint32_t shift = 3; 
+      uint32_t shift = 3;   //by default 1/
       for (uint32_t j = 1; j < sw->GetNDevices(); j++) {
         Ptr<QbbNetDevice> dev = DynamicCast<QbbNetDevice>(sw->GetDevice(j));
         uint64_t rate = dev->GetDataRate().GetBitRate();
@@ -897,37 +866,18 @@ void SetupNetwork(void (*qp_finish)(FILE *, Ptr<RdmaQueuePair>),void (*send_fini
   FILE *send_output = fopen(send_output_file.c_str(), "w");
   for (uint32_t i = 0; i < node_num; i++) {
     if (n.Get(i)->GetNodeType() == 0 || n.Get(i)->GetNodeType() == 2) { 
+      // create RdmaHw
       Ptr<RdmaHw> rdmaHw = CreateObject<RdmaHw>();
-      rdmaHw->SetAttribute("ClampTargetRate", BooleanValue(clamp_target_rate));
-      rdmaHw->SetAttribute("AlphaResumInterval",
-                           DoubleValue(alpha_resume_interval));
-      rdmaHw->SetAttribute("RPTimer", DoubleValue(rp_timer));
-      rdmaHw->SetAttribute("FastRecoveryTimes",
-                           UintegerValue(fast_recovery_times));
-      rdmaHw->SetAttribute("EwmaGain", DoubleValue(ewma_gain));
-      rdmaHw->SetAttribute("RateAI", DataRateValue(DataRate(rate_ai)));
-      rdmaHw->SetAttribute("RateHAI", DataRateValue(DataRate(rate_hai)));
-      rdmaHw->SetAttribute("L2BackToZero", BooleanValue(l2_back_to_zero));
-      rdmaHw->SetAttribute("L2ChunkSize", UintegerValue(l2_chunk_size));
-      rdmaHw->SetAttribute("L2AckInterval", UintegerValue(l2_ack_interval));
-      rdmaHw->SetAttribute("CcMode", UintegerValue(cc_mode));
-      rdmaHw->SetAttribute("RateDecreaseInterval",
-                           DoubleValue(rate_decrease_interval));
-      rdmaHw->SetAttribute("MinRate", DataRateValue(DataRate(min_rate)));
-      rdmaHw->SetAttribute("Mtu", UintegerValue(packet_payload_size));
-      rdmaHw->SetAttribute("MiThresh", UintegerValue(mi_thresh));
-      rdmaHw->SetAttribute("VarWin", BooleanValue(var_win));
-      rdmaHw->SetAttribute("FastReact", BooleanValue(fast_react));
-      rdmaHw->SetAttribute("MultiRate", BooleanValue(multi_rate));
-      rdmaHw->SetAttribute("SampleFeedback", BooleanValue(sample_feedback));
-      rdmaHw->SetAttribute("TargetUtil", DoubleValue(u_target));
-      rdmaHw->SetAttribute("RateBound", BooleanValue(rate_bound));
-      rdmaHw->SetAttribute("DctcpRateAI",
-                           DataRateValue(DataRate(dctcp_rate_ai)));
-      rdmaHw->SetAttribute("GPUsPerServer", UintegerValue(gpus_per_server));
-      rdmaHw->SetPintSmplThresh(pint_prob);
-      rdmaHw->SetAttribute("TotalPauseTimes",
-                           UintegerValue(nic_total_pause_time));
+      // check if i is in rdmaHw_config_map, if so, set the group attribute
+      if (rdmaHw_config_map.find(i) != rdmaHw_config_map.end()) {
+        for(auto configEntry : *(rdmaHw_config_map[i])){
+          std::cout<<"node "<<i<<" set attribute "<<configEntry.first << std::endl;
+          if(configEntry.first.compare(0, 5, "CC::") == 0){
+            rdmaHw->m_cc_configs.push_back(std::make_pair(configEntry.first.substr(5), configEntry.second));
+          }
+          rdmaHw->SetAttribute(configEntry.first, *(configEntry.second));
+        }
+      }
       Ptr<RdmaDriver> rdma = CreateObject<RdmaDriver>();
       Ptr<Node> node = n.Get(i);
       rdma->SetNode(node);
@@ -937,6 +887,8 @@ void SetupNetwork(void (*qp_finish)(FILE *, Ptr<RdmaQueuePair>),void (*send_fini
       rdma->Init();
       rdma->TraceConnectWithoutContext(
           "QpComplete", MakeBoundCallback(qp_finish, fct_output));
+      rdma->TraceConnectWithoutContext(
+          "MessageComplete", MakeBoundCallback(message_finish, fct_output));
       rdma->TraceConnectWithoutContext("SendComplete",MakeBoundCallback(send_finish,send_output));
     }
   }
@@ -975,7 +927,7 @@ void SetupNetwork(void (*qp_finish)(FILE *, Ptr<RdmaQueuePair>),void (*send_fini
   for (uint32_t i = 0; i < node_num; i++) {
     if (n.Get(i)->GetNodeType() == 1) { 
       Ptr<SwitchNode> sw = DynamicCast<SwitchNode>(n.Get(i));
-      sw->SetAttribute("CcMode", UintegerValue(cc_mode));
+      sw->SetAttribute("CcMode", UintegerValue(get_config_value_ns3<uint64_t>("ns3::RdmaHw::CcMode")));
       sw->SetAttribute("MaxRtt", UintegerValue(maxRtt));
     }
   }
@@ -991,10 +943,10 @@ void SetupNetwork(void (*qp_finish)(FILE *, Ptr<RdmaQueuePair>),void (*send_fini
   }
 
   FILE *trace_output = fopen(trace_output_file.c_str(), "w");
-  if (enable_trace)
+  if (enable_trace){
     qbb.EnableTracing(trace_output, trace_nodes);
 
-  {
+  
     SimSetting sim_setting;
     for (auto i : nbr2if) {
       for (auto j : i.second) {
@@ -1026,10 +978,10 @@ void SetupNetwork(void (*qp_finish)(FILE *, Ptr<RdmaQueuePair>),void (*send_fini
   topof.close();
   tracef.close();
 
-  if (link_down_time > 0) {
-    Simulator::Schedule(Seconds(2) + MicroSeconds(link_down_time),
-                        &TakeDownLink, n, n.Get(link_down_A),
-                        n.Get(link_down_B));
+  if (link_down[0] > 0) {
+    Simulator::Schedule(Seconds(2) + MicroSeconds(link_down[0]),
+                        &TakeDownLink, n, n.Get(link_down[1]),
+                        n.Get(link_down[2]));        
   }
 }
 #endif
