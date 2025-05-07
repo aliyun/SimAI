@@ -9,4 +9,4 @@
 [submodule "ns-3-alibabacloud"]
 	path = ns-3-alibabacloud
 	url = https://github.com/aliyun/ns-3-alibabacloud
-	branch = master
+	branch = SimAI_qpReuse
