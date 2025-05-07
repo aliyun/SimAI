@@ -93,8 +93,8 @@ bool is_receive_finished(int src,int dst,AstraSim::ncclFlowTag flowTag){
   MockNcclLog* NcclLog = MockNcclLog::getInstance();
   if (waiting_to_notify_receiver.count(
           std::make_pair(tag_id, std::make_pair(src, dst)))) {
-    std:: cout << "waiting count: " << waiting_to_notify_receiver.count(
-          std::make_pair(tag_id, std::make_pair(src, dst))) << std :: endl;
+    // std:: cout << "waiting count: " << waiting_to_notify_receiver.count(
+    //       std::make_pair(tag_id, std::make_pair(src, dst))) << std :: endl;
     NcclLog->writeLog(NcclLogLevel::DEBUG," is_receive_finished waiting_to_notify_receiver  tag_id  %d src  %d dst  %d count  %d",tag_id,src,dst,waiting_to_notify_receiver[std::make_pair(
                      tag_id, std::make_pair(src, dst))]);
     if (--waiting_to_notify_receiver[std::make_pair(
@@ -113,7 +113,6 @@ inline std::string getHashKey(uint32_t src, uint32_t dst, uint32_t pg, uint32_t 
 std::vector<Ptr<RdmaClient>>  getClients(uint32_t src, uint32_t dst, uint32_t pg, uint32_t dport, 
     void (*msg_handler)(void *fun_arg), void *fun_arg, int tag, int sendLat, bool nvls_on){
 
-  std::cout << "In getClients: " << std::endl;
   std::vector<Ptr<RdmaClient>> clients;
   std::string hashKey = getHashKey(src, dst, pg, dport); 
   #ifdef NS3_MTP
