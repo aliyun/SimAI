@@ -55,8 +55,8 @@ ncclResult_t initChannel(struct ncclComm* comm, int channelId) {
   ncclCommPushCudaFree(comm, channel->devRingUserRanks);
 
   /* guarantee addr has been copied into channel->devPeers */
-  NCCLCHECK(ncclStrongStreamSynchronize(&sharedRes->deviceStream));
-  NCCLCHECK(ncclStrongStreamRelease(ncclCudaGraphNone(), &sharedRes->deviceStream));
+  // NCCLCHECK(ncclStrongStreamSynchronize(&sharedRes->deviceStream));
+  // NCCLCHECK(ncclStrongStreamRelease(ncclCudaGraphNone(), &sharedRes->deviceStream));
 
   return ncclSuccess;
 }
