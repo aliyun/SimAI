@@ -770,6 +770,10 @@ ncclResult_t ncclTopoComputeP2pChannels(struct ncclComm* comm) {
   comm->p2pnChannels = nextPow2(comm->p2pnChannels);
 
   // Init channels that weren't used so far
+  for (int r = 0; r < comm->nRanks; ++r)
+  {
+    comm->topParentRanks[r] = r;
+  }
   for (int c=comm->nChannels; c<comm->p2pnChannels; c++) NCCLCHECK(initChannel(comm, c));
 
   // We want to spread channels used when there aren't many and progressively
