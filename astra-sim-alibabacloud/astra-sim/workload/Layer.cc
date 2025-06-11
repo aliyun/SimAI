@@ -998,7 +998,7 @@ Tick Layer::compute_time(
     }
     
     bw_ratio = cal_ratio(data_size,nranks,tp_size,gpus_per_server,group_type,coll_type,result.is_nvlink);
-    cout<<"通信类型： "<<coll_type<<"通信组： "<<group_type<<"通信组大小： "<< nranks<<"数据大小： "<<data_size<<"损失率： "<<bw_ratio<<"瓶颈在nvlink: "<<result.is_nvlink<<endl;
+    cout<<"Communication Type: "<<coll_type<<"Communication Group: "<<group_type<<"Group Size: "<< nranks<<"Data Size: "<<data_size<<"Ratio: "<<bw_ratio<<"Bottleneck is nvlink: "<<result.is_nvlink<<endl;
     if(comtype == ComType::All_Reduce){
       comp_time = data_size * GBps / (bw_ratio * result.busbw) * 1e9 * 2 * 
             (nranks - 1) / (nranks / 1.0);
