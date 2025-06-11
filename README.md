@@ -140,6 +140,11 @@ $ ./scripts/build.sh -c ns3
 $  ./bin/SimAI_analytical -w example/workload_analytical.txt -g 9216 -g_p_s 8 -r test- -busbw example/busbw.yaml
 ```
 
+For calculating bus bandwidth autolly, please try the following command:
+```bash
+$  ./bin/SimAI_analytical -w ./example/workload_analytical.txt -g 9216  -nv 360 -nic 48.5 -n_p_s 8 -g_p_s 8 -r example-
+```
+
 ## Use SimAI-Simulation
 
 ```bash
