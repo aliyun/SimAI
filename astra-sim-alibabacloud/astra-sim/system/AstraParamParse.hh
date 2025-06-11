@@ -141,7 +141,6 @@ int parse(int argc, char *argv[]) {
                 else if (gpu_type == "H100" || gpu_type == "h100") this->net_work_param.gpu_type = GPUType::H100;
                 else if (gpu_type == "H800" || gpu_type == "h800") this->net_work_param.gpu_type = GPUType::H800;
                 else if (gpu_type == "H20" || gpu_type == "h20") this->net_work_param.gpu_type = GPUType::H20;
-                else if (gpu_type == "PPU") this->net_work_param.gpu_type = GPUType::PPU;
                 else this->net_work_param.gpu_type = GPUType::NONE;
             }
         }else if (arg == "-v" || arg == "--visual") {

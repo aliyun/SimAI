@@ -9,9 +9,7 @@ char info[1024] = "Success!";
 int retcode = 0;
 
 float calculateAlgoBw(CalculationParameters params) {
-    // The logic to calculate Algo bandwidth goes here
-    // 这里添加根据params计算算法带宽的逻辑
-    return 0.0; // 返回计算结果
+    return 0.0; 
 }
 
 float getNvlinkBw(GPUType node_type) {
@@ -94,16 +92,15 @@ int lower_compare(char *coll_type, const char *lower_str) {
     //return strcasecmp(coll_type, lower_str);
     char temp_str[strlen(coll_type) + 1];
     
-    // 将输入字符串转换为小写
     for (int i = 0; i < strlen(coll_type); i++) {
         temp_str[i] = tolower((unsigned char)coll_type[i]);
     }
-    temp_str[strlen(coll_type)] = '\0';  // 加上字符串结束符 '\0'
+    temp_str[strlen(coll_type)] = '\0';  
     
     if (strcmp(temp_str, lower_str) == 0) {
-        return 0; // 字符串匹配
+        return 0; 
     }
-    return 1; // 字符串不匹配
+    return 1; 
 }
 
 float calculateBusBw(CalculationParameters* params) {
@@ -140,7 +137,6 @@ float calculateBusBw(CalculationParameters* params) {
     if (node_count == 1) {
         all_gather_bus_bw = nvlink_bw;
     } else {
-        // bus_bw取nvlink_bw和total_nic_bw中的较小值
         if (gpus_per_node == 1) {
             all_gather_bus_bw = nic_bw * real_nics_per_node;
         } else {
@@ -315,7 +311,6 @@ BusBwResult cal_busbw(GPUType node_type,float bw_intra,float bw_per_nic, float n
         strcpy(info, "Error: The number of nodes must be greater than 0.");
         retcode = 1;
     }
-    // 如果指定算法，算法必须是ring、tree、nvlstree、nvls之一
     if (lower_compare(params.nccl_algo, "none")) {
         if (lower_compare(params.nccl_algo, "ring") && lower_compare(params.nccl_algo, "tree") && lower_compare(params.nccl_algo, "nvls") && lower_compare(params.nccl_algo, "nvlstree")) {
             strcpy(info, "Warning: the selected algorithm is not supported.");
