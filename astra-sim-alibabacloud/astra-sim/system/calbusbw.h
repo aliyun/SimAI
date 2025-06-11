@@ -1,7 +1,6 @@
 #ifndef CALBUSBW_H
 #define CALBUSBW_H
 #include "astra-sim/system/AstraParamParse.hh"
-//固定参数
 #define SM80_NVLINK_BW 20.0
 #define SM90_NVLINK_BW 20.6
 #define H100_NVLINKS   18
