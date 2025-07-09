@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 #include "astra-sim/system/IntData.hh"
 #include "astra-sim/system/MockNcclLog.h"
 #include "astra-sim/system/AstraParamParse.hh"
-
+// #ifdef ANALYTI
+#include "astra-sim/system/calbusbw.h"
+// #endif
 
 #ifdef NS3_MPI
 #include "ns3/mpi-interface.h"
@@ -499,7 +501,7 @@ LayerData Layer::report(
       data = "total exposed comm," + to_string(total_exposed) + ",total comp," + to_string(total_compute) + ",total time," + to_string(total_time);
       EndToEnd->write_line(data);
 
-      Tick Expose_PP_time = (2 * vpp * GA * (pp_commsize * GBps / (param->net_work_param.pp) * 1e9) / FREQ );
+      Tick Expose_PP_time = (2 * vpp * GA * (pp_commsize * GBps / (param->net_work_param.pp_overlap_ratio) * 1e9) / FREQ );
       Expose_PP_time *= (1-param->net_work_param.pp_overlap_ratio) ;
       //pp bubble time
       pre_bubble_time *= static_cast<double>(PP_size - 1) / (GA * vpp);
@@ -729,7 +731,7 @@ LayerData Layer::report(
             total_exposed = (((double)Sys::boostedTick()) / FREQ ) - total_compute;
         }
         //pp commtime
-        Tick Expose_PP_time = (2 * vpp * GA * (pp_commsize * GBps / (param->net_work_param.pp) * 1e9) / FREQ );
+        Tick Expose_PP_time = (2 * vpp * GA * (pp_commsize * GBps / (param->net_work_param.pp_overlap_ratio) * 1e9) / FREQ );
         Expose_PP_time *= (1-param->net_work_param.pp_overlap_ratio) ;
         //pp bubble time
         pre_bubble_time *= static_cast<double>(PP_size - 1) / (GA * vpp);
@@ -852,6 +854,67 @@ static std::pair<int, int> binarySearch(const std::vector<long>& arr, long targe
     return std::make_pair(leftIndex, rightIndex);
 }
 
+char* comtype_to_coll(ComType comtype) {
+    switch (comtype) {
+        case ComType::None:
+            return "none";
+        case ComType::Reduce_Scatter:
+            return "reducescatter";
+        case ComType::All_Gather:
+            return "allgather";
+        case ComType::All_Reduce:
+            return "allreduce";
+        case ComType::All_to_All:
+            return "alltoall";
+        case ComType::All_Reduce_All_to_All:
+            return "all_reduce_all_to_all";
+        case ComType::All_Reduce_NVLS:
+            return "all_reduce_nvls";
+        default:
+            return "unknown";
+    }
+}
+float Layer::cal_ratio(
+    uint64_t data_size,
+    int nranks,
+    int tp_size,
+    uint32_t gpus_per_server,
+    MockNccl::GroupType group_type,
+    char* coll_type,
+    bool is_nvlink){
+    UserParam* param = UserParam::getInstance();
+    auto nic_ratio_data = generator->nic_ratio_data;
+    auto nvlink_ratio_data = generator->nvlink_ratio_data;
+    auto ata_ratio_data = generator->ata_ratio_data;
+    if ((strcmp(coll_type, "allgather") == 0 || strcmp(coll_type, "reducescatter") == 0 ) && group_type == MockNccl::GroupType::TP){
+        auto data = is_nvlink ? nvlink_ratio_data : nic_ratio_data;
+        int _temp_nnode = (tp_size < gpus_per_server) ? 1 : tp_size / gpus_per_server ;
+        return getValue(data_size, _temp_nnode, data);
+    } else if (strcmp(coll_type, "alltoall") == 0 && group_type == MockNccl::GroupType::EP){
+        auto data = ata_ratio_data;
+        if(tp_size * nranks <= gpus_per_server){
+            return getValue(data_size, 1, data);
+        }else if(tp_size >= gpus_per_server){    //multi
+            return getValue(data_size, 9, data);
+        } else {
+            int _temp_nnode = (tp_size * nranks) / gpus_per_server;
+            return getValue(data_size, _temp_nnode, data);
+        }
+    } else if (strcmp(coll_type, "alltoall") == 0 && group_type == MockNccl::GroupType::TP){
+        auto data = ata_ratio_data;
+        if (tp_size <= gpus_per_server){
+            return getValue(data_size, 1, data);
+        } else {
+            int _temp_nnode = tp_size / gpus_per_server;
+            return getValue(data_size, _temp_nnode, data);
+        }
+    }
+    else if(group_type == MockNccl::GroupType::DP || group_type == MockNccl::GroupType::DP_EP){
+        return 1; 
+    }else{
+        return 1;
+    }
+}
 Tick Layer::compute_time(
     ComType comtype,
     int tp_size,
@@ -866,102 +929,86 @@ Tick Layer::compute_time(
     return 0;
   }
 
-    bool DP_comm_inside = false;
-    bool TP_comm_inside = false;
-    bool EP_comm_inside = false;
+
     int n_ranks;
     int nnics;
     uint32_t  gpus_per_server = param->net_work_param.gpus_per_server;
     GPUType gpu_type = param->net_work_param.gpu_type;
-    float tp_ar = param->net_work_param.tp_ar;
-    float tp_ag = param->net_work_param.tp_ag;
-    float tp_ata = param->net_work_param.tp_ata;
-    float ep_ata = param->net_work_param.ep_ata;
-    float dp_ag = param->net_work_param.dp_ag;
-    float ep_ag = param->net_work_param.ep_ag;
-    float dp_ar = param->net_work_param.dp_ar;
-    float ep_ar = param->net_work_param.ep_ar;
-    if (group_type == MockNccl::GroupType::TP || group_type == MockNccl::GroupType::EP) {
-      n_ranks = tp_size;
-      if (n_ranks <= gpus_per_server)
-        TP_comm_inside = true;
-    } else if (
-        group_type == MockNccl::GroupType::DP ||
-        group_type == MockNccl::GroupType::EP || group_type == MockNccl::GroupType::DP_EP) {
-      n_ranks = nranks;
-      nnics = gpus_per_server / tp_size;
-      if (all_gpus == gpus_per_server && tp_size <= gpus_per_server)
-        DP_comm_inside = true;
-        
-    }
-    if (TP_comm_inside || DP_comm_inside) {
-      if (comtype == ComType::All_Reduce) {
+    float nvlink_bw = param->net_work_param.nvlink_bw;
+    float bw_per_nic = param->net_work_param.bw_per_nic;
+    uint32_t nics_per_server = param->net_work_param.nics_per_server;
+    char* nic_type =  param->net_work_param.nic_type;
+    char* coll_type = comtype_to_coll(comtype);
+    float bw_ratio = 1.0;
+    BusBwResult result;
 
-        comp_time = data_size * GBps / tp_ar * 1e9 * 2 * //tp2 ep8 164.8 tp16 218 
+    if (1 < data_size && data_size < 1048576){
+      if(nranks == 2) comp_time = 10000;
+      if(nranks == 4) comp_time = 12000;
+      if(nranks == 8) comp_time = 15000;
+      if(nranks == 16) comp_time = 66000;
+      if(nranks == 32) comp_time = 135000;
+      if(nranks == 64) comp_time = 200000;
+      if(nranks == 128) comp_time = 320000;
+      return comp_time;
+    }
+  if (group_type == MockNccl::GroupType::TP ){
+      //TP_comm_inside
+      if(tp_size <= gpus_per_server){
+      result = cal_busbw(gpu_type,nvlink_bw,bw_per_nic,nics_per_server,1,coll_type,tp_size,nic_type);
+      }else{
+        int _node_count = tp_size / gpus_per_server;
+        result = cal_busbw(gpu_type,nvlink_bw,bw_per_nic,nics_per_server,_node_count,coll_type,gpus_per_server,nic_type);
+      }
+    }else if (group_type == MockNccl::GroupType::EP && nranks > 1)
+    {
+     if(tp_size * nranks <= gpus_per_server){
+      uint32_t _temp_gpus_per_server = gpus_per_server / tp_size;
+      result = cal_busbw(gpu_type,nvlink_bw,bw_per_nic,nics_per_server,1,coll_type,_temp_gpus_per_server,nic_type);
+
+     }else{
+      int _node_count = (tp_size * nranks) / gpus_per_server;
+      uint32_t _temp_gpus_per_server = (gpus_per_server / tp_size > 1) ? (gpus_per_server / tp_size) : 1;
+      float _temp_nics_per_server = (tp_size > gpus_per_server) ? (nics_per_server / gpus_per_server) : (nics_per_server / tp_size);
+      result = cal_busbw(gpu_type,nvlink_bw,bw_per_nic,_temp_nics_per_server,_node_count,coll_type,_temp_gpus_per_server,nic_type);
+     }
+    }else if(group_type == MockNccl::GroupType::DP && nranks > 1){
+      if(tp_size <= gpus_per_server){
+        uint32_t _temp_gpus_per_server = gpus_per_server / tp_size;
+        float _temp_nics_per_server = nics_per_server / tp_size;
+        result = cal_busbw(gpu_type,nvlink_bw,bw_per_nic,_temp_nics_per_server,nranks,coll_type,_temp_gpus_per_server,nic_type);
+      }else{
+        float _temp_nics_per_server = nics_per_server / gpus_per_server;
+        result = cal_busbw(gpu_type,nvlink_bw,bw_per_nic,_temp_nics_per_server,nranks,coll_type,1,nic_type);
+      }
+    }else if(group_type == MockNccl::GroupType::DP_EP && nranks > 1){
+      if(tp_size * ep_size <= gpus_per_server){
+        float _temp_nics_per_server = nics_per_server / (tp_size * ep_size);
+        uint32_t _temp_gpus_per_server = gpus_per_server / (tp_size * ep_size);
+        result = cal_busbw(gpu_type,nvlink_bw,bw_per_nic,_temp_nics_per_server,nranks,coll_type,_temp_gpus_per_server,nic_type);
+       
+      }else{
+        float _temp_nics_per_server = nics_per_server / gpus_per_server;
+        result = cal_busbw(gpu_type,nvlink_bw,bw_per_nic,_temp_nics_per_server,nranks,coll_type,1,nic_type);
+      }
+    }else{
+      
+      comp_time = 0;
+      return comp_time;
+    }
+    
+    bw_ratio = cal_ratio(data_size,nranks,tp_size,gpus_per_server,group_type,coll_type,result.is_nvlink);
+    cout<<"Communication Type: "<<coll_type<<"Communication Group: "<<group_type<<"Group Size: "<< nranks<<"Data Size: "<<data_size<<"Ratio: "<<bw_ratio<<"Bottleneck is nvlink: "<<result.is_nvlink<<endl;
+    if(comtype == ComType::All_Reduce){
+      comp_time = data_size * GBps / (bw_ratio * result.busbw) * 1e9 * 2 * 
             (nranks - 1) / (nranks / 1.0);
-      }
-       else if (group_type == MockNccl::GroupType::TP && (
-          comtype == ComType::All_Gather || comtype == ComType::Reduce_Scatter )) {
-          comp_time = data_size * GBps / tp_ag * 1e9 * 
-              (nranks - 1) / (nranks / 1.0);
-      } else if (group_type == MockNccl::GroupType::TP && (
-          comtype == ComType::All_to_All)) {
-            comp_time = data_size * GBps / tp_ata * 1e9 * 
-                (nranks - 1) / (nranks / 1.0);
-      }else if (group_type == MockNccl::GroupType::EP && 
-        comtype == ComType::All_to_All) {
-
-            comp_time = data_size * GBps / ep_ata * 1e9 * 
-                (nranks - 1) / (nranks / 1.0);
-
-      }else {
-        comp_time = 0;
-      }
-    } else if (!TP_comm_inside && group_type == MockNccl::GroupType::TP) {
-      if (comtype == ComType::All_Reduce) {
-            comp_time = data_size  * GBps /
-                tp_ar * 1e9 * 2 *
-                (nranks - 1) / (nranks / 1.0);
-      } else if (
-          comtype == ComType::All_Gather || comtype == ComType::Reduce_Scatter) {
-            comp_time = data_size * GBps /
-                tp_ag * 1e9 *
-                (nranks - 1) / (nranks / 1.0);
-      } else if (
-          comtype == ComType::All_to_All) {
-            comp_time = data_size * GBps /
-                tp_ata * 1e9 *
-                (nranks - 1) / (nranks / 1.0);
-      } else {
-        comp_time = 0;
-      }
-    } else if (
-        !DP_comm_inside &&
-        (group_type == MockNccl::GroupType::DP)) {
-      if (comtype == ComType::All_Reduce) {
-            comp_time = data_size  * GBps / dp_ar * 1e9 * 
-                2 * (nranks - 1) / (nranks / 1.0);
-      } else if (
-          comtype == ComType::All_Gather || comtype == ComType::Reduce_Scatter || comtype == ComType::All_to_All) {
-            comp_time = data_size * GBps / dp_ag * 1e9 * //tp2 ep8 48.5
-                (nranks - 1) / (nranks / 1.0);
-      } else {
-        comp_time = 0;
-      }
-    }else if (
-        !DP_comm_inside &&
-        ( group_type == MockNccl::GroupType::DP_EP)) {
-      if (comtype == ComType::All_Reduce) {
-            comp_time = data_size * GBps / ep_ar* 1e9 * 
-                2 * (nranks - 1) / (nranks / 1.0);
-      } else if (
-          comtype == ComType::All_Gather || comtype == ComType::Reduce_Scatter || comtype == ComType::All_to_All) {
-            comp_time = data_size * GBps / ep_ag * 1e9 * //tp2 ep8 48.5
-                (nranks - 1) / (nranks / 1.0);
-      } else {
-        comp_time = 0;
-      }
+            
+    } else {
+      comp_time = data_size * GBps / (bw_ratio * result.busbw) * 1e9  * 
+            (nranks - 1) / (nranks / 1.0);
+             
     }
+    
   return comp_time;
 }
 

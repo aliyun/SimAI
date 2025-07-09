@@ -67,8 +67,8 @@ struct user_param {
 
 int main(int argc,char *argv[]) {
   UserParam* param = UserParam::getInstance();
-  if (param->parseArg(argc,argv)) {
-    std::cerr << "-h,       --help                Help message" << std::endl;
+  if (param->parse(argc,argv)) {
+    std::cerr << "-h,     --help              Help message" << std::endl;
     return -1;
   }
   param->mode = ModeType::ANALYTICAL;

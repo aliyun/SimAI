@@ -14,6 +14,7 @@ LICENSE file in the root directory of this source tree.
 #include "Common.hh"
 #include "RendezvousRecvData.hh"
 #include "RendezvousSendData.hh"
+#include "calbusbw.h"
 #include "astra-sim/system/collective/AllToAll.hh"
 #include "astra-sim/system/collective/DoubleBinaryTreeAllReduce.hh"
 #include "astra-sim/system/collective/HalvingDoubling.hh"
@@ -264,6 +265,11 @@ Sys::Sys(
     std::atexit(exiting);
     std::cout << "total nodes: " << total_nodes << std::endl;
   }
+  #ifdef ANALYTI
+  nic_ratio_data = readCSV(NIC_RATIO_PATH);
+  nvlink_ratio_data = readCSV(NVLINK_RATIO_PATH);
+  ata_ratio_data = readCSV(ATA_RATIO_PATH);
+  #endif
   NI->sim_init(MEM);
   memBus = new MemBus(
       "NPU",

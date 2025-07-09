@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 #include <vector>
 #include "AstraNetworkAPI.hh"
 
-enum class GPUType { A100, A800, H100, H800, NONE };
+enum class GPUType { A100, A800, H100, H800, NONE, H20};
 
 namespace AstraSim {
 #define CLOCK_PERIOD 1
