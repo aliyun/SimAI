@@ -1,6 +1,6 @@
 # Lastest News
 ### Update of SimCCL
-The code of SimCCL is first released in the branch [SimCCL](https://github.com/aliyun/SimAI/tree/SimCCL) and will be released in SimCCL repository soon.
+[2025/06] The code of SimCCL is first released in the branch [SimCCL](https://github.com/aliyun/SimAI/tree/SimCCL) and will be released in SimCCL repository soon.
 <div align="center">
 🎯 <b>Events & Community Engagement</b> 🎯
 
@@ -8,12 +8,12 @@ The code of SimCCL is first released in the branch [SimCCL](https://github.com/a
 
 | Date | Event | Location | Content | Type |
 |:----:|:------|:---------|:--------|:----:|
-| TBD  | SimAI Technical Presentation | 📍 Peking University | SimAI Discussion | 🎓 On-site |
 
 ### 🌟 Past Events
 
 | Date | Event | Location | Content | Type |
 |:----:|:------|:---------|:--------|:----:|
+| June 4, 2025  | SimAI Technical Presentation | 📍 Peking University | SimAI Discussion | 🎓 On-site |
 | Dec 27, 2024 | SimAI Technical Presentation | 📍 Beihang University | SimAI Technical Sharing & Discussion | 🎓 On-site |
 | Dec 6, 2024 | HKUST Technical Workshop | 📍 HKUST(GZ) | SimAI Technical Sharing & Discussion | 🎓 On-site |
 | Dec 5, 2024 | [Bench'24 Conference](https://mp.weixin.qq.com/s/STic_E12xMhZRxhzK9wRnw) | 📍 Guangzhou | SimAI Tutorial & Deep-dive Session | 🎓 On-site |
