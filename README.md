@@ -8,12 +8,13 @@
 
 | Date | Event | Location | Content | Type |
 |:----:|:------|:---------|:--------|:----:|
+| TBD | SimAI 2.0 | 🌐 Online | The release of SimAI 2.0 | 💻 Virtual  |
 
 ### 🌟 Past Events
 
 | Date | Event | Location | Content | Type |
 |:----:|:------|:---------|:--------|:----:|
-| June 4, 2025  | SimAI Technical Presentation | 📍 Peking University | SimAI Discussion | 🎓 On-site |
+| Jun 4, 2025  | The first workshop of the SimAI community | 📍 Peking University | Three talks from community contributors | 🎓 On-site |
 | Dec 27, 2024 | SimAI Technical Presentation | 📍 Beihang University | SimAI Technical Sharing & Discussion | 🎓 On-site |
 | Dec 6, 2024 | HKUST Technical Workshop | 📍 HKUST(GZ) | SimAI Technical Sharing & Discussion | 🎓 On-site |
 | Dec 5, 2024 | [Bench'24 Conference](https://mp.weixin.qq.com/s/STic_E12xMhZRxhzK9wRnw) | 📍 Guangzhou | SimAI Tutorial & Deep-dive Session | 🎓 On-site |
