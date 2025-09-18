@@ -1,6 +1,8 @@
 # Lastest News
-### Update of SimCCL
-[2025/06] The code of SimCCL is first released in the branch [SimCCL](https://github.com/aliyun/SimAI/tree/SimCCL) and will be released in SimCCL repository soon.
+### Recent Updates
+- [2025/09] [AICB](https://github.com/aliyun/aicb/tree/master) now supports generating training workloads for DeepSeek. Thanks to [\@parthpower](https://github.com/parthpower) for this contribution.
+- [2025/06] The code of SimCCL is first released in the branch [SimCCL](https://github.com/aliyun/SimAI/tree/SimCCL) and will be released in SimCCL repository soon.
+
 <div align="center">
 🎯 <b>Events & Community Engagement</b> 🎯
 
