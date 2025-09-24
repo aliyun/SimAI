@@ -1,7 +1,17 @@
-# Lastest News
+# Latest News
 ### Recent Updates
-- [2025/09] [AICB](https://github.com/aliyun/aicb/tree/master) now supports generating training workloads for DeepSeek. Thanks to [\@parthpower](https://github.com/parthpower) for this contribution.
+- [2025/09] [AICB](https://github.com/aliyun/aicb/tree/master) now supports generating inference workloads for DeepSeek and Qwen3-MoE.
+- [2025/09] [AICB](https://github.com/aliyun/aicb/tree/master) now supports generating training workloads for DeepSeek. Thanks to [@parthpower](https://github.com/parthpower) for this contribution.
 - [2025/06] The code of SimCCL is first released in the branch [SimCCL](https://github.com/aliyun/SimAI/tree/SimCCL) and will be released in SimCCL repository soon.
+  
+### Roadmap: SimAI 2.0 (October 2025)
+
+SimAI 2.0 is currently under active development with a focus on significantly enhancing inference simulation capabilities. Key features will include:
+
+- **End-to-End Inference Simulation:** Adds support for simulating the multi-request inference workloads, including advanced features like Prefill/Decode separation. Request scheduling is handled by a component based on the [vidur](https://github.com/microsoft/vidur) project.
+- **Enhanced `SimAI-Simulation`:** Adds support for simulating the communication patterns specified in DeepEP.
+  
+**We warmly welcome contributions from the community!** If you are interested in helping shape the future of SimAI, please feel free to open an issue to discuss your ideas or submit a pull request.
 
 <div align="center">
 🎯 <b>Events & Community Engagement</b> 🎯
