@@ -3,8 +3,8 @@
 - [2025/09] [AICB](https://github.com/aliyun/aicb/tree/master) now supports generating inference workloads for DeepSeek and Qwen3-MoE.
 - [2025/09] [AICB](https://github.com/aliyun/aicb/tree/master) now supports generating training workloads for DeepSeek. Thanks to [@parthpower](https://github.com/parthpower) for this contribution.
 - [2025/06] The code of SimCCL is first released in the branch [SimCCL](https://github.com/aliyun/SimAI/tree/SimCCL) and will be released in SimCCL repository soon.
-  
-### Roadmap: SimAI 2.0 (October 2025)
+
+### Roadmap: SimAI 2.0 (October 2025)
 
 SimAI 2.0 is currently under active development with a focus on significantly enhancing inference simulation capabilities. Key features will include:
 
@@ -178,7 +178,7 @@ Welcome to join the SimAI community chat groups, with the DingTalk group on the 
 
 <div style="display: flex; justify-content: flex-start; align-items: center; gap: 20px; margin-left: 20px;">
     <img src="./docs/images/simai_dingtalk.jpg" alt="SimAI DingTalk" style="width: 300px; height: auto;">
-    <img src="./docs/images/simai_wechat.jpg" alt="SimAI WeChat" style="width: 300px; height: auto;">
+    <img src="./docs/images/simai_wechat.jpeg" alt="SimAI WeChat" style="width: 300px; height: auto;">
 </div>
 
 <br/>
