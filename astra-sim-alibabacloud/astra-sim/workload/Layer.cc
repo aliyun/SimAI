@@ -764,6 +764,28 @@ LayerData Layer::report(
       data = keys + "\n" + values;
       EndToEnd->write_res(data);
     if(param->net_work_param.visual){
+      std::string lang = UserParam::getInstance()->lang;
+      std::map<std::string, std::map<std::string, std::string>> translations;
+
+      translations["en"]["Total Time"] = "Total Time: ";
+      translations["ja"]["Total Time"] = "合計時間: ";
+      translations["en"]["model"] = "model: ";
+      translations["ja"]["model"] = "モデル: ";
+      translations["en"]["Expose DP comm"] = "Expose DP comm";
+      translations["ja"]["Expose DP comm"] = "DP通信（露出）";
+      translations["en"]["Expose DP_EP comm"] = "Expose DP_EP comm";
+      translations["ja"]["Expose DP_EP comm"] = "DP/EP通信（露出）";
+      translations["en"]["Expose TP comm"] = "Expose TP comm";
+      translations["ja"]["Expose TP comm"] = "TP通信（露出）";
+      translations["en"]["Expose_EP_comm"] = "Expose_EP_comm";
+      translations["ja"]["Expose_EP_comm"] = "EP通信（露出）";
+      translations["en"]["Total compute"] = "Total compute";
+      translations["ja"]["Total compute"] = "合計計算時間";
+      translations["en"]["PP Bubble time"] = "PP Bubble time";
+      translations["ja"]["PP Bubble time"] = "PPバブル時間";
+      translations["en"]["Expose PP comm"] = "Expose PP comm";
+      translations["ja"]["Expose PP comm"] = "PP通信（露出）";
+
       std::string chart_path = EndToEnd->path;
       std::ofstream htmlFile(chart_path + "chart.html");
       std::string file_name = getFileName(chart_path); 
@@ -777,14 +799,14 @@ LayerData Layer::report(
       htmlFile << "</style>\n";
       htmlFile << "</head>\n<body>\n";
       htmlFile << "<canvas id=\"myPieChart\"></canvas>\n";
-      htmlFile << "<h2>Total Time: " << to_string(total_time) << " ns</h2>\n"; 
-      htmlFile << "<h2>model: " << file_name << " </h2>\n"; 
+      htmlFile << "<h2>" << translations[lang]["Total Time"] << to_string(total_time) << " ns</h2>\n";
+      htmlFile << "<h2>" << translations[lang]["model"] << file_name << " </h2>\n";
       htmlFile << "<script>\n";
       htmlFile << "var ctx = document.getElementById('myPieChart').getContext('2d');\n";
       htmlFile << "var myPieChart = new Chart(ctx, {\n";
       htmlFile << "    type: 'pie',\n";
       htmlFile << "    data: {\n";
-      htmlFile << "        labels: ['Expose DP comm', 'Expose DP_EP comm','Expose TP comm', 'Expose_EP_comm','Total compute', 'PP Bubble time', 'Expose PP comm'],\n";
+      htmlFile << "        labels: ['" << translations[lang]["Expose DP comm"] << "', '" << translations[lang]["Expose DP_EP comm"] << "','" << translations[lang]["Expose TP comm"] << "', '" << translations[lang]["Expose_EP_comm"] << "','" << translations[lang]["Total compute"] << "', '" << translations[lang]["PP Bubble time"] << "', '" << translations[lang]["Expose PP comm"] << "'],\n";
       htmlFile << "        datasets: [{\n";
       htmlFile << "            data: [" 
               << DP_comm << ", " 
