@@ -82,6 +82,7 @@ public:
   std::string workload;
   std::string res = "None";
   std::string res_folder = "None";
+  std::string lang = "en";
   int comm_scale;
   ModeType mode;
   NetWorkParam net_work_param;
@@ -114,6 +115,7 @@ int parse(int argc, char *argv[]) {
             std::cout << "-ep_o, --ep_overlap    ep overlap ratio(Default 0)" << std::endl;
             std::cout << "-tp_o, --tp_overlap    tp overlap ratio(Default 0)" << std::endl;
             std::cout << "-pp_o, --pp_overlap    pp overlap ratio(Default 1)" << std::endl;
+            std::cout << "-l, --lang               Language of the report (en or ja), default en" << std::endl;
             return 1;
         } else if (arg == "-w" || arg == "--workload") {
             if (++i < argc) this->workload = argv[i];
@@ -153,6 +155,16 @@ int parse(int argc, char *argv[]) {
             if (++i < argc) this->net_work_param.ep_overlap_ratio = std::stof(argv[i]);
         }else if (arg == "--pp_overlap" || arg == "-pp_o") {
             if (++i < argc) this->net_work_param.pp_overlap_ratio = std::stof(argv[i]);
+        } else if (arg == "-l" || arg == "--lang") {
+            if (++i < argc) {
+                std::string lang_str = argv[i];
+                if (lang_str == "en" || lang_str == "ja") {
+                    this->lang = lang_str;
+                } else {
+                    std::cerr << "Error: Invalid language '" << lang_str << "'. Please use 'en' or 'ja'." << std::endl;
+                    return 1;
+                }
+            }
         }
         else {
             return 1; 
