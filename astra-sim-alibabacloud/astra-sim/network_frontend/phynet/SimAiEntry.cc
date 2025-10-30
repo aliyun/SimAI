@@ -67,7 +67,7 @@ simai_send_finish(AstraSim::ncclFlowTag flowTag) {
   MockNcclLog* NcclLog = MockNcclLog::getInstance();
   NcclLog->writeLog(
       NcclLogLevel::DEBUG,
-      " 数据包出网卡队列, src %d did %d total_bytes %lu channel_id %d flow_id %d tag_id %d",
+      " [Packet dequeued from NIC TX queue], src %d did %d total_bytes %lu channel_id %d flow_id %d tag_id %d",
       sid,
       did,
       flowTag.flow_size,

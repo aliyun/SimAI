@@ -299,7 +299,7 @@ void notify_sender_packet_arrivered_receiver(int sender_node, int receiver_node,
 void qp_finish(FILE *fout, Ptr<RdmaQueuePair> q) {
   uint32_t sid = ip_to_node_id(q->sip), did = ip_to_node_id(q->dip);
   uint64_t base_rtt = pairRtt[sid][did], b = pairBw[sid][did];
-  uint32_t total_bytes =
+  uint64_t total_bytes =
       q->m_size +
       ((q->m_size - 1) / packet_payload_size + 1) *
           (CustomHeader::GetStaticWholeHeaderSize() -
