@@ -197,8 +197,8 @@ The following tables give the description of parameters in layer level, and show
 |                 | `-nl`      | NVLink latency |
 |                 | `-l`       | NIC latency |
 | Intra-Segment   | `-bw`      | NIC to ASW bandwidth |
-|                 | `-asw`     | ASW switch num |
-|                 | `-nps`     | NICs per switch (Connected GPUs per ASW) |
+|                 | `-asn`     | ASW switch num |
+|                 | `-npa`     | NICs per switch (Connected GPUs per ASW) |
 | Intra-Pod       | `-psn`     | PSW switch num |
 |                 | `-apbw`    | ASW to PSW bandwidth |
 |                 | `-app`     | ASW per PSW |
@@ -219,8 +219,8 @@ The following tables give the description of parameters in layer level, and show
 |                 | `-nl`      | 0.000025ms  | 0.000025ms              | 0.000025ms            | 0.000025ms    | 0.000025ms    |
 |                 | `-l`       | 0.0005ms    | 0.0005ms                | 0.0005ms              | 0.0005ms      | 0.0005ms      |
 | Intra-Segment   | `-bw`      | 400Gbps     | 200Gbps                 | 200Gbps               | 200Gbps       | 400Gbps       |
-|                 | `-asw`     | 64          | 120                     | 120                   | 2             | 1             |
-|                 | `-nps`     | 64          | 128                     | 128                   | 128           | 64            |
+|                 | `-asn`     | 64          | 120                     | 120                   | 2             | 1             |
+|                 | `-npa`     | 64          | 128                     | 128                   | 128           | 64            |
 | Intra-Pod       | `-psn`     | 64          | 120                     | 120                   | 8             | 4             |
 |                 | `-apbw`    | 400Gbps     | 400Gbps                 | 400Gbps               | 400Gbps       | 400Gbps       |
 |                 | `-app`     | 64          | 240                     | 120                   | 8             | 4             |
