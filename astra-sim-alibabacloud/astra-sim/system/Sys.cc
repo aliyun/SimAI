@@ -1360,7 +1360,9 @@ bool Sys::mock_nccl_grobal_group_init(){
     int TP_size = workload->model_parallel_npu_group == 0
         ? total_nodes
         : workload->model_parallel_npu_group;
-    int PP_size = 1;
+    int PP_size = workload->pipeline_model_parallelism == 0
+        ? 1
+        : workload->pipeline_model_parallelism;
     int DP_size = all_gpus[0] / (TP_size * PP_size);
     int EP_size = workload->expert_parallel_npu_group;
     int DP_EP_size = DP_size / EP_size;
@@ -1373,7 +1375,9 @@ bool Sys::mock_nccl_comms_init(){
     int TP_size = workload->model_parallel_npu_group == 0
        ? total_nodes
        : workload->model_parallel_npu_group;
-    int PP_size = 1;
+    int PP_size = workload->pipeline_model_parallelism == 0
+        ? 1
+        : workload->pipeline_model_parallelism;
     int DP_size = total_nodes / (TP_size * PP_size);
     int EP_size = workload->expert_parallel_npu_group;
     int DP_EP_size = DP_size / EP_size;
