@@ -106,25 +106,23 @@ namespace MockNccl {
       std::set<int> EPnodes;
       for (int i = 0; i < TP_nums / _EP_size; i++){
         TP_idx = i*_EP_size;
-        for(int j =0;j<_EP_size;j++){
-          for(int k = 0;k<AllTPGroups[TP_idx].Ranks.size();k++){
-            ranks.clear();
-            EPnodes.clear();
-            for(int l = TP_idx;l<TP_idx+_EP_size;l++){
-              int tmp_rank = AllTPGroups[l].Ranks[k];
-              int node_idx = tmp_rank/_gpus_per_nodes;
-              ranks.push_back(tmp_rank);
-              GroupIndex[std::make_pair(tmp_rank, EP)] = all_group_idx;
-              EPnodes.insert(node_idx);
-            }
-            NVSwitchs.clear();
-            for(int idx:EPnodes){
-              NVSwitchs.push_back(_NVSwitch[idx]);
-              GroupIndex[std::make_pair(_NVSwitch[idx],EP)] = all_group_idx;
-            }
-            AllGroups[all_group_idx] = GroupInfo(all_group_idx,EP,EPnodes.size(),_EP_size,ranks,NVSwitchs);
-            all_group_idx++;
+        for(int k = 0;k<AllTPGroups[TP_idx].Ranks.size();k++){
+          ranks.clear();
+          EPnodes.clear();
+          for(int l = TP_idx;l<TP_idx+_EP_size;l++){
+            int tmp_rank = AllTPGroups[l].Ranks[k];
+            int node_idx = tmp_rank/_gpus_per_nodes;
+            ranks.push_back(tmp_rank);
+            GroupIndex[std::make_pair(tmp_rank, EP)] = all_group_idx;
+            EPnodes.insert(node_idx);
           }
+          NVSwitchs.clear();
+          for(int idx:EPnodes){
+            NVSwitchs.push_back(_NVSwitch[idx]);
+            GroupIndex[std::make_pair(_NVSwitch[idx],EP)] = all_group_idx;
+          }
+          AllGroups[all_group_idx] = GroupInfo(all_group_idx,EP,EPnodes.size(),_EP_size,ranks,NVSwitchs);
+          all_group_idx++;
         }
       }
     }
@@ -134,25 +132,23 @@ namespace MockNccl {
       std::set<int> DP_EP_nodes;
       for (int i = 0; i < TP_nums / _DP_EP_size; i++){
         TP_idx = i;
-        for (int j = 0; j < _DP_EP_size; j++){
-          for (int k = 0; k < AllTPGroups[TP_idx].Ranks.size(); k++){
-            ranks.clear();
-            DP_EP_nodes.clear();
-            for (int l = TP_idx; l < TP_idx + _DP_EP_size * _EP_size; l += _EP_size){
-              int tmp_rank = AllTPGroups[l].Ranks[k];
-              int node_idx = tmp_rank / _gpus_per_nodes;
-              ranks.push_back(tmp_rank);
-              GroupIndex[std::make_pair(tmp_rank, DP_EP)] = all_group_idx;
-              DP_EP_nodes.insert(node_idx);
-            }
-            NVSwitchs.clear();
-            for (int idx : DP_EP_nodes){
-              NVSwitchs.push_back(_NVSwitch[idx]);
-              GroupIndex[std::make_pair(_NVSwitch[idx], DP_EP)] = all_group_idx;
-            }
-            AllGroups[all_group_idx] = GroupInfo(all_group_idx, DP_EP, DP_EP_nodes.size(), _DP_EP_size, ranks, NVSwitchs);
-            all_group_idx++;
+        for (int k = 0; k < AllTPGroups[TP_idx].Ranks.size(); k++){
+          ranks.clear();
+          DP_EP_nodes.clear();
+          for (int l = TP_idx; l < TP_idx + _DP_EP_size * _EP_size; l += _EP_size){
+            int tmp_rank = AllTPGroups[l].Ranks[k];
+            int node_idx = tmp_rank / _gpus_per_nodes;
+            ranks.push_back(tmp_rank);
+            GroupIndex[std::make_pair(tmp_rank, DP_EP)] = all_group_idx;
+            DP_EP_nodes.insert(node_idx);
           }
+          NVSwitchs.clear();
+          for (int idx : DP_EP_nodes){
+            NVSwitchs.push_back(_NVSwitch[idx]);
+            GroupIndex[std::make_pair(_NVSwitch[idx], DP_EP)] = all_group_idx;
+          }
+          AllGroups[all_group_idx] = GroupInfo(all_group_idx, DP_EP, DP_EP_nodes.size(), _DP_EP_size, ranks, NVSwitchs);
+          all_group_idx++;
         }
       }
     }
