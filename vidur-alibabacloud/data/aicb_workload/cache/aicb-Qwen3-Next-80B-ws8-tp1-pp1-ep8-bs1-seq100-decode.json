@@ -1,0 +1,482 @@
+{
+  "0": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "1": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "2": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "3": {
+    "attention": {
+      "comp_time": 42127.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "4": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "5": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "6": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "7": {
+    "attention": {
+      "comp_time": 42127.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "8": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "9": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "10": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "11": {
+    "attention": {
+      "comp_time": 42127.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "12": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "13": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "14": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "15": {
+    "attention": {
+      "comp_time": 42127.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "16": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "17": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "18": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "19": {
+    "attention": {
+      "comp_time": 42127.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "20": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "21": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "22": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "23": {
+    "attention": {
+      "comp_time": 42127.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "24": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "25": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "26": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "27": {
+    "attention": {
+      "comp_time": 42127.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "28": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "29": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "30": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "31": {
+    "attention": {
+      "comp_time": 42127.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "32": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "33": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "34": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "35": {
+    "attention": {
+      "comp_time": 42127.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "36": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "37": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "38": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "39": {
+    "attention": {
+      "comp_time": 42127.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "40": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "41": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "42": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "43": {
+    "attention": {
+      "comp_time": 42127.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "44": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "45": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "46": {
+    "attention": {
+      "comp_time": 26734.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  },
+  "47": {
+    "attention": {
+      "comp_time": 42127.0,
+      "comm_size": 0.0
+    },
+    "moe": {
+      "comp_time": 113280.0,
+      "comm_size": 62080.0
+    }
+  }
+}

@@ -8,3 +8,4 @@ class NodeSKUType(BaseIntEnum):
     A100_DGX = 4
     H100_DGX = 5
     H800_DGX = 6
+    H20_DGX = 7

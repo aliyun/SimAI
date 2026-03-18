@@ -47,10 +47,11 @@ class ReplicaStageScheduleEvent(BaseEvent):
 
         self._is_last_stage = stage_scheduler.is_last_stage
 
-        print(f"> Debug: time={self._time} Event {self._id} of type {self._event_type} \
-            Generates 1 BatchStageEndEvent replica_id={self._replica_id} stage_id={self._stage_id} \
-            batch_stage={self._batch_stage}")
-        assert self._batch_stage.execution_time >= 0, f"> debug self._batch_stage.execution_time={self._batch_stage.execution_time}"
+        logger.debug(f"time={self._time} Event {self._id} of type {self._event_type} "
+            f"Generates 1 BatchStageEndEvent replica_id={self._replica_id} stage_id={self._stage_id} "
+            f"batch_stage={self._batch_stage}")
+        assert self._batch_stage.execution_time >= 0, \
+            f"batch_stage execution_time must be non-negative, got {self._batch_stage.execution_time}"
         
         return [
             BatchStageEndEvent(

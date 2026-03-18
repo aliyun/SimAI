@@ -10,6 +10,7 @@ from vidur.config import SimulationConfig
 from vidur.entities import Batch, BatchStage, ExecutionTime, Request
 from vidur.logger import init_logger
 from vidur.metrics.cdf_sketch import CDFSketch
+from vidur.metrics.data_series import _safe_write_image # qoder
 from vidur.metrics.constants import (
     BatchMetricsCountDistribution,
     BatchMetricsTimeDistribution,
@@ -300,6 +301,7 @@ class MetricsStore:
                 labels={"x": x_label, "y": y_label},
             )
             fig.write_image(f"{base_path}/{plot_name}.png")
+            _safe_write_image(fig, f"{base_path}/{plot_name}.png") # qoder
 
     def _store_operation_metrics(self, base_plot_path: str):
         if not self._config.store_operation_metrics:
@@ -369,7 +371,6 @@ class MetricsStore:
     def _store_request_metrics(self, base_plot_path: str):
         if not self._config.store_request_metrics:
             return
-        # import pdb; pdb.set_trace() # > debug
         all_request_metrics = list(
             self._request_metrics_time_distributions.values()
         ) + list(self._request_metrics_histogram.values())

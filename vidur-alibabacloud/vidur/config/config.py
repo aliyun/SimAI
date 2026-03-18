@@ -483,22 +483,108 @@ class ReplicaConfig:
     
     pd_p2p_comm_dtype: str = field(
         default='float16',
-        metadata={"help": "> add: pd_p2p_comm_dtype for pd disaggregation."},
+        metadata={"help": "> add: pd_p2p_comm_dtype for pd disaggregation."
+                  "choices=['fp8', 'float16', 'float32', 'float64', 'bfloat16', 'int8', 'int16', 'int32', 'int64'],"
+                  },
+        
     )
     
+    # pd_node_ratio: float = field(
+    #     default=0.5,
+    #     metadata={"help": "Number of p replicas : number of d replicas."},
+    # )
+    
+    # when pd_node_ratio = 1, all replicas are P-nodes; no D-nodes; that means not pd disaggregation
     pd_node_ratio: float = field(
-        default=0.5,
-        metadata={"help": "Number of p replicas : number of d replicas."},
+        default=1,
+        metadata={"help": "Number of p replicas : number of d replicas.; Ratio of P-nodes to （P-nodes + D-nodes） Fraction of replicas allocated as prefill (P) nodes. The remaining replicas are used as decode (D) nodes. For example, 0.5 means half of the replicas are prefill nodes and half are decode nodes (P:D = 1:1)."},
     )
-    
-    # parser.add_argument('--expert_model_parallel_size', type=int, default=1, help='Degree of expert model parallelism.')
+  
+    # ============================================================
+    # [EP Auto] Auto-computed EP, user doesn't need to specify; user value will be overridden
+    # Temporary = tp * pp (per-replica), later overridden in cluster.py
+    # to tp * pp * dp (full cluster world_size)
+    # [EP Auto] EP 自动计算, 用户无需手动传, 传了也会被覆盖
+    # 临时值 = tp * pp (per-replica), 后续在 cluster.py 中
+    # 覆盖为 tp * pp * dp (全集群 world_size)
+    # ============================================================
     expert_model_parallel_size: int = field(
         default=1,
-        metadata={"help": "Degree of expert model parallelism."},
+        metadata={"help": "Degree of expert model parallelism. "
+                  "Auto-computed as cluster world_size (tp*pp*dp) in cluster.py, "
+                  "user-provided value will be overridden."},
     )
 
+    # ============================================================
+    # PD separation specific params (optional, fallback to shared values above if not set)
+    # Reference vLLM: PD separation runs prefill/decode as completely independent clusters
+    # with potentially different TP/PP/EP
+    # PD 分离专用参数 (可选, 未指定时 fallback 到上方共享值)
+    # 参考 vLLM: PD 分离时 prefill/decode 是完全独立的集群
+    # 可以有不同 TP/PP/EP
+    # ============================================================
+    prefill_tensor_parallel_size: Optional[int] = field(
+        default=None,
+        metadata={"help": "Prefill-specific TP size. Falls back to tensor_parallel_size if not set."},
+    )
+    prefill_num_pipeline_stages: Optional[int] = field(
+        default=None,
+        metadata={"help": "Prefill-specific PP size. Falls back to num_pipeline_stages if not set."},
+    )
+    decode_tensor_parallel_size: Optional[int] = field(
+        default=None,
+        metadata={"help": "Decode-specific TP size. Falls back to tensor_parallel_size if not set."},
+    )
+    decode_num_pipeline_stages: Optional[int] = field(
+        default=None,
+        metadata={"help": "Decode-specific PP size. Falls back to num_pipeline_stages if not set."},
+    )
+    # Directly specify prefill replica count, takes priority over pd_node_ratio
+    # More flexible: avoids pd_node_ratio indivisibility issues
+    # 直接指定 prefill replica 数量, 优先于 pd_node_ratio 计算
+    # 更灵活: 避免 pd_node_ratio 不整除的问题
+    num_prefill_replicas: Optional[int] = field(
+        default=None,
+        metadata={"help": "Directly specify number of prefill replicas. "
+                  "Takes priority over pd_node_ratio when set. "
+                  "num_decode_replicas = total_replicas - num_prefill_replicas."},
+    )
+
+
     def __post_init__(self):
+        # Base world_size: per-replica GPU count (excluding dp)
+        # 基础 world_size: per-replica 的 GPU 数 (不含 dp)
         self.world_size = self.num_pipeline_stages * self.tensor_parallel_size
+        
+        # ============================================================
+        # [EP] Temporary = tp * pp (per-replica), excluding dp
+        # Will be overridden in cluster.py to tp * pp * dp (full cluster world_size)
+        # Initialization only, printed value is for reference
+        # [EP] 临时值 = tp * pp (per-replica), 不含 dp
+        # 后续在 cluster.py 中会被覆盖为 tp * pp * dp (全集群 world_size)
+        # 这里只是初始化, 打印仅供参考
+        # ============================================================
+        user_ep = self.expert_model_parallel_size
+        self.expert_model_parallel_size = self.world_size  # Temporary, overridden in cluster.py / 临时值, cluster.py 会覆盖
+        if user_ep != 1 and user_ep != self.world_size:
+            logger.info(f"[EP] Note: user-provided expert_model_parallel_size={user_ep}, "
+                  f"temporarily set to per-replica ws={self.world_size}, "
+                  f"final value will be overridden in cluster.py as tp*pp*dp")
+        
+        # 打印 ReplicaConfig 配置摘要 | Print ReplicaConfig summary
+        logger.info(f"[ReplicaConfig] tp={self.tensor_parallel_size}, pp={self.num_pipeline_stages}, "
+              f"per_replica_ws={self.world_size}, ep(temp)={self.expert_model_parallel_size}, "
+              f"pd_ratio={self.pd_node_ratio}")
+        if self.pd_node_ratio < 1:
+            p_tp = self.prefill_tensor_parallel_size or self.tensor_parallel_size
+            p_pp = self.prefill_num_pipeline_stages or self.num_pipeline_stages
+            d_tp = self.decode_tensor_parallel_size or self.tensor_parallel_size
+            d_pp = self.decode_num_pipeline_stages or self.num_pipeline_stages
+            logger.info(f"[ReplicaConfig] PD separation enabled: "
+                  f"prefill(tp={p_tp}, pp={p_pp}), decode(tp={d_tp}, pp={d_pp})")
+            if self.num_prefill_replicas is not None:
+                logger.info(f"[ReplicaConfig] User specified num_prefill_replicas={self.num_prefill_replicas}")
+        
         self.model_config: BaseModelConfig = BaseModelConfig.create_from_name(
             self.model_name
         )

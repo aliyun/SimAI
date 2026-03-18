@@ -86,8 +86,8 @@ class BenchmarkRunner:
             f"ip_addr: {ray.util.get_node_ip_address()}, CUDA_VISIBLE_DEVICES: {os.environ['CUDA_VISIBLE_DEVICES']}"
         )
 
-        # TODO > 可以改成deepep后端
-        # TODO > can be changed to deepep backend
+        # TODO(tianhao909): support DeepEP backend
+        # TODO(tianhao909): 支持 DeepEP 后端
         torch.distributed.init_process_group(
             backend="nccl",
             rank=rank,
