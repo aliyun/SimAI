@@ -53,16 +53,13 @@ class BatchStageEndEvent(BaseEvent):
 
         next_events = [
             # 当前stage调度下一个micro-batch
-            # TODO: 这里有点怪，BatchStageEndEvent会引发当前stage的调度
-            # BatchStageArrivalEvent也会引发当前stage的调度
-            # 虽然多次调度并不会引发问题，但是有很多调度是多余的(因为stage_scheduler.is_busy = True
-            #     或者stage_scheduler.queue为空)
-            
-            # Schedule the next micro-batch on the current stage
-            # TODO: This seems odd, BatchStageEndEvent triggers scheduling of the current stage
-            # BatchStageArrivalEvent also triggers scheduling of the current stage
-            # Although multiple scheduling doesn't cause issues, many schedules are redundant 
+            # TODO(tianhao909): odd behavior - BatchStageEndEvent triggers current stage scheduling
+            # BatchStageArrivalEvent also triggers current stage scheduling
+            # Although multiple scheduling doesn't cause issues, many schedules are redundant
             # (because stage_scheduler.is_busy = True or stage_scheduler.queue is empty)
+            # TODO(tianhao909): 这里有点怪，BatchStageEndEvent 会触发当前 stage 的调度
+            # BatchStageArrivalEvent 也会触发当前 stage 的调度
+            # 虽然多次调度不会引发问题，但很多调度是冗余的
             ReplicaStageScheduleEvent(
                 self.time,
                 self._replica_id,

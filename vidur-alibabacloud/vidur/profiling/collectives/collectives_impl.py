@@ -37,9 +37,8 @@ class GraphedCollective:
                 dtype=dtype,
                 device="cuda",
             )
-        # TODO >  elif collective == "all_to_all":
+        # TODO(tianhao909): add all_to_all collective support
         # elif collective == "all_to_all":
-        #     # TODO > change _reduce_buffer to what? all to all buffer?
         #     self._reduce_buffer = torch.empty(
         #         size=(size * num_workers,),
         #         dtype=dtype,
@@ -61,7 +60,6 @@ class GraphedCollective:
         if not self._disable_graph:
             self._graph = self._build_graph()
             
-        # >
         self._num_workers = num_workers
 
     def _run_all_reduce(self):
@@ -80,10 +78,11 @@ class GraphedCollective:
             torch.distributed.recv(self._buffer, 0)
 
     def _run_reduce_scatter(self):
-        # > torch.distributed function: def reduce_scatter_tensor(output, input, op=ReduceOp.SUM, group=None, async_op=False):
+        # torch.distributed function: reduce_scatter_tensor
         torch.distributed.reduce_scatter_tensor(self._buffer, self._reduce_buffer)
         
-    # TODO > modify according to def all_to_all(output_tensor_list, input_tensor_list, group=None, async_op=False):
+    # TODO(tianhao909): implement all_to_all collective
+    # TODO(tianhao909): 实现 all_to_all 集合通信
         # Or use all_to_all_single first?
         # def all_to_all_single(
         #     output,

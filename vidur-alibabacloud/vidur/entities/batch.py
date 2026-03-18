@@ -52,7 +52,6 @@ class Batch(BaseEntity):
         self._completed_at = None
         self._scheduled = False
         self._completed = False
-        # assert len(requests) <=1, f"> debug: 看看requests的长度是不是始终为1"
 
     @property
     def replica_id(self) -> int:

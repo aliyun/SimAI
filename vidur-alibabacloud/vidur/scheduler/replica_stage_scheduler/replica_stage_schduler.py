@@ -42,11 +42,10 @@ class ReplicaStageScheduler:
 
         self._is_busy = True
         batch = self._batch_queue.pop(0)
-        # 模拟micro-batch在PP stage上的执行
-        # TODO: 这块接入simai
-        
         # Simulate micro-batch execution on PP stage
-        # TODO: Integrate with simai
+        # 模拟 micro-batch 在 PP stage 上的执行
+        # TODO(tianhao909): integrate with SimAI for execution time prediction
+        # TODO(tianhao909): 接入 SimAI 获取执行时间预测
         execution_time = self._execution_time_predictor.get_execution_time(
             batch,
             self._stage_id,

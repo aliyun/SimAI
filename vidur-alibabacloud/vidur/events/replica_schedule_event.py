@@ -27,9 +27,9 @@ class ReplicaScheduleEvent(BaseEvent):
 
         replica_scheduler = scheduler.get_replica_scheduler(self._replica_id)
         # _batches中至多有PP-stages个batch
-        # TODO: 这里有一点奇怪，他这样的话就是每次issue PP-stages个batch
+        # TODO(tianhao909): odd behavior - issues PP-stages batches each time
         # _batches contains at most PP-stages batches
-        # TODO: This is a bit strange, as it issues PP-stages batches each time
+        # TODO(tianhao909): 这里有点奇怪，每次发射 PP-stages 个 batch
         self._batches = replica_scheduler.on_schedule()
 
         if not self._batches:

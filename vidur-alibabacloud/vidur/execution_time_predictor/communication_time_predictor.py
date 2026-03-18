@@ -25,8 +25,8 @@ class TPTimePredictor:
         self.predictor_config = predictor_config
         self.replica_config = replica_config
         # TODO ct: change to sizeof(tensor.dtype)
-        # fy：得做； 动态调整dtype； 从config里面获取
-        # fy: need to do; dynamically adjust dtype; get from config
+        # TODO: dynamically adjust dtype from config
+        # 待实现: 从 config 动态获取 dtype
         self.tensor_size = 2
         self.workload: SimAIWorkload = SimAIWorkload(
             tp_size=replica_config.tensor_parallel_size,
@@ -79,8 +79,8 @@ class TPTimePredictor:
         # Generate hash based on all relevant parameters of WorkItem
             
         
-        # TODO: > 增加layer0 str（1） "ALLREDUCE"等其他变量对于hash的影响，目前是写成固定值的
-        # TODO: > Add impact of other variables like layer0 str(1) "ALLREDUCE" to hash, currently hardcoded
+        # TODO(tianhao909): add layer0 str(1) "ALLREDUCE" etc. to hash computation, currently hardcoded
+        # TODO(tianhao909): 增加 layer0 str(1) "ALLREDUCE" 等变量对 hash 的影响，目前是固定值
             
         work_item_data = (
             "layer0" + 
@@ -173,13 +173,13 @@ class TPTimePredictor:
     # > rewrite: add two features to reuse same workloads and results of same commands
     def get_execution_time_by_simai_analytical(self, batch: Batch):
         """
+        Predict communication time using SimAI analytical tool.
+        Args: batch: Batch object containing batch information to process.
+        Returns: float: Predicted execution time (ms), returns -1 on error.
+
         使用SimAI分析工具预测通信时间的方法
         Args: batch: Batch对象，包含需要处理的批次信息
         Returns: float: 预测的执行时间（毫秒），如果出错则返回-1
-            
-        The method of predicting communication time using the SimAI analysis tool
-        Args: batch: Batch object, containing the batch information to be processed. 
-        Returns: float: Predicted execution time (milliseconds), returns -1 if an error occurs.
         """
         self.workload.flush()
         num_tokens_in_batch = batch._total_num_tokens_rounded
@@ -198,12 +198,12 @@ class TPTimePredictor:
                 * self.replica_config.tensor_parallel_size**1.25)
         
         
-        # 为workload和命令生成唯一标识符
-        # 基于WorkItem的所有相关参数生成哈希值
-        # TODO: > 增加layer0 str（1） "ALLREDUCE"等其他变量对于hash的影响，目前是写成固定值的
+        # TODO(tianhao909): add layer0 str(1) "ALLREDUCE" etc. to hash computation, currently hardcoded
+        # 为 workload 和命令生成唯一标识符
         # Generate unique identifier for workload and command
+        # 基于 WorkItem 的所有相关参数生成哈希值
         # Generate hash based on all relevant parameters of WorkItem
-        # TODO: > Add impact of other variables like layer0 str(1) "ALLREDUCE" to hash, currently hardcoded
+        # TODO(tianhao909): 增加 layer0 str(1) "ALLREDUCE" 等变量对 hash 的影响，目前是固定值
             
         work_item_data = (
             "layer0" + 
@@ -214,6 +214,7 @@ class TPTimePredictor:
             str(self.tensor_size)
         )
         
+        # Generate MD5 hash as workload identifier
         # 使用MD5哈希算法生成工作负载标识符
         workload_identifier = hashlib.md5(work_item_data.encode()).hexdigest()
         
@@ -301,9 +302,8 @@ class TPTimePredictor:
             # Get latency data from index 5 position (microseconds), convert to milliseconds
             latency = float(rows[-1][5]) * 1e-3  
             
-            # TODO: > 量太小有可能tp通信量是零， 比如 通信量为65535的时候， 就是0
-            # 通信量为3276800的时候， laytency=0.015ms
-            # TODO: > Amount may be too small for tp communication to be zero, e.g. when communication amount is 65535, it's 0
+            # TODO(tianhao909): handle near-zero TP communication amounts (e.g. 65535 bytes -> 0 latency)
+            # TODO(tianhao909): 通信量太小时 TP 通信可能为 0，如 65535 bytes 时 latency=0
             # When communication amount is 3276800, latency=0.015ms
             # assert all_reduce_bytes>0 and latency > 0, f"> Debug: all_reduce_bytes={all_reduce_bytes} latency={latency} need to be >=0"
             

@@ -1,6 +1,6 @@
 from typing import List, Tuple, Dict 
 
-# from vidur.config import Config  
+from vidur.logger import init_logger
 from vidur.entities import Replica, Request  
 from vidur.scheduler.global_scheduler.base_global_scheduler import BaseGlobalScheduler 
 
@@ -14,6 +14,8 @@ from vidur.scheduler.replica_scheduler.replica_scheduler_registry import (
     ReplicaSchedulerRegistry,
 )
 
+logger = init_logger(__name__)
+
 # >
 from vidur.entities.task import Task, TaskType
 from vidur.entities.flow import Flow, FlowType
@@ -21,8 +23,8 @@ from vidur.entities.interconnect import DummyLink
 from vidur.entities.replica import Replica, ReplicaType
 from vidur.entities.request import Request, RequestType
 
-# TODO: > > 参考 sw写的；但也很多区别； 换一个名字； 类似pd分离的其他名字； 不严格是sw了
-# TODO: > > Refer to sw implementation; but there are many differences; need a new name; similar to pd separation; not strictly sw anymore
+# TODO(tianhao909): rename class - not strictly Splitwise anymore, more like PD-separation scheduler
+# TODO(tianhao909): 重命名类，已不严格是 Splitwise，更像 PD 分离调度器
 class SplitwiseGlobalScheduler(BaseGlobalScheduler):  # Splitwise Global Scheduler.
     def __init__(self, config: SimulationConfig, replicas: Dict[int, Replica]):
         # Call parent class initialization method
@@ -33,12 +35,14 @@ class SplitwiseGlobalScheduler(BaseGlobalScheduler):  # Splitwise Global Schedul
         self._replicas = replicas  # Save replica dictionary as instance private attribute, key is replica ID, value is replica object
         self._num_replicas = len(self._replicas)  # Calculate and save total number of replicas
         
-        # TODO > improve pd_node_ratio
+        # TODO(tianhao909): make pd_node_ratio configurable
+        # TODO(tianhao909): 优化 pd_node_ratio 的配置方式
         # self.pd_node_ratio = 0.5 
         self.pd_node_ratio =  self._replicas[0].pd_node_ratio
-        assert self.pd_node_ratio >= 0 and self.pd_node_ratio <= 1, "> Debug: pd_node_ratio must be between 0 and 1."
+        assert self.pd_node_ratio >= 0 and self.pd_node_ratio <= 1, "pd_node_ratio must be between 0 and 1"
         # self._sub_scheduler = self._config.splitwise_scheduler_sub_scheduler  # Get sub-scheduler type from configuration
-        # TODO > improve _sub_scheduler flexible choice
+        # TODO(tianhao909): make _sub_scheduler configurable
+        # TODO(tianhao909): 优化 _sub_scheduler 的灵活选择
         # self._sub_scheduler = "round_robin"
         self._sub_scheduler = "lor"
         
@@ -148,14 +152,11 @@ class SplitwiseGlobalScheduler(BaseGlobalScheduler):  # Splitwise Global Schedul
         # self.mixed_instances = []  # Mixed instance list (can handle prompts and tokens)
         # self.token_instances = []  # Token instance list
         
-        # TODO : > 增加到输入或者仿真里面
-        # fy 这个需要是一个入参 从config里面读取
-        # TODO : > Add to input or simulation
-        # fy This needs to be an input parameter read from config
+        # TODO(tianhao909): add transfer_bandwidth to config input
+        # TODO(tianhao909): 增加到输入或仿真配置中，从 config 读取
         self.transfer_bandwidth = 0
         self.transfer_bandwidth = 200 * 1024**3 # Gbps转换为bps
         
-        # >
         self.p_request_counter = 0
         self.d_request_counter = 0
 
@@ -346,7 +347,7 @@ class SplitwiseGlobalScheduler(BaseGlobalScheduler):  # Splitwise Global Schedul
             
             prefill_replica = None
 
-            
+            # fth 目前p req 进入 p replica的 lor 策略：
             # vidur's lor:
             # replica_id = min(pending_prefill_requests_map.items(), key=lambda x: x[1])[0]
             
@@ -373,21 +374,46 @@ class SplitwiseGlobalScheduler(BaseGlobalScheduler):  # Splitwise Global Schedul
             request.decode_replica_id = replica_id
             decode_request_mapping.append((decode_replica.id, request))
             
-            # TODO fy： 没有用的 task dag等相关代码都可以删掉； 优先级相对低
-            # task继承 req； 或者让task能构造req； 
-            # TODO fy: Unused task dag related code can be deleted; relatively low priority
+            # TODO(tianhao909): remove unused task DAG code (low priority)
+            # TODO(tianhao909): 删除未使用的 task DAG 相关代码（优先级较低）
             # task inherits from req; or let task construct req
+            # task 继承 req；或者让 task 能构造 req
             
+            '''
             if prefill_replica != decode_replica:  # If prompt instance and token instance are different
+                # ============================================================
+                # [冗余代码分析] add_to_pool + DAG + sched_* 运行时验证
+                # 
+                # 以下代码在 Splitwise PD分离 实际调度流程中并不影响核心逻辑:
+                # 1. add_to_pool(): 将request加入replica.pending_requests
+                #    - prefill端: batch_end_event.py 会从中remove，但不影响调度
+                #    - decode端: 从未被消费，纯冗余
+                # 2. request DAG (prefill_task, decode_task): 创建了DAG图，
+                #    但_get_next_batch()使用的是_request_queue，不读取DAG
+                # 3. add_kv_cache_transfer(): 构建了flow node，但模拟不使用
+                # 4. sched_memory/sched_pending_tokens: 设置但从未被读取用于调度
+                #
+                # 保留这些代码以兼容可能的上层逻辑，但标注为冗余。
+                # ============================================================
+                logger.debug(f"[Redundant code check (冗余代码验证)] schedule(): "
+                      f"req={request.id}, p_replica={prefill_replica.id}, d_replica={decode_replica.id}")
+                logger.debug(f"  add_to_pool(prefill_task): added to p_replica.pending_requests "
+                      f"(加入 p_replica.pending_requests, len={len(prefill_replica.pending_requests)})")
+                logger.debug(f"  add_to_pool(decode_task): added to d_replica.pending_requests "
+                      f"(加入 d_replica.pending_requests, len={len(decode_replica.pending_requests)}) [redundant, 冗余]")
                 prefill_replica.add_to_pool(prefill_task)  
-                decode_replica.add_to_pool(decode_task)    
+                # decode_replica.add_to_pool(decode_task)  
+                decode_replica.add_to_pool(decode_task)  # [冗余] decode端pending_requests从未被消费  
                 
+                # [冗余] 以下KV cache transfer/DAG操作不影响实际调度
                 # 在实例之间传输KV缓存
                 # Transfer KV cache between instances
                 self.add_kv_cache_transfer(request,
                                         prefill_replica,
                                         decode_replica,
                                         self.transfer_bandwidth)
+                
+                # [冗余] sched_memory 设置但从未被核心调度逻辑读取
                 prefill_replica.sched_memory += prefill_task.max_memory(prefill_replica)  # Update prompt instance memory usage
                 decode_replica.sched_memory += prefill_task.max_memory(decode_replica) + \
                                             decode_task.max_memory(decode_replica)  # Update token instance memory usage
@@ -398,10 +424,11 @@ class SplitwiseGlobalScheduler(BaseGlobalScheduler):  # Splitwise Global Schedul
                 prefill_replica.sched_memory += prefill_task.max_memory(prefill_replica) + \
                                                 decode_task.max_memory(prefill_replica)  # Update instance memory usage
                 prefill_task.chain = [decode_task]  # Set token task as successor of prompt task
-                
+            
+            # [冗余] sched_pending_tokens 设置但从未被核心调度逻辑读取
             prefill_replica.sched_pending_tokens += prefill_task.prompt_size  # Update prompt instance pending token count
             decode_replica.sched_pending_tokens += 1  # Update token instance pending token count
-        
+            '''
         # >
         for req in requests_to_remove:
             self._request_queue.remove(req)
