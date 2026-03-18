@@ -1,0 +1,87 @@
+name: Bug Report
+description: Submit a bug report to help improve SimAI
+title: "[BUG]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+
+        It would be very helpful if you could provide as much detail as possible.
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Describe the Bug
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction Details
+      description: |
+        Please provide detailed steps to reproduce the issue.
+        Include the branch names or commit IDs of SimAI/AICB you are using.
+      placeholder: |
+        1. **Branches / Commit IDs**: SimAI branch `master` (commit `abc1234`), AICB branch `master`
+        2. Go to '...'
+        3. Run `...`
+        4. See error: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened? Please include any error messages or logs.
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Please provide details about your environment.
+      placeholder: |
+        - OS: Ubuntu 20.04
+        - GCC/G++: 9.4.0
+        - Python: 3.8.10
+        - Docker image (if applicable): ...
+        - CUDA version (if applicable): ...
+        - SimAI branch/commit: master / abc1234
+        - AICB branch/commit: master / def5678
+    validations:
+      required: true
+
+  - type: textarea
+    id: usage-scenario
+    attributes:
+      label: Usage Scenario (Optional)
+      description: |
+        If possible, please describe your usage scenario for SimAI:
+        - What task or project you are working on
+        - The underlying goals or business context
+
+        This information will help us collect relevant use cases and optimize the SimAI simulator to better meet your needs.
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots / Logs
+      description: If applicable, add screenshots or log snippets to help explain your problem.
+    validations:
+      required: false
