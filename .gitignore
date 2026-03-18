@@ -1,4 +1,4 @@
-.vscode
+# .vscode
 astra-sim-alibabacloud/build/simai_analytical/build/
 astra-sim-alibabacloud/build/astra_ns3/build/
 astra-sim-alibabacloud/extern/
@@ -8,5 +8,16 @@ test/log/
 *.log
 .cur*
 .DS_Store
+
+# fth add
+*.csv
+*.txt
 tmp_simai_inference_workload/
+aicb/
 Spectrum-X*
+
+fth-test/*
+
+# Personal dev / fth files
+fth.sh
+**/fth.sh
