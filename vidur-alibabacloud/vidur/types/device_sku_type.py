@@ -6,3 +6,6 @@ class DeviceSKUType(BaseIntEnum):
     A100 = 2
     H100 = 3
     H800 = 4
+    H20 = 5
+    H200 = 6
+    GB200 = 7

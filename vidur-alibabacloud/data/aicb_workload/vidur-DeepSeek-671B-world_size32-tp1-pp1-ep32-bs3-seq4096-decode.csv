@@ -1,0 +1,4 @@
+layer_name,comp_time,comm_size
+attention,179376,0
+mlp,30314,0
+moe,208498,521472

@@ -182,14 +182,13 @@ env_3
 vidur.egg-info
 example
 
-# >
-fth_test/
-fth_run/
-SimAI/
+# Project-specific ignores
+examples/vidur-ali-scenarios/logs/
+examples/vidur-ali-scenarios/simulator_output/
 core.*
 *.csv
-# Added rule to ignore all *fth.py files
-*fth.py
-# Added rule to recursively ignore all *fth.py files in all directories
-**/*fth.py
+!data/aicb_workload/*.csv
+!data/aicb_workload/cache/
+!data/aicb_workload/cache/*.csv
+!data/aicb_workload/cache/*.json
 
