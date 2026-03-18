@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: SimAI Documentation
+    url: https://github.com/aliyun/SimAI/tree/master/docs
+    about: Refer to the SimAI documentation to help you get started.
+  - name: SimAI Community (DingTalk / WeChat)
+    url: https://github.com/aliyun/SimAI#contact-us
+    about: Join our DingTalk or WeChat community groups for discussion and support.

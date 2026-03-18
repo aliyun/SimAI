@@ -8,3 +8,5 @@ test/log/
 *.log
 .cur*
 .DS_Store
+tmp_simai_inference_workload/
+Spectrum-X*
