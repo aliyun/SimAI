@@ -44,7 +44,6 @@ function compile {
     mkdir -p "${SIM_LOG_DIR}"/topo/
     mkdir -p "${SIM_LOG_DIR}"/results/
     local option="$1" 
-    cd "${BUILD_DIR}" || exit
     case "$option" in
     "ns3")
         cd "${NS3_BUILD_DIR}"
