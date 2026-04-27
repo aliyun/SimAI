@@ -7,10 +7,11 @@ SIMAI_DIR="${ROOT_DIR:?}"/astra-sim-alibabacloud
 SOURCE_NS3_BIN_DIR="${SIMAI_DIR:?}"/extern/network_backend/ns3-interface/simulation/build/scratch/ns3.36.1-AstraSimNetwork-debug
 SOURCE_ANA_BIN_DIR="${SIMAI_DIR:?}"/build/simai_analytical/build/simai_analytical/SimAI_analytical
 SOURCE_PHY_BIN_DIR="${SIMAI_DIR:?}"/build/simai_phy/build/simai_phynet/SimAI_phynet
+SOURCE_OXC_BIN_DIR="${SIMAI_DIR:?}"/build/simai_oxc/build/simai_oxc/SimAI_oxc
 
 TARGET_BIN_DIR="${SCRIPT_DIR:?}"/../bin
 function compile {
-    local option="$1" 
+    local option="$1"
     case "$option" in
     "ns3")
         mkdir -p "${TARGET_BIN_DIR:?}"
@@ -22,7 +23,7 @@ function compile {
         cp -r "${NS3_DIR:?}"/* "${SIMAI_DIR:?}"/extern/network_backend/ns3-interface
         cd "${SIMAI_DIR:?}"
         ./build.sh -lr ns3
-        ./build.sh -c ns3    
+        ./build.sh -c ns3
         ln -s "${SOURCE_NS3_BIN_DIR:?}" "${TARGET_BIN_DIR:?}"/SimAI_simulator;;
     "phy")
         mkdir -p "${TARGET_BIN_DIR:?}"
@@ -31,7 +32,7 @@ function compile {
         fi
         cd "${SIMAI_DIR:?}"
         ./build.sh -lr phy
-        ./build.sh -c phy 
+        ./build.sh -c phy
         ln -s "${SOURCE_PHY_BIN_DIR:?}" "${TARGET_BIN_DIR:?}"/SimAI_phynet;;
     "analytical")
         mkdir -p "${TARGET_BIN_DIR:?}"
@@ -41,8 +42,18 @@ function compile {
         fi
         cd "${SIMAI_DIR:?}"
         ./build.sh -lr analytical
-        ./build.sh -c analytical 
+        ./build.sh -c analytical
         ln -s "${SOURCE_ANA_BIN_DIR:?}" "${TARGET_BIN_DIR:?}"/SimAI_analytical;;
+    "oxc")
+        mkdir -p "${TARGET_BIN_DIR:?}"
+        mkdir -p "${ROOT_DIR:?}"/results
+        if [ -L "${TARGET_BIN_DIR:?}/SimAI_oxc" ]; then
+            rm -rf "${TARGET_BIN_DIR:?}"/SimAI_oxc
+        fi
+        cd "${SIMAI_DIR:?}"
+        ./build.sh -lr oxc
+        ./build.sh -c oxc
+        ln -s "${SOURCE_OXC_BIN_DIR:?}" "${TARGET_BIN_DIR:?}"/SimAI_oxc;;
     esac
 }
 
@@ -68,6 +79,12 @@ function cleanup_build {
         fi
         cd "${SIMAI_DIR:?}"
         ./build.sh -lr analytical;;
+    "oxc")
+        if [ -L "${TARGET_BIN_DIR:?}/SimAI_oxc" ]; then
+            rm -rf "${TARGET_BIN_DIR:?}"/SimAI_oxc
+        fi
+        cd "${SIMAI_DIR:?}"
+        ./build.sh -lr oxc;;
     esac
 }
 
@@ -79,7 +96,7 @@ case "$1" in
     compile "$2";;
 -h|--help|*)
     printf -- "help message\n"
-    printf -- "-c|--compile mode supported ns3/phy/analytical  (example:./build.sh -c ns3)\n"
+    printf -- "-c|--compile mode supported ns3/phy/analytical/oxc  (example:./build.sh -c ns3)\n"
     printf -- "-l|--clean  (example:./build.sh -l ns3)\n"
     printf -- "-lr|--clean-result mode  (example:./build.sh -lr ns3)\n"
 esac

@@ -8,3 +8,6 @@ test/log/
 *.log
 .cur*
 .DS_Store
+
+# OXC build artifacts
+astra-sim-alibabacloud/build/simai_oxc/build/
