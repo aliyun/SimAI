@@ -1598,7 +1598,7 @@ namespace MockNccl {
               result[std::make_pair(ring_id, g_flow_id)] = tmp_result;
               g_flow_id++;
               prevranks.clear();
-              if(rank_it->first){
+              if(rank_it->first!=-1){
                 prevranks = {rank_it->first};
               }
               tmp_result = SingleFlow(
