@@ -433,9 +433,14 @@ bool NcclTreeFlowModel::iteratable(int channel_id) {
       break;
     }
   }
+  bool should_exit = false;
+  if (all_channel_finished && all_packets_freed) {
+    if (!judge_exit_flag.exchange(true)) {
+      should_exit = true;
+    }
+  }
   cs.ExitSection();
-  if (all_channel_finished == true &&
-      all_packets_freed == true) {
+  if (should_exit) {
     exit();
     return false;
   }
