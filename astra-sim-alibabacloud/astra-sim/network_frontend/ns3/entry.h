@@ -129,13 +129,12 @@ void SendFlow(int src, int dst, uint64_t maxPacketCount,
   const char* send_lat_env = std::getenv("AS_SEND_LAT");
   if (send_lat_env) {
     try {
-      send_lat = std::stoi(send_lat_env);
+      send_lat = 1000 * std::stoi(send_lat_env);
     } catch (const std::invalid_argument& e) {
       NcclLog->writeLog(NcclLogLevel::ERROR,"send_lat set error");
       exit(-1);
     }
   }
-  send_lat *= 1000;
   flow_input.idx++;
   if(real_PacketCount == 0) real_PacketCount = 1;
     MockNcclLog* NcclLog = MockNcclLog::getInstance();
