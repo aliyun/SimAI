@@ -4,6 +4,7 @@ NS3_BUILD_DIR="${SCRIPT_DIR:?}"/build/astra_ns3
 SIMAI_PHY_BUILD_DIR="${SCRIPT_DIR:?}"/build/simai_phy
 SIMAI_ANALYTICAL_BUILD_DIR="${SCRIPT_DIR:?}"/build/simai_analytical
 SIM_LOG_DIR="${SCRIPT_DIR:?}"/log
+export SIM_LOG_DIR
 
 # Functions
 function cleanup_build {
@@ -43,8 +44,7 @@ function compile {
     mkdir -p "${SIM_LOG_DIR}"/config/
     mkdir -p "${SIM_LOG_DIR}"/topo/
     mkdir -p "${SIM_LOG_DIR}"/results/
-    local option="$1" 
-    cd "${BUILD_DIR}" || exit
+    local option="$1"
     case "$option" in
     "ns3")
         cd "${NS3_BUILD_DIR}"

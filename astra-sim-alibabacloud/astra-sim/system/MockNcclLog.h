@@ -26,7 +26,10 @@
 #include <cstdarg>
 #include <thread>
 
-#define LOG_PATH  "/etc/astra-sim/"
+#ifndef SIM_LOG_DIR
+#define SIM_LOG_DIR "/etc/astra-sim"
+#endif
+#define LOG_PATH SIM_LOG_DIR "/"
 
 enum class NcclLogLevel { DEBUG, INFO, WARNING,ERROR};
 

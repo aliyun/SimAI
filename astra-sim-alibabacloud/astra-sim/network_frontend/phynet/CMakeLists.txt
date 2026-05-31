@@ -13,6 +13,10 @@ if(use_rdma)
     add_definitions(-DPHY_RDMA)
     message("PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
 endif()
+
+if(DEFINED ENV{SIM_LOG_DIR})
+    add_definitions(-DSIM_LOG_DIR="$ENV{SIM_LOG_DIR}")
+endif()
 set(CMAKE_BUILD_TYPE Debug)
 add_executable(SimAI_phynet ${SOURCES} ${HEADERS})
 

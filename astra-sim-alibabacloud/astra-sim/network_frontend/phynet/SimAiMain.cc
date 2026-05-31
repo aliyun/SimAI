@@ -30,7 +30,10 @@
 #ifdef PHY_RDMA
 #include "astra-sim/system/SimAiFlowModelRdma.hh"
 #endif
-#define RESULT_PATH "/etc/astra-sim/results/ncclFlowModel_"
+#ifndef SIM_LOG_DIR
+#define SIM_LOG_DIR "/etc/astra-sim"
+#endif
+#define RESULT_PATH SIM_LOG_DIR "/results/ncclFlowModel_"
 
 using namespace std;
 
