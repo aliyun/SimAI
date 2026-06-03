@@ -1,0 +1,479 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1776996728174,
+  "projectRoot": "/Users/anthony/PycharmProjects/SimAI/dashboard",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "tsconfig.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "react",
+        "version": "19.2.0",
+        "category": "frontend"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.0",
+        "category": "frontend"
+      },
+      {
+        "name": "@playwright/test",
+        "version": "1.58.2",
+        "category": "testing"
+      },
+      {
+        "name": "vite",
+        "version": "7.3.1",
+        "category": "build"
+      }
+    ],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": "cd /Users/anthony/PycharmProjects/SimAI/dashboard && npx tsc --noEmit 2>&1 | tail -3",
+    "testCommand": "cd /Users/anthony/PycharmProjects/SimAI/dashboard && npx tsc --noEmit 2>&1 && echo \"tsc OK\" && python3 -m pytest server/tests/ -q 2>&1 | tail -2 && bash scripts/lra-test.sh 2>&1 | tail -3",
+    "lintCommand": "npm run lint",
+    "devCommand": "npm run dev",
+    "scripts": {
+      "dev": "vite",
+      "build": "tsc -b && vite build",
+      "lint": "eslint .",
+      "preview": "vite preview",
+      "test:e2e": "playwright test",
+      "test:e2e:headed": "playwright test --headed",
+      "test:e2e:report": "playwright show-report"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": "type-based"
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "public",
+      "src",
+      "tests"
+    ],
+    "gitBranches": {
+      "defaultBranch": "master",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "dist": {
+      "path": "dist",
+      "purpose": "Distribution/build output",
+      "fileCount": 3,
+      "lastAccessed": 1776996728161,
+      "keyFiles": [
+        "index.html",
+        "logo.png",
+        "mockServiceWorker.js"
+      ]
+    },
+    "playwright-report": {
+      "path": "playwright-report",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1776996728163,
+      "keyFiles": [
+        "index.html"
+      ]
+    },
+    "public": {
+      "path": "public",
+      "purpose": "Public files",
+      "fileCount": 2,
+      "lastAccessed": 1776996728163,
+      "keyFiles": [
+        "logo.png",
+        "mockServiceWorker.js"
+      ]
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 3,
+      "lastAccessed": 1776996728163,
+      "keyFiles": [
+        "App.tsx",
+        "index.css",
+        "main.tsx"
+      ]
+    },
+    "test-results": {
+      "path": "test-results",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1776996728163,
+      "keyFiles": []
+    },
+    "tests": {
+      "path": "tests",
+      "purpose": "Test files",
+      "fileCount": 0,
+      "lastAccessed": 1776996728163,
+      "keyFiles": []
+    },
+    "dist/assets": {
+      "path": "dist/assets",
+      "purpose": "Static assets",
+      "fileCount": 3,
+      "lastAccessed": 1776996728165,
+      "keyFiles": [
+        "index-CwV78Ied.css",
+        "index-DarLmIFk.js",
+        "index-DarLmIFk.js.map"
+      ]
+    },
+    "src/api": {
+      "path": "src/api",
+      "purpose": "API routes",
+      "fileCount": 4,
+      "lastAccessed": 1776996728165,
+      "keyFiles": [
+        "client.ts",
+        "edg-api.ts",
+        "simulation-api.ts"
+      ]
+    },
+    "src/assets": {
+      "path": "src/assets",
+      "purpose": "Static assets",
+      "fileCount": 0,
+      "lastAccessed": 1776996728165,
+      "keyFiles": []
+    },
+    "src/components": {
+      "path": "src/components",
+      "purpose": "UI components",
+      "fileCount": 0,
+      "lastAccessed": 1776996728165,
+      "keyFiles": []
+    },
+    "src/pages": {
+      "path": "src/pages",
+      "purpose": "Page components",
+      "fileCount": 9,
+      "lastAccessed": 1776996728165,
+      "keyFiles": [
+        "EdgPage.tsx",
+        "HomePage.tsx",
+        "LaunchPage.tsx"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "src/components/charts/LayerTimingChart.tsx",
+      "accessCount": 41,
+      "lastAccessed": 1776399839745,
+      "type": "file"
+    },
+    {
+      "path": "src/pages/HomePage.tsx",
+      "accessCount": 27,
+      "lastAccessed": 1776766872046,
+      "type": "file"
+    },
+    {
+      "path": "src",
+      "accessCount": 18,
+      "lastAccessed": 1776766881912,
+      "type": "directory"
+    },
+    {
+      "path": "src/pages/ResultsPage.tsx",
+      "accessCount": 18,
+      "lastAccessed": 1776838864895,
+      "type": "file"
+    },
+    {
+      "path": "src/pages/LaunchPage.tsx",
+      "accessCount": 14,
+      "lastAccessed": 1777447735585,
+      "type": "file"
+    },
+    {
+      "path": "src/stores/wizard-store.ts",
+      "accessCount": 14,
+      "lastAccessed": 1777447773684,
+      "type": "file"
+    },
+    {
+      "path": "src/api/simulation-api.ts",
+      "accessCount": 13,
+      "lastAccessed": 1777447865588,
+      "type": "file"
+    },
+    {
+      "path": "src/components/edg/edg-layout.ts",
+      "accessCount": 8,
+      "lastAccessed": 1776838261133,
+      "type": "file"
+    },
+    {
+      "path": "src/components/charts/BandwidthChart.tsx",
+      "accessCount": 6,
+      "lastAccessed": 1776217680058,
+      "type": "file"
+    },
+    {
+      "path": "src/types/wizard.ts",
+      "accessCount": 6,
+      "lastAccessed": 1777447760942,
+      "type": "file"
+    },
+    {
+      "path": "tests/e2e/edg-integration.spec.ts",
+      "accessCount": 5,
+      "lastAccessed": 1776756262770,
+      "type": "file"
+    },
+    {
+      "path": "src/components/edg/EdgDiffGraph.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1776838377999,
+      "type": "file"
+    },
+    {
+      "path": "src/pages/NetworkDetailPage.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1776155347125,
+      "type": "file"
+    },
+    {
+      "path": "src/components/edg/DiffEdge.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1776828117806,
+      "type": "file"
+    },
+    {
+      "path": "test-results/edg-visual/04-edg-adjusted.png",
+      "accessCount": 4,
+      "lastAccessed": 1776838906175,
+      "type": "file"
+    },
+    {
+      "path": "src/pages/WorkloadPage.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1777447900096,
+      "type": "file"
+    },
+    {
+      "path": "src/pages/TopologyPage.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1776155353694,
+      "type": "file"
+    },
+    {
+      "path": "test-results/edg-visual/03-edg-baseline.png",
+      "accessCount": 3,
+      "lastAccessed": 1776838421706,
+      "type": "file"
+    },
+    {
+      "path": "src/pages/EdgPage.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1776838839829,
+      "type": "file"
+    },
+    {
+      "path": "src/main.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1776155309276,
+      "type": "file"
+    },
+    {
+      "path": "index.html",
+      "accessCount": 2,
+      "lastAccessed": 1776155309889,
+      "type": "file"
+    },
+    {
+      "path": "tests/e2e/dashboard.spec.ts",
+      "accessCount": 2,
+      "lastAccessed": 1776155310029,
+      "type": "file"
+    },
+    {
+      "path": "src/components/layout/Header.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1776155407533,
+      "type": "file"
+    },
+    {
+      "path": "src/components/charts/DimensionBreakdown.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1776170039156,
+      "type": "file"
+    },
+    {
+      "path": "src/components/charts/ComputeCommBreakdown.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1776170044251,
+      "type": "file"
+    },
+    {
+      "path": "src/components/charts/NodeTransferChart.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1776170068446,
+      "type": "file"
+    },
+    {
+      "path": "src/components/charts/OverviewMetrics.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1776171038141,
+      "type": "file"
+    },
+    {
+      "path": "",
+      "accessCount": 2,
+      "lastAccessed": 1776245702278,
+      "type": "directory"
+    },
+    {
+      "path": "test-results/edg-launch-page.png",
+      "accessCount": 2,
+      "lastAccessed": 1776755779312,
+      "type": "file"
+    },
+    {
+      "path": "test-results/edg-homepage.png",
+      "accessCount": 2,
+      "lastAccessed": 1776755779364,
+      "type": "file"
+    },
+    {
+      "path": "src/components/wizard/WizardLayout.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1776838824969,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-polling.ts",
+      "accessCount": 1,
+      "lastAccessed": 1776155332029,
+      "type": "file"
+    },
+    {
+      "path": "playwright.config.ts",
+      "accessCount": 1,
+      "lastAccessed": 1776169348728,
+      "type": "file"
+    },
+    {
+      "path": "src/components/charts",
+      "accessCount": 1,
+      "lastAccessed": 1776170048290,
+      "type": "directory"
+    },
+    {
+      "path": "src/api",
+      "accessCount": 1,
+      "lastAccessed": 1776170848981,
+      "type": "directory"
+    },
+    {
+      "path": "src/api/client.ts",
+      "accessCount": 1,
+      "lastAccessed": 1776170850986,
+      "type": "file"
+    },
+    {
+      "path": "test-results-debug.mjs",
+      "accessCount": 1,
+      "lastAccessed": 1776171001174,
+      "type": "file"
+    },
+    {
+      "path": "test-results-debug2.mjs",
+      "accessCount": 1,
+      "lastAccessed": 1776171107428,
+      "type": "file"
+    },
+    {
+      "path": "test-results-debug3.mjs",
+      "accessCount": 1,
+      "lastAccessed": 1776171283330,
+      "type": "file"
+    },
+    {
+      "path": "test-results-debug4.mjs",
+      "accessCount": 1,
+      "lastAccessed": 1776171447681,
+      "type": "file"
+    },
+    {
+      "path": "test-results-debug5.mjs",
+      "accessCount": 1,
+      "lastAccessed": 1776171527097,
+      "type": "file"
+    },
+    {
+      "path": "test-results-debug6.mjs",
+      "accessCount": 1,
+      "lastAccessed": 1776171601961,
+      "type": "file"
+    },
+    {
+      "path": "test-results-final.mjs",
+      "accessCount": 1,
+      "lastAccessed": 1776171935807,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 1,
+      "lastAccessed": 1776325087555,
+      "type": "file"
+    },
+    {
+      "path": "src/types/edg.ts",
+      "accessCount": 1,
+      "lastAccessed": 1776829199144,
+      "type": "file"
+    },
+    {
+      "path": "src/components/edg/CrossEdge.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1776830226858,
+      "type": "file"
+    },
+    {
+      "path": "tests/e2e/edg-visual.spec.ts",
+      "accessCount": 1,
+      "lastAccessed": 1776830408557,
+      "type": "file"
+    },
+    {
+      "path": "src/pages/OpsPage.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1778297542320,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

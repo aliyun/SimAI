@@ -1,0 +1,661 @@
+{
+  "version": "v2.0.260430",
+  "request_id": 2,
+  "message_type": "IMPORT_FULL_TOPO",
+  "topology": {
+    "oxc_nodes": [
+      {
+        "node_ip": "10.118.241.50",
+        "node_location": {
+          "type": "OXC",
+          "para_plane_group_id": "NULL",
+          "super_node_id": "NULL",
+          "super_plane_group_id": "NULL",
+          "node_id": "24150"
+        },
+        "oxc_type": "oxc_type",
+        "port_num": "256"
+      }
+    ],
+    "server_nodes": [
+      {
+        "node_ip": "10.118.241.1",
+        "node_location": {
+          "type": "SERVER",
+          "para_plane_group_id": "1",
+          "super_node_id": "NULL",
+          "super_plane_group_id": "NULL",
+          "node_id": "2411"
+        },
+        "server_type": "A100"
+      },
+      {
+        "node_ip": "10.118.241.7",
+        "node_location": {
+          "type": "SERVER",
+          "para_plane_group_id": "2",
+          "super_node_id": "NULL",
+          "super_plane_group_id": "NULL",
+          "node_id": "2417"
+        },
+        "server_type": "A100"
+      },
+      {
+        "node_ip": "10.118.241.12",
+        "node_location": {
+          "type": "SERVER",
+          "para_plane_group_id": "3",
+          "super_node_id": "NULL",
+          "super_plane_group_id": "NULL",
+          "node_id": "24112"
+        },
+        "server_type": "A100"
+      },
+      {
+        "node_ip": "10.118.241.15",
+        "node_location": {
+          "type": "SERVER",
+          "para_plane_group_id": "4",
+          "super_node_id": "NULL",
+          "super_plane_group_id": "NULL",
+          "node_id": "24115"
+        },
+        "server_type": "A100"
+      }
+    ],
+    "leaf_nodes": [
+      {
+        "node_ip": "10.118.241.25",
+        "node_location": {
+          "type": "LEAF",
+          "para_plane_group_id": "1",
+          "super_node_id": "NULL",
+          "super_plane_group_id": "NULL",
+          "node_id": "24125"
+        },
+        "port_num": "32",
+        "port_infos": [
+          {
+            "port_id": "1-1",
+            "port_name": "400GE/0/1/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "1-2",
+            "port_name": "400GE/0/1/2",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "2-1",
+            "port_name": "400GE/0/2/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "2-2",
+            "port_name": "400GE/0/2/2",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "3-1",
+            "port_name": "400GE/0/3/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "3-2",
+            "port_name": "400GE/0/3/2",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "4-1",
+            "port_name": "400GE/0/4/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "4-2",
+            "port_name": "400GE/0/4/2",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "17",
+            "port_name": "400GE/0/17/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "18",
+            "port_name": "400GE/0/18/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "19",
+            "port_name": "400GE/0/19/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "20",
+            "port_name": "400GE/0/20/1",
+            "port_ip": "NULL"
+          }
+        ],
+        "bounding_port_pair": [],
+        "plane_id": "0"
+      },
+      {
+        "node_ip": "10.118.241.26",
+        "node_location": {
+          "type": "LEAF",
+          "para_plane_group_id": "2",
+          "super_node_id": "NULL",
+          "super_plane_group_id": "NULL",
+          "node_id": "24126"
+        },
+        "port_num": "32",
+        "port_infos": [
+          {
+            "port_id": "9-1",
+            "port_name": "400GE/0/9/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "9-2",
+            "port_name": "400GE/0/9/2",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "10-1",
+            "port_name": "400GE/0/10/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "10-2",
+            "port_name": "400GE/0/10/2",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "11-1",
+            "port_name": "400GE/0/11/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "11-2",
+            "port_name": "400GE/0/11/2",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "12-1",
+            "port_name": "400GE/0/12/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "12-2",
+            "port_name": "400GE/0/12/2",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "17",
+            "port_name": "400GE/0/17/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "18",
+            "port_name": "400GE/0/18/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "19",
+            "port_name": "400GE/0/19/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "20",
+            "port_name": "400GE/0/20/1",
+            "port_ip": "NULL"
+          }
+        ],
+        "bounding_port_pair": [],
+        "plane_id": "0"
+      },
+      {
+        "node_ip": "10.118.241.27",
+        "node_location": {
+          "type": "LEAF",
+          "para_plane_group_id": "3",
+          "super_node_id": "NULL",
+          "super_plane_group_id": "NULL",
+          "node_id": "24127"
+        },
+        "port_num": "32",
+        "port_infos": [
+          {
+            "port_id": "13-1",
+            "port_name": "400GE/0/13/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "13-2",
+            "port_name": "400GE/0/13/2",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "14-1",
+            "port_name": "400GE/0/14/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "14-2",
+            "port_name": "400GE/0/14/2",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "15-1",
+            "port_name": "400GE/0/15/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "15-2",
+            "port_name": "400GE/0/15/2",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "16-1",
+            "port_name": "400GE/0/16/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "16-2",
+            "port_name": "400GE/0/16/2",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "17",
+            "port_name": "400GE/0/17/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "18",
+            "port_name": "400GE/0/18/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "19",
+            "port_name": "400GE/0/19/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "20",
+            "port_name": "400GE/0/20/1",
+            "port_ip": "NULL"
+          }
+        ],
+        "bounding_port_pair": [],
+        "plane_id": "0"
+      },
+      {
+        "node_ip": "10.118.241.28",
+        "node_location": {
+          "type": "LEAF",
+          "para_plane_group_id": "4",
+          "super_node_id": "NULL",
+          "super_plane_group_id": "NULL",
+          "node_id": "24128"
+        },
+        "port_num": "32",
+        "port_infos": [
+          {
+            "port_id": "9-1",
+            "port_name": "400GE/0/9/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "9-2",
+            "port_name": "400GE/0/9/2",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "10-1",
+            "port_name": "400GE/0/10/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "10-2",
+            "port_name": "400GE/0/10/2",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "11-1",
+            "port_name": "400GE/0/11/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "11-2",
+            "port_name": "400GE/0/11/2",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "12-1",
+            "port_name": "400GE/0/12/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "12-2",
+            "port_name": "400GE/0/12/2",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "17",
+            "port_name": "400GE/0/17/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "18",
+            "port_name": "400GE/0/18/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "19",
+            "port_name": "400GE/0/19/1",
+            "port_ip": "NULL"
+          },
+          {
+            "port_id": "20",
+            "port_name": "400GE/0/20/1",
+            "port_ip": "NULL"
+          }
+        ],
+        "bounding_port_pair": [],
+        "plane_id": "0"
+      }
+    ],
+    "spine_nodes": [],
+    "edges": [
+      {
+        "a_node_ip": "10.118.241.50",
+        "a_node_port_id": "1",
+        "b_node_ip": "10.118.241.25",
+        "b_node_port_id": "17"
+      },
+      {
+        "a_node_ip": "10.118.241.50",
+        "a_node_port_id": "2",
+        "b_node_ip": "10.118.241.25",
+        "b_node_port_id": "18"
+      },
+      {
+        "a_node_ip": "10.118.241.50",
+        "a_node_port_id": "3",
+        "b_node_ip": "10.118.241.25",
+        "b_node_port_id": "19"
+      },
+      {
+        "a_node_ip": "10.118.241.50",
+        "a_node_port_id": "4",
+        "b_node_ip": "10.118.241.25",
+        "b_node_port_id": "20"
+      },
+      {
+        "a_node_ip": "10.118.241.50",
+        "a_node_port_id": "5",
+        "b_node_ip": "10.118.241.26",
+        "b_node_port_id": "17"
+      },
+      {
+        "a_node_ip": "10.118.241.50",
+        "a_node_port_id": "6",
+        "b_node_ip": "10.118.241.26",
+        "b_node_port_id": "18"
+      },
+      {
+        "a_node_ip": "10.118.241.50",
+        "a_node_port_id": "7",
+        "b_node_ip": "10.118.241.26",
+        "b_node_port_id": "19"
+      },
+      {
+        "a_node_ip": "10.118.241.50",
+        "a_node_port_id": "8",
+        "b_node_ip": "10.118.241.26",
+        "b_node_port_id": "20"
+      },
+      {
+        "a_node_ip": "10.118.241.50",
+        "a_node_port_id": "9",
+        "b_node_ip": "10.118.241.27",
+        "b_node_port_id": "17"
+      },
+      {
+        "a_node_ip": "10.118.241.50",
+        "a_node_port_id": "10",
+        "b_node_ip": "10.118.241.27",
+        "b_node_port_id": "18"
+      },
+      {
+        "a_node_ip": "10.118.241.50",
+        "a_node_port_id": "11",
+        "b_node_ip": "10.118.241.27",
+        "b_node_port_id": "19"
+      },
+      {
+        "a_node_ip": "10.118.241.50",
+        "a_node_port_id": "12",
+        "b_node_ip": "10.118.241.27",
+        "b_node_port_id": "20"
+      },
+      {
+        "a_node_ip": "10.118.241.50",
+        "a_node_port_id": "13",
+        "b_node_ip": "10.118.241.28",
+        "b_node_port_id": "17"
+      },
+      {
+        "a_node_ip": "10.118.241.50",
+        "a_node_port_id": "14",
+        "b_node_ip": "10.118.241.28",
+        "b_node_port_id": "18"
+      },
+      {
+        "a_node_ip": "10.118.241.50",
+        "a_node_port_id": "15",
+        "b_node_ip": "10.118.241.28",
+        "b_node_port_id": "19"
+      },
+      {
+        "a_node_ip": "10.118.241.50",
+        "a_node_port_id": "16",
+        "b_node_ip": "10.118.241.28",
+        "b_node_port_id": "20"
+      },
+      {
+        "a_node_ip": "10.118.241.25",
+        "a_node_port_id": "1-1",
+        "b_node_ip": "10.118.241.1",
+        "b_node_port_id": "1"
+      },
+      {
+        "a_node_ip": "10.118.241.25",
+        "a_node_port_id": "1-2",
+        "b_node_ip": "10.118.241.1",
+        "b_node_port_id": "2"
+      },
+      {
+        "a_node_ip": "10.118.241.25",
+        "a_node_port_id": "2-1",
+        "b_node_ip": "10.118.241.1",
+        "b_node_port_id": "3"
+      },
+      {
+        "a_node_ip": "10.118.241.25",
+        "a_node_port_id": "2-2",
+        "b_node_ip": "10.118.241.1",
+        "b_node_port_id": "4"
+      },
+      {
+        "a_node_ip": "10.118.241.25",
+        "a_node_port_id": "3-1",
+        "b_node_ip": "10.118.241.1",
+        "b_node_port_id": "5"
+      },
+      {
+        "a_node_ip": "10.118.241.25",
+        "a_node_port_id": "3-2",
+        "b_node_ip": "10.118.241.1",
+        "b_node_port_id": "6"
+      },
+      {
+        "a_node_ip": "10.118.241.25",
+        "a_node_port_id": "4-1",
+        "b_node_ip": "10.118.241.1",
+        "b_node_port_id": "7"
+      },
+      {
+        "a_node_ip": "10.118.241.25",
+        "a_node_port_id": "4-2",
+        "b_node_ip": "10.118.241.1",
+        "b_node_port_id": "8"
+      },
+      {
+        "a_node_ip": "10.118.241.26",
+        "a_node_port_id": "9-1",
+        "b_node_ip": "10.118.241.7",
+        "b_node_port_id": "1"
+      },
+      {
+        "a_node_ip": "10.118.241.26",
+        "a_node_port_id": "9-2",
+        "b_node_ip": "10.118.241.7",
+        "b_node_port_id": "2"
+      },
+      {
+        "a_node_ip": "10.118.241.26",
+        "a_node_port_id": "10-1",
+        "b_node_ip": "10.118.241.7",
+        "b_node_port_id": "3"
+      },
+      {
+        "a_node_ip": "10.118.241.26",
+        "a_node_port_id": "10-2",
+        "b_node_ip": "10.118.241.7",
+        "b_node_port_id": "4"
+      },
+      {
+        "a_node_ip": "10.118.241.26",
+        "a_node_port_id": "11-1",
+        "b_node_ip": "10.118.241.7",
+        "b_node_port_id": "5"
+      },
+      {
+        "a_node_ip": "10.118.241.26",
+        "a_node_port_id": "11-2",
+        "b_node_ip": "10.118.241.7",
+        "b_node_port_id": "6"
+      },
+      {
+        "a_node_ip": "10.118.241.26",
+        "a_node_port_id": "12-1",
+        "b_node_ip": "10.118.241.7",
+        "b_node_port_id": "7"
+      },
+      {
+        "a_node_ip": "10.118.241.26",
+        "a_node_port_id": "12-2",
+        "b_node_ip": "10.118.241.7",
+        "b_node_port_id": "8"
+      },
+      {
+        "a_node_ip": "10.118.241.27",
+        "a_node_port_id": "13-1",
+        "b_node_ip": "10.118.241.12",
+        "b_node_port_id": "1"
+      },
+      {
+        "a_node_ip": "10.118.241.27",
+        "a_node_port_id": "13-2",
+        "b_node_ip": "10.118.241.12",
+        "b_node_port_id": "2"
+      },
+      {
+        "a_node_ip": "10.118.241.27",
+        "a_node_port_id": "14-1",
+        "b_node_ip": "10.118.241.12",
+        "b_node_port_id": "3"
+      },
+      {
+        "a_node_ip": "10.118.241.27",
+        "a_node_port_id": "14-2",
+        "b_node_ip": "10.118.241.12",
+        "b_node_port_id": "4"
+      },
+      {
+        "a_node_ip": "10.118.241.27",
+        "a_node_port_id": "15-1",
+        "b_node_ip": "10.118.241.12",
+        "b_node_port_id": "5"
+      },
+      {
+        "a_node_ip": "10.118.241.27",
+        "a_node_port_id": "15-2",
+        "b_node_ip": "10.118.241.12",
+        "b_node_port_id": "6"
+      },
+      {
+        "a_node_ip": "10.118.241.27",
+        "a_node_port_id": "16-1",
+        "b_node_ip": "10.118.241.12",
+        "b_node_port_id": "7"
+      },
+      {
+        "a_node_ip": "10.118.241.27",
+        "a_node_port_id": "16-2",
+        "b_node_ip": "10.118.241.12",
+        "b_node_port_id": "8"
+      },
+      {
+        "a_node_ip": "10.118.241.28",
+        "a_node_port_id": "9-1",
+        "b_node_ip": "10.118.241.15",
+        "b_node_port_id": "1"
+      },
+      {
+        "a_node_ip": "10.118.241.28",
+        "a_node_port_id": "9-2",
+        "b_node_ip": "10.118.241.15",
+        "b_node_port_id": "2"
+      },
+      {
+        "a_node_ip": "10.118.241.28",
+        "a_node_port_id": "10-1",
+        "b_node_ip": "10.118.241.15",
+        "b_node_port_id": "3"
+      },
+      {
+        "a_node_ip": "10.118.241.28",
+        "a_node_port_id": "10-2",
+        "b_node_ip": "10.118.241.15",
+        "b_node_port_id": "4"
+      },
+      {
+        "a_node_ip": "10.118.241.28",
+        "a_node_port_id": "11-1",
+        "b_node_ip": "10.118.241.15",
+        "b_node_port_id": "5"
+      },
+      {
+        "a_node_ip": "10.118.241.28",
+        "a_node_port_id": "11-2",
+        "b_node_ip": "10.118.241.15",
+        "b_node_port_id": "6"
+      },
+      {
+        "a_node_ip": "10.118.241.28",
+        "a_node_port_id": "12-1",
+        "b_node_ip": "10.118.241.15",
+        "b_node_port_id": "7"
+      },
+      {
+        "a_node_ip": "10.118.241.28",
+        "a_node_port_id": "12-2",
+        "b_node_ip": "10.118.241.15",
+        "b_node_port_id": "8"
+      }
+    ],
+    "full_oxc_crosses": []
+  }
+}

@@ -1,0 +1,50 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.selectChartDataWithIndexesIfNotInPanoramaPosition4 = exports.selectChartDataWithIndexesIfNotInPanoramaPosition3 = exports.selectChartDataWithIndexes = exports.selectChartDataAndAlwaysIgnoreIndexes = void 0;
+var _reselect = require("reselect");
+/**
+ * This selector always returns the data with the indexes set by a Brush.
+ * Trouble is, that might or might not be what you want.
+ *
+ * In charts with Brush, you will sometimes want to select the full range of data, and sometimes the one decided by the Brush
+ * - even if the Brush is active, the panorama inside the Brush should show the full range of data.
+ *
+ * So instead of this selector, consider using either selectChartDataAndAlwaysIgnoreIndexes or selectChartDataWithIndexesIfNotInPanorama
+ *
+ * @param state RechartsRootState
+ * @returns data defined on the chart root element, such as BarChart or ScatterChart
+ */
+var selectChartDataWithIndexes = state => state.chartData;
+
+/**
+ * This selector will always return the full range of data, ignoring the indexes set by a Brush.
+ * Useful for when you want to render the full range of data, even if a Brush is active.
+ * For example: in the Brush panorama, in Legend, in Tooltip.
+ */
+exports.selectChartDataWithIndexes = selectChartDataWithIndexes;
+var selectChartDataAndAlwaysIgnoreIndexes = exports.selectChartDataAndAlwaysIgnoreIndexes = (0, _reselect.createSelector)([selectChartDataWithIndexes], dataState => {
+  var dataEndIndex = dataState.chartData != null ? dataState.chartData.length - 1 : 0;
+  return {
+    chartData: dataState.chartData,
+    computedData: dataState.computedData,
+    dataEndIndex,
+    dataStartIndex: 0
+  };
+});
+var selectChartDataWithIndexesIfNotInPanoramaPosition4 = (state, _unused1, _unused2, isPanorama) => {
+  if (isPanorama) {
+    return selectChartDataAndAlwaysIgnoreIndexes(state);
+  }
+  return selectChartDataWithIndexes(state);
+};
+exports.selectChartDataWithIndexesIfNotInPanoramaPosition4 = selectChartDataWithIndexesIfNotInPanoramaPosition4;
+var selectChartDataWithIndexesIfNotInPanoramaPosition3 = (state, _unused1, isPanorama) => {
+  if (isPanorama) {
+    return selectChartDataAndAlwaysIgnoreIndexes(state);
+  }
+  return selectChartDataWithIndexes(state);
+};
+exports.selectChartDataWithIndexesIfNotInPanoramaPosition3 = selectChartDataWithIndexesIfNotInPanoramaPosition3;

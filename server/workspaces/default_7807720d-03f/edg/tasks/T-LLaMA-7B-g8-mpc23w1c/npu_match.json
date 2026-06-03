@@ -1,0 +1,21 @@
+{
+  "version": "v2.0.260430",
+  "request_id": 32006,
+  "message_type": "NOTIFY_NODE_MATRIX",
+  "npu_matrix": [
+    {
+      "inst_key": {
+        "task_id": "T-LLaMA-7B-g8-mpc23w1c",
+        "k8s_task_id": "T-LLaMA-7B-g8-mpc23w1c",
+        "inst_id": "NULL",
+        "inst_type": "TRAINING"
+      },
+      "npu_set": [
+        {
+          "server_ip": "10.118.241.1",
+          "npu_id": -1
+        }
+      ]
+    }
+  ]
+}

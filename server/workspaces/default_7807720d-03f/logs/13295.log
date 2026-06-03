@@ -1,0 +1,131 @@
+maxRtt=63 maxBdp=18900
+Running Simulation.
+[OXC Integration] Initialized with:
+  Server URL: http://localhost:8080
+  Algorithm: ALGO_OXC_RING
+  NPUs per server: 8
+  HTTP timeout: 30s
+  Connect timeout: 5s
+  RankTable file: /Users/anthony/PycharmProjects/SimAI/server/workspaces/default_7807720d-03f/ranktable.json
+[OXC Integration] External RankTable set with 8 ranks
+[OXC Integration] RankRackMap set with 8 entries
+[OXC Integration] Auto-generated Rank-Rack map from RankTable:
+  rack_0: ranks [0,1,2,3...] (8 NPUs)
+[OXC Integration] Loaded RankTable from /Users/anthony/PycharmProjects/SimAI/server/workspaces/default_7807720d-03f/ranktable.json with 8 ranks
+The final active chunks per dimension 1 after allocating to queues is: 1
+ring of node 0, id: 0 dimension: local total nodes in ring: 8 index in ring: 0 offset: 1total nodes in ring: 8
+ring of node 0, id: 0 dimension: local total nodes in ring: 8 index in ring: 0 offset: 1total nodes in ring: 8
+ring of node 0, id: 0 dimension: local total nodes in ring: 8 index in ring: 0 offset: 1total nodes in ring: 8
+ring of node 0, id: 0 dimension: local total nodes in ring: 8 index in ring: 0 offset: 1total nodes in ring: 8
+total nodes: 8
+Success in opening workload file
+model_parallel_NPU_group is 8
+checkpoints layers are: 
+layers initiating fwd_in_bckwd are: 
+pp_commize:0
+[Layer 0] embedding_layer | fwd: ALLREDUCE(TP, 8 ranks) | ig: NONE(NONE, 0 ranks) | wg: NONE(NONE, 0 ranks)
+[Layer 1] embedding_layer | fwd: ALLREDUCE(TP, 8 ranks) | ig: NONE(NONE, 0 ranks) | wg: NONE(NONE, 0 ranks)
+type: HYBRID_TRANSFORMER_FWD_IN_BCKWD ,num passes: 1 ,lines: 2 compute scale: 1 ,comm scale: 1
+
+========== Communication Group Distribution ==========
+Config: all_gpus=8, TP=8, DP=1, PP=1, EP=1, DP_EP=1
+(Note: PP_size=1 in MockNcclGroup, PP from workload header is for AICB only)
+
+--- TP groups (size=8, count=1) ---
+  Group[0]: ranks [0, 1, 2, 3, 4, 5, 6, 7]
+  Formula: group[i] = [i*8 .. i*8+7]
+======================================================
+
+stat path: ./sim_result_1779160309_ ,total rows: 1 ,stat row: 0
+CSV path and filename: ./sim_result_1779160309_detailed_8.csv
+CSV path and filename: ./sim_result_1779160309_EndToEnd.csv
+simulator run 
+chunk size is: 16777216 , size is: 16777216 , layer_num is: 0 , node: 0
+[OXC Integration] shouldUseOxc: ranks=[0,1,2,3...], cross_rack=false
+info: all-reduce forward pass collective issued for layer: embedding_layer, involved dimensions:  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: embedding_layer is finished************
+chunk size is: 67108864 , size is: 67108864 , layer_num is: 1 , node: 0
+[OXC Integration] shouldUseOxc: ranks=[0,1,2,3...], cross_rack=false
+info: all-reduce forward pass collective issued for layer: embedding_layer, involved dimensions:  1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+***** info: fwd pass comm collective for layer: embedding_layer is finished************
+info: no input grad collective for layer: embedding_layer
+info: no weight grad collective for layer: embedding_layer
+info: no input grad collective for layer: embedding_layer
+info: no weight grad collective for layer: embedding_layer
+pass: 0 finished at time: 1745245
+workload stats for the job scheduled at NPU offset: 0
+*******************
+Layer id: embedding_layer
+Total collectives issued for this layer: 1
+*************************  Workload stats  ************************* embedding_layer
+id: embedding_layer ,Total cycles spent on fwd pass compute: 556000
+id: embedding_layer ,Total cycles spent on weight grad compute: 1
+id: embedding_layer ,Total cycles spent on input grad compute: 1
+id: embedding_layer ,Total cycles spent idle waiting for fwd finish: 176842
+id: embedding_layer ,Total cycles spent idle waiting for weight grad finish: 0
+id: embedding_layer ,Total cycles spent idle waiting for input grad finish: 0
+id: embedding_layer ,Total cycles spent on fwd pass comm: 176842
+id: embedding_layer ,Total cycles spent on weight grad comm: 0
+id: embedding_layer ,Total cycles spent on input grad comm: 0
+*******************
+Layer id: embedding_layer
+Total collectives issued for this layer: 1
+*************************  Workload stats  ************************* embedding_layer
+id: embedding_layer ,Total cycles spent on fwd pass compute: 556000
+id: embedding_layer ,Total cycles spent on weight grad compute: 1
+id: embedding_layer ,Total cycles spent on input grad compute: 1
+id: embedding_layer ,Total cycles spent idle waiting for fwd finish: 456394
+id: embedding_layer ,Total cycles spent idle waiting for weight grad finish: 0
+id: embedding_layer ,Total cycles spent idle waiting for input grad finish: 0
+id: embedding_layer ,Total cycles spent on fwd pass comm: 456394
+id: embedding_layer ,Total cycles spent on weight grad comm: 0
+id: embedding_layer ,Total cycles spent on input grad comm: 0
+*************************
+all passes finished at time: 1745246, id of first layer: embedding_layer
+path to create csvs is: ./sim_result_1779160309_
+success in openning file
+*****
+Time to exit: Tue May 19 11:11:52 2026
+all-reduce Collective implementation: NcclFlowModel
+reduce-scatter Collective implementation: NcclFlowModel
+all-gather Collective implementation: NcclFlowModel
+all-to-all Collective implementation: NcclFlowModel
+Collective optimization: baseline
+Total sim duration: 0:0 hours
+Total streams injected: 2
+Total streams finished: 2
+Percentage of finished streams: 100 %
+*****
+Exiting
+sim_finish on sent,  Thread id: 0x16de07000
+All data sent from node 0 is 146800640
+sim_finish on received,  Thread id: 0x16de07000
+All data received by node 0 is 146800640
+sim_finish on sent,  Thread id: 0x16de07000
+All data sent from node 1 is 146800640
+sim_finish on received,  Thread id: 0x16de07000
+All data received by node 1 is 146800640
+sim_finish on sent,  Thread id: 0x16de07000
+All data sent from node 2 is 146800640
+sim_finish on received,  Thread id: 0x16de07000
+All data received by node 2 is 146800640
+sim_finish on sent,  Thread id: 0x16de07000
+All data sent from node 3 is 146800640
+sim_finish on received,  Thread id: 0x16de07000
+All data received by node 3 is 146800640
+sim_finish on sent,  Thread id: 0x16de07000
+All data sent from node 4 is 146800640
+sim_finish on received,  Thread id: 0x16de07000
+All data received by node 4 is 146800640
+sim_finish on sent,  Thread id: 0x16de07000
+All data sent from node 5 is 146800640
+sim_finish on received,  Thread id: 0x16de07000
+All data received by node 5 is 146800640
+sim_finish on sent,  Thread id: 0x16de07000
+All data sent from node 6 is 146800640
+sim_finish on received,  Thread id: 0x16de07000
+All data received by node 6 is 146800640
+sim_finish on sent,  Thread id: 0x16de07000
+All data sent from node 7 is 146800640
+sim_finish on received,  Thread id: 0x16de07000
+All data received by node 7 is 146800640

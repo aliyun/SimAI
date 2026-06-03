@@ -1,0 +1,4 @@
+#!/bin/bash
+echo 'starting simulation'
+sleep 0.5
+echo 'done'

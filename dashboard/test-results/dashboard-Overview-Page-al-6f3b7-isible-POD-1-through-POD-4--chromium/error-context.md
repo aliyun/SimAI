@@ -1,0 +1,116 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - heading "OCS-Sim" [level=1] [ref=e6]
+      - navigation [ref=e7]:
+        - link "首页" [ref=e8] [cursor=pointer]:
+          - /url: /
+        - link "结果分析" [ref=e9] [cursor=pointer]:
+          - /url: /results
+        - link "监控大屏" [ref=e10] [cursor=pointer]:
+          - /url: /monitor
+  - generic [ref=e12]:
+    - generic [ref=e13]:
+      - generic:
+        - img
+      - heading "OCS-Sim 仿真平台" [level=1] [ref=e16]
+      - paragraph [ref=e17]: 面向 AI 大规模训练的高精度仿真器
+      - paragraph [ref=e18]: NSDI'25 Spring · 全栈建模 · 万卡级规模
+    - generic [ref=e21]:
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - img [ref=e25]
+          - generic [ref=e27]:
+            - heading "组网管理" [level=2] [ref=e28]
+            - paragraph [ref=e29]: 创建和管理网络拓扑配置
+        - generic [ref=e31]:
+          - generic [ref=e32]: ⬡
+          - paragraph [ref=e33]: 暂无组网，点击下方创建
+        - button "+ 新建组网" [ref=e34]
+      - generic [ref=e35]:
+        - generic [ref=e36]:
+          - img [ref=e38]
+          - generic [ref=e41]:
+            - heading "仿真任务部署" [level=2] [ref=e42]
+            - paragraph [ref=e43]: 配置并启动仿真任务
+        - generic [ref=e44]:
+          - link "Workload 配置 模型参数与通信模式" [ref=e45] [cursor=pointer]:
+            - /url: /deploy/workload
+            - generic [ref=e46]:
+              - generic [ref=e47]: Workload 配置
+              - generic [ref=e48]: 模型参数与通信模式
+            - img [ref=e49]
+          - link "OXC 调节 OXC 光交换网络拓扑调节" [ref=e51] [cursor=pointer]:
+            - /url: /deploy/edg
+            - generic [ref=e52]:
+              - generic [ref=e53]: OXC 调节
+              - generic [ref=e54]: OXC 光交换网络拓扑调节
+            - img [ref=e55]
+          - link "启动仿真 执行 OCS-Sim 仿真任务" [ref=e57] [cursor=pointer]:
+            - /url: /deploy/launch
+            - generic [ref=e58]:
+              - generic [ref=e59]: 启动仿真
+              - generic [ref=e60]: 执行 OCS-Sim 仿真任务
+            - img [ref=e61]
+      - generic [ref=e63]:
+        - generic [ref=e64]:
+          - img [ref=e66]
+          - generic [ref=e68]:
+            - heading "仿真结果分析" [level=2] [ref=e69]
+            - paragraph [ref=e70]: 可视化性能指标与报告
+        - generic [ref=e71]:
+          - link "结果可视化 EndToEnd CSV日志分析" [ref=e72] [cursor=pointer]:
+            - /url: /results
+            - generic [ref=e73]:
+              - generic [ref=e74]: 结果可视化
+              - generic [ref=e75]: EndToEnd CSV日志分析
+            - img [ref=e76]
+          - link "实时监控大屏 网络拓扑与节点状态监控" [ref=e78] [cursor=pointer]:
+            - /url: /monitor
+            - generic [ref=e79]:
+              - generic [ref=e80]: 实时监控大屏
+              - generic [ref=e81]: 网络拓扑与节点状态监控
+            - img [ref=e82]
+      - generic [ref=e84]:
+        - generic [ref=e85]:
+          - img [ref=e87]
+          - generic [ref=e90]:
+            - heading "运维工具" [level=2] [ref=e91]
+            - paragraph [ref=e92]: OXC/EDG 调用记录与平台日志查询
+        - generic [ref=e93]:
+          - link "调用记录 按来源分类查看 OXc-HCCL 与 EDG 的 API 交互" [ref=e94] [cursor=pointer]:
+            - /url: /ops?tab=interactions
+            - generic [ref=e95]:
+              - generic [ref=e96]: 调用记录
+              - generic [ref=e97]: 按来源分类查看 OXc-HCCL 与 EDG 的 API 交互
+            - img [ref=e98]
+          - link "日志查询 搜索平台运行日志，快速定位错误与异常" [ref=e100] [cursor=pointer]:
+            - /url: /ops?tab=logs
+            - generic [ref=e101]:
+              - generic [ref=e102]: 日志查询
+              - generic [ref=e103]: 搜索平台运行日志，快速定位错误与异常
+            - img [ref=e104]
+    - generic [ref=e106]:
+      - heading "快速开始" [level=2] [ref=e109]
+      - generic [ref=e111]:
+        - generic [ref=e114]:
+          - generic [ref=e115]: "1"
+          - generic [ref=e116]: 创建组网
+          - generic [ref=e117]: 选择拓扑模板，配置网络参数
+        - generic [ref=e120]:
+          - generic [ref=e121]: "2"
+          - generic [ref=e122]: 配置任务
+          - generic [ref=e123]: 设定 Workload 和 RankTable
+        - generic [ref=e126]:
+          - generic [ref=e127]: "3"
+          - generic [ref=e128]: 启动仿真
+          - generic [ref=e129]: 选择 Analytical 或 NS-3 模式运行
+        - generic [ref=e131]:
+          - generic [ref=e132]: "4"
+          - generic [ref=e133]: 分析结果
+          - generic [ref=e134]: 可视化性能指标，导出报告
+    - paragraph [ref=e137]: OCS-Sim © 2025 · NSDI'25 Spring
+```
