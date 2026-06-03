@@ -1,0 +1,46 @@
+additional_commands:
+    build_lib:
+        flags: [IGNORE_PCH]
+        kwargs:
+            LIBNAME : '1'
+            SOURCE_FILES : '*'
+            HEADER_FILES : '*'
+            LIBRARIES_TO_LINK : '*'
+            TEST_SOURCES : '*'
+            DEPRECATED_HEADER_FILES : '*'
+            MODULE_ENABLED_FEATURES : '*'
+
+    build_lib_example:
+        flags: [IGNORE_PCH]
+        kwargs:
+            NAME : '1'
+            SOURCE_FILES : '*'
+            HEADER_FILES : '*'
+            LIBRARIES_TO_LINK : '*'
+
+    build_example:
+        kwargs:
+            NAME : '1'
+            SOURCE_FILES : '*'
+            HEADER_FILES : '*'
+            LIBRARIES_TO_LINK : '*'
+
+    find_external_library:
+        kwargs:
+            DEPENDENCY_NAME : '1'
+            HEADER_NAME : '1'
+            LIBRARY_NAME : '1'
+            HEADER_NAMES : '*'
+            LIBRARY_NAMES : '*'
+            PATH_SUFFIXES : '*'
+            SEARCH_PATHS : '*'
+
+format:
+  tab_size: 2
+  line_width: 80
+  dangle_parens: true
+  autosort: true
+  enable_sort: true
+  max_subgroups_hwrap: 1
+  max_pargs_hwrap: 1
+  max_lines_hwrap: 1

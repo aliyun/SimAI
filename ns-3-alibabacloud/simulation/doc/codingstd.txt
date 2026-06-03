@@ -1,0 +1,4 @@
+The project coding style document is maintained as part of the contribution
+guide (https://www.nsnam.org/docs/contributing/html/index.html).  The raw
+source file for the coding style chapter is in a subdirectory:
+contributing/source/coding-style.rst

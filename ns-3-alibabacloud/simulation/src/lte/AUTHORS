@@ -1,0 +1,103 @@
+
+The ns-3 LTE module is the result of the design and development effort carried out by different people/institutions/projects. The main contributors are listed below.
+
+
+====================================================
+  LTE-EPC Network simulAtor (LENA) Project (2011-13)
+====================================================
+
+Nicola Baldo, CTTC <nicobaldo@gmail.com>
+Marco Miozzo, CTTC <mmiozzo@cttc.es>
+Manuel Requena, CTTC <mrequena@cttc.es>
+Jaume Nin
+Lluis Parcerisa
+
+=======================================================================
+  WiFi Alliance funded work on Lisenced Assisted Access (LAA) (2015-16)
+=======================================================================
+Biljana Bojovic, CTTC <bbojovic@cttc.es>
+Lorenza Giupponi, CTTC <lorenza.giupponi@cttc.es>
+Tom Henderson, Uni Washington <tomh@tomh.org>
+Marco Miozzo, CTTC <mmiozzo@cttc.es>
+
+=============================================================================
+  Spidercloud Wireless funded work on Carrier Aggregation and LTE-U (2015-16)
+=============================================================================
+Biljana Bojovic, CTTC <bbojovic@cttc.es>
+Lorenza Giupponi, CTTC <lorenza.giupponi@cttc.es>
+Marco Miozzo, CTTC <mmiozzo@cttc.es>
+
+=====================================================
+  NIST funded work on Public Safety and D2D (2017-19)
+=====================================================
+Zoraze Ali, CTTC <bbojovic@cttc.es>
+Manuel Requena, CTTC <mrequena@cttc.es>
+Lorenza Giupponi, CTTC <lorenza.giupponi@cttc.es>
+Tom Henderson, Uni Washington <tomh@tomh.org>
+
+
+=====================================
+  Google Summer of Code (GSoC) (2017)
+=====================================
+Aleksander Krotov, <ilabdsf@gmail.com>;: Enabling LTE CA handover to secondary cell
+supervision and GSoC project mentorship
+
+
+Biljana Bojovic, CTTC <bbojovic@cttc.es>
+
+=====================================
+  Google Summer of Code (GSoC) (2015)
+=====================================
+
+Melchiorre Danilo Abrignani: Carrier Aggregation support for LTE module
+
+Nicola Baldo, CTTC <nicobaldo@gmail.com>
+Marco Miozzo, CTTC <mmiozzo@cttc.es>
+supervision and GSoC project mentorship
+
+
+=====================================
+  Google Summer of Code (GSoC) (2014)
+=====================================
+
+Piotr Gawlowicz, Fractional Frequency Reuse algorithms
+
+Nicola Baldo, CTTC <nicobaldo@gmail.com>
+Marco Miozzo, CTTC <mmiozzo@cttc.es>
+supervision and GSoC project mentorship
+
+
+
+=====================================
+  Google Summer of Code (GSoC) (2013)
+=====================================
+Budiarto Herman: Improvements to UE Measurements in Active and Idle Mode for LTE Module Module
+
+Nicola Baldo, CTTC <nicobaldo@gmail.com>
+Marco Miozzo, CTTC <mmiozzo@cttc.es>
+Manuel Requena, CTTC <mrequena@cttc.es>
+supervision and GSoC project mentorship
+
+=====================================
+  Google Summer of Code (GSoC) (2012)
+=====================================
+ 
+Dizhi Zhou, University of New Brunswick, Canada <dizhi.zhou@gmail.com>
+develop several LTE MAC schedulers
+ 
+Nicola Baldo, CTTC <nicobaldo@gmail.com>
+Marco Miozzo, CTTC <mmiozzo@cttc.es>
+supervision and GSoC project mentorship
+
+
+=====================================
+  Google Summer of Code (GSoC) (2010)
+=====================================
+
+Giuseppe Piro, TELEMATICS LAB, Politecnico di Bari <G.Piro@poliba.it>
+design and development
+
+Nicola Baldo, CTTC <nicobaldo@gmail.com>
+Marco Miozzo, CTTC <mmiozzo@cttc.es>
+supervision and GSoC project mentorship
+

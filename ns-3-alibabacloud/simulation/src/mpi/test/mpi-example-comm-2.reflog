@@ -1,0 +1,14 @@
+TEST : 00000 : simple-distributed-mpi-comm
+TEST : 00001 : 
+TEST : 00002 : Configuration:
+TEST : 00003 : Routing:           nix-vector
+TEST : 00004 : Synchronization:   granted time window (YAWNS)
+TEST : 00005 : MPI_Init called:   implicitly by ns3::MpiInterface::Enable()
+TEST : 00006 : ns-3 Communicator: MPI_COMM_WORLD (2 ranks)
+TEST : 00007 : PCAP tracing:      not enabled
+TEST : 00008 : 
+TEST : 00009 : Rank assignments:
+TEST : 00010 : ns-3 rank:  in MPI_COMM_WORLD: 0:2, in splitComm: 0:2
+TEST : 00011 : 
+TEST : 00012 : 
+TEST : 00013 : PASSED

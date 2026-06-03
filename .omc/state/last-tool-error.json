@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"git add -A SimCCL/ aicb/ ns-3-alibabacloud/ .lra_done_hash && git add -f feature_list.json progress.md scripts/lra-gate.py && git add -A .omc/specs/ .omc/plans/ && git status --short 2>&1 ...",
+  "error": "Exit code 1\nThe following paths are ignored by one of your .gitignore files:\n.omc/plans\n.omc/specs\nhint: Use -f if you really want to add them.\nhint: Disable this message with \"git config set advice.addIgnoredFile false\"",
+  "timestamp": "2026-06-03T09:26:35.481Z",
+  "retry_count": 3
+}

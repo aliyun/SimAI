@@ -1,0 +1,7 @@
+Contributing to the ns-3 project
+--------------------------------
+
+ns-3 is a free, open source software project that welcomes contributions
+from users worldwide.  Please see the following web page for how to 
+contribute:  
+http://www.nsnam.org/developers/contributing-code/

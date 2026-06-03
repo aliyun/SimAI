@@ -1,0 +1,92 @@
+set(source_files
+    helper/adhoc-aloha-noack-ideal-phy-helper.cc
+    helper/spectrum-analyzer-helper.cc
+    helper/spectrum-helper.cc
+    helper/tv-spectrum-transmitter-helper.cc
+    helper/waveform-generator-helper.cc
+    model/aloha-noack-mac-header.cc
+    model/aloha-noack-net-device.cc
+    model/constant-spectrum-propagation-loss.cc
+    model/friis-spectrum-propagation-loss.cc
+    model/half-duplex-ideal-phy-signal-parameters.cc
+    model/half-duplex-ideal-phy.cc
+    model/matrix-based-channel-model.cc
+    model/microwave-oven-spectrum-value-helper.cc
+    model/multi-model-spectrum-channel.cc
+    model/non-communicating-net-device.cc
+    model/single-model-spectrum-channel.cc
+    model/spectrum-analyzer.cc
+    model/spectrum-channel.cc
+    model/spectrum-converter.cc
+    model/spectrum-error-model.cc
+    model/spectrum-interference.cc
+    model/spectrum-model-300kHz-300GHz-log.cc
+    model/spectrum-model-ism2400MHz-res1MHz.cc
+    model/spectrum-model.cc
+    model/spectrum-phy.cc
+    model/spectrum-propagation-loss-model.cc
+    model/phased-array-spectrum-propagation-loss-model.cc
+    model/spectrum-signal-parameters.cc
+    model/spectrum-value.cc
+    model/three-gpp-channel-model.cc
+    model/three-gpp-spectrum-propagation-loss-model.cc
+    model/trace-fading-loss-model.cc
+    model/tv-spectrum-transmitter.cc
+    model/waveform-generator.cc
+    model/wifi-spectrum-value-helper.cc
+)
+
+set(header_files
+    helper/adhoc-aloha-noack-ideal-phy-helper.h
+    helper/spectrum-analyzer-helper.h
+    helper/spectrum-helper.h
+    helper/tv-spectrum-transmitter-helper.h
+    helper/waveform-generator-helper.h
+    model/aloha-noack-mac-header.h
+    model/aloha-noack-net-device.h
+    model/constant-spectrum-propagation-loss.h
+    model/friis-spectrum-propagation-loss.h
+    model/half-duplex-ideal-phy-signal-parameters.h
+    model/half-duplex-ideal-phy.h
+    model/matrix-based-channel-model.h
+    model/microwave-oven-spectrum-value-helper.h
+    model/multi-model-spectrum-channel.h
+    model/non-communicating-net-device.h
+    model/single-model-spectrum-channel.h
+    model/spectrum-analyzer.h
+    model/spectrum-channel.h
+    model/spectrum-converter.h
+    model/spectrum-error-model.h
+    model/spectrum-interference.h
+    model/spectrum-model-300kHz-300GHz-log.h
+    model/spectrum-model-ism2400MHz-res1MHz.h
+    model/spectrum-model.h
+    model/spectrum-phy.h
+    model/spectrum-propagation-loss-model.h
+    model/phased-array-spectrum-propagation-loss-model.h
+    model/spectrum-signal-parameters.h
+    model/spectrum-value.h
+    model/three-gpp-channel-model.h
+    model/three-gpp-spectrum-propagation-loss-model.h
+    model/trace-fading-loss-model.h
+    model/tv-spectrum-transmitter.h
+    model/waveform-generator.h
+    model/wifi-spectrum-value-helper.h
+    test/spectrum-test.h
+)
+
+build_lib(
+  LIBNAME spectrum
+  SOURCE_FILES ${source_files}
+  HEADER_FILES ${header_files}
+  LIBRARIES_TO_LINK ${libpropagation}
+                    ${libantenna}
+  TEST_SOURCES
+    test/spectrum-ideal-phy-test.cc
+    test/spectrum-interference-test.cc
+    test/spectrum-value-test.cc
+    test/spectrum-waveform-generator-test.cc
+    test/three-gpp-channel-test-suite.cc
+    test/tv-helper-distribution-test.cc
+    test/tv-spectrum-transmitter-test.cc
+)

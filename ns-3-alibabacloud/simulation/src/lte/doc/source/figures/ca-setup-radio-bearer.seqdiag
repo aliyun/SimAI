@@ -1,0 +1,18 @@
+
+diagram {
+
+  LteEpc -> LteEnbRrc [label="SetupDataRadioBearer ()"];
+            LteEnbRrc -> LteEnbComponentCarrierManager [label="SetupDataRadioBearer ()"];
+            LteEnbRrc <- LteEnbComponentCarrierManager [label="AddLc (std::vector<LcConfiguration>)"];
+            LteEnbRrc -> LteEnbMac0 [label="AddLc ()"];
+            LteEnbRrc -> LteEnbMac1 [label="AddLc ()"]; 
+  // Separator
+  === ===
+            LteEnbRrc -> LteEnbComponentCarrierManager [label="MeasurementReport ()"];
+                         // self referenced edge
+                         LteEnbComponentCarrierManager -> LteEnbComponentCarrierManager [label = "Decide Activation"];
+            LteEnbRrc <- LteEnbComponentCarrierManager [label="AddLc (std::vector<LcConfiguration>)"];
+            LteEnbRrc -> LteEnbMac0 [label="AddLc ()"];
+            LteEnbRrc -> LteEnbMac1 [label="AddLc ()"]; 
+  }
+

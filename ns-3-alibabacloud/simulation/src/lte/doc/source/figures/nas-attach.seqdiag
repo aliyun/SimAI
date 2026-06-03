@@ -1,0 +1,25 @@
+
+diagram {
+	EpcUeNas; LteUeRrc; LteEnbRrc; EpcEnbApplication; EpcMmeApplication; EpcSgwApplication; EpcPgwApplication;
+	
+	
+	EpcUeNas ->> LteUeRrc [label="ForceCampedOnEnb (CellId)"]
+	EpcUeNas ->> LteUeRrc [label="Connect"]
+	LteUeRrc ->> LteEnbRrc [label="RRC Connection Request"]
+	LteEnbRrc ->> EpcEnbApplication [label="initial UE message"]
+	EpcEnbApplication ->> EpcMmeApplication [label="S1-AP INITIAL UE MESSAGE"]
+	EpcMmeApplication ->> EpcMmeApplication [label="store IMSI->\n eNB UE id (RNTI)\n mapping"]
+	EpcMmeApplication ->> EpcSgwApplication [label="S11 CREATE SESSION"]
+	EpcSgwApplication ->> EpcSgwApplication [label="setup S1-U\nbearers"]
+	EpcSgwApplication ->> EpcPgwApplication [label="S5 CREATE SESSION"]
+	EpcPgwApplication ->> EpcPgwApplication [label="setup S5 bearers"]
+	EpcSgwApplication <<- EpcPgwApplication [label="S5 CREATE SESSION\nRESPONSE"]
+	EpcMmeApplication <<- EpcSgwApplication [label="S11 CREATE SESSION\nRESPONSE"]
+	EpcEnbApplication <<- EpcMmeApplication [label="S1-AP INITIAL CONTEXT\n SETUP (bearers to be created)"]
+	EpcEnbApplication ->> EpcEnbApplication [label="setup S1-U\n bearers"]
+	LteEnbRrc <<- EpcEnbApplication [label="DataRadioBearerSetupRequest"]
+	LteEnbRrc ->> LteEnbRrc  [label="setup data\n radio bearers"]
+	LteUeRrc <<- LteEnbRrc [label="RRC Connection\n Reconfiguration"]
+	LteUeRrc ->> LteUeRrc  [label="setup data\n radio bearers"]
+	LteUeRrc ->> LteEnbRrc [label="RRC Connection\n Reconfiguration Completed"]
+}

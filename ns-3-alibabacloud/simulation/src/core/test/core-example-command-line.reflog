@@ -1,0 +1,21 @@
+
+command-line-example:
+
+Initial values:
+intArg:   1
+boolArg:  false
+strArg:   "strArg default"
+anti:     "false"
+cbArg:    "cbArg default"
+nonOpt1:  1
+nonOpt2:  1
+
+Final values:
+intArg:   1
+boolArg:  false
+strArg:   "strArg default"
+anti:     "false"
+cbArg:    "cbArg default"
+nonOpt1:  1
+nonOpt2:  1
+Number of extra non-option arguments:0

@@ -1,0 +1,23 @@
+digraph LteHandoverAlgorithm {
+
+START [shape = circle]
+GET_MEASUREMENTS [shape = box,
+                  label = "eNodeB receives measurement reports from UE\n(Event A2 and A4)"]
+CHECK_SERVING_RSRQ [shape = diamond,
+                    label = "serving cell RSRQ\n<= ServingCellThreshold?"]
+LOOK_BEST_NEIGHBOUR [shape = box,
+                     label = "Look for neighbour cell with the best RSRQ"]
+CHECK_BEST_NEIGHBOUR [shape = diamond,
+                      label = "(best neighbour RSRQ - serving cell RSRQ)\n>= NeighbourCellOffset?"]
+TRIGGER_HANDOVER [shape = box,
+                  label = "Trigger handover procedure for this UE\nto the best neighbour"]
+
+START -> GET_MEASUREMENTS
+GET_MEASUREMENTS -> CHECK_SERVING_RSRQ
+CHECK_SERVING_RSRQ -> LOOK_BEST_NEIGHBOUR [label="true"]
+CHECK_SERVING_RSRQ -> START [label="false"]
+LOOK_BEST_NEIGHBOUR -> CHECK_BEST_NEIGHBOUR
+CHECK_BEST_NEIGHBOUR -> TRIGGER_HANDOVER [label="true"]
+CHECK_BEST_NEIGHBOUR -> START [label="false"]
+
+}

@@ -1,0 +1,36 @@
+
+			  ns-3 stats example
+
+The example script wifi-example-db.sh in this directly will run
+through the entire process of running a simple experiment.  It assumes
+sqlite3 is installed as it uses the sqlite3 data output format of the
+statistics package.  It also assumes it is being run from the
+examples/stats/ subdirectory of the ns-3 package, together with its
+gnuplot script.  When the script completes successfully, a graph will
+be have been produced in examples/stats/wifi-default.eps demonstrating
+output from this example.
+
+More information on the statistics package and this example is
+available online on the ns-3 wiki at:
+
+http://www.nsnam.org/wiki/Statistical_Framework_for_Network_Simulation
+
+*** Using ns-3 with the OMNeT++ analysis tool ***
+
+The stat framework can write out the result in a format that is compatible with the
+output format of OMNeT++ 4 Discrete Event Simulator Framework.
+Use the wifi-example-omnet.sh script to generate the results in OMNeT++ format.
+
+If you want to analyse the results with OMNeT++'s result analyser tool:
+a) Download OMNeT++ 4 and install it. Start the IDE. (www.omnetpp.org)
+b) If you do not want to install the whole simulator framework, there is a separate 
+   package which contains only the analysis tool from the OMNeT++ package.
+   You can download it from http://omnetpp.org/download/release/omnetpp-scave.tgz
+
+Once you are running the OMNeT++ IDE or the separate analysis tool (SCAVE)
+- Choose File|Import...|Existing Projects into Workspace, then click [Next]
+- Select root directory. (choose the examples/stats directory) and click [Finish]
+
+Double click the wifi-example-omnet.anf in the opened project and select 
+the Chart page to see the created chart. Experiment with the analysis tool and read its
+documentation: http://omnetpp.org/doc/omnetpp40/userguide/ch09.html

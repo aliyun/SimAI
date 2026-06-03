@@ -1,0 +1,116 @@
+The CMake build system is used to build ns-3.  CMake is a
+meta-build system (https://cmake.org/)
+
+Note:  We've added a wiki page with more complete build instructions
+than the quick ones you find below:
+http://www.nsnam.org/wiki/Installation
+
+=== Installing CMake ===
+
+To use CMake, you need to download it and install it. This can be done
+ via package managers available for your operating system, or directly
+ from the CMake page: https://cmake.org/download/.
+
+CMake is a meta-build system that relies on an underlying build system.
+This build system is referred to as Generators by CMake
+(https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html),
+and include Makefiles, Ninja, XCode, Eclipse CDT4 and others.
+
+One of these must be installed for CMake to work.
+
+
+=== Building with ns3 ===
+
+To build ns-3 with the ns3 CMake wrapper type the commands from the top-level directory:
+ 1. ./ns3 configure [options]
+ 2. ./ns3 build
+
+To see valid configure options, type ./ns3 --help.  The most important
+option is -d <debug level>.  Valid debug levels (which are listed in
+ns3 --help) are: "debug" or "optimized", with debug being default.  It is
+also possible to change the flags used for compilation with (e.g.):
+CXXFLAGS="-O3" ./ns3 configure.  By default, ns-3 is built as debug code,
+with examples and tests disabled, and with python bindings enabled.  
+
+[ Note:  Unlike some other build tools, to change the build target,
+the option must be supplied during the configure stage rather than
+the build stage (i.e., "./ns3 build -d optimized" will not work; instead, do
+"./ns3 configure -d optimized; ./ns3 build" ]
+
+The resulting executables and libraries are placed in build/.
+
+Other ns3 usages include:
+
+ 1. ./ns3 configure --enable-examples --enable-tests
+    Turn on examples and tests.
+
+ 2. ./ns3 configure --disable-python
+    Disable python bindings.
+
+ 3. ./ns3 docs doxygen
+    Run doxygen to generate documentation
+
+ 4. ./ns3 run "program [args]"
+    Run a ns3 program, given its target name, with the given
+    arguments.  This takes care of automatically modifying the
+    path for finding the ns3 dynamic libraries in the environment
+    before running the program.  Note: the "program [args]" string is
+    parsed using POSIX shell rules.
+
+ 4.1 ./ns3 run program-name --command-template "... %s ..."
+
+    Same as run, but uses a command template with %s replaced by the
+    actual program (whose name is given by run).  This can be use to
+    run ns-3 programs with helper tools.  For example, to run unit
+    tests with valgrind, use the command:
+
+         ./ns3 run run-tests --command-template "valgrind %s"
+
+ 5. ./ns3 shell
+    Starts a nested system shell with modified environment to run ns3 programs.
+
+ 6. ./ns3 clean
+    Cleans out the entire build/ directory
+
+
+=== Extending ns-3 ===
+
+To add new modules:
+  1. Create the module directory under src;
+  2. Add the source files to it;
+  3. Add a 'CMakeLists.txt' describing it;
+
+A convenience program to auto-generate the template of a new module can
+be found in src/create-module.py.
+
+A ns-3 module is created as a cpp/shlib object, like this:
+
+    set(name ns3-mymodule)
+
+    set(source_files
+        model/ns3-mymodule.cc
+        helper/ns3-mymodule-helper.cc
+        )
+
+    set(header_files
+        model/ns3-mymodule.h
+        helper/ns3-mymodule-helper.h
+        )
+
+    set(libraries_to_link
+        libcore # lib prefix + module name
+        )
+
+    set(test_sources
+        test/test-mymodule.cc
+        )
+
+    build_lib(
+       LIBNAME ${name}
+       SOURCE_FILES ${source_files}
+       HEADER_FILES ${header_files}
+       LIBRARIES_TO_LINK ${libraries_to_link}
+       TEST_SOURCES ${test_sources}
+       )
+
+

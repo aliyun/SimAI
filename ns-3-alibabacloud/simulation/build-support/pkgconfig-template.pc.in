@@ -1,0 +1,13 @@
+exec_prefix="@CMAKE_INSTALL_FULL_BINDIR@"
+libdir="@CMAKE_INSTALL_FULL_LIBDIR@"
+includedir="@CMAKE_INSTALL_FULL_INCLUDEDIR@"
+
+Name: ns3-@module_name@
+Description: @CMAKE_PROJECT_DESCRIPTION@
+URL: @CMAKE_PROJECT_HOMEPAGE_URL@
+Version: @ns3_version@
+Requires: @pkgconfig_public_required@
+Requires.private: @pkgconfig_private_required@
+Cflags: -I"${includedir}" @pkgconfig_interface_include_directories@
+Libs: -L"${libdir}" -l@pkgconfig_target_lib@ @pkgconfig_public_libs@
+Libs.private: -L"${libdir}" @pkgconfig_private_libs@

@@ -1,0 +1,6 @@
+Device 0: pseudo-Mac-48 02:00:00:00:00:01, IPv6 Address 2001:2::ff:fe00:1
+Device 1: pseudo-Mac-48 02:00:00:00:00:02, IPv6 Address 2001:2::ff:fe00:2
+NDISC Cache of node 0 at time +9s
+2001:2::ff:fe00:2 dev 2 lladdr 00-06-02:00:00:00:00:02 REACHABLE
+NDISC Cache of node 1 at time +9s
+2001:2::ff:fe00:1 dev 2 lladdr 00-06-02:00:00:00:00:01 REACHABLE

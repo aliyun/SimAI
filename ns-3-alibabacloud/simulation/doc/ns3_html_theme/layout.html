@@ -1,0 +1,130 @@
+{#
+    ns-3/layout.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    Sphinx layout template for ns-3.
+
+    :copyright: Copyright 2012 by ns-3, see AUTHORS.
+    :license: GPL, see LICENSE for details.
+#}
+{% extends "basic/layout.html" %}
+
+{% set reldelim1 = '<span class="navelem">&nbsp;</span>' %}
+{# set reldelim1 = ' @' #}
+  
+{%- block extrahead %}
+  {%- if theme_customstylesheet %}
+  <link rel="stylesheet" type="text/css"
+    href="{{ pathto('_static/'+theme_customstylesheet, 1) }}" />
+  {%- endif %}
+    
+  {%- if theme_favicon %}
+    <link rel="icon" type="image/ico" 
+      href="{{ pathto('_static/'+theme_favicon, 1) }}" />
+  {%- endif %}
+
+  <script type="text/javascript" src="_static/drop-down-menu.js"></script>
+  <script type="text/javascript" src="_static/ns3_version.js"></script>
+  <script type="text/javascript">var ns3_builder="{{builder}}";</script>
+  <script type="text/javascript" src="_static/ns3_links.js"></script>
+      
+{% endblock %}
+      
+{% block header %}
+    <div id="titlearea">
+      <table cellspacing="0" cellpadding="0" width="100%">
+        <tbody>
+          <tr style="height: 56px;">
+            <td id="projectlogo">
+              <a id="ns3_home1"
+                 href="http://www.nsnam.org/">
+                 <img alt="ns-3 Logo"
+                      src="{{ pathto('_static/' + theme_logo, 1)}}"/>
+              </a>
+            </td>
+            <td id="projecttext">
+              <div id="projectbrief">A Discrete-Event Network Simulator</div>
+              <span id="projectnumber"><script type="text/javascript">document.write(ns3_version)</script></span>
+            </td>
+
+            <td id="ns3-menu">
+              <div class="menu">
+                <ul >
+                  <li style="background-image:none">
+                    <a id="ns3_home2"
+                         href="http://www.nsnam.org/"
+                         >&nbsp;&nbsp;Home</a>
+                  </li>
+                  <li><span
+                        onmouseover="mopen('mTuts')" 
+                        onmouseout="mclosetime()"
+                          >Tutorials &nbsp;&#x25BC;</span>
+                      <div id="mTuts" 
+                          onmouseover="mcancelclosetime()" 
+                          onmouseout="mclosetime()">
+                        <a id="ns3_tut"
+                           href="/docs/tutorial/html/index.html"
+                            >English</a><br/>
+                      </div>
+                  </li>
+                  <li><span
+                        onmouseover="mopen('mDocs')" 
+                        onmouseout="mclosetime()"
+                          >Documentation &nbsp;&#x25BC;</span>
+                      <div id="mDocs"
+                          onmouseover="mcancelclosetime()" 
+                          onmouseout="mclosetime()">
+                        <a id="ns3_man"
+                           href="/docs/manual/html/index.html"
+                           >Manual</a><br/>
+                        <a id="ns3_mod"
+                           href="/docs/models/html/index.html"
+                           >Models</a><br/>
+                        <a id="ns3_con"
+                           href="/docs/contributing/html/index.html"
+                           >Contributing</a><br/>
+                        <a id="ns3_wiki"
+                           href="http://www.nsnam.org/wiki"
+                           >Wiki</a><br/>
+                      </div>
+                  </li>
+                  <li><span
+                        onmouseover="mopen('mDev')" 
+                        onmouseout="mclosetime()"
+                          >Development &nbsp;&#x25BC;</span>
+                      <div id="mDev"
+                          onmouseover="mcancelclosetime()" 
+                          onmouseout="mclosetime()">
+                        <a id="ns3_api"
+                           href="/docs/doxygen/html/index.html"
+                           >API Docs</a><br/>
+                        <a id="ns3_bugs"
+                         href="https://gitlab.com/nsnam/ns-3-dev/-/issues"
+                           >Issue Tracker</a><br/>
+                        <a id="ns3_merge"
+                         href="https://gitlab.com/nsnam/ns-3-dev/-/merge_requests"
+                           >Merge Requests</a><br/>
+                      </div>
+                  </li>
+                </ul>
+              </div>
+            </td>
+
+            <td id="projectsection">
+              <span style="margin-right:10px">{{ shorttitle }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <script  type="text/javascript">ns3_write_links()</script>
+    </div>
+{% endblock %}
+      
+{% block rootrellink %}
+    <li class="navelem"><a href="{{ theme_homepage }}">{{ theme_projectname }}</a><span class="navelem">&nbsp;</span></li>
+    {{ super() }}
+{% endblock %}
+      
+{% if theme_collapsiblesidebar|tobool %}
+  {% set script_files = script_files + ['_static/sidebar.js'] %}
+{% endif %}

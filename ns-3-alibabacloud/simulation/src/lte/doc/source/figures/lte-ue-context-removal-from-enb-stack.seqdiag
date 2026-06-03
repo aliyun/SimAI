@@ -1,0 +1,14 @@
+
+diagram {
+
+LteEnbRrc;UeManager;EpcEnbApplication;"LteUeMac (All MACs)";Scheduler;"LteUePhy (All Phys)";LteSpectrumPhy;LteEnbComponentCarrierManager;RrcProtocol
+
+LteEnbRrc ->> UeManager [label="CancelPendingEvents ()"];
+LteEnbRrc ->> "LteUeMac (All MACs)" [label="RemoveUe (rnti)"];
+"LteUeMac (All MACs)" ->> Scheduler [label="CschedUeReleaseReq (params)"];
+LteEnbRrc ->> "LteUePhy (All Phys)" [label="RemoveUe (rnti)"];
+"LteUePhy (All Phys)" ->> LteSpectrumPhy [label="RemoveExpectedTb (rnti)"];
+LteEnbRrc ->> EpcEnbApplication [label="UeContextRelease (rnti)"];
+LteEnbRrc ->> LteEnbComponentCarrierManager [label="RemoveUe (rnti)"];
+LteEnbRrc ->> RrcProtocol [label="RemoveUe (rnti)"];
+}

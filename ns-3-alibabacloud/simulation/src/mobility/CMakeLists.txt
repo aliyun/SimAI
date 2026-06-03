@@ -1,0 +1,55 @@
+build_lib(
+  LIBNAME mobility
+  SOURCE_FILES
+    helper/group-mobility-helper.cc
+    helper/mobility-helper.cc
+    helper/ns2-mobility-helper.cc
+    model/box.cc
+    model/constant-acceleration-mobility-model.cc
+    model/constant-position-mobility-model.cc
+    model/constant-velocity-helper.cc
+    model/constant-velocity-mobility-model.cc
+    model/gauss-markov-mobility-model.cc
+    model/geographic-positions.cc
+    model/hierarchical-mobility-model.cc
+    model/mobility-model.cc
+    model/position-allocator.cc
+    model/random-direction-2d-mobility-model.cc
+    model/random-walk-2d-mobility-model.cc
+    model/random-waypoint-mobility-model.cc
+    model/rectangle.cc
+    model/steady-state-random-waypoint-mobility-model.cc
+    model/waypoint-mobility-model.cc
+    model/waypoint.cc
+  HEADER_FILES
+    helper/group-mobility-helper.h
+    helper/mobility-helper.h
+    helper/ns2-mobility-helper.h
+    model/box.h
+    model/constant-acceleration-mobility-model.h
+    model/constant-position-mobility-model.h
+    model/constant-velocity-helper.h
+    model/constant-velocity-mobility-model.h
+    model/gauss-markov-mobility-model.h
+    model/geographic-positions.h
+    model/hierarchical-mobility-model.h
+    model/mobility-model.h
+    model/position-allocator.h
+    model/random-direction-2d-mobility-model.h
+    model/random-walk-2d-mobility-model.h
+    model/random-waypoint-mobility-model.h
+    model/rectangle.h
+    model/steady-state-random-waypoint-mobility-model.h
+    model/waypoint-mobility-model.h
+    model/waypoint.h
+  LIBRARIES_TO_LINK ${libnetwork}
+  TEST_SOURCES
+    test/box-line-intersection-test.cc
+    test/geo-to-cartesian-test.cc
+    test/mobility-test-suite.cc
+    test/mobility-trace-test-suite.cc
+    test/ns2-mobility-helper-test-suite.cc
+    test/rand-cart-around-geo-test.cc
+    test/steady-state-random-waypoint-mobility-model-test.cc
+    test/waypoint-mobility-model-test.cc
+)

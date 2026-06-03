@@ -1,0 +1,29 @@
+build_lib(
+  LIBNAME antenna
+  SOURCE_FILES
+    model/angles.cc
+    model/antenna-model.cc
+    model/cosine-antenna-model.cc
+    model/isotropic-antenna-model.cc
+    model/parabolic-antenna-model.cc
+    model/phased-array-model.cc
+    model/three-gpp-antenna-model.cc
+    model/uniform-planar-array.cc
+  HEADER_FILES
+    model/angles.h
+    model/antenna-model.h
+    model/cosine-antenna-model.h
+    model/isotropic-antenna-model.h
+    model/parabolic-antenna-model.h
+    model/phased-array-model.h
+    model/three-gpp-antenna-model.h
+    model/uniform-planar-array.h
+  LIBRARIES_TO_LINK ${libcore}
+  TEST_SOURCES
+    test/test-angles.cc
+    test/test-degrees-radians.cc
+    test/test-isotropic-antenna.cc
+    test/test-cosine-antenna.cc
+    test/test-parabolic-antenna.cc
+    test/test-uniform-planar-array.cc
+)

@@ -1,0 +1,26 @@
+{
+  "active": true,
+  "current_phase": "deep-interview",
+  "interview_id": "rank-decomposition-arch-20260602",
+  "type": "brownfield",
+  "initial_idea": "研究 SimAI 中 rank 分解的正确位置和方法：当前 AICB (Python) 和 SimAI (C++) 各自独立实现了正交 rank 分解，AICB 用 RankGenerator 生成 per-rank LogItem，但转换为 SimAI TXT 格式时丢弃了 rank 信息，SimAI C++ 在 MockNcclGroup 中用相同数学公式重新推导 rank 组。用户想知道最正确的架构应该是怎样的、AICB 的方法是否理论化、是否仍需依赖 SimAI 的分解、以及是否应该输出 per-rank workload。",
+  "initial_context_summary": null,
+  "rounds": [],
+  "current_ambiguity": 1,
+  "threshold": 0.2,
+  "codebase_context": {
+    "aicb_rank_decomposition": "AICB uses RankGenerator class in aicb/utils/utils.py with generate_masked_orthogonal_rank_groups() for orthogonal decomposition. AICB CSV format has per-rank data (LogItem.ranks field). RankMapper bridges CommGroup enum to RankGenerator tokens.",
+    "simai_rank_decomposition": "SimAI C++ MockNcclGroup constructor in astra-sim-alibabacloud/astra-sim/system/MockNcclGroup.cc independently derives rank groups from TP/DP/EP parameters using same orthogonal math. SimAI TXT format is aggregated - no per-rank data. Workload file only carries TP_sz, EP_sz, all_gpus in header.",
+    "dual_implementation_risk": "Two independent implementations of same math - AICB Python RankGenerator and SimAI C++ MockNcclGroup. Risk of divergence. Currently both use same formulas but no guarantee they stay in sync.",
+    "format_boundary": "Conversion from AICB CSV (per-rank) to SimAI TXT (aggregated) in SimAI_training_workload_generator.py or convert_megatron_to_simai.py discards rank information. Then C++ re-derives it.",
+    "oxc_integration": "OXC flow generator uses global rank IDs for src/dst in OxcFlowEntry. Flows are generated per-communication-group using comm_group_ranks vector. RankTable maps global rank to hardware addresses."
+  },
+  "challenge_modes_used": [],
+  "ontology_snapshots": [],
+  "_meta": {
+    "mode": "deep-interview",
+    "sessionId": null,
+    "updatedAt": "2026-06-02T09:21:53.227Z",
+    "updatedBy": "state_write_tool"
+  }
+}

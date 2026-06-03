@@ -1,0 +1,366 @@
+# Set lib core link dependencies
+set(libraries_to_link
+    ${CMAKE_THREAD_LIBS_INIT}
+)
+
+set(gsl_test_sources)
+if(${GSL_FOUND})
+  set(libraries_to_link
+      ${libraries_to_link}
+      ${GSL_LIBRARIES}
+  )
+  set(gsl_test_sources
+      test/rng-test-suite.cc
+      test/random-variable-stream-test-suite.cc
+  )
+endif()
+
+# Check for dependencies and add sources accordingly
+if(${CMAKE_VERSION}
+   VERSION_LESS
+   "3.11.0"
+)
+  check_include_file_cxx(
+    boost/units/quantity.hpp
+    HAVE_BOOST_UNITS_QUANTITY
+  )
+  check_include_file_cxx(
+    boost/units/systems/si.hpp
+    HAVE_BOOST_UNITS_SI
+  )
+  if(${HAVE_BOOST_UNITS_QUANTITY}
+     AND ${HAVE_BOOST_UNITS_SI}
+  )
+    set(HAVE_BOOST_UNITS
+        TRUE
+    )
+  else()
+    set(HAVE_BOOST_UNITS
+        FALSE
+    )
+  endif()
+else()
+  # Fast path for CMake >= 3.11
+  check_include_files(
+    "boost/units/quantity.hpp;boost/units/systems/si.hpp"
+    HAVE_BOOST_UNITS
+    LANGUAGE
+    CXX
+  )
+endif()
+
+if(${HAVE_BOOST_UNITS})
+  add_definitions(
+    -DHAVE_BOOST
+    -DHAVE_BOOST_UNITS
+  )
+  message(STATUS "Boost Units have been found.")
+else()
+  message(
+    STATUS
+      "Boost Units are an optional feature of length.cc."
+      " Ubuntu ships it within the libboost-dev package."
+      " You may need to clean up the CMake cache after installing it to pass this check."
+  )
+endif()
+
+set(rt_sources)
+set(rt_headers)
+if(${ENABLE_REALTIME})
+  set(rt_sources
+      model/realtime-simulator-impl.cc
+      model/wall-clock-synchronizer.cc
+  )
+  set(rt_headers
+      model/realtime-simulator-impl.h
+      model/wall-clock-synchronizer.h
+  )
+  set(libraries_to_link
+      ${libraries_to_link}
+      ${LIBRT}
+  )
+endif()
+
+set(osclock_sources
+    model/unix-system-wall-clock-ms.cc
+)
+
+set(int64x64_sources)
+set(int64x64_headers)
+
+if(${NS3_INT64X64}
+   MATCHES
+   "INT128"
+)
+  set(int64x64_sources
+      model/int64x64-128.cc
+  )
+  set(int64x64_headers
+      model/int64x64-128.h
+  )
+elseif(
+  ${NS3_INT64X64}
+  MATCHES
+  "DOUBLE"
+)
+  set(int64x64_headers
+      model/int64x64-double.h
+  )
+elseif(
+  ${NS3_INT64X64}
+  MATCHES
+  "CAIRO"
+)
+  set(int64x64_sources
+      model/int64x64-cairo.cc
+  )
+  set(int64x64_headers
+      model/int64x64-cairo.h
+      model/cairo-wideint-private.h
+  )
+endif()
+
+if(${ENABLE_EXAMPLES})
+  set(example_as_test_sources
+      model/example-as-test.cc
+  )
+  set(example_as_test_headers
+      model/example-as-test.h
+  )
+  set(example_as_test_suite
+      test/examples-as-tests-test-suite.cc
+  )
+endif()
+
+# Embedded version support
+set(embedded_version_sources)
+set(embedded_version_headers)
+if(${ENABLE_BUILD_VERSION})
+  set(embedded_version_sources
+      model/version.cc
+  )
+  set(embedded_version_headers
+      model/version.h
+  )
+endif()
+
+# Define core lib sources
+set(source_files
+    ${rt_sources}
+    ${osclock_sources}
+    ${int64x64_sources}
+    ${example_as_test_sources}
+    ${embedded_version_sources}
+    helper/csv-reader.cc
+    helper/random-variable-stream-helper.cc
+    helper/event-garbage-collector.cc
+    model/time.cc
+    model/event-id.cc
+    model/scheduler.cc
+    model/list-scheduler.cc
+    model/map-scheduler.cc
+    model/heap-scheduler.cc
+    model/calendar-scheduler.cc
+    model/priority-queue-scheduler.cc
+    model/event-impl.cc
+    model/simulator.cc
+    model/simulator-impl.cc
+    model/default-simulator-impl.cc
+    model/timer.cc
+    model/watchdog.cc
+    model/synchronizer.cc
+    model/make-event.cc
+    model/log.cc
+    model/breakpoint.cc
+    model/type-id.cc
+    model/attribute-construction-list.cc
+    model/object-base.cc
+    model/ref-count-base.cc
+    model/object.cc
+    model/test.cc
+    model/random-variable-stream.cc
+    model/rng-seed-manager.cc
+    model/rng-stream.cc
+    model/command-line.cc
+    model/attribute.cc
+    model/boolean.cc
+    model/integer.cc
+    model/uinteger.cc
+    model/enum.cc
+    model/double.cc
+    model/int64x64.cc
+    model/string.cc
+    model/pointer.cc
+    model/object-ptr-container.cc
+    model/object-factory.cc
+    model/global-value.cc
+    model/trace-source-accessor.cc
+    model/config.cc
+    model/callback.cc
+    model/names.cc
+    model/vector.cc
+    model/fatal-impl.cc
+    model/system-path.cc
+    model/hash-function.cc
+    model/hash-murmur3.cc
+    model/hash-fnv.cc
+    model/hash.cc
+    model/des-metrics.cc
+    model/ascii-file.cc
+    model/node-printer.cc
+    model/show-progress.cc
+    model/time-printer.cc
+    model/system-wall-clock-timestamp.cc
+    model/length.cc
+    model/trickle-timer.cc
+    model/unix-fd-reader.cc
+    model/random-variable.cc
+)
+
+# Define core lib headers
+set(header_files
+    ${rt_headers}
+    ${int64x64_headers}
+    ${example_as_test_headers}
+    ${embedded_version_headers}
+    helper/csv-reader.h
+    helper/event-garbage-collector.h
+    helper/random-variable-stream-helper.h
+    model/abort.h
+    model/ascii-file.h
+    model/ascii-test.h
+    model/assert.h
+    model/atomic-counter.h
+    model/attribute-accessor-helper.h
+    model/attribute-construction-list.h
+    model/attribute-container-accessor-helper.h
+    model/attribute-container.h
+    model/attribute-helper.h
+    model/attribute.h
+    model/boolean.h
+    model/breakpoint.h
+    model/build-profile.h
+    model/calendar-scheduler.h
+    model/callback.h
+    model/command-line.h
+    model/config.h
+    model/default-deleter.h
+    model/default-simulator-impl.h
+    model/deprecated.h
+    model/des-metrics.h
+    model/double.h
+    model/empty.h
+    model/enum.h
+    model/event-id.h
+    model/event-impl.h
+    model/fatal-error.h
+    model/fatal-impl.h
+    model/global-value.h
+    model/hash-fnv.h
+    model/hash-function.h
+    model/hash-murmur3.h
+    model/hash.h
+    model/heap-scheduler.h
+    model/int-to-type.h
+    model/int64x64-double.h
+    model/int64x64.h
+    model/integer.h
+    model/length.h
+    model/list-scheduler.h
+    model/log-macros-disabled.h
+    model/log-macros-enabled.h
+    model/log.h
+    model/make-event.h
+    model/map-scheduler.h
+    model/math.h
+    model/names.h
+    model/node-printer.h
+    model/nstime.h
+    model/object-base.h
+    model/object-factory.h
+    model/object-map.h
+    model/object-ptr-container.h
+    model/object-vector.h
+    model/object.h
+    model/pair.h
+    model/pointer.h
+    model/priority-queue-scheduler.h
+    model/ptr.h
+    model/random-variable-stream.h
+    model/ref-count-base.h
+    model/rng-seed-manager.h
+    model/rng-stream.h
+    model/scheduler.h
+    model/show-progress.h
+    model/simple-ref-count.h
+    model/simulation-singleton.h
+    model/simulator-impl.h
+    model/simulator.h
+    model/singleton.h
+    model/string.h
+    model/synchronizer.h
+    model/system-path.h
+    model/system-wall-clock-ms.h
+    model/system-wall-clock-timestamp.h
+    model/test.h
+    model/time-printer.h
+    model/timer-impl.h
+    model/timer.h
+    model/trace-source-accessor.h
+    model/traced-callback.h
+    model/traced-value.h
+    model/trickle-timer.h
+    model/tuple.h
+    model/type-id.h
+    model/type-name.h
+    model/type-traits.h
+    model/uinteger.h
+    model/unix-fd-reader.h
+    model/unused.h
+    model/valgrind.h
+    model/vector.h
+    model/watchdog.h
+    model/random-variable.h
+)
+
+set(test_sources
+    ${example_as_test_suite}
+    ${gsl_test_sources}
+    test/attribute-container-test-suite.cc
+    test/attribute-test-suite.cc
+    test/build-profile-test-suite.cc
+    test/callback-test-suite.cc
+    test/command-line-test-suite.cc
+    test/config-test-suite.cc
+    test/event-garbage-collector-test-suite.cc
+    test/global-value-test-suite.cc
+    test/hash-test-suite.cc
+    test/int64x64-test-suite.cc
+    test/length-test-suite.cc
+    test/many-uniform-random-variables-one-get-value-call-test-suite.cc
+    test/names-test-suite.cc
+    test/object-test-suite.cc
+    test/one-uniform-random-variable-many-get-value-calls-test-suite.cc
+    test/pair-value-test-suite.cc
+    test/ptr-test-suite.cc
+    test/sample-test-suite.cc
+    test/simulator-test-suite.cc
+    test/threaded-test-suite.cc
+    test/time-test-suite.cc
+    test/timer-test-suite.cc
+    test/traced-callback-test-suite.cc
+    test/trickle-timer-test-suite.cc
+    test/tuple-value-test-suite.cc
+    test/type-id-test-suite.cc
+    test/type-traits-test-suite.cc
+    test/watchdog-test-suite.cc
+)
+
+# Build core lib
+build_lib(
+  LIBNAME core
+  SOURCE_FILES ${source_files}
+  HEADER_FILES ${header_files}
+  LIBRARIES_TO_LINK ${libraries_to_link}
+  TEST_SOURCES ${test_sources}
+)

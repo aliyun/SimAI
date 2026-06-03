@@ -1,0 +1,147 @@
+
++++++++++++++++++++++++++++++++++++++
+ RELEASE NOTES of the ns-3 LTE module
++++++++++++++++++++++++++++++++++++++
+
+This file documents the user-visible features that have been added
+within each release of the ns-3 LTE module.
+
+
+Milestone 6 (M6) release of the LENA project (April 30, 2013)
+================================================================
+
+ - PHY support for UE measurements (RSRP and RSRQ)
+ - RRC support for UE measurements (configuration, execution, reporting)
+ - Automatic Handover trigger based on RRC UE measurement reports
+
+
+Milestone 5 (M5) release of the LENA project (January 23, 2013)
+================================================================
+
+ - MIMO model
+ - HARQ model integrated with error model
+ - Control Channel and Reference Signals models
+ - MAC Random Access model with protocol interference model
+   for preamble collisions
+ - RRC implementation with new UE and ENB state machines and
+   ASN.1-encoded RRC PDUs sent over Signaling Radio Bearers
+ - RLC TM model
+ - MME, S1-AP and S11 logical models
+ - X2 implementation supporting handover and SON primitives
+ - additional KPIs: RSRP & SINR traces, PHY tx/rx traces,
+   SRB stats
+ - several bug fixes
+
+
+GSoC 2012 release (merged into ns-3-dev on December 2012)
+=========================================================
+
+ - Maximum Throughput (MT) Scheduler
+ - Throughput to Average (TTA) Scheduler
+ - Blind Equal Throughput (BET) Scheduler
+ - Token Bank Fair Queue (TBFQ) Scheduler
+ - Priority Set Scheduler (PSS)
+
+
+Milestone 4 (M4) release of the LENA project (December 15, 2011)
+================================================================
+
++ LTE Radio Protocols:
+  - RLC/UM
+  - RLC/AM
+  - PDCP
++ EPC data plane:
+  - S1-U interface with GTP-U tunneling
+  - SGW/PGW node
+  - TFT classifiers
+  - mapping of EPS bearers to Radio Bearers
+  - integration with ns-3 Ipv4 and ns-3 applications
++ Propagation Models:
+  - revised trace-based fading model with new traces
+  - new buildings pathloss model 
+
+
+Milestone 1 (M1) release of the LENA project (June 17, 2011)
+============================================================
+
+Here is a summary of the new features available in the LTE module with
+this release:  
+
+
+ - uplink PHY and MAC properly implemented including Adaptive
+   Modulation and Coding (previously only downlink was supported)  
+
+ - interference modeling was implemented: it is now possible to
+   simulate multi-cell scenarios with inter-cell interference
+
+ - flexible spectrum model: it is now possible to specify the carrier
+   frequency and bandwidth of each cell independently 
+
+ - an implementation of the Proportional Fair scheduler based on the
+   FF LTE MAC Scheduler API is now included 
+
+ - support for output of RLC and MAC layer Key Performance Indicators
+   (KPIs) via dedicated trace sinks connected to newly defined trace
+   sources 
+
+ - the setting of the most relevant parameters (e.g. tx power, noise,
+   carrier frequency, bandwidth, type of scheduler, etc.) is now done
+   via the ns-3 attribute system   
+
+ - several test suites have been added, including both unit tests that
+   check the correct functionality of specific objects, and system
+   tests that validate the output produced by the simulator in several
+   scenarios of interest.
+
+ - the documentation of the lte module has been entirely rewritten, it
+   now features three separate sections: the design documentation, the
+   user documentation and the testing documentation. 
+
+
+
+First Public release of the LENA project (March 10, 2011)
+=========================================================
+
+The LENA code is based on the GSoC 2010 project code by Giuseppe Piro,
+which was merged into ns-3-dev on December 2010. With respect to the GSoC
+code, the main modifications that have been performed are: 
+
+ - the MAC has been entirely rewritten to support the MAC Scheduler
+   API defined by the Femto Forum, which is publicly available at this
+   location: http://www.femtoforum.org/femto/technical.php
+
+ - a Round Robin scheduler implementation based on the above API is
+   also provided
+
+ - the RLC API has been redefined  RLC in particular, at this stage
+   only the API definition is in place, together with a simplified RLC
+   implementation (RLC TM/UM/AM not available yet) 
+
+  - the RRC has been entirely rewritten; we plan to reuse part of the
+    GSoC 2010 flow classification code (which we plan to reuse) at a
+    future stage for the implementation of Traffic Flow Template
+    classifiers. 
+
+  - network layer functionality has been temporarily disabled; it will
+    be re-enabled when either RLC/UM or RLC/AM is available. 
+
+
+
+
+GSoC 2010 release (merged into ns-3-dev on December 2010)
+=========================================================
+
+Here are 
+In summary, the most important features provided by the
+proposed module are (i) a basic implementation of both the
+User Equipment (UE) and the enhanced NodeB (eNB) de-
+vices, (ii) RRC entities for both the UE and the eNB, (iii)
+a state-of-the-art Adaptive Modulation and Coding (AMC)
+scheme for the downlink [9], (iv) the management of the
+data radio bearers (with their QoS parameters), the MAC
+queues and the RLC instances, (v) Channel Quality Indi-
+cator (CQI) management, (vi) support for both uplink and
+downlik packet scheduling, (vii) a PHY layer model with
+Resource Block level granularity and (viii) a channel model
+with the outdoor E-UTRAN propagation loss model.
+

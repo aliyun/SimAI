@@ -1,0 +1,41 @@
+digraph LteEnbRrcStates {
+
+
+NO_CONTEXT [shape="ellipse", label="no context"]
+INITIAL_RANDOM_ACCESS [shape="box",width=3]
+CONNECTION_SETUP [shape="box",width=3]
+CONNECTION_REJECTED [shape="box",width=3] 
+CONNECTED_NORMALLY [shape="box",width=3] 
+CONNECTION_RECONFIGURATION [shape="box",width=3] 
+HANDOVER_PREPARATION [shape="box",width=3] 
+HANDOVER_JOINING [shape="box",width=3] 
+HANDOVER_PATH_SWITCH [shape="box",width=3] 
+HANDOVER_LEAVING [shape="box",width=3]
+CONTEXT_DESTROYED [shape="ellipse", label="context destroyed"]
+
+// connection establishment
+NO_CONTEXT -> INITIAL_RANDOM_ACCESS [label="rx RA\npreamble"]
+INITIAL_RANDOM_ACCESS -> CONNECTION_REJECTED [label="rx RRC CONN REQ,\nAdmit = false"]
+CONNECTION_REJECTED -> CONTEXT_DESTROYED [label="connection\nrejected\ntimeout"]
+INITIAL_RANDOM_ACCESS -> CONTEXT_DESTROYED [label="connection\nrequest\ntimeout"]
+INITIAL_RANDOM_ACCESS -> CONNECTION_SETUP [label="rx RRC CONN REQ,\nAdmit = true"]
+CONNECTION_SETUP -> CONTEXT_DESTROYED [label="connection\nsetup\ntimeout"]
+CONNECTION_SETUP -> CONNECTED_NORMALLY [label="rx RRC CONN SETUP\nCOMPLETED"]
+CONNECTED_NORMALLY -> CONNECTION_RECONFIGURATION [label="reconfiguration\ntrigger"]
+CONNECTION_RECONFIGURATION -> CONNECTED_NORMALLY [label="rx RRC CONN RECONF\nCOMPLETED"]
+
+// leaving because of handover
+CONNECTED_NORMALLY -> HANDOVER_PREPARATION [label="handover\ntrigger"]
+HANDOVER_PREPARATION -> CONNECTED_NORMALLY [label="rx X2 HO PREP\nFAILURE"]
+HANDOVER_PREPARATION -> HANDOVER_LEAVING [label="rx X2 HO REQ ACK"]
+HANDOVER_LEAVING -> CONTEXT_DESTROYED [label="rx X2 UE CONTEXT RELEASE"]
+HANDOVER_LEAVING -> CONTEXT_DESTROYED [label="handover\nleaving\ntimeout"]
+
+// joining because of handover
+NO_CONTEXT -> HANDOVER_JOINING [label="rx X2 HANDOVER REQ,\nAdmit = true"]
+HANDOVER_JOINING -> HANDOVER_PATH_SWITCH [label="rx RRC CONN RECONF\nCOMPLETED"]
+HANDOVER_JOINING -> CONTEXT_DESTROYED [label="handover\njoining\ntimeout"]
+HANDOVER_PATH_SWITCH -> CONNECTED_NORMALLY [label="rx S1 PATH SWITCH REQ ACK"]
+
+
+}

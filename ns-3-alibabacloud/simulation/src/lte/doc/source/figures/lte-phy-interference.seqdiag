@@ -1,0 +1,37 @@
+
+
+diagram {
+
+Scheduler;
+SpectrumChannel;
+
+Scheduler => SpectrumChannel [label="at 0.001s: StartRx(signal1)"] {
+  SpectrumChannel => LteSpectrumPhy [label="StartRx(interferer)"] {
+    LteSpectrumPhy => LteInterference  [label="AddSignal()"];
+  }
+}
+
+Scheduler => SpectrumChannel [label="at 0.001s: StartRx(signal2)"] {
+  SpectrumChannel => LteSpectrumPhy [label="at 0.001s: StartRx(signal2)"] {
+    LteSpectrumPhy => LteInterference  [label="AddSignal(signal2)"];
+    LteSpectrumPhy => LteInterference  [label="StartRx(signal2)"];
+    LteSpectrumPhy => Scheduler  [label="Schedule (EndRx)"];
+  }
+}
+
+Scheduler => SpectrumChannel [label="at 0.001s: StartRx(signal3)"] {
+  SpectrumChannel => LteSpectrumPhy [label="StartRx(signal3)"] {
+    LteSpectrumPhy => LteInterference  [label="AddSignal(signal3)"];
+  }
+}
+
+Scheduler => LteSpectrumPhy [label="at 0.002s: EndRx()"] {
+  LteSpectrumPhy => LteInterference  [label="EndRx()"] {
+    LteInterference => LteCqiSinrChunkProcessor [label="EvaluateSinrChunk()"];
+    LteInterference => LteCqiSinrChunkProcessor [label="End()"] {
+      LteCqiSinrChunkProcessor => LtePhy [label="GenerateCqiFeedback(SINR of signal2)"]
+    }
+  }
+}
+
+}

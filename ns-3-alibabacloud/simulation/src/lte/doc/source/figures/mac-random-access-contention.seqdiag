@@ -1,0 +1,44 @@
+
+diagram {
+   UeRrc; UeMac; UePhy;  EnbRrc; EnbPhy; EnbMac; FfSched;	
+		
+   UeRrc ->> UeMac [label="StartContentionBasedRandomAccessProcedure"]
+   UeMac ->> UeMac [label="Select random preamble in 0,1,...,63-Ncf"]
+   UeMac ->> UeMac [label="start RAR timeout"]
+   UeMac ->> UePhy [label="SendRachPreamble"] 
+   UePhy ->> EnbPhy [label="RachPreambleLteControlMessage"]	
+   EnbPhy ->> EnbMac [label="ReceiveRachPreamble (this UE)"]
+   EnbMac ->> EnbMac [label="add to list of received Rach preamble"]
+   EnbPhy ->> EnbMac [label="ReceiveRachPreamble (other UE colliding)"]
+   EnbMac ->> EnbMac [label="add to list of received Rach preamble"]
+   EnbPhy ->> EnbMac [label="SubframeIndication"]
+   EnbMac ->> EnbMac [label="discard collided preambles"]
+   UeMac ->> UeMac [label="RAR timeout expires"]
+   UeMac ->> UeMac [label="Select random preamble in 0,1,...,63-Ncf"]
+   UeMac ->> UeMac [label="start RAR timeout"]
+   UeMac ->> UePhy [label="SendRachPreamble"] 
+   UePhy ->> EnbPhy [label="RachPreambleLteControlMessage"]	
+   EnbPhy ->> EnbMac [label="ReceiveRachPreamble (this UE)"]
+   EnbMac ->> EnbMac [label="add to list of received Rach preamble"]
+   EnbPhy ->> EnbMac [label="SubframeIndication"]
+   EnbMac ->> EnbRrc [label="AllocateTemporaryCellRnti"]	
+   EnbRrc ->> EnbRrc [label="AddUe"]	
+   EnbMac <<- EnbRrc [label="ConfigureUe (C-RNTI = T-C-RNTI)"] 
+   EnbMac ->> FfSched  [label="CSCHED_UE_CONFIG_REQ"]
+   EnbMac <<- FfSched  [label="CSCHED_UE_CONFIG_CNF"]
+   EnbMac ->> FfSched  [label="CSCHED_LC_CONFIG_REQ (SRB1)"]
+   EnbMac <<- FfSched  [label="CSCHED_LC_CONFIG_CNF"]
+   EnbMac <<- EnbRrc [label="T-C-RNTI"]		
+   EnbMac ->> FfSched [label="SCHED_DL_RACH_INFO_REQ (T-C-RNTI list)"]		
+   EnbMac ->> FfSched [label="SCHED_DL_TRIGGER_REQ"]	
+   EnbMac <<- FfSched  [label="SCHED_DL_CONFIG_IND (RAR list with UL grant per RNTI)"]
+   EnbMac ->> EnbMac [label="build RARs"]
+   EnbPhy <<- EnbMac [label="SendLteControlMessage (RARs)"]
+   UePhy <<- EnbPhy [label="RARs as RarLteControlMessage"]
+   UeMac <<- UePhy [label="ReceiveLteControlMessage (RARs)"] 
+   UeMac ->> UeMac [label="RecvRaResponse"]
+   UeRrc <<- UeMac [label="NotifyRandomAccessSuccessful"]
+}
+
+
+
