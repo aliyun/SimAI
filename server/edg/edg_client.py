@@ -3,7 +3,8 @@
 import json
 import logging
 import os
-from typing import Any, Dict, Optional
+import re
+from typing import Any, Dict, Optional, Set
 
 import requests
 
@@ -151,34 +152,36 @@ def _mock_baseline_crosses(lld: Dict[str, Any]) -> list:
     if not oxc_nodes:
         return []
 
-    oxc_ips = {n["node_id"] for n in oxc_nodes}
-    spine_ips = {n["node_id"] for n in topo.get("spine_nodes", [])}
+    _strip2 = lambda s: re.sub(r"\(\d+\)$", "", s).strip()
+    oxc_ips = {_strip2(n["node_id"]) for n in oxc_nodes}
+    spine_ips = {_strip2(n["node_id"]) for n in topo.get("spine_nodes", [])}
 
     # Build spine→leaves mapping for spine-based topologies (1:N fan-out)
     spine_to_leaves: Dict[str, Set[str]] = {}  # spine_ip -> set of leaf_ips
     if spine_ips:
         for e in edges:
             a_id, b_id = e["a_node_id"], e["b_node_id"]
-            if a_id in spine_ips and b_id not in oxc_ips:
-                spine_to_leaves.setdefault(a_id, set()).add(b_id)
-            elif b_id in spine_ips and a_id not in oxc_ips:
-                spine_to_leaves.setdefault(b_id, set()).add(a_id)
+            if a_id in spine_ips and _strip2(b_id) not in oxc_ips:
+                spine_to_leaves.setdefault(a_id, set()).add(_strip2(b_id))
+            elif b_id in spine_ips and _strip2(a_id) not in oxc_ips:
+                spine_to_leaves.setdefault(b_id, set()).add(_strip2(a_id))
 
     # Group OXC ports by which leaf they eventually reach
     oxc_port_leaf: Dict[str, Dict[str, str]] = {}  # oxc_ip -> {port -> leaf_ip}
     for e in edges:
         a_id, b_id = e["a_node_id"], e["b_node_id"]
-        if a_id in oxc_ips:
-            peer = b_id
-        elif b_id in oxc_ips:
-            peer = a_id
+        a_clean, b_clean = _strip2(a_id), _strip2(b_id)
+        if a_clean in oxc_ips:
+            peer = b_clean
+        elif b_clean in oxc_ips:
+            peer = a_clean
         else:
             continue
 
         # Resolve OXC port → leaf(s) via spine fan-out
         leaf_ips = spine_to_leaves.get(peer, {peer})
-        oxc_ip = a_id if a_id in oxc_ips else b_id
-        port = str(e["a_node_port_id"]) if a_id in oxc_ips else str(e["b_node_port_id"])
+        oxc_ip = a_clean if a_clean in oxc_ips else b_clean
+        port = str(e["a_node_port_id"]) if a_clean in oxc_ips else str(e["b_node_port_id"])
         # Use first leaf as primary; all leaves are reachable via this spine
         primary_leaf = next(iter(leaf_ips)) if leaf_ips else peer
         if primary_leaf not in oxc_port_leaf.get(oxc_ip, {}):
@@ -252,8 +255,9 @@ def _smart_adjustment(ctx: Dict[str, Any]) -> Optional[dict]:
     lld = ctx.get("lld") or {}
     baseline = ctx.get("baseline_crosses") or []
     topo = lld.get("topology", {})
-    oxc_ips = {n["node_id"] for n in topo.get("oxc_nodes", [])}
-    spine_ips2 = {n["node_id"] for n in topo.get("spine_nodes", [])}
+    _strip3 = lambda s: re.sub(r"\(\d+\)$", "", s).strip()
+    oxc_ips = {_strip3(n["node_id"]) for n in topo.get("oxc_nodes", [])}
+    spine_ips2 = {_strip3(n["node_id"]) for n in topo.get("spine_nodes", [])}
     if not oxc_ips or not baseline:
         return None
 
@@ -261,7 +265,7 @@ def _smart_adjustment(ctx: Dict[str, Any]) -> Optional[dict]:
     spine_to_leaves2: Dict[str, Set[str]] = {}
     if spine_ips2:
         for e in topo.get("edges", []):
-            a_id2, b_id2 = e["a_node_id"], e["b_node_id"]
+            a_id2, b_id2 = _strip3(e["a_node_id"]), _strip3(e["b_node_id"])
             if a_id2 in spine_ips2 and b_id2 not in oxc_ips:
                 spine_to_leaves2.setdefault(a_id2, set()).add(b_id2)
             elif b_id2 in spine_ips2 and a_id2 not in oxc_ips:
@@ -271,7 +275,7 @@ def _smart_adjustment(ctx: Dict[str, Any]) -> Optional[dict]:
     port_to_leaf: Dict[tuple, str] = {}
     leaf_to_ports: Dict[str, Dict[str, list]] = {}  # oxc_ip -> leaf_ip -> [port]
     for e in topo.get("edges", []):
-        a_ip, b_ip = e["a_node_id"], e["b_node_id"]
+        a_ip, b_ip = _strip3(e["a_node_id"]), _strip3(e["b_node_id"])
         a_port, b_port = str(e["a_node_port_id"]), str(e["b_node_port_id"])
         if a_ip in oxc_ips:
             leaves = spine_to_leaves2.get(b_ip, {b_ip})

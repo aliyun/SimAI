@@ -4,6 +4,7 @@ The graph contains only the servers listed in npu_match (sub-topology).
 """
 
 import logging
+import re
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 from server.edg.crosses import Cross
@@ -40,41 +41,43 @@ def _build_edge_maps(edges: List[Dict[str, Any]], oxc_ips: Set[str], server_ips:
 
     for e in edges:
         a_id, b_id = e["a_node_id"], e["b_node_id"]
+        a_clean = re.sub(r"\(\d+\)$", "", a_id).strip()
+        b_clean = re.sub(r"\(\d+\)$", "", b_id).strip()
         a_port, b_port = str(e["a_node_port_id"]), str(e["b_node_port_id"])
 
         # OXC ↔ spine edges — record exactly which spine port
         if spine_ips:
-            if a_id in oxc_ips and b_id in spine_ips:
-                oxc_spine_edge[(a_id, a_port)] = (b_id, b_port)
+            if a_clean in oxc_ips and b_id in spine_ips:
+                oxc_spine_edge[(a_clean, a_port)] = (b_id, b_port)
                 continue
-            elif b_id in oxc_ips and a_id in spine_ips:
-                oxc_spine_edge[(b_id, b_port)] = (a_id, a_port)
+            elif b_clean in oxc_ips and a_id in spine_ips:
+                oxc_spine_edge[(b_clean, b_port)] = (a_id, a_port)
                 continue
 
         # Spine ↔ leaf edges — keyed by (spine_ip, spine_port), use the
         # other side as leaf target regardless of which field it's in
         if spine_ips:
-            if a_id in spine_ips and b_id not in oxc_ips:
-                spine_port_to_leaf[(a_id, a_port)] = (b_id, b_port)
+            if a_id in spine_ips and b_clean not in oxc_ips:
+                spine_port_to_leaf[(a_id, a_port)] = (b_clean, b_port)
                 continue
-            elif b_id in spine_ips and a_id not in oxc_ips:
-                spine_port_to_leaf[(b_id, b_port)] = (a_id, a_port)
+            elif b_id in spine_ips and a_clean not in oxc_ips:
+                spine_port_to_leaf[(b_id, b_port)] = (a_clean, a_port)
                 continue
 
         # Direct OXC ↔ leaf edges (flat topology, no spine)
         if not spine_ips:
-            if a_id in oxc_ips:
-                oxc_port_to_leaves.setdefault((a_id, a_port), []).append((b_id, b_port))
-            elif b_id in oxc_ips:
-                oxc_port_to_leaves.setdefault((b_id, b_port), []).append((a_id, a_port))
+            if a_clean in oxc_ips:
+                oxc_port_to_leaves.setdefault((a_clean, a_port), []).append((b_clean, b_port))
+            elif b_clean in oxc_ips:
+                oxc_port_to_leaves.setdefault((b_clean, b_port), []).append((a_clean, a_port))
 
         # Leaf ↔ server edges (1 server can connect to N leaves)
-        if a_id in server_ips:
-            leaf_port_to_server[(b_id, b_port)] = (a_id, a_port)
-            server_to_leaves.setdefault(a_id, set()).add(b_id)
-        elif b_id in server_ips:
-            leaf_port_to_server[(a_id, a_port)] = (b_id, b_port)
-            server_to_leaves.setdefault(b_id, set()).add(a_id)
+        if a_clean in server_ips:
+            leaf_port_to_server[(b_clean, b_port)] = (a_clean, a_port)
+            server_to_leaves.setdefault(a_clean, set()).add(b_clean)
+        elif b_clean in server_ips:
+            leaf_port_to_server[(a_clean, a_port)] = (b_clean, b_port)
+            server_to_leaves.setdefault(b_clean, set()).add(a_clean)
 
     # Chain OXC→spine→leaf: each OXC port reaches its connected spine, and
     # through the spine (which acts as a switch) can reach ALL leaves that
@@ -115,10 +118,11 @@ def resolve_paths(
     """
     topo = lld.get("topology", {})
 
-    oxc_ips = {n["node_id"] for n in topo.get("oxc_nodes", [])}
-    all_server_ips = {n["node_id"] for n in topo.get("server_nodes", [])}
-    all_leaf_ips = {n["node_id"] for n in topo.get("leaf_nodes", [])}
-    spine_ips = {n["node_id"] for n in topo.get("spine_nodes", [])}
+    _strip = lambda s: re.sub(r"\(\d+\)$", "", s).strip()
+    oxc_ips = {_strip(n["node_id"]) for n in topo.get("oxc_nodes", [])}
+    all_server_ips = {_strip(n["node_id"]) for n in topo.get("server_nodes", [])}
+    all_leaf_ips = {_strip(n["node_id"]) for n in topo.get("leaf_nodes", [])}
+    spine_ips = {_strip(n["node_id"]) for n in topo.get("spine_nodes", [])}
 
     if participating_server_ips is not None:
         target_servers = set(participating_server_ips)
