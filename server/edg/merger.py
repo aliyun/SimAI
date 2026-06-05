@@ -163,7 +163,8 @@ def resolve_paths(
     # Count server-leaf links per pair
     srv_leaf_count: Dict[Tuple[str, str], int] = {}
     for e in edges:
-        a_id, b_id = e["a_node_id"], e["b_node_id"]
+        a_id = re.sub(r"\(\d+\)$", "", e["a_node_id"]).strip()
+        b_id = re.sub(r"\(\d+\)$", "", e["b_node_id"]).strip()
         if a_id in target_servers and b_id in all_leaf_ips:
             key = (a_id, b_id)
             srv_leaf_count[key] = srv_leaf_count.get(key, 0) + 1
