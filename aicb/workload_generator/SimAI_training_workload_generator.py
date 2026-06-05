@@ -140,7 +140,7 @@ class SIMAI_workload:
             for child in model.child_modules():
                 traverse_model(child)
 
-        traverse_model(model)
+        traverse_model(self.model)
 
         return layers
 

@@ -134,15 +134,15 @@ export function HomePage() {
       setNewDir(`topology/${newName.trim() || autoName}`);
 
       // Extract server IPs
-      const srvIps = ((topo.server_nodes ?? []) as Array<Record<string, string>>).map(s => s.node_ip).filter(Boolean);
+      const srvIps = ((topo.server_nodes ?? []) as Array<Record<string, string>>).map(s => s.node_id).filter(Boolean);
       setLldServerIps(srvIps);
 
-      // Auto-detect bandwidth from leaf port_name (e.g. "400GE/0/1/1" → "400Gbps")
+      // Auto-detect bandwidth from leaf port_id (e.g. "400GE1/0/1:1" → "400Gbps")
       const leafNodes = (topo.leaf_nodes ?? []) as Array<Record<string, unknown>>;
       for (const leaf of leafNodes) {
-        const ports = (leaf.port_infos ?? []) as Array<Record<string, string>>;
+        const ports = (leaf.port_id_list ?? []) as Array<Record<string, string>>;
         for (const p of ports) {
-          const m = p.port_name?.match(/^(\d+)GE/);
+          const m = p.port_id?.match(/^(\d+)GE/);
           if (m) {
             setLinkBw(`${m[1]}Gbps`);
             break;
@@ -151,7 +151,7 @@ export function HomePage() {
         if (linkBw) break;
       }
 
-      // Auto-detect NPU type + server-internal bandwidth from lld server_type
+      // Auto-detect NPU type + server-internal bandwidth from lld chassis_topo
       // Supports mixed-NPU deployments (e.g. A2 and A3 servers)
       const NPU_INTRA_MAP: Record<string, string> = { A2: '200Gbps', A3: '400Gbps', A5: '400Gbps', A6: '400Gbps', A100: '2400Gbps', H100: '2880Gbps', H800: '2880Gbps' };
       const srvNodes = (topo.server_nodes ?? []) as Array<Record<string, string>>;
@@ -159,11 +159,13 @@ export function HomePage() {
       let primaryType = '';
       let primaryBw = '400Gbps';
       for (const srv of srvNodes) {
-        if (srv.server_type) {
-          types.add(srv.server_type);
+        const chassisT = (srv as any).chassis_topo;
+        if (chassisT) {
+          const prefix = chassisT.split('_')[0];
+          types.add(prefix);
           if (!primaryType) {
-            primaryType = srv.server_type;
-            primaryBw = NPU_INTRA_MAP[srv.server_type] ?? '400Gbps';
+            primaryType = prefix;
+            primaryBw = NPU_INTRA_MAP[prefix] ?? '400Gbps';
           }
         }
       }

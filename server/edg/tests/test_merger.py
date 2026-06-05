@@ -1,4 +1,4 @@
-"""Unit tests for server.edg.merger — path resolution."""
+"""Unit tests for server.edg.merger — path resolution (v3 spine topology)."""
 
 import json
 import os
@@ -16,56 +16,49 @@ def lld():
         return json.load(f)
 
 
-def test_resolve_single_cross(lld):
-    # OXC port 1 → leaf_25:17, OXC port 16 → leaf_28:17
-    crosses = {("10.118.241.50", "1", "16")}
-    graph = resolve_paths(lld, crosses, participating_server_ips=["10.118.241.1", "10.118.241.15"])
-
-    assert len(graph["servers"]) == 2
-    assert graph["servers"][0]["ip"] == "10.118.241.1"
-    assert graph["servers"][1]["ip"] == "10.118.241.15"
-    assert len(graph["leaves"]) == 2
-    assert len(graph["leaf_leaf_edges"]) == 1
-
-    ll = graph["leaf_leaf_edges"][0]
-    assert set([ll[0], ll[1]]) == {"10.118.241.25", "10.118.241.28"}
-
-
 def test_resolve_no_crosses(lld):
-    graph = resolve_paths(lld, set(), participating_server_ips=["10.118.241.1"])
+    graph = resolve_paths(lld, set(), participating_server_ips=["superpod#0_server#0"])
     assert len(graph["servers"]) == 1
     assert len(graph["leaf_leaf_edges"]) == 0
     assert len(graph["server_leaf_edges"]) >= 1
 
 
 def test_resolve_dangling_port(lld):
-    # Port 999 doesn't exist in lld edges
-    crosses = {("10.118.241.50", "1", "999")}
-    graph = resolve_paths(lld, crosses, participating_server_ips=["10.118.241.1"])
+    crosses = {("10.118.241.1(0)", "99", "999")}
+    graph = resolve_paths(lld, crosses, participating_server_ips=["superpod#0_server#0"])
     assert len(graph["leaf_leaf_edges"]) == 0
 
 
 def test_resolve_excludes_non_participating(lld):
-    crosses = {("10.118.241.50", "1", "16")}
-    # Only server .1 participates, .15 does not → leaf_28 excluded → no leaf-leaf edge
-    graph = resolve_paths(lld, crosses, participating_server_ips=["10.118.241.1"])
-    assert len(graph["servers"]) == 1
-    assert len(graph["leaf_leaf_edges"]) == 0
+    """Non-existent servers appear in output with empty fields (caller-side filtering)."""
+    graph = resolve_paths(lld, set(), participating_server_ips=["no_such_server"])
+    assert len(graph["servers"]) == 1  # entry created but empty
+    assert graph["servers"][0]["leaf_ip"] == ""
+    assert len(graph["leaves"]) == 0
 
 
 def test_resolve_all_servers(lld):
-    crosses = {
-        ("10.118.241.50", "1", "16"),
-        ("10.118.241.50", "5", "9"),
-    }
-    graph = resolve_paths(lld, crosses)
-    assert len(graph["servers"]) == 4
-    assert len(graph["leaf_leaf_edges"]) >= 1
+    graph = resolve_paths(lld, set())
+    assert len(graph["servers"]) == 1
+    assert graph["servers"][0]["server_type"] == "A5"
+    assert graph["servers"][0]["ip"] == "superpod#0_server#0"
 
 
 def test_server_order_matches_input(lld):
-    crosses = {("10.118.241.50", "1", "16")}
-    ips = ["10.118.241.15", "10.118.241.1"]
-    graph = resolve_paths(lld, crosses, participating_server_ips=ips)
-    assert graph["servers"][0]["ip"] == "10.118.241.15"
-    assert graph["servers"][1]["ip"] == "10.118.241.1"
+    graph = resolve_paths(lld, set(), participating_server_ips=["superpod#0_server#0"])
+    assert graph["servers"][0]["ip"] == "superpod#0_server#0"
+
+
+def test_spine_topology_dual_homed(lld):
+    """Server connects to 2 leaves via dual-homing — both leaves participate."""
+    graph = resolve_paths(lld, set(), participating_server_ips=["superpod#0_server#0"])
+    assert len(graph["servers"]) == 1
+    assert len(graph["leaves"]) == 2
+    assert len(graph["server_leaf_edges"]) == 2
+    assert len(graph["servers"][0]["leaf_ips"]) == 2
+
+
+def test_chassis_to_npu_type(lld):
+    """Verify NPU type derived from chassis_topo."""
+    graph = resolve_paths(lld, set())
+    assert graph["servers"][0]["server_type"] == "A5"

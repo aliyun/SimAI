@@ -43,12 +43,12 @@ def _parse_port_bandwidth(port_name: str) -> Optional[str]:
 
 
 def _detect_bandwidth_from_lld(lld: Optional[Dict[str, Any]]) -> Optional[str]:
-    """Scan leaf port_infos in lld to detect link bandwidth."""
+    """Scan leaf port_id_list in lld to detect link bandwidth."""
     if not lld:
         return None
     for leaf in lld.get("topology", {}).get("leaf_nodes", []):
-        for port in leaf.get("port_infos", []):
-            bw = _parse_port_bandwidth(port.get("port_name", ""))
+        for port in leaf.get("port_id_list", []):
+            bw = _parse_port_bandwidth(port.get("port_id", ""))
             if bw:
                 return bw
     return None
@@ -77,7 +77,7 @@ def write_ns3_topology(
     if detected_bw and bandwidth == DEFAULT_BW:
         bandwidth = detected_bw
         ap_bandwidth = detected_bw
-        logger.info("Auto-detected bandwidth from lld port_name: %s", bandwidth)
+        logger.info("Auto-detected bandwidth from lld port_id: %s", bandwidth)
 
     servers: List[Dict] = graph["servers"]
     leaves: List[Dict] = graph["leaves"]
@@ -149,18 +149,26 @@ def write_ns3_topology(
                     f"{npu_base + i} {npu_base + j} {link_bw} {nv_latency} {error_rate}"
                 )
 
-    # NPU <-> Leaf links (one direct uplink per NPU for cross-server traffic)
+    # NPU <-> Leaf links (distribute NPUs evenly across all connected leaves)
     for srv_idx, srv in enumerate(servers):
-        leaf_ip = srv.get("leaf_ip", "")
-        leaf_id = leaf_ip_to_id.get(leaf_ip)
-        if leaf_id is None:
+        leaf_ips = srv.get("leaf_ips", [])
+        if not leaf_ips:
+            leaf_ip = srv.get("leaf_ip", "")
+            leaf_ips = [leaf_ip] if leaf_ip else []
+
+        leaf_ids = [leaf_ip_to_id.get(lip) for lip in leaf_ips]
+        leaf_ids = [lid for lid in leaf_ids if lid is not None]
+        if not leaf_ids:
             logger.warning(
                 "Server %s has no leaf mapping, skipping NPU-leaf links", srv["ip"]
             )
             continue
+
         npu_base = srv_idx * npu_per_server
         for npu_offset in range(npu_per_server):
             npu_id = npu_base + npu_offset
+            # Round-robin NPUs across available leaves
+            leaf_id = leaf_ids[npu_offset % len(leaf_ids)]
             lines.append(f"{npu_id} {leaf_id} {bandwidth} {latency} {error_rate}")
 
     # Leaf <-> Leaf links (from OXC crosses)

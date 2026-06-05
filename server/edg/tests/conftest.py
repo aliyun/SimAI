@@ -40,15 +40,15 @@ def lld():
 def crosses(lld):
     topo = lld["topology"]
     oxc_nodes = topo.get("oxc_nodes", [])
-    oxc_ips = {n["node_ip"] for n in oxc_nodes}
-    leaf_ips = {n["node_ip"] for n in topo.get("leaf_nodes", [])}
+    oxc_ips = {n["node_id"] for n in oxc_nodes}
+    leaf_ips = {n["node_id"] for n in topo.get("leaf_nodes", [])}
     edges = topo.get("edges", [])
 
     oxc_port_to_leaf = {}
     leaf_to_ports = defaultdict(list)
 
     for e in edges:
-        a_ip, b_ip = e["a_node_ip"], e["b_node_ip"]
+        a_ip, b_ip = e["a_node_id"], e["b_node_id"]
         a_port, b_port = str(e["a_node_port_id"]), str(e["b_node_port_id"])
         if a_ip in oxc_ips and b_ip in leaf_ips:
             oxc_port_to_leaf[(a_ip, a_port)] = b_ip
@@ -74,7 +74,7 @@ def crosses(lld):
 
 @pytest.fixture(scope="session")
 def graph(lld, crosses):
-    all_server_ips = [n["node_ip"] for n in lld["topology"]["server_nodes"]]
+    all_server_ips = [n["node_id"] for n in lld["topology"]["server_nodes"]]
     server_ips = all_server_ips[:2]
     return resolve_paths(lld, crosses, participating_server_ips=server_ips)
 

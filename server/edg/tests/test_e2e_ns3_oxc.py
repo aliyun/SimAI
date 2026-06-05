@@ -68,24 +68,41 @@ def test_step2_simulate_edg_init(lld):
     """Simulate /api/edg/init: parse LLD edges into baseline crosses."""
     topo = lld["topology"]
     oxc_nodes = topo.get("oxc_nodes", [])
-    oxc_ips = {n["node_ip"] for n in oxc_nodes}
-    leaf_ips = {n["node_ip"] for n in topo.get("leaf_nodes", [])}
+    oxc_ips = {n["node_id"] for n in oxc_nodes}
+    leaf_ips = {n["node_id"] for n in topo.get("leaf_nodes", [])}
+    spine_ips = {n["node_id"] for n in topo.get("spine_nodes", [])}
 
-    # Build OXC port → leaf mapping
+    # Build spine→leaves mapping for spine-based topologies (1:N fan-out)
+    spine_to_leaves_e2e = {}
     edges = topo.get("edges", [])
+    if spine_ips:
+        for e in edges:
+            a_id, b_id = e["a_node_id"], e["b_node_id"]
+            if a_id in spine_ips and b_id not in oxc_ips:
+                spine_to_leaves_e2e.setdefault(a_id, set()).add(b_id)
+            elif b_id in spine_ips and a_id not in oxc_ips:
+                spine_to_leaves_e2e.setdefault(b_id, set()).add(a_id)
+
+    # Build OXC port → leaf mapping (chain through spine if needed)
     from collections import defaultdict
     oxc_port_to_leaf = {}  # (oxc_ip, port) -> leaf_ip
     leaf_to_ports = defaultdict(list)  # leaf_ip -> [(oxc_ip, port)]
 
     for e in edges:
-        a_ip, b_ip = e["a_node_ip"], e["b_node_ip"]
+        a_ip, b_ip = e["a_node_id"], e["b_node_id"]
         a_port, b_port = str(e["a_node_port_id"]), str(e["b_node_port_id"])
-        if a_ip in oxc_ips and b_ip in leaf_ips:
-            oxc_port_to_leaf[(a_ip, a_port)] = b_ip
-            leaf_to_ports[b_ip].append((a_ip, a_port))
-        elif b_ip in oxc_ips and a_ip in leaf_ips:
-            oxc_port_to_leaf[(b_ip, b_port)] = a_ip
-            leaf_to_ports[a_ip].append((b_ip, b_port))
+        if a_ip in oxc_ips:
+            leaves = spine_to_leaves_e2e.get(b_ip, {b_ip})
+            for leaf_ip in leaves:
+                if leaf_ip in leaf_ips:
+                    oxc_port_to_leaf[(a_ip, a_port)] = leaf_ip
+                    leaf_to_ports[leaf_ip].append((a_ip, a_port))
+        elif b_ip in oxc_ips:
+            leaves = spine_to_leaves_e2e.get(a_ip, {a_ip})
+            for leaf_ip in leaves:
+                if leaf_ip in leaf_ips:
+                    oxc_port_to_leaf[(b_ip, b_port)] = leaf_ip
+                    leaf_to_ports[leaf_ip].append((b_ip, b_port))
 
     # Create crosses between different leaves (full mesh)
     base_crosses = set()
@@ -108,7 +125,7 @@ def test_step2_simulate_edg_init(lld):
 def test_step3_resolve_graph(lld, crosses):
     """Simulate /api/edg/register-task: resolve crosses into connectivity graph."""
     # Use only first 2 servers to match 16-NPU workload
-    all_server_ips = [n["node_ip"] for n in lld["topology"]["server_nodes"]]
+    all_server_ips = [n["node_id"] for n in lld["topology"]["server_nodes"]]
     server_ips = all_server_ips[:2]
     graph = resolve_paths(lld, crosses, participating_server_ips=server_ips)
 

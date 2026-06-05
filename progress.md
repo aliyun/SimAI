@@ -3,13 +3,22 @@
 ## 状态
 
 **当前阶段**: Phase 3 — 功能扩展  
-**完成**: 32 features | **待开发**: 14 items | **LLD→OXC→NS3 端到端**: ✅
+**完成**: 33 features | **待开发**: 13 items | **LLD→OXC→NS3 端到端**: ✅
 
 ## 近期 Session
 
 | 日期 | 工作 |
 |------|------|
-| 2026-06-03 | F089: per-rank CSV生成 — generate_per_rank_csv.py(自动检测sidecar中的tp/pp/ep/world_size), 8 rank全部输出, TP/DP/PP各组ranks验证正确 | — Python RankGenerator vs C++ MockNcclGroup: TP一致✅, DP不一致(Python strided vs C++ 前/后半), PP在C++中空实现❌. 根因: 两套独立rank分解实现缺乏对齐. |
+| 2026-06-04 | F090: LLDP v2→v3 migration — 9 files refactored (deep-interview→ralplan→autopilot pipeline). Field renames: node_ip→node_id, port_infos→port_id_list, server_type→chassis_topo. +_chassis_to_npu_type(). Bandwidth from port_id. 19/19 tests pass. Frontend tsc clean. |
+|------|------|
+| 2026-06-04 | Deep Interview: Rank 分解架构分析 — AICB vs SimAI 双重实现问题，确认 AICB RankGenerator 和 Megatron-LM 使用相同默认排序 tp-cp-ep-dp-pp，不是理论分法。产出 spec: .omc/specs/deep-interview-rank-decomposition.md (4轮访谈, ambiguity 10.7%)。方案: 显式传递 rank_ordering 参数消除双重实现风险 |
+| 2026-06-03 | 128 GPU per-rank workload 生成演示 — tp=8,dp=8,pp=2, 全部128 rank CSV输出; 修复lra-test.sh时间戳在hash后记录避免mtime误判; 验证per-rank CSV唯一差异为ranks列 |
+| 2026-06-03 | 3个submodule扁平化+server+dashboard+F089全部改动 -> https://gitcode.com/yanzhenghao/oec-sim |
+| 2026-06-03 | generate_per_rank_csv.py(自动检测sidecar中的tp/pp/ep/world_size), 8 rank全部输出, TP/DP/PP各组ranks验证正确 |
+| 2026-06-04 | F090 spine+OXC topology: lld.json updated to full v3 ELECTRICAL_2_OPTICAL_1 topology (2 OXC, 2 Spine, 2 Leaf, 1 Server). merger.py _build_edge_maps updated to chain OXC→spine→leaf. edg_client.py _mock_baseline_crosses + _smart_adjustment spine-aware. SimAI.conf: +800Gbps rate map, /etc→/tmp paths. NS3 sim passes 8-GPU ALLREDUCE with 800Gbps links, A5 NPU. |
+| 2026-06-04 | Session checkpoint: F090 active (spine topology work), all tests pass. |
+| 2026-06-03 | Python RankGenerator vs C++ MockNcclGroup: TP一致✅, DP不一致(Python strided vs C++ 前/后半), PP在C++中空实现❌. 根因: 两套独立rank分解实现缺乏对齐. |
+| 2026-06-04 | Session checkpoint: F090 complete, F088/F089 in progress. All tests pass. |
 | 2026-06-02 | F089: 新增ranks可视化 — Domain Flow Graph+Domain MsgSize Bar; 交叉验证36 ops ranks与RankGenerator逐位一致 |
 | 2026-06-02 | F089: AICB通信域ranks实现完成 — LogItem+ranks字段, rank_mapper.py, _fill_ranks(), dump sidecar, 15/15 tests pass, LRA gate多feature支持 |
 | 2026-06-02 | Deep Interview + Ralplan: AICB通信域范围增强 — 6轮Socratic访谈(ambiguity 100%→15.5%), 3轮Architect+Critic共识(12+ findings fixed), 产出spec(.omc/specs/deep-interview-aicb-comm-domain.md)+plan(.omc/plans/ralplan-aicb-comm-domain.md). 方案: LogItem加ranks字段+sidecar rank_mapping.csv, Python-only, hybrid population(Option C). |
@@ -17,11 +26,20 @@
 | 2026-05-12 | F054 ✅ DONE: 全场景取消 NVSwitch，所有 server 机内 full mesh + NPU→Leaf 直连。single-server 通信占比 33.06%，multi-server 16GPU 仿真通过。修复三处: (1) ns3_emitter.py 移除 NVSwitch 相关拓扑生成； (2) MockNcclGroup.cc 空 NVSwitch vector 越界访问； (3) rdma-hw.cc intra-server 路由强制走 NVSwitch 导致断言失败，改为 NVSwitch 路径可选，无 NVSwitch 时回退到 m_rtTable 直连链路。 |
 | 2026-05-12 | T028: NS3 full-mesh E2E dashboard launch 验证. 修复 SimAI_simulator 符号链接路径错误(缺少../). 修复 launch API 400 (workload/ranktable 未注入 auth token). 修复 status polling endpoint (/api/process/logs 非 /api/process/status). E2E test 可成功启动 NS3 仿真. |
 | 2026-05-12 | LRA 协议增强：遇到 Bug 时按置信度分级处理 — 高置信度直接修，低置信度给分析+选项丢给用户 |
+| 2026-06-04 | F090 spine mapping 修复: spine→leaf 被 OXC→spine 边污染，加 oxc_ips 排除。test_merger.py 改为 spine topology 适配 (7 tests)。test_e2e_ns3_oxc step2 加 spine 支持。99/99 tests pass。LRA .skill 包导出 (lra-simai-snapshot.skill, 71KB, 5 files)。 |
 | 2026-05-12 | LRA context-save 机制：compaction 时自动保存现场到 .lra_context_warning，下次 init.sh 顶部大字提醒 |
+| 2026-06-04 | F090 收尾: skill 改名 harness-lra-workflow, 竞赛申报书输出至 COMPETITION_SUBMISSION.md, 全部测试通过 |
+| 2026-06-04 | F090 N:N topology: OXC port→leaf full fan-out, spine→leaf/leaf→server/oxc→spine all N:N, 8-server 64-leaf lld.json, 1/2/4/8 server NS3 ALLREDUCE all pass, 64 GPU 128n 1312l ✅ |
+| 2026-06-04 | F090 multi-leaf 支持: server_to_leaves (1:N), NPU round-robin 分配跨 leaf, OXC 2 leaf-leaf edges 激活, NS3 sim passes, 99 tests |
+| 2026-06-05 | F090 AIOB E2E: 8-srv 64-leaf 580-edge v3 topology, AIOB算子表 (gpu_compute_timing.txt) 生成 workload, 8/32/64 GPU NS3 ALLREDUCE all pass. TP busbw=43.9GB/s (NVLink), DP busbw=6.7GB/s (OXC cross), 6.5x gap normal |
 | 2026-05-13 | F067-F068: AIOB auto-enable + homepage cleanup, E2E exemption for deletions-only frontend changes |
 | 2026-05-13 | F059-F060: install-lra.sh 完全自包含，rule 装项目级 .claude/ |
 | 2026-05-13 | F055-F058: LRA 三条防线 — gate scope/dirty/done+progress |
 | 2026-05-12 | LRA install/uninstall 脚本：基于 cp 不再嵌 heredoc，uninstall 对称清理 |
+| 2026-06-05 | AICB workload 生成流程梳理: 前端 WorkloadPage→API→workload_generator.py→SIMAI_workload, 后端直调 AICB 模块 (非 CLI), AIOB 算子表注入路径完整, 前端 preset 模式 + CLI 命令行两种入口 |
+| 2026-06-05 | F090 AIOB workload生成+验证: 修复SimAI_training_workload_generator.py get_model_details() bug (model→self.model), 通过server/workload_generator.py generate_megatron_workload(aiob_enable=True) 生成GPT-13B workload, 8GPU v3拓扑验证通过: compute=137ms(89.7%) comm=15ms(10.3%) busbw=50.6GB/s NVLink. 64GPU 128n 1312l太重需Linux服务器 |
+| 2026-06-05 | PP=4 workload生成: aicb.py + gloo backend, 2090 items. 确认megatron_demo_128gpu CSV由aicb.py生成, computationEnable_False跳过了fwd/bwd层的send/recv |
+| 2026-06-05 | 两个workload生成器深度对比: MegatronWorkload(1F1B+PP ISEND/IRECV+每层4+LogItem) vs SIMAI_workload(无PP调度+每层1Item), MegatronModel是共享的结构描述, 两个生成器用法完全不同(前向/反向遍历 vs 扁平列表). NS3包级仿真必须用MegatronWorkload, SIMAI_workload仅适用于analytical |
 | 2026-05-12 | 38988 根因定位：TP AllReduce 死绑 NCCL_ALGO_RING，全网格 28 条链路只用到 1 条。需加 NCCL_ALGO_TREE 分支 |
 | 2026-05-09 | F052 ✅ DONE: HomePage NPU_INTRA_MAP 补齐 A100(2400Gbps)/H100/H800
 | 2026-05-11 | F053 ✅ DONE: OXC 4端口修复— _mock_baseline_crosses min(2)→min(all), 每对Leaf 4×400Gbps cross; NS3 config 调优 (BUFFER_SIZE 512→PFC风暴修复, TP加速166x); 信息收集清单(Config+Topo完整参数表) 

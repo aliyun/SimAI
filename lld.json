@@ -1,0 +1,6024 @@
+{
+  "version": "v3.0.260530",
+  "request_id": 0,
+  "message_type": "IMPORT_FULL_TOPO",
+  "topology": {
+    "superpod_id": 0,
+    "topo_type": "ELECTRICAL_2_OPTICAL_1",
+    "chassis_topology": "A5_1DPOD",
+    "oxc_nodes": [
+      {
+        "node_id": "10.118.241.1(0)",
+        "port_num": 128
+      },
+      {
+        "node_id": "10.118.241.2(1)",
+        "port_num": 128
+      }
+    ],
+    "server_nodes": [
+      {
+        "node_id": "superpod#0_server#0",
+        "chassis_topo": "A5_1DPOD",
+        "chassis_id": 0,
+        "index_in_chassid": 0,
+        "group_id": "0"
+      },
+      {
+        "node_id": "superpod#0_server#1",
+        "chassis_topo": "A5_1DPOD",
+        "chassis_id": 1,
+        "index_in_chassid": 1,
+        "group_id": "1"
+      },
+      {
+        "node_id": "superpod#0_server#2",
+        "chassis_topo": "A5_1DPOD",
+        "chassis_id": 2,
+        "index_in_chassid": 2,
+        "group_id": "2"
+      },
+      {
+        "node_id": "superpod#0_server#3",
+        "chassis_topo": "A5_1DPOD",
+        "chassis_id": 3,
+        "index_in_chassid": 3,
+        "group_id": "3"
+      },
+      {
+        "node_id": "superpod#0_server#4",
+        "chassis_topo": "A5_1DPOD",
+        "chassis_id": 4,
+        "index_in_chassid": 4,
+        "group_id": "4"
+      },
+      {
+        "node_id": "superpod#0_server#5",
+        "chassis_topo": "A5_1DPOD",
+        "chassis_id": 5,
+        "index_in_chassid": 5,
+        "group_id": "5"
+      },
+      {
+        "node_id": "superpod#0_server#6",
+        "chassis_topo": "A5_1DPOD",
+        "chassis_id": 6,
+        "index_in_chassid": 6,
+        "group_id": "6"
+      },
+      {
+        "node_id": "superpod#0_server#7",
+        "chassis_topo": "A5_1DPOD",
+        "chassis_id": 7,
+        "index_in_chassid": 7,
+        "group_id": "7"
+      }
+    ],
+    "leaf_nodes": [
+      {
+        "node_id": "10.118.1.100",
+        "group_id": "0",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.1.101",
+        "group_id": "0",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.1.102",
+        "group_id": "0",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.1.103",
+        "group_id": "0",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.1.104",
+        "group_id": "0",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.1.105",
+        "group_id": "0",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.1.106",
+        "group_id": "0",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.1.107",
+        "group_id": "0",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.2.100",
+        "group_id": "1",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.2.101",
+        "group_id": "1",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.2.102",
+        "group_id": "1",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.2.103",
+        "group_id": "1",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.2.104",
+        "group_id": "1",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.2.105",
+        "group_id": "1",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.2.106",
+        "group_id": "1",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.2.107",
+        "group_id": "1",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.3.100",
+        "group_id": "2",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.3.101",
+        "group_id": "2",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.3.102",
+        "group_id": "2",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.3.103",
+        "group_id": "2",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.3.104",
+        "group_id": "2",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.3.105",
+        "group_id": "2",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.3.106",
+        "group_id": "2",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.3.107",
+        "group_id": "2",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.4.100",
+        "group_id": "3",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.4.101",
+        "group_id": "3",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.4.102",
+        "group_id": "3",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.4.103",
+        "group_id": "3",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.4.104",
+        "group_id": "3",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.4.105",
+        "group_id": "3",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.4.106",
+        "group_id": "3",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.4.107",
+        "group_id": "3",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.5.100",
+        "group_id": "4",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.5.101",
+        "group_id": "4",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.5.102",
+        "group_id": "4",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.5.103",
+        "group_id": "4",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.5.104",
+        "group_id": "4",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.5.105",
+        "group_id": "4",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.5.106",
+        "group_id": "4",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.5.107",
+        "group_id": "4",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.6.100",
+        "group_id": "5",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.6.101",
+        "group_id": "5",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.6.102",
+        "group_id": "5",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.6.103",
+        "group_id": "5",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.6.104",
+        "group_id": "5",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.6.105",
+        "group_id": "5",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.6.106",
+        "group_id": "5",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.6.107",
+        "group_id": "5",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.7.100",
+        "group_id": "6",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.7.101",
+        "group_id": "6",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.7.102",
+        "group_id": "6",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.7.103",
+        "group_id": "6",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.7.104",
+        "group_id": "6",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.7.105",
+        "group_id": "6",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.7.106",
+        "group_id": "6",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.7.107",
+        "group_id": "6",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.8.100",
+        "group_id": "7",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.8.101",
+        "group_id": "7",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.8.102",
+        "group_id": "7",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.8.103",
+        "group_id": "7",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.8.104",
+        "group_id": "7",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.8.105",
+        "group_id": "7",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.8.106",
+        "group_id": "7",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.8.107",
+        "group_id": "7",
+        "port_num": 9,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1:1"
+          },
+          {
+            "port_id": "800GE1/0/2:1"
+          },
+          {
+            "port_id": "800GE1/0/3:1"
+          },
+          {
+            "port_id": "800GE1/0/4:1"
+          },
+          {
+            "port_id": "800GE1/0/1:2"
+          },
+          {
+            "port_id": "800GE1/0/2:2"
+          },
+          {
+            "port_id": "800GE1/0/3:2"
+          },
+          {
+            "port_id": "800GE1/0/4:2"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          }
+        ],
+        "bounding_port_pair_list": []
+      }
+    ],
+    "spine_nodes": [
+      {
+        "node_id": "10.118.241.69",
+        "group_id": "0",
+        "port_num": 128,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1"
+          },
+          {
+            "port_id": "800GE1/0/2"
+          },
+          {
+            "port_id": "800GE1/0/3"
+          },
+          {
+            "port_id": "800GE1/0/4"
+          },
+          {
+            "port_id": "800GE1/0/5"
+          },
+          {
+            "port_id": "800GE1/0/6"
+          },
+          {
+            "port_id": "800GE1/0/7"
+          },
+          {
+            "port_id": "800GE1/0/8"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          },
+          {
+            "port_id": "800GE1/0/10"
+          },
+          {
+            "port_id": "800GE1/0/11"
+          },
+          {
+            "port_id": "800GE1/0/12"
+          },
+          {
+            "port_id": "800GE1/0/13"
+          },
+          {
+            "port_id": "800GE1/0/14"
+          },
+          {
+            "port_id": "800GE1/0/15"
+          },
+          {
+            "port_id": "800GE1/0/16"
+          },
+          {
+            "port_id": "800GE1/0/17"
+          },
+          {
+            "port_id": "800GE1/0/18"
+          },
+          {
+            "port_id": "800GE1/0/19"
+          },
+          {
+            "port_id": "800GE1/0/20"
+          },
+          {
+            "port_id": "800GE1/0/21"
+          },
+          {
+            "port_id": "800GE1/0/22"
+          },
+          {
+            "port_id": "800GE1/0/23"
+          },
+          {
+            "port_id": "800GE1/0/24"
+          },
+          {
+            "port_id": "800GE1/0/25"
+          },
+          {
+            "port_id": "800GE1/0/26"
+          },
+          {
+            "port_id": "800GE1/0/27"
+          },
+          {
+            "port_id": "800GE1/0/28"
+          },
+          {
+            "port_id": "800GE1/0/29"
+          },
+          {
+            "port_id": "800GE1/0/30"
+          },
+          {
+            "port_id": "800GE1/0/31"
+          },
+          {
+            "port_id": "800GE1/0/32"
+          },
+          {
+            "port_id": "800GE1/0/33"
+          },
+          {
+            "port_id": "800GE1/0/34"
+          }
+        ],
+        "bounding_port_pair_list": []
+      },
+      {
+        "node_id": "10.118.241.70",
+        "group_id": "0",
+        "port_num": 128,
+        "port_id_list": [
+          {
+            "port_id": "800GE1/0/1"
+          },
+          {
+            "port_id": "800GE1/0/2"
+          },
+          {
+            "port_id": "800GE1/0/3"
+          },
+          {
+            "port_id": "800GE1/0/4"
+          },
+          {
+            "port_id": "800GE1/0/5"
+          },
+          {
+            "port_id": "800GE1/0/6"
+          },
+          {
+            "port_id": "800GE1/0/7"
+          },
+          {
+            "port_id": "800GE1/0/8"
+          },
+          {
+            "port_id": "800GE1/0/9"
+          },
+          {
+            "port_id": "800GE1/0/10"
+          },
+          {
+            "port_id": "800GE1/0/11"
+          },
+          {
+            "port_id": "800GE1/0/12"
+          },
+          {
+            "port_id": "800GE1/0/13"
+          },
+          {
+            "port_id": "800GE1/0/14"
+          },
+          {
+            "port_id": "800GE1/0/15"
+          },
+          {
+            "port_id": "800GE1/0/16"
+          },
+          {
+            "port_id": "800GE1/0/17"
+          },
+          {
+            "port_id": "800GE1/0/18"
+          },
+          {
+            "port_id": "800GE1/0/19"
+          },
+          {
+            "port_id": "800GE1/0/20"
+          },
+          {
+            "port_id": "800GE1/0/21"
+          },
+          {
+            "port_id": "800GE1/0/22"
+          },
+          {
+            "port_id": "800GE1/0/23"
+          },
+          {
+            "port_id": "800GE1/0/24"
+          },
+          {
+            "port_id": "800GE1/0/25"
+          },
+          {
+            "port_id": "800GE1/0/26"
+          },
+          {
+            "port_id": "800GE1/0/27"
+          },
+          {
+            "port_id": "800GE1/0/28"
+          },
+          {
+            "port_id": "800GE1/0/29"
+          },
+          {
+            "port_id": "800GE1/0/30"
+          },
+          {
+            "port_id": "800GE1/0/31"
+          },
+          {
+            "port_id": "800GE1/0/32"
+          },
+          {
+            "port_id": "800GE1/0/33"
+          },
+          {
+            "port_id": "800GE1/0/34"
+          }
+        ],
+        "bounding_port_pair_list": []
+      }
+    ],
+    "edges": [
+      {
+        "a_node_id": "10.118.1.100",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "1/1"
+      },
+      {
+        "a_node_id": "10.118.1.100",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "2/1"
+      },
+      {
+        "a_node_id": "10.118.1.100",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "3/1"
+      },
+      {
+        "a_node_id": "10.118.1.100",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "4/1"
+      },
+      {
+        "a_node_id": "10.118.1.100",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "5/1"
+      },
+      {
+        "a_node_id": "10.118.1.100",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "6/1"
+      },
+      {
+        "a_node_id": "10.118.1.100",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "7/1"
+      },
+      {
+        "a_node_id": "10.118.1.100",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "8/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/1",
+        "b_node_id": "10.118.1.100",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.1.101",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "5/1"
+      },
+      {
+        "a_node_id": "10.118.1.101",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "6/1"
+      },
+      {
+        "a_node_id": "10.118.1.101",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "7/1"
+      },
+      {
+        "a_node_id": "10.118.1.101",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "8/1"
+      },
+      {
+        "a_node_id": "10.118.1.101",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "9/1"
+      },
+      {
+        "a_node_id": "10.118.1.101",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "10/1"
+      },
+      {
+        "a_node_id": "10.118.1.101",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "11/1"
+      },
+      {
+        "a_node_id": "10.118.1.101",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "12/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/2",
+        "b_node_id": "10.118.1.101",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.1.102",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "9/1"
+      },
+      {
+        "a_node_id": "10.118.1.102",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "10/1"
+      },
+      {
+        "a_node_id": "10.118.1.102",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "11/1"
+      },
+      {
+        "a_node_id": "10.118.1.102",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "12/1"
+      },
+      {
+        "a_node_id": "10.118.1.102",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "13/1"
+      },
+      {
+        "a_node_id": "10.118.1.102",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "14/1"
+      },
+      {
+        "a_node_id": "10.118.1.102",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "15/1"
+      },
+      {
+        "a_node_id": "10.118.1.102",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "16/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/3",
+        "b_node_id": "10.118.1.102",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.1.103",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "13/1"
+      },
+      {
+        "a_node_id": "10.118.1.103",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "14/1"
+      },
+      {
+        "a_node_id": "10.118.1.103",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "15/1"
+      },
+      {
+        "a_node_id": "10.118.1.103",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "16/1"
+      },
+      {
+        "a_node_id": "10.118.1.103",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "17/1"
+      },
+      {
+        "a_node_id": "10.118.1.103",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "18/1"
+      },
+      {
+        "a_node_id": "10.118.1.103",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "19/1"
+      },
+      {
+        "a_node_id": "10.118.1.103",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "20/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/4",
+        "b_node_id": "10.118.1.103",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.1.104",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "17/1"
+      },
+      {
+        "a_node_id": "10.118.1.104",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "18/1"
+      },
+      {
+        "a_node_id": "10.118.1.104",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "19/1"
+      },
+      {
+        "a_node_id": "10.118.1.104",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "20/1"
+      },
+      {
+        "a_node_id": "10.118.1.104",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "21/1"
+      },
+      {
+        "a_node_id": "10.118.1.104",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "22/1"
+      },
+      {
+        "a_node_id": "10.118.1.104",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "23/1"
+      },
+      {
+        "a_node_id": "10.118.1.104",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "24/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/5",
+        "b_node_id": "10.118.1.104",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.1.105",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "21/1"
+      },
+      {
+        "a_node_id": "10.118.1.105",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "22/1"
+      },
+      {
+        "a_node_id": "10.118.1.105",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "23/1"
+      },
+      {
+        "a_node_id": "10.118.1.105",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "24/1"
+      },
+      {
+        "a_node_id": "10.118.1.105",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "25/1"
+      },
+      {
+        "a_node_id": "10.118.1.105",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "26/1"
+      },
+      {
+        "a_node_id": "10.118.1.105",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "27/1"
+      },
+      {
+        "a_node_id": "10.118.1.105",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "28/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/6",
+        "b_node_id": "10.118.1.105",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.1.106",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "25/1"
+      },
+      {
+        "a_node_id": "10.118.1.106",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "26/1"
+      },
+      {
+        "a_node_id": "10.118.1.106",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "27/1"
+      },
+      {
+        "a_node_id": "10.118.1.106",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "28/1"
+      },
+      {
+        "a_node_id": "10.118.1.106",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "29/1"
+      },
+      {
+        "a_node_id": "10.118.1.106",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "30/1"
+      },
+      {
+        "a_node_id": "10.118.1.106",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "31/1"
+      },
+      {
+        "a_node_id": "10.118.1.106",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "32/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/7",
+        "b_node_id": "10.118.1.106",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.1.107",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "29/1"
+      },
+      {
+        "a_node_id": "10.118.1.107",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "30/1"
+      },
+      {
+        "a_node_id": "10.118.1.107",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "31/1"
+      },
+      {
+        "a_node_id": "10.118.1.107",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "32/1"
+      },
+      {
+        "a_node_id": "10.118.1.107",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "33/1"
+      },
+      {
+        "a_node_id": "10.118.1.107",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "34/1"
+      },
+      {
+        "a_node_id": "10.118.1.107",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "35/1"
+      },
+      {
+        "a_node_id": "10.118.1.107",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#0",
+        "b_node_port_id": "36/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/8",
+        "b_node_id": "10.118.1.107",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.2.100",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "1/1"
+      },
+      {
+        "a_node_id": "10.118.2.100",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "2/1"
+      },
+      {
+        "a_node_id": "10.118.2.100",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "3/1"
+      },
+      {
+        "a_node_id": "10.118.2.100",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "4/1"
+      },
+      {
+        "a_node_id": "10.118.2.100",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "5/1"
+      },
+      {
+        "a_node_id": "10.118.2.100",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "6/1"
+      },
+      {
+        "a_node_id": "10.118.2.100",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "7/1"
+      },
+      {
+        "a_node_id": "10.118.2.100",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "8/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/9",
+        "b_node_id": "10.118.2.100",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.2.101",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "5/1"
+      },
+      {
+        "a_node_id": "10.118.2.101",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "6/1"
+      },
+      {
+        "a_node_id": "10.118.2.101",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "7/1"
+      },
+      {
+        "a_node_id": "10.118.2.101",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "8/1"
+      },
+      {
+        "a_node_id": "10.118.2.101",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "9/1"
+      },
+      {
+        "a_node_id": "10.118.2.101",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "10/1"
+      },
+      {
+        "a_node_id": "10.118.2.101",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "11/1"
+      },
+      {
+        "a_node_id": "10.118.2.101",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "12/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/10",
+        "b_node_id": "10.118.2.101",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.2.102",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "9/1"
+      },
+      {
+        "a_node_id": "10.118.2.102",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "10/1"
+      },
+      {
+        "a_node_id": "10.118.2.102",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "11/1"
+      },
+      {
+        "a_node_id": "10.118.2.102",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "12/1"
+      },
+      {
+        "a_node_id": "10.118.2.102",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "13/1"
+      },
+      {
+        "a_node_id": "10.118.2.102",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "14/1"
+      },
+      {
+        "a_node_id": "10.118.2.102",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "15/1"
+      },
+      {
+        "a_node_id": "10.118.2.102",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "16/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/11",
+        "b_node_id": "10.118.2.102",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.2.103",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "13/1"
+      },
+      {
+        "a_node_id": "10.118.2.103",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "14/1"
+      },
+      {
+        "a_node_id": "10.118.2.103",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "15/1"
+      },
+      {
+        "a_node_id": "10.118.2.103",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "16/1"
+      },
+      {
+        "a_node_id": "10.118.2.103",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "17/1"
+      },
+      {
+        "a_node_id": "10.118.2.103",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "18/1"
+      },
+      {
+        "a_node_id": "10.118.2.103",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "19/1"
+      },
+      {
+        "a_node_id": "10.118.2.103",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "20/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/12",
+        "b_node_id": "10.118.2.103",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.2.104",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "17/1"
+      },
+      {
+        "a_node_id": "10.118.2.104",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "18/1"
+      },
+      {
+        "a_node_id": "10.118.2.104",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "19/1"
+      },
+      {
+        "a_node_id": "10.118.2.104",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "20/1"
+      },
+      {
+        "a_node_id": "10.118.2.104",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "21/1"
+      },
+      {
+        "a_node_id": "10.118.2.104",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "22/1"
+      },
+      {
+        "a_node_id": "10.118.2.104",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "23/1"
+      },
+      {
+        "a_node_id": "10.118.2.104",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "24/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/13",
+        "b_node_id": "10.118.2.104",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.2.105",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "21/1"
+      },
+      {
+        "a_node_id": "10.118.2.105",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "22/1"
+      },
+      {
+        "a_node_id": "10.118.2.105",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "23/1"
+      },
+      {
+        "a_node_id": "10.118.2.105",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "24/1"
+      },
+      {
+        "a_node_id": "10.118.2.105",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "25/1"
+      },
+      {
+        "a_node_id": "10.118.2.105",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "26/1"
+      },
+      {
+        "a_node_id": "10.118.2.105",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "27/1"
+      },
+      {
+        "a_node_id": "10.118.2.105",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "28/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/14",
+        "b_node_id": "10.118.2.105",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.2.106",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "25/1"
+      },
+      {
+        "a_node_id": "10.118.2.106",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "26/1"
+      },
+      {
+        "a_node_id": "10.118.2.106",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "27/1"
+      },
+      {
+        "a_node_id": "10.118.2.106",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "28/1"
+      },
+      {
+        "a_node_id": "10.118.2.106",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "29/1"
+      },
+      {
+        "a_node_id": "10.118.2.106",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "30/1"
+      },
+      {
+        "a_node_id": "10.118.2.106",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "31/1"
+      },
+      {
+        "a_node_id": "10.118.2.106",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "32/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/15",
+        "b_node_id": "10.118.2.106",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.2.107",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "29/1"
+      },
+      {
+        "a_node_id": "10.118.2.107",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "30/1"
+      },
+      {
+        "a_node_id": "10.118.2.107",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "31/1"
+      },
+      {
+        "a_node_id": "10.118.2.107",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "32/1"
+      },
+      {
+        "a_node_id": "10.118.2.107",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "33/1"
+      },
+      {
+        "a_node_id": "10.118.2.107",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "34/1"
+      },
+      {
+        "a_node_id": "10.118.2.107",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "35/1"
+      },
+      {
+        "a_node_id": "10.118.2.107",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#1",
+        "b_node_port_id": "36/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/16",
+        "b_node_id": "10.118.2.107",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.3.100",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "1/1"
+      },
+      {
+        "a_node_id": "10.118.3.100",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "2/1"
+      },
+      {
+        "a_node_id": "10.118.3.100",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "3/1"
+      },
+      {
+        "a_node_id": "10.118.3.100",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "4/1"
+      },
+      {
+        "a_node_id": "10.118.3.100",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "5/1"
+      },
+      {
+        "a_node_id": "10.118.3.100",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "6/1"
+      },
+      {
+        "a_node_id": "10.118.3.100",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "7/1"
+      },
+      {
+        "a_node_id": "10.118.3.100",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "8/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/17",
+        "b_node_id": "10.118.3.100",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.3.101",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "5/1"
+      },
+      {
+        "a_node_id": "10.118.3.101",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "6/1"
+      },
+      {
+        "a_node_id": "10.118.3.101",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "7/1"
+      },
+      {
+        "a_node_id": "10.118.3.101",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "8/1"
+      },
+      {
+        "a_node_id": "10.118.3.101",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "9/1"
+      },
+      {
+        "a_node_id": "10.118.3.101",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "10/1"
+      },
+      {
+        "a_node_id": "10.118.3.101",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "11/1"
+      },
+      {
+        "a_node_id": "10.118.3.101",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "12/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/18",
+        "b_node_id": "10.118.3.101",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.3.102",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "9/1"
+      },
+      {
+        "a_node_id": "10.118.3.102",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "10/1"
+      },
+      {
+        "a_node_id": "10.118.3.102",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "11/1"
+      },
+      {
+        "a_node_id": "10.118.3.102",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "12/1"
+      },
+      {
+        "a_node_id": "10.118.3.102",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "13/1"
+      },
+      {
+        "a_node_id": "10.118.3.102",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "14/1"
+      },
+      {
+        "a_node_id": "10.118.3.102",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "15/1"
+      },
+      {
+        "a_node_id": "10.118.3.102",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "16/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/19",
+        "b_node_id": "10.118.3.102",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.3.103",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "13/1"
+      },
+      {
+        "a_node_id": "10.118.3.103",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "14/1"
+      },
+      {
+        "a_node_id": "10.118.3.103",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "15/1"
+      },
+      {
+        "a_node_id": "10.118.3.103",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "16/1"
+      },
+      {
+        "a_node_id": "10.118.3.103",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "17/1"
+      },
+      {
+        "a_node_id": "10.118.3.103",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "18/1"
+      },
+      {
+        "a_node_id": "10.118.3.103",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "19/1"
+      },
+      {
+        "a_node_id": "10.118.3.103",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "20/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/20",
+        "b_node_id": "10.118.3.103",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.3.104",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "17/1"
+      },
+      {
+        "a_node_id": "10.118.3.104",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "18/1"
+      },
+      {
+        "a_node_id": "10.118.3.104",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "19/1"
+      },
+      {
+        "a_node_id": "10.118.3.104",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "20/1"
+      },
+      {
+        "a_node_id": "10.118.3.104",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "21/1"
+      },
+      {
+        "a_node_id": "10.118.3.104",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "22/1"
+      },
+      {
+        "a_node_id": "10.118.3.104",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "23/1"
+      },
+      {
+        "a_node_id": "10.118.3.104",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "24/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/21",
+        "b_node_id": "10.118.3.104",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.3.105",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "21/1"
+      },
+      {
+        "a_node_id": "10.118.3.105",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "22/1"
+      },
+      {
+        "a_node_id": "10.118.3.105",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "23/1"
+      },
+      {
+        "a_node_id": "10.118.3.105",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "24/1"
+      },
+      {
+        "a_node_id": "10.118.3.105",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "25/1"
+      },
+      {
+        "a_node_id": "10.118.3.105",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "26/1"
+      },
+      {
+        "a_node_id": "10.118.3.105",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "27/1"
+      },
+      {
+        "a_node_id": "10.118.3.105",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "28/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/22",
+        "b_node_id": "10.118.3.105",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.3.106",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "25/1"
+      },
+      {
+        "a_node_id": "10.118.3.106",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "26/1"
+      },
+      {
+        "a_node_id": "10.118.3.106",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "27/1"
+      },
+      {
+        "a_node_id": "10.118.3.106",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "28/1"
+      },
+      {
+        "a_node_id": "10.118.3.106",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "29/1"
+      },
+      {
+        "a_node_id": "10.118.3.106",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "30/1"
+      },
+      {
+        "a_node_id": "10.118.3.106",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "31/1"
+      },
+      {
+        "a_node_id": "10.118.3.106",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "32/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/23",
+        "b_node_id": "10.118.3.106",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.3.107",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "29/1"
+      },
+      {
+        "a_node_id": "10.118.3.107",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "30/1"
+      },
+      {
+        "a_node_id": "10.118.3.107",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "31/1"
+      },
+      {
+        "a_node_id": "10.118.3.107",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "32/1"
+      },
+      {
+        "a_node_id": "10.118.3.107",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "33/1"
+      },
+      {
+        "a_node_id": "10.118.3.107",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "34/1"
+      },
+      {
+        "a_node_id": "10.118.3.107",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "35/1"
+      },
+      {
+        "a_node_id": "10.118.3.107",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#2",
+        "b_node_port_id": "36/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/24",
+        "b_node_id": "10.118.3.107",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.4.100",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "1/1"
+      },
+      {
+        "a_node_id": "10.118.4.100",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "2/1"
+      },
+      {
+        "a_node_id": "10.118.4.100",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "3/1"
+      },
+      {
+        "a_node_id": "10.118.4.100",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "4/1"
+      },
+      {
+        "a_node_id": "10.118.4.100",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "5/1"
+      },
+      {
+        "a_node_id": "10.118.4.100",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "6/1"
+      },
+      {
+        "a_node_id": "10.118.4.100",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "7/1"
+      },
+      {
+        "a_node_id": "10.118.4.100",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "8/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/25",
+        "b_node_id": "10.118.4.100",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.4.101",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "5/1"
+      },
+      {
+        "a_node_id": "10.118.4.101",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "6/1"
+      },
+      {
+        "a_node_id": "10.118.4.101",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "7/1"
+      },
+      {
+        "a_node_id": "10.118.4.101",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "8/1"
+      },
+      {
+        "a_node_id": "10.118.4.101",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "9/1"
+      },
+      {
+        "a_node_id": "10.118.4.101",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "10/1"
+      },
+      {
+        "a_node_id": "10.118.4.101",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "11/1"
+      },
+      {
+        "a_node_id": "10.118.4.101",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "12/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/26",
+        "b_node_id": "10.118.4.101",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.4.102",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "9/1"
+      },
+      {
+        "a_node_id": "10.118.4.102",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "10/1"
+      },
+      {
+        "a_node_id": "10.118.4.102",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "11/1"
+      },
+      {
+        "a_node_id": "10.118.4.102",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "12/1"
+      },
+      {
+        "a_node_id": "10.118.4.102",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "13/1"
+      },
+      {
+        "a_node_id": "10.118.4.102",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "14/1"
+      },
+      {
+        "a_node_id": "10.118.4.102",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "15/1"
+      },
+      {
+        "a_node_id": "10.118.4.102",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "16/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/27",
+        "b_node_id": "10.118.4.102",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.4.103",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "13/1"
+      },
+      {
+        "a_node_id": "10.118.4.103",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "14/1"
+      },
+      {
+        "a_node_id": "10.118.4.103",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "15/1"
+      },
+      {
+        "a_node_id": "10.118.4.103",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "16/1"
+      },
+      {
+        "a_node_id": "10.118.4.103",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "17/1"
+      },
+      {
+        "a_node_id": "10.118.4.103",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "18/1"
+      },
+      {
+        "a_node_id": "10.118.4.103",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "19/1"
+      },
+      {
+        "a_node_id": "10.118.4.103",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "20/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/28",
+        "b_node_id": "10.118.4.103",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.4.104",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "17/1"
+      },
+      {
+        "a_node_id": "10.118.4.104",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "18/1"
+      },
+      {
+        "a_node_id": "10.118.4.104",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "19/1"
+      },
+      {
+        "a_node_id": "10.118.4.104",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "20/1"
+      },
+      {
+        "a_node_id": "10.118.4.104",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "21/1"
+      },
+      {
+        "a_node_id": "10.118.4.104",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "22/1"
+      },
+      {
+        "a_node_id": "10.118.4.104",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "23/1"
+      },
+      {
+        "a_node_id": "10.118.4.104",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "24/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/29",
+        "b_node_id": "10.118.4.104",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.4.105",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "21/1"
+      },
+      {
+        "a_node_id": "10.118.4.105",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "22/1"
+      },
+      {
+        "a_node_id": "10.118.4.105",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "23/1"
+      },
+      {
+        "a_node_id": "10.118.4.105",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "24/1"
+      },
+      {
+        "a_node_id": "10.118.4.105",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "25/1"
+      },
+      {
+        "a_node_id": "10.118.4.105",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "26/1"
+      },
+      {
+        "a_node_id": "10.118.4.105",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "27/1"
+      },
+      {
+        "a_node_id": "10.118.4.105",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "28/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/30",
+        "b_node_id": "10.118.4.105",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.4.106",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "25/1"
+      },
+      {
+        "a_node_id": "10.118.4.106",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "26/1"
+      },
+      {
+        "a_node_id": "10.118.4.106",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "27/1"
+      },
+      {
+        "a_node_id": "10.118.4.106",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "28/1"
+      },
+      {
+        "a_node_id": "10.118.4.106",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "29/1"
+      },
+      {
+        "a_node_id": "10.118.4.106",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "30/1"
+      },
+      {
+        "a_node_id": "10.118.4.106",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "31/1"
+      },
+      {
+        "a_node_id": "10.118.4.106",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "32/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/31",
+        "b_node_id": "10.118.4.106",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.4.107",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "29/1"
+      },
+      {
+        "a_node_id": "10.118.4.107",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "30/1"
+      },
+      {
+        "a_node_id": "10.118.4.107",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "31/1"
+      },
+      {
+        "a_node_id": "10.118.4.107",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "32/1"
+      },
+      {
+        "a_node_id": "10.118.4.107",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "33/1"
+      },
+      {
+        "a_node_id": "10.118.4.107",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "34/1"
+      },
+      {
+        "a_node_id": "10.118.4.107",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "35/1"
+      },
+      {
+        "a_node_id": "10.118.4.107",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#3",
+        "b_node_port_id": "36/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/32",
+        "b_node_id": "10.118.4.107",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.5.100",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "1/1"
+      },
+      {
+        "a_node_id": "10.118.5.100",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "2/1"
+      },
+      {
+        "a_node_id": "10.118.5.100",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "3/1"
+      },
+      {
+        "a_node_id": "10.118.5.100",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "4/1"
+      },
+      {
+        "a_node_id": "10.118.5.100",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "5/1"
+      },
+      {
+        "a_node_id": "10.118.5.100",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "6/1"
+      },
+      {
+        "a_node_id": "10.118.5.100",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "7/1"
+      },
+      {
+        "a_node_id": "10.118.5.100",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "8/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/33",
+        "b_node_id": "10.118.5.100",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.5.101",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "5/1"
+      },
+      {
+        "a_node_id": "10.118.5.101",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "6/1"
+      },
+      {
+        "a_node_id": "10.118.5.101",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "7/1"
+      },
+      {
+        "a_node_id": "10.118.5.101",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "8/1"
+      },
+      {
+        "a_node_id": "10.118.5.101",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "9/1"
+      },
+      {
+        "a_node_id": "10.118.5.101",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "10/1"
+      },
+      {
+        "a_node_id": "10.118.5.101",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "11/1"
+      },
+      {
+        "a_node_id": "10.118.5.101",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "12/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/34",
+        "b_node_id": "10.118.5.101",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.5.102",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "9/1"
+      },
+      {
+        "a_node_id": "10.118.5.102",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "10/1"
+      },
+      {
+        "a_node_id": "10.118.5.102",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "11/1"
+      },
+      {
+        "a_node_id": "10.118.5.102",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "12/1"
+      },
+      {
+        "a_node_id": "10.118.5.102",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "13/1"
+      },
+      {
+        "a_node_id": "10.118.5.102",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "14/1"
+      },
+      {
+        "a_node_id": "10.118.5.102",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "15/1"
+      },
+      {
+        "a_node_id": "10.118.5.102",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "16/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/35",
+        "b_node_id": "10.118.5.102",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.5.103",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "13/1"
+      },
+      {
+        "a_node_id": "10.118.5.103",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "14/1"
+      },
+      {
+        "a_node_id": "10.118.5.103",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "15/1"
+      },
+      {
+        "a_node_id": "10.118.5.103",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "16/1"
+      },
+      {
+        "a_node_id": "10.118.5.103",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "17/1"
+      },
+      {
+        "a_node_id": "10.118.5.103",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "18/1"
+      },
+      {
+        "a_node_id": "10.118.5.103",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "19/1"
+      },
+      {
+        "a_node_id": "10.118.5.103",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "20/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/36",
+        "b_node_id": "10.118.5.103",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.5.104",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "17/1"
+      },
+      {
+        "a_node_id": "10.118.5.104",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "18/1"
+      },
+      {
+        "a_node_id": "10.118.5.104",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "19/1"
+      },
+      {
+        "a_node_id": "10.118.5.104",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "20/1"
+      },
+      {
+        "a_node_id": "10.118.5.104",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "21/1"
+      },
+      {
+        "a_node_id": "10.118.5.104",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "22/1"
+      },
+      {
+        "a_node_id": "10.118.5.104",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "23/1"
+      },
+      {
+        "a_node_id": "10.118.5.104",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "24/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/37",
+        "b_node_id": "10.118.5.104",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.5.105",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "21/1"
+      },
+      {
+        "a_node_id": "10.118.5.105",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "22/1"
+      },
+      {
+        "a_node_id": "10.118.5.105",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "23/1"
+      },
+      {
+        "a_node_id": "10.118.5.105",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "24/1"
+      },
+      {
+        "a_node_id": "10.118.5.105",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "25/1"
+      },
+      {
+        "a_node_id": "10.118.5.105",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "26/1"
+      },
+      {
+        "a_node_id": "10.118.5.105",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "27/1"
+      },
+      {
+        "a_node_id": "10.118.5.105",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "28/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/38",
+        "b_node_id": "10.118.5.105",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.5.106",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "25/1"
+      },
+      {
+        "a_node_id": "10.118.5.106",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "26/1"
+      },
+      {
+        "a_node_id": "10.118.5.106",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "27/1"
+      },
+      {
+        "a_node_id": "10.118.5.106",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "28/1"
+      },
+      {
+        "a_node_id": "10.118.5.106",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "29/1"
+      },
+      {
+        "a_node_id": "10.118.5.106",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "30/1"
+      },
+      {
+        "a_node_id": "10.118.5.106",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "31/1"
+      },
+      {
+        "a_node_id": "10.118.5.106",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "32/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/39",
+        "b_node_id": "10.118.5.106",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.5.107",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "29/1"
+      },
+      {
+        "a_node_id": "10.118.5.107",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "30/1"
+      },
+      {
+        "a_node_id": "10.118.5.107",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "31/1"
+      },
+      {
+        "a_node_id": "10.118.5.107",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "32/1"
+      },
+      {
+        "a_node_id": "10.118.5.107",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "33/1"
+      },
+      {
+        "a_node_id": "10.118.5.107",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "34/1"
+      },
+      {
+        "a_node_id": "10.118.5.107",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "35/1"
+      },
+      {
+        "a_node_id": "10.118.5.107",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#4",
+        "b_node_port_id": "36/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/40",
+        "b_node_id": "10.118.5.107",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.6.100",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "1/1"
+      },
+      {
+        "a_node_id": "10.118.6.100",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "2/1"
+      },
+      {
+        "a_node_id": "10.118.6.100",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "3/1"
+      },
+      {
+        "a_node_id": "10.118.6.100",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "4/1"
+      },
+      {
+        "a_node_id": "10.118.6.100",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "5/1"
+      },
+      {
+        "a_node_id": "10.118.6.100",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "6/1"
+      },
+      {
+        "a_node_id": "10.118.6.100",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "7/1"
+      },
+      {
+        "a_node_id": "10.118.6.100",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "8/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/41",
+        "b_node_id": "10.118.6.100",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.6.101",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "5/1"
+      },
+      {
+        "a_node_id": "10.118.6.101",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "6/1"
+      },
+      {
+        "a_node_id": "10.118.6.101",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "7/1"
+      },
+      {
+        "a_node_id": "10.118.6.101",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "8/1"
+      },
+      {
+        "a_node_id": "10.118.6.101",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "9/1"
+      },
+      {
+        "a_node_id": "10.118.6.101",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "10/1"
+      },
+      {
+        "a_node_id": "10.118.6.101",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "11/1"
+      },
+      {
+        "a_node_id": "10.118.6.101",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "12/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/42",
+        "b_node_id": "10.118.6.101",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.6.102",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "9/1"
+      },
+      {
+        "a_node_id": "10.118.6.102",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "10/1"
+      },
+      {
+        "a_node_id": "10.118.6.102",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "11/1"
+      },
+      {
+        "a_node_id": "10.118.6.102",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "12/1"
+      },
+      {
+        "a_node_id": "10.118.6.102",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "13/1"
+      },
+      {
+        "a_node_id": "10.118.6.102",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "14/1"
+      },
+      {
+        "a_node_id": "10.118.6.102",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "15/1"
+      },
+      {
+        "a_node_id": "10.118.6.102",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "16/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/43",
+        "b_node_id": "10.118.6.102",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.6.103",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "13/1"
+      },
+      {
+        "a_node_id": "10.118.6.103",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "14/1"
+      },
+      {
+        "a_node_id": "10.118.6.103",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "15/1"
+      },
+      {
+        "a_node_id": "10.118.6.103",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "16/1"
+      },
+      {
+        "a_node_id": "10.118.6.103",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "17/1"
+      },
+      {
+        "a_node_id": "10.118.6.103",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "18/1"
+      },
+      {
+        "a_node_id": "10.118.6.103",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "19/1"
+      },
+      {
+        "a_node_id": "10.118.6.103",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "20/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/44",
+        "b_node_id": "10.118.6.103",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.6.104",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "17/1"
+      },
+      {
+        "a_node_id": "10.118.6.104",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "18/1"
+      },
+      {
+        "a_node_id": "10.118.6.104",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "19/1"
+      },
+      {
+        "a_node_id": "10.118.6.104",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "20/1"
+      },
+      {
+        "a_node_id": "10.118.6.104",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "21/1"
+      },
+      {
+        "a_node_id": "10.118.6.104",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "22/1"
+      },
+      {
+        "a_node_id": "10.118.6.104",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "23/1"
+      },
+      {
+        "a_node_id": "10.118.6.104",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "24/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/45",
+        "b_node_id": "10.118.6.104",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.6.105",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "21/1"
+      },
+      {
+        "a_node_id": "10.118.6.105",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "22/1"
+      },
+      {
+        "a_node_id": "10.118.6.105",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "23/1"
+      },
+      {
+        "a_node_id": "10.118.6.105",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "24/1"
+      },
+      {
+        "a_node_id": "10.118.6.105",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "25/1"
+      },
+      {
+        "a_node_id": "10.118.6.105",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "26/1"
+      },
+      {
+        "a_node_id": "10.118.6.105",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "27/1"
+      },
+      {
+        "a_node_id": "10.118.6.105",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "28/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/46",
+        "b_node_id": "10.118.6.105",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.6.106",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "25/1"
+      },
+      {
+        "a_node_id": "10.118.6.106",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "26/1"
+      },
+      {
+        "a_node_id": "10.118.6.106",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "27/1"
+      },
+      {
+        "a_node_id": "10.118.6.106",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "28/1"
+      },
+      {
+        "a_node_id": "10.118.6.106",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "29/1"
+      },
+      {
+        "a_node_id": "10.118.6.106",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "30/1"
+      },
+      {
+        "a_node_id": "10.118.6.106",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "31/1"
+      },
+      {
+        "a_node_id": "10.118.6.106",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "32/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/47",
+        "b_node_id": "10.118.6.106",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.6.107",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "29/1"
+      },
+      {
+        "a_node_id": "10.118.6.107",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "30/1"
+      },
+      {
+        "a_node_id": "10.118.6.107",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "31/1"
+      },
+      {
+        "a_node_id": "10.118.6.107",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "32/1"
+      },
+      {
+        "a_node_id": "10.118.6.107",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "33/1"
+      },
+      {
+        "a_node_id": "10.118.6.107",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "34/1"
+      },
+      {
+        "a_node_id": "10.118.6.107",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "35/1"
+      },
+      {
+        "a_node_id": "10.118.6.107",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#5",
+        "b_node_port_id": "36/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/48",
+        "b_node_id": "10.118.6.107",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.7.100",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "1/1"
+      },
+      {
+        "a_node_id": "10.118.7.100",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "2/1"
+      },
+      {
+        "a_node_id": "10.118.7.100",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "3/1"
+      },
+      {
+        "a_node_id": "10.118.7.100",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "4/1"
+      },
+      {
+        "a_node_id": "10.118.7.100",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "5/1"
+      },
+      {
+        "a_node_id": "10.118.7.100",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "6/1"
+      },
+      {
+        "a_node_id": "10.118.7.100",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "7/1"
+      },
+      {
+        "a_node_id": "10.118.7.100",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "8/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/49",
+        "b_node_id": "10.118.7.100",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.7.101",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "5/1"
+      },
+      {
+        "a_node_id": "10.118.7.101",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "6/1"
+      },
+      {
+        "a_node_id": "10.118.7.101",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "7/1"
+      },
+      {
+        "a_node_id": "10.118.7.101",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "8/1"
+      },
+      {
+        "a_node_id": "10.118.7.101",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "9/1"
+      },
+      {
+        "a_node_id": "10.118.7.101",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "10/1"
+      },
+      {
+        "a_node_id": "10.118.7.101",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "11/1"
+      },
+      {
+        "a_node_id": "10.118.7.101",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "12/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/50",
+        "b_node_id": "10.118.7.101",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.7.102",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "9/1"
+      },
+      {
+        "a_node_id": "10.118.7.102",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "10/1"
+      },
+      {
+        "a_node_id": "10.118.7.102",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "11/1"
+      },
+      {
+        "a_node_id": "10.118.7.102",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "12/1"
+      },
+      {
+        "a_node_id": "10.118.7.102",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "13/1"
+      },
+      {
+        "a_node_id": "10.118.7.102",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "14/1"
+      },
+      {
+        "a_node_id": "10.118.7.102",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "15/1"
+      },
+      {
+        "a_node_id": "10.118.7.102",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "16/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/51",
+        "b_node_id": "10.118.7.102",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.7.103",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "13/1"
+      },
+      {
+        "a_node_id": "10.118.7.103",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "14/1"
+      },
+      {
+        "a_node_id": "10.118.7.103",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "15/1"
+      },
+      {
+        "a_node_id": "10.118.7.103",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "16/1"
+      },
+      {
+        "a_node_id": "10.118.7.103",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "17/1"
+      },
+      {
+        "a_node_id": "10.118.7.103",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "18/1"
+      },
+      {
+        "a_node_id": "10.118.7.103",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "19/1"
+      },
+      {
+        "a_node_id": "10.118.7.103",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "20/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/52",
+        "b_node_id": "10.118.7.103",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.7.104",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "17/1"
+      },
+      {
+        "a_node_id": "10.118.7.104",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "18/1"
+      },
+      {
+        "a_node_id": "10.118.7.104",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "19/1"
+      },
+      {
+        "a_node_id": "10.118.7.104",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "20/1"
+      },
+      {
+        "a_node_id": "10.118.7.104",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "21/1"
+      },
+      {
+        "a_node_id": "10.118.7.104",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "22/1"
+      },
+      {
+        "a_node_id": "10.118.7.104",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "23/1"
+      },
+      {
+        "a_node_id": "10.118.7.104",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "24/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/53",
+        "b_node_id": "10.118.7.104",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.7.105",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "21/1"
+      },
+      {
+        "a_node_id": "10.118.7.105",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "22/1"
+      },
+      {
+        "a_node_id": "10.118.7.105",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "23/1"
+      },
+      {
+        "a_node_id": "10.118.7.105",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "24/1"
+      },
+      {
+        "a_node_id": "10.118.7.105",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "25/1"
+      },
+      {
+        "a_node_id": "10.118.7.105",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "26/1"
+      },
+      {
+        "a_node_id": "10.118.7.105",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "27/1"
+      },
+      {
+        "a_node_id": "10.118.7.105",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "28/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/54",
+        "b_node_id": "10.118.7.105",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.7.106",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "25/1"
+      },
+      {
+        "a_node_id": "10.118.7.106",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "26/1"
+      },
+      {
+        "a_node_id": "10.118.7.106",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "27/1"
+      },
+      {
+        "a_node_id": "10.118.7.106",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "28/1"
+      },
+      {
+        "a_node_id": "10.118.7.106",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "29/1"
+      },
+      {
+        "a_node_id": "10.118.7.106",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "30/1"
+      },
+      {
+        "a_node_id": "10.118.7.106",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "31/1"
+      },
+      {
+        "a_node_id": "10.118.7.106",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "32/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/55",
+        "b_node_id": "10.118.7.106",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.7.107",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "29/1"
+      },
+      {
+        "a_node_id": "10.118.7.107",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "30/1"
+      },
+      {
+        "a_node_id": "10.118.7.107",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "31/1"
+      },
+      {
+        "a_node_id": "10.118.7.107",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "32/1"
+      },
+      {
+        "a_node_id": "10.118.7.107",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "33/1"
+      },
+      {
+        "a_node_id": "10.118.7.107",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "34/1"
+      },
+      {
+        "a_node_id": "10.118.7.107",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "35/1"
+      },
+      {
+        "a_node_id": "10.118.7.107",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#6",
+        "b_node_port_id": "36/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/56",
+        "b_node_id": "10.118.7.107",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.8.100",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "1/1"
+      },
+      {
+        "a_node_id": "10.118.8.100",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "2/1"
+      },
+      {
+        "a_node_id": "10.118.8.100",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "3/1"
+      },
+      {
+        "a_node_id": "10.118.8.100",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "4/1"
+      },
+      {
+        "a_node_id": "10.118.8.100",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "5/1"
+      },
+      {
+        "a_node_id": "10.118.8.100",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "6/1"
+      },
+      {
+        "a_node_id": "10.118.8.100",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "7/1"
+      },
+      {
+        "a_node_id": "10.118.8.100",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "8/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/57",
+        "b_node_id": "10.118.8.100",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.8.101",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "5/1"
+      },
+      {
+        "a_node_id": "10.118.8.101",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "6/1"
+      },
+      {
+        "a_node_id": "10.118.8.101",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "7/1"
+      },
+      {
+        "a_node_id": "10.118.8.101",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "8/1"
+      },
+      {
+        "a_node_id": "10.118.8.101",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "9/1"
+      },
+      {
+        "a_node_id": "10.118.8.101",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "10/1"
+      },
+      {
+        "a_node_id": "10.118.8.101",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "11/1"
+      },
+      {
+        "a_node_id": "10.118.8.101",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "12/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/58",
+        "b_node_id": "10.118.8.101",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.8.102",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "9/1"
+      },
+      {
+        "a_node_id": "10.118.8.102",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "10/1"
+      },
+      {
+        "a_node_id": "10.118.8.102",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "11/1"
+      },
+      {
+        "a_node_id": "10.118.8.102",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "12/1"
+      },
+      {
+        "a_node_id": "10.118.8.102",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "13/1"
+      },
+      {
+        "a_node_id": "10.118.8.102",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "14/1"
+      },
+      {
+        "a_node_id": "10.118.8.102",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "15/1"
+      },
+      {
+        "a_node_id": "10.118.8.102",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "16/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/59",
+        "b_node_id": "10.118.8.102",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.8.103",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "13/1"
+      },
+      {
+        "a_node_id": "10.118.8.103",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "14/1"
+      },
+      {
+        "a_node_id": "10.118.8.103",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "15/1"
+      },
+      {
+        "a_node_id": "10.118.8.103",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "16/1"
+      },
+      {
+        "a_node_id": "10.118.8.103",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "17/1"
+      },
+      {
+        "a_node_id": "10.118.8.103",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "18/1"
+      },
+      {
+        "a_node_id": "10.118.8.103",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "19/1"
+      },
+      {
+        "a_node_id": "10.118.8.103",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "20/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/60",
+        "b_node_id": "10.118.8.103",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.8.104",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "17/1"
+      },
+      {
+        "a_node_id": "10.118.8.104",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "18/1"
+      },
+      {
+        "a_node_id": "10.118.8.104",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "19/1"
+      },
+      {
+        "a_node_id": "10.118.8.104",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "20/1"
+      },
+      {
+        "a_node_id": "10.118.8.104",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "21/1"
+      },
+      {
+        "a_node_id": "10.118.8.104",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "22/1"
+      },
+      {
+        "a_node_id": "10.118.8.104",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "23/1"
+      },
+      {
+        "a_node_id": "10.118.8.104",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "24/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/61",
+        "b_node_id": "10.118.8.104",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.8.105",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "21/1"
+      },
+      {
+        "a_node_id": "10.118.8.105",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "22/1"
+      },
+      {
+        "a_node_id": "10.118.8.105",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "23/1"
+      },
+      {
+        "a_node_id": "10.118.8.105",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "24/1"
+      },
+      {
+        "a_node_id": "10.118.8.105",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "25/1"
+      },
+      {
+        "a_node_id": "10.118.8.105",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "26/1"
+      },
+      {
+        "a_node_id": "10.118.8.105",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "27/1"
+      },
+      {
+        "a_node_id": "10.118.8.105",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "28/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/62",
+        "b_node_id": "10.118.8.105",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.8.106",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "25/1"
+      },
+      {
+        "a_node_id": "10.118.8.106",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "26/1"
+      },
+      {
+        "a_node_id": "10.118.8.106",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "27/1"
+      },
+      {
+        "a_node_id": "10.118.8.106",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "28/1"
+      },
+      {
+        "a_node_id": "10.118.8.106",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "29/1"
+      },
+      {
+        "a_node_id": "10.118.8.106",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "30/1"
+      },
+      {
+        "a_node_id": "10.118.8.106",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "31/1"
+      },
+      {
+        "a_node_id": "10.118.8.106",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "32/1"
+      },
+      {
+        "a_node_id": "10.118.241.70",
+        "a_node_port_id": "800GE1/0/63",
+        "b_node_id": "10.118.8.106",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.8.107",
+        "a_node_port_id": "800GE1/0/1:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "29/1"
+      },
+      {
+        "a_node_id": "10.118.8.107",
+        "a_node_port_id": "800GE1/0/1:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "30/1"
+      },
+      {
+        "a_node_id": "10.118.8.107",
+        "a_node_port_id": "800GE1/0/2:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "31/1"
+      },
+      {
+        "a_node_id": "10.118.8.107",
+        "a_node_port_id": "800GE1/0/2:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "32/1"
+      },
+      {
+        "a_node_id": "10.118.8.107",
+        "a_node_port_id": "800GE1/0/3:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "33/1"
+      },
+      {
+        "a_node_id": "10.118.8.107",
+        "a_node_port_id": "800GE1/0/3:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "34/1"
+      },
+      {
+        "a_node_id": "10.118.8.107",
+        "a_node_port_id": "800GE1/0/4:1",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "35/1"
+      },
+      {
+        "a_node_id": "10.118.8.107",
+        "a_node_port_id": "800GE1/0/4:2",
+        "b_node_id": "superpod#0_server#7",
+        "b_node_port_id": "36/1"
+      },
+      {
+        "a_node_id": "10.118.241.69",
+        "a_node_port_id": "800GE1/0/64",
+        "b_node_id": "10.118.8.107",
+        "b_node_port_id": "800GE1/0/9"
+      },
+      {
+        "a_node_id": "10.118.241.1(0)",
+        "a_node_port_id": "1",
+        "b_node_id": "10.118.241.69",
+        "b_node_port_id": "800GE1/0/33"
+      },
+      {
+        "a_node_id": "10.118.241.1(0)",
+        "a_node_port_id": "2",
+        "b_node_id": "10.118.241.70",
+        "b_node_port_id": "800GE1/0/33"
+      },
+      {
+        "a_node_id": "10.118.241.2(1)",
+        "a_node_port_id": "1",
+        "b_node_id": "10.118.241.69",
+        "b_node_port_id": "800GE1/0/34"
+      },
+      {
+        "a_node_id": "10.118.241.2(1)",
+        "a_node_port_id": "2",
+        "b_node_id": "10.118.241.70",
+        "b_node_port_id": "800GE1/0/34"
+      }
+    ]
+  }
+}

@@ -143,6 +143,7 @@ def _mock_baseline_crosses(lld: Dict[str, Any]) -> list:
     """Generate baseline OXC crosses from lld topology.
 
     Pairs OXC ports connecting different leaves into cross-connects.
+    Supports flat (OXC→leaf) and spine-based (OXC→spine→leaf) topologies.
     """
     topo = lld.get("topology", {})
     oxc_nodes = topo.get("oxc_nodes", [])
@@ -150,32 +151,50 @@ def _mock_baseline_crosses(lld: Dict[str, Any]) -> list:
     if not oxc_nodes:
         return []
 
-    oxc_ips = {n["node_ip"] for n in oxc_nodes}
+    oxc_ips = {n["node_id"] for n in oxc_nodes}
+    spine_ips = {n["node_id"] for n in topo.get("spine_nodes", [])}
 
-    # Group OXC ports by which leaf they connect to
-    # oxc_port_to_leaf: {(oxc_ip, port) -> leaf_ip}
+    # Build spine→leaves mapping for spine-based topologies (1:N fan-out)
+    spine_to_leaves: Dict[str, Set[str]] = {}  # spine_ip -> set of leaf_ips
+    if spine_ips:
+        for e in edges:
+            a_id, b_id = e["a_node_id"], e["b_node_id"]
+            if a_id in spine_ips and b_id not in oxc_ips:
+                spine_to_leaves.setdefault(a_id, set()).add(b_id)
+            elif b_id in spine_ips and a_id not in oxc_ips:
+                spine_to_leaves.setdefault(b_id, set()).add(a_id)
+
+    # Group OXC ports by which leaf they eventually reach
     oxc_port_leaf: Dict[str, Dict[str, str]] = {}  # oxc_ip -> {port -> leaf_ip}
     for e in edges:
-        a_ip, b_ip = e["a_node_ip"], e["b_node_ip"]
-        if a_ip in oxc_ips:
-            oxc_port_leaf.setdefault(a_ip, {})[str(e["a_node_port_id"])] = b_ip
-        elif b_ip in oxc_ips:
-            oxc_port_leaf.setdefault(b_ip, {})[str(e["b_node_port_id"])] = a_ip
+        a_id, b_id = e["a_node_id"], e["b_node_id"]
+        if a_id in oxc_ips:
+            peer = b_id
+        elif b_id in oxc_ips:
+            peer = a_id
+        else:
+            continue
+
+        # Resolve OXC port → leaf(s) via spine fan-out
+        leaf_ips = spine_to_leaves.get(peer, {peer})
+        oxc_ip = a_id if a_id in oxc_ips else b_id
+        port = str(e["a_node_port_id"]) if a_id in oxc_ips else str(e["b_node_port_id"])
+        # Use first leaf as primary; all leaves are reachable via this spine
+        primary_leaf = next(iter(leaf_ips)) if leaf_ips else peer
+        if primary_leaf not in oxc_port_leaf.get(oxc_ip, {}):
+            oxc_port_leaf.setdefault(oxc_ip, {})[port] = primary_leaf
 
     crosses = []
     for oxc_ip, port_map in oxc_port_leaf.items():
-        # Group ports by leaf
         leaf_ports: Dict[str, list] = {}
         for port, leaf_ip in port_map.items():
             leaf_ports.setdefault(leaf_ip, []).append(port)
 
-        # Create cross-connects between ports of different leaves
         leaf_list = sorted(leaf_ports.keys())
         for i in range(len(leaf_list)):
             for j in range(i + 1, len(leaf_list)):
                 ports_a = sorted(leaf_ports[leaf_list[i]])
                 ports_b = sorted(leaf_ports[leaf_list[j]])
-                # Connect all available ports per leaf pair
                 for k in range(min(len(ports_a), len(ports_b))):
                     crosses.append({
                         "node_ip": oxc_ip,
@@ -233,22 +252,37 @@ def _smart_adjustment(ctx: Dict[str, Any]) -> Optional[dict]:
     lld = ctx.get("lld") or {}
     baseline = ctx.get("baseline_crosses") or []
     topo = lld.get("topology", {})
-    oxc_ips = {n["node_ip"] for n in topo.get("oxc_nodes", [])}
+    oxc_ips = {n["node_id"] for n in topo.get("oxc_nodes", [])}
+    spine_ips2 = {n["node_id"] for n in topo.get("spine_nodes", [])}
     if not oxc_ips or not baseline:
         return None
 
-    # Build (oxc_ip, port) -> leaf_ip
+    # Build spine→leaves mapping for spine-based topologies (1:N fan-out)
+    spine_to_leaves2: Dict[str, Set[str]] = {}
+    if spine_ips2:
+        for e in topo.get("edges", []):
+            a_id2, b_id2 = e["a_node_id"], e["b_node_id"]
+            if a_id2 in spine_ips2 and b_id2 not in oxc_ips:
+                spine_to_leaves2.setdefault(a_id2, set()).add(b_id2)
+            elif b_id2 in spine_ips2 and a_id2 not in oxc_ips:
+                spine_to_leaves2.setdefault(b_id2, set()).add(a_id2)
+
+    # Build (oxc_ip, port) -> leaf_ip (primary leaf via spine fan-out)
     port_to_leaf: Dict[tuple, str] = {}
     leaf_to_ports: Dict[str, Dict[str, list]] = {}  # oxc_ip -> leaf_ip -> [port]
     for e in topo.get("edges", []):
-        a_ip, b_ip = e["a_node_ip"], e["b_node_ip"]
+        a_ip, b_ip = e["a_node_id"], e["b_node_id"]
         a_port, b_port = str(e["a_node_port_id"]), str(e["b_node_port_id"])
         if a_ip in oxc_ips:
-            port_to_leaf[(a_ip, a_port)] = b_ip
-            leaf_to_ports.setdefault(a_ip, {}).setdefault(b_ip, []).append(a_port)
+            leaves = spine_to_leaves2.get(b_ip, {b_ip})
+            leaf_ip = next(iter(leaves)) if leaves else b_ip
+            port_to_leaf[(a_ip, a_port)] = leaf_ip
+            leaf_to_ports.setdefault(a_ip, {}).setdefault(leaf_ip, []).append(a_port)
         elif b_ip in oxc_ips:
-            port_to_leaf[(b_ip, b_port)] = a_ip
-            leaf_to_ports.setdefault(b_ip, {}).setdefault(a_ip, []).append(b_port)
+            leaves = spine_to_leaves2.get(a_ip, {a_ip})
+            leaf_ip = next(iter(leaves)) if leaves else a_ip
+            port_to_leaf[(b_ip, b_port)] = leaf_ip
+            leaf_to_ports.setdefault(b_ip, {}).setdefault(leaf_ip, []).append(b_port)
 
     def _norm(c):
         a, b = sorted([str(c[1]), str(c[2])])
