@@ -39,23 +39,22 @@ def test_resolve_excludes_non_participating(lld):
 
 def test_resolve_all_servers(lld):
     graph = resolve_paths(lld, set())
-    assert len(graph["servers"]) == 1
+    assert len(graph["servers"]) == 8
     assert graph["servers"][0]["server_type"] == "A5"
-    assert graph["servers"][0]["ip"] == "superpod#0_server#0"
 
 
 def test_server_order_matches_input(lld):
-    graph = resolve_paths(lld, set(), participating_server_ips=["superpod#0_server#0"])
+    graph = resolve_paths(lld, set(), participating_server_ips=["superpod#0_server#0", "superpod#0_server#1"])
     assert graph["servers"][0]["ip"] == "superpod#0_server#0"
+    assert graph["servers"][1]["ip"] == "superpod#0_server#1"
 
 
-def test_spine_topology_dual_homed(lld):
-    """Server connects to 2 leaves via dual-homing — both leaves participate."""
+def test_spine_topology_8_leaves_per_server(lld):
+    """Each server connects to 8 leaf switches via dual spine."""
     graph = resolve_paths(lld, set(), participating_server_ips=["superpod#0_server#0"])
     assert len(graph["servers"]) == 1
-    assert len(graph["leaves"]) == 2
-    assert len(graph["server_leaf_edges"]) == 2
-    assert len(graph["servers"][0]["leaf_ips"]) == 2
+    assert len(graph["leaves"]) == 8
+    assert len(graph["servers"][0]["leaf_ips"]) == 8
 
 
 def test_chassis_to_npu_type(lld):

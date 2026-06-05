@@ -32,7 +32,7 @@ def _build_edge_maps(edges: List[Dict[str, Any]], oxc_ips: Set[str], server_ips:
 
     # Intermediate mappings for spine-based topologies
     oxc_spine_edge: Dict[Tuple[str, str], Tuple[str, str]] = {}  # (oxc_ip, port) -> (spine_ip, spine_port)
-    spine_to_leaves: Dict[str, List[Tuple[str, str]]] = {}      # spine_ip -> [(leaf_ip, leaf_port), ...]
+    spine_port_to_leaf: Dict[Tuple[str, str], Tuple[str, str]] = {}  # (spine_ip, spine_port) -> (leaf_ip, leaf_port)
 
     oxc_port_to_leaves: Dict[Tuple[str, str], List[Tuple[str, str]]] = {}
     leaf_port_to_server: Dict[Tuple[str, str], Tuple[str, str]] = {}
@@ -42,7 +42,7 @@ def _build_edge_maps(edges: List[Dict[str, Any]], oxc_ips: Set[str], server_ips:
         a_id, b_id = e["a_node_id"], e["b_node_id"]
         a_port, b_port = str(e["a_node_port_id"]), str(e["b_node_port_id"])
 
-        # OXC ↔ spine edges (spine-based topology)
+        # OXC ↔ spine edges — record exactly which spine port
         if spine_ips:
             if a_id in oxc_ips and b_id in spine_ips:
                 oxc_spine_edge[(a_id, a_port)] = (b_id, b_port)
@@ -51,13 +51,14 @@ def _build_edge_maps(edges: List[Dict[str, Any]], oxc_ips: Set[str], server_ips:
                 oxc_spine_edge[(b_id, b_port)] = (a_id, a_port)
                 continue
 
-        # Spine ↔ leaf edges (1 spine can fan out to N leaves via different ports)
+        # Spine ↔ leaf edges — keyed by (spine_ip, spine_port), use the
+        # other side as leaf target regardless of which field it's in
         if spine_ips:
             if a_id in spine_ips and b_id not in oxc_ips:
-                spine_to_leaves.setdefault(a_id, []).append((b_id, b_port))
+                spine_port_to_leaf[(a_id, a_port)] = (b_id, b_port)
                 continue
             elif b_id in spine_ips and a_id not in oxc_ips:
-                spine_to_leaves.setdefault(b_id, []).append((a_id, a_port))
+                spine_port_to_leaf[(b_id, b_port)] = (a_id, a_port)
                 continue
 
         # Direct OXC ↔ leaf edges (flat topology, no spine)
@@ -75,11 +76,17 @@ def _build_edge_maps(edges: List[Dict[str, Any]], oxc_ips: Set[str], server_ips:
             leaf_port_to_server[(a_id, a_port)] = (b_id, b_port)
             server_to_leaves.setdefault(b_id, set()).add(a_id)
 
-    # Chain OXC→spine→leaf for spine-based topologies (N:N: each OXC port reaches
-    # ALL leaves that its spine fans out to)
-    if spine_ips and oxc_spine_edge and spine_to_leaves:
-        for (oxc_ip, oxc_port), (spine_ip, _spine_peer_port) in oxc_spine_edge.items():
-            leaf_targets = spine_to_leaves.get(spine_ip, [])
+    # Chain OXC→spine→leaf: each OXC port reaches its connected spine, and
+    # through the spine (which acts as a switch) can reach ALL leaves that
+    # the spine connects to on any of its ports.
+    if spine_ips and oxc_spine_edge and spine_port_to_leaf:
+        # Group leaves by spine IP for fan-out
+        spine_ip_to_leaves: Dict[str, List[Tuple[str, str]]] = {}
+        for (spine_ip, _sp), (leaf_ip, leaf_port) in spine_port_to_leaf.items():
+            spine_ip_to_leaves.setdefault(spine_ip, []).append((leaf_ip, leaf_port))
+
+        for (oxc_ip, oxc_port), (spine_ip, _spine_port) in oxc_spine_edge.items():
+            leaf_targets = spine_ip_to_leaves.get(spine_ip, [])
             if leaf_targets:
                 oxc_port_to_leaves[(oxc_ip, oxc_port)] = list(leaf_targets)
 
