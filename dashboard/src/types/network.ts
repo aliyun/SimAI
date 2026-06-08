@@ -8,7 +8,7 @@ export interface Network {
   readonly npuType: string;
   readonly intraBw: string;
   readonly bandwidth: string;
-  readonly serverIps: readonly string[];
+  readonly serverIds: readonly string[];
   readonly createdAt: number;
   readonly updatedAt: number;
 }
@@ -20,5 +20,5 @@ export interface NetworkFormData {
   readonly npuType?: string;
   readonly intraBw?: string;
   readonly bandwidth?: string;
-  readonly serverIps?: readonly string[];
+  readonly serverIds?: readonly string[];
 }

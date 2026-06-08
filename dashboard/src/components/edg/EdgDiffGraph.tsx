@@ -13,21 +13,21 @@ interface EdgDiffGraphProps {
   readonly baselineGraph: EdgGraph;
   readonly adjustedGraph: EdgGraph | null;
   readonly diff: EdgDiff | null;
-  readonly participatingServerIps?: ReadonlySet<string>;
+  readonly participatingServerIds?: ReadonlySet<string>;
   readonly height?: string;
 }
 
-export function EdgDiffGraph({ baselineGraph, adjustedGraph, diff, participatingServerIps, height = '420px' }: EdgDiffGraphProps) {
+export function EdgDiffGraph({ baselineGraph, adjustedGraph, diff, participatingServerIds, height = '420px' }: EdgDiffGraphProps) {
   const showComparison = adjustedGraph !== null && diff !== null;
 
   const baselineElements = useMemo(
-    () => buildEdgFlowElements(baselineGraph, null, participatingServerIps),
-    [baselineGraph, participatingServerIps],
+    () => buildEdgFlowElements(baselineGraph, null, participatingServerIds),
+    [baselineGraph, participatingServerIds],
   );
 
   const adjustedElements = useMemo(
-    () => showComparison ? buildEdgFlowElements(baselineGraph, diff, participatingServerIps) : null,
-    [baselineGraph, diff, participatingServerIps, showComparison],
+    () => showComparison ? buildEdgFlowElements(baselineGraph, diff, participatingServerIds) : null,
+    [baselineGraph, diff, participatingServerIds, showComparison],
   );
 
   if (showComparison && adjustedElements) {

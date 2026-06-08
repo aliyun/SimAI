@@ -2,11 +2,11 @@
   "project": "SimAI-OXC",
   "updated": "2026-06-04T07:00:00Z",
   "summary": {
-    "done": 3,
+    "done": 5,
     "pending": 2,
     "in_progress": 1,
     "by_type": {
-      "refactor": 3,
+      "refactor": 4,
       "feature": 12,
       "test": 3,
       "bugfix": 17,
@@ -186,7 +186,7 @@
       "type": "feature",
       "category": "edg-persistence",
       "description": "EDG init data global persistence: migrate lld.json/init_crosses.json from per-session workspace to global EDG_DATA_ROOT/{topology_dir}/. wizard-store add zustand/persist for EDG graph data.",
-      "status": "in_progress",
+      "status": "done",
       "priority": "P0",
       "phase": "phase3",
       "files": [
@@ -207,10 +207,45 @@
         "wizard-store EDG graph data survives page refresh",
         "Backward compatible: old workspace data still readable"
       ],
-      "passes": false,
+      "passes": true,
       "created_at": "2026-06-08T00:00:00Z",
       "updated_at": "2026-06-08T00:00:00Z",
       "confidence": "HIGH: 确定性存储迁移。根因明确(workspace session隔离)，修复路径清晰(全局路径+topology_dir索引)，改动范围可控(5文件)"
+    },
+    {
+      "id": "F092",
+      "type": "refactor",
+      "category": "naming",
+      "description": "Rename serverIps/server_ips to serverIds/server_ids: v3 lld server node_id is a name (superpod#0_server#0), not an IP. Keep server_ip in npu_match (external EDG protocol).",
+      "status": "in_progress",
+      "priority": "P1",
+      "phase": "phase3",
+      "files": [
+        "dashboard/src/types/network.ts",
+        "dashboard/src/stores/network-store.ts",
+        "dashboard/src/api/edg-api.ts",
+        "dashboard/src/pages/HomePage.tsx",
+        "dashboard/src/pages/EdgPage.tsx",
+        "server/edg/routes.py",
+        "server/edg/merger.py",
+        "server/edg/tests/conftest.py",
+        "server/edg/tests/test_merger.py",
+        "server/edg/tests/test_e2e_ns3_oxc.py",
+        "dashboard/src/components/edg/EdgDiffGraph.tsx",
+        "feature_list.json",
+        "progress.md",
+        "."
+      ],
+      "verification_steps": [
+        "tsc --noEmit passes",
+        "backend tests pass",
+        "E2E tests pass",
+        "npu_match server_ip field unchanged (external EDG contract)"
+      ],
+      "passes": true,
+      "created_at": "2026-06-08T00:00:00Z",
+      "updated_at": "2026-06-08T00:00:00Z",
+      "confidence": "HIGH: 确定性重命名。搜索确认所有出现位置，npu_match server_ip 保留不改。"
     }
   ],
   "done": [

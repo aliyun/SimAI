@@ -33,12 +33,12 @@ export function EdgPage() {
   const npuPerServer = activeNetwork?.npuPerServer ?? 8;
   const neededGpus = workloadConfig.all_gpus;
   const neededServers = Math.ceil(neededGpus / npuPerServer);
-  const serverIps = useMemo(
-    () => activeNetwork?.serverIps.slice(0, neededServers) ?? [],
+  const serverIds = useMemo(
+    () => activeNetwork?.serverIds.slice(0, neededServers) ?? [],
     [activeNetwork, neededServers],
   );
 
-  const isEdgNetwork = (activeNetwork?.serverIps.length ?? 0) > 0;
+  const isEdgNetwork = (activeNetwork?.serverIds.length ?? 0) > 0;
   const isAdjusted = edgAdjustedGraph !== null;
   const canProceed = isAdjusted || edgSkipped || !isEdgNetwork;
 
@@ -47,7 +47,7 @@ export function EdgPage() {
     if (!isEdgNetwork || !activeNetwork || edgBaselineGraph) return;
     let cancelled = false;
     setLoading(true);
-    fetchBaselineGraph(activeNetwork.serverIps, npuPerServer, activeNetwork.topologyDir)
+    fetchBaselineGraph(activeNetwork.serverIds, npuPerServer, activeNetwork.topologyDir)
       .then((res) => {
         if (!cancelled) {
           setEdgBaselineGraph(res.graph);
@@ -64,13 +64,13 @@ export function EdgPage() {
   }, [isEdgNetwork, activeNetwork, npuPerServer, edgBaselineGraph, setEdgBaselineGraph]);
 
   const handleAdjust = useCallback(async () => {
-    if (!activeNetwork || serverIps.length === 0) return;
+    if (!activeNetwork || serverIds.length === 0) return;
     setAdjusting(true);
     setError(null);
     try {
       const taskId = `T-${workloadConfig.model_size}-g${neededGpus}-${Date.now().toString(36)}`;
       const result = await registerTask(
-        { server_ips: [...serverIps], npu_per_server: npuPerServer, task_id: taskId },
+        { server_ids: [...serverIds], npu_per_server: npuPerServer, task_id: taskId },
         taskId,
         {
           npu_per_server: String(npuPerServer),
@@ -91,7 +91,7 @@ export function EdgPage() {
     } finally {
       setAdjusting(false);
     }
-  }, [activeNetwork, serverIps, npuPerServer, workloadConfig, neededGpus,
+  }, [activeNetwork, serverIds, npuPerServer, workloadConfig, neededGpus,
       setEdgAdjustedGraph, setEdgDiff, setEdgTopologyPath, setRanktableSavedPath]);
 
   const handleSkip = useCallback(async () => {
@@ -113,7 +113,7 @@ export function EdgPage() {
   }, [navigate]);
 
   const displayGraph = edgAdjustedGraph ?? edgBaselineGraph;
-  const participatingIps = useMemo(() => new Set(serverIps), [serverIps]);
+  const participatingIps = useMemo(() => new Set(serverIds), [serverIds]);
 
   return (
     <DashboardShell>
@@ -174,7 +174,7 @@ export function EdgPage() {
               baselineGraph={edgBaselineGraph!}
               adjustedGraph={edgAdjustedGraph}
               diff={edgDiff}
-              participatingServerIps={participatingIps}
+              participatingServerIds={participatingIps}
               height="380px"
             />
           )}

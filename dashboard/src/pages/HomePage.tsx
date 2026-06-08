@@ -109,7 +109,7 @@ export function HomePage() {
   const [edgLoading, setEdgLoading] = useState(false);
   const [edgMsg, setEdgMsg] = useState<string | null>(null);
   const [lldData, setLldData] = useState<Record<string, unknown> | null>(null);
-  const [lldServerIps, setLldServerIps] = useState<string[]>([]);
+  const [lldServerIds, setLldServerIps] = useState<string[]>([]);
   const [npuPerServer, setNpuPerServer] = useState('8');
   const [npuType, setNpuType] = useState('A3');
   const [intraBw, setIntraBw] = useState('400Gbps');
@@ -222,7 +222,7 @@ export function HomePage() {
         npuType,
         intraBw,
         bandwidth: linkBw,
-        serverIps: lldServerIps,
+        serverIds: lldServerIds,
       });
       setActiveNetwork(net.id);
       setShowCreateModal(false);

@@ -74,9 +74,9 @@ def crosses(lld):
 
 @pytest.fixture(scope="session")
 def graph(lld, crosses):
-    all_server_ips = [n["node_id"] for n in lld["topology"]["server_nodes"]]
-    server_ips = all_server_ips[:2]
-    return resolve_paths(lld, crosses, participating_server_ips=server_ips)
+    all_server_ids = [n["node_id"] for n in lld["topology"]["server_nodes"]]
+    server_ids = all_server_ids[:2]
+    return resolve_paths(lld, crosses, participating_server_ids=server_ids)
 
 
 @pytest.fixture(scope="session")

@@ -17,12 +17,12 @@ export interface EdgTopoParams {
 }
 
 export async function fetchBaselineGraph(
-  serverIps: readonly string[],
+  serverIds: readonly string[],
   npuPerServer: number,
   topologyDir?: string,
 ): Promise<EdgBaselineGraphResponse> {
   const { data } = await apiClient.post<EdgBaselineGraphResponse>('/api/edg/baseline-graph', {
-    server_ips: [...serverIps],
+    server_ids: [...serverIds],
     npu_per_server: npuPerServer,
     topology_dir: topologyDir ?? '',
   });

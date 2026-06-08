@@ -29,7 +29,7 @@ export const useNetworkStore = create<NetworkState>()(
           npuType: data.npuType ?? 'A3',
           intraBw: data.intraBw ?? '400Gbps',
           bandwidth: data.bandwidth ?? '',
-          serverIps: data.serverIps ?? [],
+          serverIds: data.serverIds ?? [],
           createdAt: now,
           updatedAt: now,
         };

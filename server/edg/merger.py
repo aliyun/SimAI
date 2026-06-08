@@ -17,7 +17,7 @@ def _chassis_to_npu_type(chassis_topo: str) -> str:
     return chassis_topo.split("_")[0] if "_" in chassis_topo else chassis_topo
 
 
-def _build_edge_maps(edges: List[Dict[str, Any]], oxc_ips: Set[str], server_ips: Set[str],
+def _build_edge_maps(edges: List[Dict[str, Any]], oxc_ips: Set[str], server_ids: Set[str],
                     spine_ips: Optional[Set[str]] = None):
     """Index lld.topology.edges into lookup tables.
 
@@ -25,8 +25,8 @@ def _build_edge_maps(edges: List[Dict[str, Any]], oxc_ips: Set[str], server_ips:
 
     Returns:
         oxc_port_to_leaves: {(oxc_ip, port) -> [(leaf_ip, leaf_port), ...]}  (N:N via spine)
-        leaf_port_to_server: {(leaf_ip, port) -> (server_ip, server_port)}
-        server_to_leaves: {server_ip -> set of leaf_ips}
+        leaf_port_to_server: {(leaf_ip, port) -> (server_id, server_port)}
+        server_to_leaves: {server_id -> set of leaf_ips}
     """
     if spine_ips is None:
         spine_ips = set()
@@ -72,10 +72,10 @@ def _build_edge_maps(edges: List[Dict[str, Any]], oxc_ips: Set[str], server_ips:
                 oxc_port_to_leaves.setdefault((b_clean, b_port), []).append((a_clean, a_port))
 
         # Leaf ↔ server edges (1 server can connect to N leaves)
-        if a_clean in server_ips:
+        if a_clean in server_ids:
             leaf_port_to_server[(b_clean, b_port)] = (a_clean, a_port)
             server_to_leaves.setdefault(a_clean, set()).add(b_clean)
-        elif b_clean in server_ips:
+        elif b_clean in server_ids:
             leaf_port_to_server[(a_clean, a_port)] = (b_clean, b_port)
             server_to_leaves.setdefault(b_clean, set()).add(a_clean)
 
@@ -99,20 +99,20 @@ def _build_edge_maps(edges: List[Dict[str, Any]], oxc_ips: Set[str], server_ips:
 def resolve_paths(
     lld: Dict[str, Any],
     crosses: Set[Cross],
-    participating_server_ips: Optional[List[str]] = None,
+    participating_server_ids: Optional[List[str]] = None,
 ) -> Dict[str, Any]:
     """Resolve OXC crosses into a connectivity graph.
 
     Args:
         lld: parsed lld.json
         crosses: set of (oxc_ip, port_a, port_b) tuples
-        participating_server_ips: if given, only include these servers (sub-topology)
+        participating_server_ids: if given, only include these servers (sub-topology)
 
     Returns:
         {
             "servers": [{ip, node_id, server_type, leaf_ip}],
             "leaves": [{ip, node_id}],
-            "server_leaf_edges": [(server_ip, leaf_ip, link_count)],
+            "server_leaf_edges": [(server_id, leaf_ip, link_count)],
             "leaf_leaf_edges": [(leaf_a_ip, leaf_b_ip, oxc_ip, port_a, port_b)],
         }
     """
@@ -120,18 +120,18 @@ def resolve_paths(
 
     _strip = lambda s: re.sub(r"\(\d+\)$", "", s).strip()
     oxc_ips = {_strip(n["node_id"]) for n in topo.get("oxc_nodes", [])}
-    all_server_ips = {_strip(n["node_id"]) for n in topo.get("server_nodes", [])}
+    all_server_ids = {_strip(n["node_id"]) for n in topo.get("server_nodes", [])}
     all_leaf_ips = {_strip(n["node_id"]) for n in topo.get("leaf_nodes", [])}
     spine_ips = {_strip(n["node_id"]) for n in topo.get("spine_nodes", [])}
 
-    if participating_server_ips is not None:
-        target_servers = set(participating_server_ips)
+    if participating_server_ids is not None:
+        target_servers = set(participating_server_ids)
     else:
-        target_servers = all_server_ips
+        target_servers = all_server_ids
 
     edges = topo.get("edges", [])
     oxc_port_to_leaves, leaf_port_to_server, server_to_leaves = _build_edge_maps(
-        edges, oxc_ips, all_server_ips, spine_ips,
+        edges, oxc_ips, all_server_ids, spine_ips,
     )
 
     # Determine participating leaves (all leaves connected to participating servers)
@@ -181,11 +181,11 @@ def resolve_paths(
                 oxc_port_map.setdefault(oxc_ip, {})[port] = leaf_ip
                 break
 
-    # Build server info list (ordered by participating_server_ips if given)
+    # Build server info list (ordered by participating_server_ids if given)
     server_node_map = {n["node_id"]: n for n in topo.get("server_nodes", [])}
     leaf_node_map = {n["node_id"]: n for n in topo.get("leaf_nodes", [])}
 
-    ordered_servers = participating_server_ips if participating_server_ips else sorted(target_servers)
+    ordered_servers = participating_server_ids if participating_server_ids else sorted(target_servers)
     servers = []
     for ip in ordered_servers:
         if ip not in target_servers:
@@ -278,7 +278,7 @@ def split_graph_by_pod(
         return {key: graph}
 
     # ── Build sub-graph per OXC ───────────────────────────────────
-    # server_ip -> set of leaf_ips (derived from server_leaf_edges)
+    # server_id -> set of leaf_ips (derived from server_leaf_edges)
     srv_leaves_map: Dict[str, Set[str]] = {}
     for (srv_ip, leaf_ip, _cnt) in server_leaf_edges:
         srv_leaves_map.setdefault(srv_ip, set()).add(leaf_ip)

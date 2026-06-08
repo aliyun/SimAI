@@ -9,6 +9,7 @@
 
 | 日期 | 工作 |
 |------|------|
+| 2026-06-08 | F092: serverIps→serverIds rename — v3 lld server node_id is name not IP. 10 files: network.ts, network-store.ts, edg-api.ts, HomePage.tsx, EdgPage.tsx, EdgDiffGraph.tsx, routes.py, merger.py, conftest.py, test_merger.py, test_e2e_ns3_oxc.py. npu_match server_ip preserved. 79 tests + tsc + E2E pass |
 | 2026-06-08 | Deep Interview: MegatronWorkload vs MegatronModel 选型分析 — 4轮访谈(14.0%), 逐函数对标NCCL trace, 发现PP double-step bug. spec: .omc/specs/deep-interview-megatron-workload-vs-model.md |
 | 2026-06-08 | F091: EDG init 全局持久化 — config.py加EDG_DATA_ROOT, routes.py新增_edg_global_dir()/_edg_load()支持global store(优先)/workspace(回退), init双写, baseline-graph+register-task读global. 前端: edg-api.ts传topology_dir, EdgPage.tsx传topologyDir, wizard-store.ts加zustand/persist(EDG graph数据跨refresh存活) |
 | 2026-06-08 | EDG init 持久化分析 — 根因: lld.json/init_crosses.json 存于 session 级 workspace, 新 session 丢失需重新 init。方案: 迁移到全局 EDG_DATA_ROOT/{topology_dir}/, topology_dir 已在 localStorage 持久化。改动5文件 |
@@ -46,7 +47,7 @@
 | 2026-06-05 | 两个workload生成器深度对比: MegatronWorkload(1F1B+PP ISEND/IRECV+每层4+LogItem) vs SIMAI_workload(无PP调度+每层1Item). NS3包级仿真必须用MegatronWorkload, SIMAI_workload仅适用于analytical |
 | 2026-06-05 | F090 gitcode 4 commits: v3 LLDP + port-level spine + OXC strip fix + srv_leaf_count strip. E2E verified: 16GPU 64 LL edges + NS3 sim OK |
 | 2026-06-08 | 回顾 F086-F089 解耦: Layer1(ranks) + Layer2(flow decouple) 均已完成, 两层正交, 无需合并 |
-| 2026-06-08 | 流文件解析: AS_DECOUPLED_OUTPUT生成flow_output.txt, 896条RING流, 262KB/chunk×14, 117MB/节点, GPU i→(i+1)%8 ring, 896 unique |
+| 2026-06-08 | 流文件解析: AS_DECOUPLED_OUTPUT生成flow_output.txt, 896条RING流, 262KB/chunk×14, 117MB/节点, 按GPU分组(先走完同一GPU所有chunk), 定义在MockNcclGroup.cc:2221+AstraSimNetwork.cc:349+entry.h:171 |
 | 2026-05-12 | 38988 根因定位：TP AllReduce 死绑 NCCL_ALGO_RING，全网格 28 条链路只用到 1 条。需加 NCCL_ALGO_TREE 分支 |
 | 2026-05-09 | F052 ✅ DONE: HomePage NPU_INTRA_MAP 补齐 A100(2400Gbps)/H100/H800
 | 2026-05-11 | F053 ✅ DONE: OXC 4端口修复— _mock_baseline_crosses min(2)→min(all), 每对Leaf 4×400Gbps cross; NS3 config 调优 (BUFFER_SIZE 512→PFC风暴修复, TP加速166x); 信息收集清单(Config+Topo完整参数表) 

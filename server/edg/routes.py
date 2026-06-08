@@ -139,7 +139,7 @@ def api_edg_init():
 def api_edg_baseline_graph():
     """Return the baseline connectivity graph (before any task adjustment)."""
     data = request.get_json(silent=True) or {}
-    server_ips = data.get("server_ips", [])
+    server_ids = data.get("server_ids", [])
     npu_per_server = data.get("npu_per_server", 8)
     topology_dir = data.get("topology_dir", "")
 
@@ -148,8 +148,8 @@ def api_edg_baseline_graph():
         return jsonify({"error": "No baseline data. Call /api/edg/init first."}), 400
     lld, base_crosses = _load
 
-    participating = server_ips if server_ips else None
-    graph = resolve_paths(lld, base_crosses, participating_server_ips=participating)
+    participating = server_ids if server_ids else None
+    graph = resolve_paths(lld, base_crosses, participating_server_ids=participating)
 
     return jsonify({
         "graph": _serialize_graph(graph),
@@ -196,11 +196,11 @@ def api_edg_register_task():
     topo_params = data.get("topo_params", {})
     topology_dir = data.get("topology_dir", "")
 
-    # Auto-build npu_match from server_ips if provided
-    if npu_match and "server_ips" in npu_match and "npu_matrix" not in npu_match:
-        server_ips = npu_match["server_ips"]
+    # Auto-build npu_match from server_ids if provided
+    if npu_match and "server_ids" in npu_match and "npu_matrix" not in npu_match:
+        server_ids = npu_match["server_ids"]
         npu_per_server = npu_match.get("npu_per_server", 8)
-        npu_match = _build_npu_match(server_ips, task_id, npu_per_server)
+        npu_match = _build_npu_match(server_ids, task_id, npu_per_server)
 
     if not npu_match or not isinstance(npu_match, dict):
         return jsonify({"error": "npu_match (object) is required"}), 400
@@ -240,10 +240,10 @@ def api_edg_register_task():
     })
 
     # Extract participating server IPs from npu_match
-    server_ips = _extract_server_ips(npu_match)
+    server_ids = _extract_server_ids(npu_match)
 
     # Resolve paths (sub-topology)
-    graph = resolve_paths(lld, merged, participating_server_ips=server_ips)
+    graph = resolve_paths(lld, merged, participating_server_ids=server_ids)
 
     # Emit NS3 topology — split into per-ODC pods for multi-ODC scenarios
     pods = split_graph_by_pod(graph, lld)
@@ -279,8 +279,8 @@ def api_edg_register_task():
                         len(pod_graph.get("servers", [])))
 
     # Compute diff against baseline on FULL network (not sub-topology)
-    full_base_graph = resolve_paths(lld, base_crosses, participating_server_ips=None)
-    full_adjusted_graph = resolve_paths(lld, merged, participating_server_ips=None)
+    full_base_graph = resolve_paths(lld, base_crosses, participating_server_ids=None)
+    full_adjusted_graph = resolve_paths(lld, merged, participating_server_ids=None)
     diff = _compute_diff(full_base_graph, full_adjusted_graph)
 
     # Auto-generate ranktable
@@ -311,7 +311,7 @@ def api_edg_register_task():
     })
 
 
-def _extract_server_ips(npu_match: dict) -> list:
+def _extract_server_ids(npu_match: dict) -> list:
     seen = set()
     result = []
     for entry in npu_match.get("npu_matrix", []):
@@ -323,10 +323,10 @@ def _extract_server_ips(npu_match: dict) -> list:
     return result
 
 
-def _build_npu_match(server_ips: list, task_id: str, npu_per_server: int = 8) -> dict:
+def _build_npu_match(server_ids: list, task_id: str, npu_per_server: int = 8) -> dict:
     """Auto-build npu_match.json from a list of server IPs."""
     npu_matrix = []
-    for ip in server_ips:
+    for ip in server_ids:
         npu_matrix.append({
             "inst_key": {
                 "task_id": task_id,
@@ -386,11 +386,11 @@ def _regenerate_dashboard_xml_with_crosses(
         logger.warning("generate_pod_xml_with_crosses not available yet, skipping dashboard update")
         return
 
-    server_ips = set(_extract_server_ips(npu_match))
+    server_ids = set(_extract_server_ids(npu_match))
     crosses_list = [{"node_ip": c[0], "a_port_id": c[1], "b_port_id": c[2]} for c in crosses]
 
     try:
-        xml_str = generate_pod_xml_with_crosses(lld, crosses_list, server_ips, task_id)
+        xml_str = generate_pod_xml_with_crosses(lld, crosses_list, server_ids, task_id)
         pods_dir = os.path.join(PROJECT_ROOT, "topology", "pods")
         os.makedirs(pods_dir, exist_ok=True)
         pod_file = os.path.join(pods_dir, "POD#1.xml")

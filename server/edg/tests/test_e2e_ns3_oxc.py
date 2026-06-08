@@ -125,9 +125,9 @@ def test_step2_simulate_edg_init(lld):
 def test_step3_resolve_graph(lld, crosses):
     """Simulate /api/edg/register-task: resolve crosses into connectivity graph."""
     # Use only first 2 servers to match 16-NPU workload
-    all_server_ips = [n["node_id"] for n in lld["topology"]["server_nodes"]]
-    server_ips = all_server_ips[:2]
-    graph = resolve_paths(lld, crosses, participating_server_ips=server_ips)
+    all_server_ids = [n["node_id"] for n in lld["topology"]["server_nodes"]]
+    server_ids = all_server_ids[:2]
+    graph = resolve_paths(lld, crosses, participating_server_ids=server_ids)
 
     print(f"  Servers:         {len(graph['servers'])}")
     print(f"  Leaves:          {len(graph['leaves'])}")
