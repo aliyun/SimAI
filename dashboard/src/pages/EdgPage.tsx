@@ -47,7 +47,7 @@ export function EdgPage() {
     if (!isEdgNetwork || !activeNetwork || edgBaselineGraph) return;
     let cancelled = false;
     setLoading(true);
-    fetchBaselineGraph(activeNetwork.serverIps, npuPerServer)
+    fetchBaselineGraph(activeNetwork.serverIps, npuPerServer, activeNetwork.topologyDir)
       .then((res) => {
         if (!cancelled) {
           setEdgBaselineGraph(res.graph);
@@ -78,6 +78,7 @@ export function EdgPage() {
           intra_bw: activeNetwork.intraBw,
           bandwidth: activeNetwork.bandwidth || undefined,
         },
+        activeNetwork.topologyDir,
       );
       setEdgAdjustedGraph(result.graph);
       setEdgDiff(result.diff);

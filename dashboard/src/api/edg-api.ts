@@ -19,10 +19,12 @@ export interface EdgTopoParams {
 export async function fetchBaselineGraph(
   serverIps: readonly string[],
   npuPerServer: number,
+  topologyDir?: string,
 ): Promise<EdgBaselineGraphResponse> {
   const { data } = await apiClient.post<EdgBaselineGraphResponse>('/api/edg/baseline-graph', {
     server_ips: [...serverIps],
     npu_per_server: npuPerServer,
+    topology_dir: topologyDir ?? '',
   });
   return data;
 }
@@ -31,11 +33,13 @@ export async function registerTask(
   npuMatch: Record<string, unknown>,
   taskId: string,
   topoParams?: EdgTopoParams,
+  topologyDir?: string,
 ): Promise<EdgTaskResponse> {
   const { data } = await apiClient.post<EdgTaskResponse>('/api/edg/register-task', {
     npu_match: npuMatch,
     task_id: taskId,
     topo_params: topoParams,
+    topology_dir: topologyDir ?? '',
   });
   return data;
 }

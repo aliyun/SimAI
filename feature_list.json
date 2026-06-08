@@ -2,12 +2,12 @@
   "project": "SimAI-OXC",
   "updated": "2026-06-04T07:00:00Z",
   "summary": {
-    "done": 36,
-    "pending": 20,
-    "in_progress": 3,
+    "done": 3,
+    "pending": 2,
+    "in_progress": 1,
     "by_type": {
       "refactor": 3,
-      "feature": 11,
+      "feature": 12,
       "test": 3,
       "bugfix": 17,
       "unknown": 14
@@ -139,7 +139,7 @@
       "type": "refactor",
       "category": "lld-v3-migration",
       "description": "LLDP topology parsing pipeline v2→v3 migration: refactor 9 files (merger.py, ns3_emitter.py, edg_client.py, HomePage.tsx, lld_to_topology.py, lld.json, conftest.py, test_e2e_ns3_oxc.py) to support new LLDP v3.0.260530 format",
-      "status": "in_progress",
+      "status": "done",
       "priority": "P0",
       "phase": "phase3",
       "files": [
@@ -177,9 +177,40 @@
       ],
       "passes": true,
       "created_at": "2026-06-04T02:55:00Z",
-      "updated_at": "2026-06-04T07:00:00Z",
+      "updated_at": "2026-06-08T00:00:00Z",
       "confidence": "HIGH: 确定性字段重命名重构。v2-v3映射已在用户提供的JSON中明确：node_ip→node_id, a_node_ip→a_node_id, port_infos→port_id_list, port_name→port_id, server_type→chassis_topo。新增_chassis_to_npu_type()是简单split操作。无架构/算法/数据流变更。",
       "confidence_reason": "确定性字段重命名重构。v2-v3映射已在用户提供的JSON中明确：node_ip→node_id, a_node_ip→a_node_id, port_infos→port_id_list, port_name→port_id, server_type→chassis_topo。新增_chassis_to_npu_type()是简单split操作。无架构/算法/数据流变更。"
+    },
+    {
+      "id": "F091",
+      "type": "feature",
+      "category": "edg-persistence",
+      "description": "EDG init data global persistence: migrate lld.json/init_crosses.json from per-session workspace to global EDG_DATA_ROOT/{topology_dir}/. wizard-store add zustand/persist for EDG graph data.",
+      "status": "in_progress",
+      "priority": "P0",
+      "phase": "phase3",
+      "files": [
+        "server/config.py",
+        "server/edg/routes.py",
+        "dashboard/src/api/edg-api.ts",
+        "dashboard/src/pages/EdgPage.tsx",
+        "dashboard/src/stores/wizard-store.ts",
+        "/tmp/*",
+        "feature_list.json",
+        "progress.md",
+        "."
+      ],
+      "verification_steps": [
+        "EDG init saves to global EDG_DATA_ROOT/{topology_dir}/",
+        "New session/workspace: baseline-graph loads without re-init",
+        "register-task loads from global store",
+        "wizard-store EDG graph data survives page refresh",
+        "Backward compatible: old workspace data still readable"
+      ],
+      "passes": false,
+      "created_at": "2026-06-08T00:00:00Z",
+      "updated_at": "2026-06-08T00:00:00Z",
+      "confidence": "HIGH: 确定性存储迁移。根因明确(workspace session隔离)，修复路径清晰(全局路径+topology_dir索引)，改动范围可控(5文件)"
     }
   ],
   "done": [

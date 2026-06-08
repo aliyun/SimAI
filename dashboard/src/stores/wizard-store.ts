@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import type {
   WizardStep,
   WorkloadConfig,
@@ -146,10 +147,12 @@ const INITIAL_STATE = {
   consoleData: null,
 };
 
-export const useWizardStore = create<WizardState>((set) => ({
-  ...INITIAL_STATE,
+export const useWizardStore = create<WizardState>()(
+  persist(
+    (set) => ({
+      ...INITIAL_STATE,
 
-  setCurrentStep: (step) => set({ currentStep: step }),
+      setCurrentStep: (step) => set({ currentStep: step }),
 
   completeStep: (step) =>
     set((state) => ({
@@ -199,4 +202,17 @@ export const useWizardStore = create<WizardState>((set) => ({
   setConsoleData: (data) => set({ consoleData: data }),
 
   reset: () => set({ ...INITIAL_STATE, completedSteps: new Set<WizardStep>() }),
-}));
+}),
+{
+  name: 'ocs-sim-wizard',
+  partialize: (state) => ({
+    edgBaselineGraph: state.edgBaselineGraph,
+    edgAdjustedGraph: state.edgAdjustedGraph,
+    edgDiff: state.edgDiff,
+    edgTaskId: state.edgTaskId,
+    edgTopologyPath: state.edgTopologyPath,
+    topologyDir: state.topologyDir,
+  }),
+},
+),
+);

@@ -28,6 +28,51 @@ def _edg_dir(workspace_dir: str) -> str:
     return p
 
 
+def _edg_global_dir(topology_dir: str) -> str:
+    """Global EDG data dir keyed by topology_dir (survives session restarts)."""
+    from server.config import EDG_DATA_ROOT
+    p = os.path.join(EDG_DATA_ROOT, topology_dir, "edg")
+    os.makedirs(p, exist_ok=True)
+    return p
+
+
+def _edg_load(topology_dir: str) -> tuple | None:
+    """Load baseline EDG data (lld, crosses) from global or workspace store."""
+    lld = None
+    saved = None
+
+    # Prefer global store when topology_dir is provided
+    if topology_dir:
+        global_dir = _edg_global_dir(topology_dir)
+        lld_path = os.path.join(global_dir, "lld.json")
+        crosses_path = os.path.join(global_dir, "init_crosses.json")
+        if os.path.exists(lld_path) and os.path.exists(crosses_path):
+            with open(lld_path, "r") as f:
+                lld = json.load(f)
+            with open(crosses_path, "r") as f:
+                saved = json.load(f)
+
+    # Fallback: try workspace store
+    if lld is None:
+        from server.config import WORKSPACE_ROOT
+        ws = WORKSPACE_ROOT
+        for user_dir in os.listdir(ws) if os.path.exists(ws) else []:
+            edg_dir = os.path.join(ws, user_dir, "edg")
+            lld_path = os.path.join(edg_dir, "lld.json")
+            crosses_path = os.path.join(edg_dir, "init_crosses.json")
+            if os.path.exists(lld_path) and os.path.exists(crosses_path):
+                with open(lld_path, "r") as f:
+                    lld = json.load(f)
+                with open(crosses_path, "r") as f:
+                    saved = json.load(f)
+                break
+
+    if lld is None or saved is None:
+        return None
+    base_crosses = {tuple(c) for c in saved.get("crosses", [])}
+    return lld, base_crosses
+
+
 def _save_json(path: str, data):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
@@ -47,9 +92,14 @@ def api_edg_init():
     ws = getattr(request, "workspace_dir", ".")
     edg_dir = _edg_dir(ws)
 
-    # Save lld.json
+    # Also write to global store (keyed by topology_dir) for session persistence
+    global_edg_dir = _edg_global_dir(topology_dir) if topology_dir else None
+
+    # Save lld.json (both workspace and global)
     lld_path = os.path.join(edg_dir, "lld.json")
     _save_json(lld_path, lld)
+    if global_edg_dir:
+        _save_json(os.path.join(global_edg_dir, "lld.json"), lld)
 
     # Call EDG
     try:
@@ -60,14 +110,17 @@ def api_edg_init():
 
     warning = resp.get("_warning")
 
-    # Parse and save baseline crosses
+    # Parse and save baseline crosses (both workspace and global)
     orders = resp.get("oxc_oper_orders", {})
     base_crosses = apply_batches(set(), orders)
-    crosses_path = os.path.join(edg_dir, "init_crosses.json")
-    _save_json(crosses_path, {
+    crosses_data = {
         "crosses": [list(c) for c in base_crosses],
         "raw_response": resp,
-    })
+    }
+    crosses_path = os.path.join(edg_dir, "init_crosses.json")
+    _save_json(crosses_path, crosses_data)
+    if global_edg_dir:
+        _save_json(os.path.join(global_edg_dir, "init_crosses.json"), crosses_data)
 
     # Generate monitor dashboard XML via lld_to_topology.py
     _regenerate_dashboard_xml(lld, ws, topology_dir)
@@ -77,6 +130,7 @@ def api_edg_init():
         "crosses_count": len(base_crosses),
         "oxc_count": len({c[0] for c in base_crosses}),
         "warning": warning,
+        "persisted": bool(global_edg_dir),
     })
 
 
@@ -87,20 +141,12 @@ def api_edg_baseline_graph():
     data = request.get_json(silent=True) or {}
     server_ips = data.get("server_ips", [])
     npu_per_server = data.get("npu_per_server", 8)
+    topology_dir = data.get("topology_dir", "")
 
-    ws = getattr(request, "workspace_dir", ".")
-    edg_dir = _edg_dir(ws)
-
-    lld_path = os.path.join(edg_dir, "lld.json")
-    crosses_path = os.path.join(edg_dir, "init_crosses.json")
-    if not os.path.exists(lld_path) or not os.path.exists(crosses_path):
+    _load = _edg_load(topology_dir)
+    if _load is None:
         return jsonify({"error": "No baseline data. Call /api/edg/init first."}), 400
-
-    with open(lld_path, "r") as f:
-        lld = json.load(f)
-    with open(crosses_path, "r") as f:
-        saved = json.load(f)
-    base_crosses = {tuple(c) for c in saved.get("crosses", [])}
+    lld, base_crosses = _load
 
     participating = server_ips if server_ips else None
     graph = resolve_paths(lld, base_crosses, participating_server_ips=participating)
@@ -148,6 +194,7 @@ def api_edg_register_task():
     npu_match = data.get("npu_match")
     task_id = data.get("task_id", "T001")
     topo_params = data.get("topo_params", {})
+    topology_dir = data.get("topology_dir", "")
 
     # Auto-build npu_match from server_ips if provided
     if npu_match and "server_ips" in npu_match and "npu_matrix" not in npu_match:
@@ -158,23 +205,14 @@ def api_edg_register_task():
     if not npu_match or not isinstance(npu_match, dict):
         return jsonify({"error": "npu_match (object) is required"}), 400
 
+    # Load baseline from global store (fallback to workspace)
+    _load = _edg_load(topology_dir)
+    if _load is None:
+        return jsonify({"error": "No baseline data. Call /api/edg/init first."}), 400
+    lld, base_crosses = _load
+
     ws = getattr(request, "workspace_dir", ".")
     edg_dir = _edg_dir(ws)
-
-    # Load baseline
-    crosses_path = os.path.join(edg_dir, "init_crosses.json")
-    if not os.path.exists(crosses_path):
-        return jsonify({"error": "No baseline crosses. Call /api/edg/init first."}), 400
-
-    with open(crosses_path, "r") as f:
-        saved = json.load(f)
-    base_crosses = {tuple(c) for c in saved.get("crosses", [])}
-
-    lld_path = os.path.join(edg_dir, "lld.json")
-    if not os.path.exists(lld_path):
-        return jsonify({"error": "No lld.json found. Call /api/edg/init first."}), 400
-    with open(lld_path, "r") as f:
-        lld = json.load(f)
 
     # Save npu_match
     task_dir = os.path.join(edg_dir, "tasks", task_id)

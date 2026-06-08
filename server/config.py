@@ -16,6 +16,9 @@ WORKSPACE_ROOT = os.path.join(SERVER_DIR, "workspaces")
 BIN_DIR = os.path.join(PROJECT_ROOT, "bin")
 AUTH_CONFIG_PATH = os.path.join(SERVER_DIR, "auth_config.yaml")
 
+# EDG global persistence (survives session restarts)
+EDG_DATA_ROOT = os.path.join(PROJECT_ROOT, "edg_data")
+
 # Workspace
 WORKSPACE_TTL_SECONDS = 24 * 3600  # 24 hours
 
