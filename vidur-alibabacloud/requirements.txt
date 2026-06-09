@@ -1,0 +1,43 @@
+# === Core Data Science & Visualization Libraries ===
+numpy
+pandas
+scipy>=1.11.3
+scikit-learn
+matplotlib
+seaborn
+plotly>=5.17.0
+plotly_express
+networkx>=3.1
+
+# === MLOps, Experiment Tracking & Distributed Computing ===
+wandb
+ray>=2.6.3
+
+# === Hydra Framework & Launchers ===
+hydra-core>=1.3.2
+hydra-joblib-launcher>=1.2.0
+hydra-ray-launcher>=1.2.1
+omegaconf>=2.3.0
+
+# === Development, Linting & Formatting Tools ===
+black
+isort
+flake8
+autopep8
+jupyterlab
+nbformat>=5.9.2
+
+# === Application Frameworks & Utilities ===
+streamlit
+fasteners
+randomname
+snakeviz
+kaleido
+ddsketch
+paretoset
+pyyaml
+requests>=2.31.0
+
+# setuptools is typically pre-installed with python and pip.
+# It can be uncommented if a specific version is required for build processes.
+# setuptools

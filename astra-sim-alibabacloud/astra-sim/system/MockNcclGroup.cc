@@ -2022,7 +2022,7 @@ namespace MockNccl {
         q.push(current->right);
       }
     }
-    return node2treenode[(nodes[rank2index[root->node]+1]) % nodes.size()];
+    return node2treenode[nodes[(rank2index[root->node] + 1) % nodes.size()]];
   }
 
   ncclInfo* MockNcclGroup::get_algo_proto_info(

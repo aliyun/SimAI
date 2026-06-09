@@ -1,0 +1,12 @@
+name: vidur
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - setuptools
+  - pip
+  - make
+  - black
+  - isort
+  - flake8
+  - autopep8

@@ -1,0 +1,65 @@
+clusters:
+  - device: h100
+    num_gpus: 16
+    gpus_per_node: 4
+  - device: a100
+    num_gpus: 16
+    gpus_per_node: 4
+  - device: a40
+    num_gpus: 32
+    gpus_per_node: 8
+
+schedulers:
+  - scheduler: vllm
+  - scheduler: sarathi
+    chunk_size: 256
+  - scheduler: sarathi
+    chunk_size: 512
+  - scheduler: sarathi
+    chunk_size: 1024
+  - scheduler: sarathi
+    chunk_size: 2048
+  - scheduler: sarathi
+    chunk_size: 4096
+
+traces:
+  - name: chat
+    trace_file: "./data/processed_traces/lmsys_chat_1m_conversation_stats_llama2_tokenizer.csv"
+    max_seq_len: 4096
+    num_requests: 16000
+    start_qps: 32
+  - name: arxiv
+    trace_file: "./data/processed_traces/arxiv_summarization_stats_llama2_tokenizer_filtered_v2.csv"
+    max_seq_len: 4096
+    num_requests: 16000
+    start_qps: 16
+  - name: bwb
+    trace_file: "./data/processed_traces/bwb_stats_llama2_tokenizer_filtered_v2.csv"
+    max_seq_len: 4096
+    num_requests: 16000
+    start_qps: 8
+
+batch_sizes: [32, 64, 128]
+tp_dimensions: [1, 2, 4, 8]
+pp_dimensions: [1, 2, 4]
+
+models:
+  # - name: phi-2
+  #   identifier: microsoft/phi-2
+  #   exclude_tp_dims: [2, 4, 8]
+  - name: llama-2-7b-hf
+    identifier: meta-llama/Llama-2-7b-hf
+  # - name: internlm-20b
+  #   identifier: internlm/internlm-20b
+  #   exclude_tp_dims: [1]
+  - name: codellama-34b-instruct-hf
+    identifier: codellama/CodeLlama-34b-Instruct-hf
+  # - name: llama-2-70b-hf
+  #   identifier: meta-llama/Llama-2-70b-hf
+  #   exclude_tp_dims: [1]
+  # - name: qwen-72b
+  #   identifier: Qwen/Qwen-72B
+  #   exclude_tp_dims: [1]
+  - name: qwen-72b
+    identifier: Qwen/Qwen-72B
+    exclude_tp_dims: [1]

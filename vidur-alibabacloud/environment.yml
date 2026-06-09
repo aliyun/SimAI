@@ -1,0 +1,25 @@
+name: vidur
+channels:
+  - conda-forge
+  - plotly
+dependencies:
+  - python=3.10
+  - setuptools
+  - pip
+  - numpy
+  - plotly_express
+  - jupyterlab
+  - matplotlib
+  - pyyaml
+  - snakeviz
+  - scikit-learn
+  - python-kaleido
+  - wandb
+  - fasteners
+  - ray-all
+  - streamlit
+  - randomname
+  - pip:
+    - kaleido
+    - ddsketch
+    - paretoset

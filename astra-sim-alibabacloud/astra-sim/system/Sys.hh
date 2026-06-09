@@ -148,7 +148,9 @@ class Sys : public Callable {
   int total_running_streams;
   std::map<int, std::list<BaseStream*>> active_Streams;
   std::map<int, std::list<int>> stream_priorities;
-
+  std::vector<std::vector<std::string>> nic_ratio_data;
+  std::vector<std::vector<std::string>> nvlink_ratio_data;
+  std::vector<std::vector<std::string>> ata_ratio_data;
   QueueLevels* vLevels;
   std::map<std::string, LogicalTopology*> logical_topologies;
   std::map<Tick, std::list<std::tuple<Callable*, EventType, CallData*>>>

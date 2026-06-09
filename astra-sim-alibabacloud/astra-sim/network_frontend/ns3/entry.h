@@ -65,7 +65,7 @@ struct task1 {
   double schTime; 
 };
 map<std::pair<int, std::pair<int, int>>, struct task1> expeRecvHash;
-map<std::pair<int, std::pair<int, int>>, int> recvHash;
+map<std::pair<int, std::pair<int, int>>, uint64_t> recvHash;
 map<std::pair<int, std::pair<int, int>>, struct task1> sentHash;
 map<std::pair<int, int>, int64_t> nodeHash;
 map<std::pair<int,std::pair<int,int>>,int> waiting_to_sent_callback;  
@@ -139,8 +139,8 @@ void SendFlow(int src, int dst, uint64_t maxPacketCount,
   flow_input.idx++;
   if(real_PacketCount == 0) real_PacketCount = 1;
     MockNcclLog* NcclLog = MockNcclLog::getInstance();
-    NcclLog->writeLog(NcclLogLevel::DEBUG," 发包事件  %dSendFlow to  %d channelid:  %d flow_id  %d srcip  %d dstip  %d size:  %d at the tick:  %d",src,dst,tag,flow_id,serverAddress[src],serverAddress[dst],maxPacketCount,AstraSim::Sys::boostedTick());
-    NcclLog->writeLog(NcclLogLevel::DEBUG," request->flowTag 发包事件  %dSendFlow to  %d tag_id:  %d flow_id  %d srcip  %d dstip  %d size:  %d at the tick:  %d",request->flowTag.sender_node,request->flowTag.receiver_node,request->flowTag.tag_id,request->flowTag.current_flow_id,serverAddress[src],serverAddress[dst],maxPacketCount,AstraSim::Sys::boostedTick());
+    NcclLog->writeLog(NcclLogLevel::DEBUG," [Packet sending event]  %dSendFlow to  %d channelid:  %d flow_id  %d srcip  %d dstip  %d size:  %llu at the tick:  %d",src,dst,tag,flow_id,serverAddress[src],serverAddress[dst],maxPacketCount,AstraSim::Sys::boostedTick());
+    NcclLog->writeLog(NcclLogLevel::DEBUG," request->flowTag [Packet sending event]  %dSendFlow to  %d tag_id:  %d flow_id  %d srcip  %d dstip  %d size:  %llu at the tick:  %d",request->flowTag.sender_node,request->flowTag.receiver_node,request->flowTag.tag_id,request->flowTag.current_flow_id,serverAddress[src],serverAddress[dst],maxPacketCount,AstraSim::Sys::boostedTick());
   RdmaClientHelper clientHelper(
       pg, serverAddress[src], serverAddress[dst], port, dport, real_PacketCount,
       has_win ? (global_t == 1 ? maxBdp : pairBdp[n.Get(src)][n.Get(dst)]) : 0,
@@ -170,17 +170,17 @@ void notify_receiver_receive_data(int sender_node, int receiver_node,
     MtpInterface::explicitCriticalSection cs;   
     #endif                         
     MockNcclLog* NcclLog = MockNcclLog::getInstance();
-    NcclLog->writeLog(NcclLogLevel::DEBUG," %d notify recevier:  %d message size:  %d",sender_node,receiver_node,message_size);
+    NcclLog->writeLog(NcclLogLevel::DEBUG," %d notify recevier:  %d message size:  %llu",sender_node,receiver_node,message_size);
     int tag = flowTag.tag_id;   
     if (expeRecvHash.find(make_pair(
             tag, make_pair(sender_node, receiver_node))) != expeRecvHash.end()) {
       task1 t2 =
           expeRecvHash[make_pair(tag, make_pair(sender_node, receiver_node))];
     MockNcclLog* NcclLog = MockNcclLog::getInstance();
-    NcclLog->writeLog(NcclLogLevel::DEBUG," %d notify recevier:  %d message size:  %d t2.count:  %d channle id:  %d",sender_node,receiver_node,message_size,t2.count,flowTag.channel_id);
+    NcclLog->writeLog(NcclLogLevel::DEBUG," %d notify recevier:  %d message size:  %llu t2.count:  %llu channle id:  %d",sender_node,receiver_node,message_size,t2.count,flowTag.channel_id);
       AstraSim::RecvPacketEventHadndlerData* ehd = (AstraSim::RecvPacketEventHadndlerData*) t2.fun_arg;
       if (message_size == t2.count) {
-        NcclLog->writeLog(NcclLogLevel::DEBUG," message_size = t2.count expeRecvHash.erase  %d notify recevier:  %d message size:  %d channel_id  %d",sender_node,receiver_node,message_size,tag);
+        NcclLog->writeLog(NcclLogLevel::DEBUG," message_size = t2.count expeRecvHash.erase  %d notify recevier:  %d message size:  %llu channel_id  %d",sender_node,receiver_node,message_size,tag);
         expeRecvHash.erase(make_pair(tag, make_pair(sender_node, receiver_node)));
         #ifdef NS3_MTP
         cs.ExitSection();
@@ -192,7 +192,7 @@ void notify_receiver_receive_data(int sender_node, int receiver_node,
       } else if (message_size > t2.count) {
         recvHash[make_pair(tag, make_pair(sender_node, receiver_node))] =
             message_size - t2.count;
-        NcclLog->writeLog(NcclLogLevel::DEBUG,"message_size > t2.count expeRecvHash.erase %d notify recevier:  %d message size:  %d channel_id  %d",sender_node,receiver_node,message_size,tag);
+        NcclLog->writeLog(NcclLogLevel::DEBUG,"message_size > t2.count expeRecvHash.erase %d notify recevier:  %d message size:  %llu channel_id  %d",sender_node,receiver_node,message_size,tag);
         expeRecvHash.erase(make_pair(tag, make_pair(sender_node, receiver_node)));
         #ifdef NS3_MTP
         cs.ExitSection();
@@ -320,7 +320,7 @@ void qp_finish(FILE *fout, Ptr<RdmaQueuePair> q) {
     Ptr<RdmaDriver> rdma = dstNode->GetObject<RdmaDriver>();
     rdma->m_rdma->DeleteRxQp(q->sip.Get(), q->m_pg, q->sport);
     MockNcclLog* NcclLog = MockNcclLog::getInstance();
-    NcclLog->writeLog(NcclLogLevel::DEBUG,"qp finish, src:  %d did:  %d port:  %d total bytes:  %d at the tick:  %d",sid,did,q->sport,q->m_size,AstraSim::Sys::boostedTick());
+    NcclLog->writeLog(NcclLogLevel::DEBUG,"qp finish, src:  %d did:  %d port:  %d total bytes:  %llu at the tick:  %d",sid,did,q->sport,q->m_size,AstraSim::Sys::boostedTick());
     if (sender_src_port_map.find(make_pair(q->sport, make_pair(sid, did))) ==
         sender_src_port_map.end()) {
       NcclLog->writeLog(NcclLogLevel::ERROR,"could not find the tag, there must be something wrong");
@@ -348,8 +348,8 @@ void send_finish(FILE *fout, Ptr<RdmaQueuePair> q) {
   uint32_t sid = ip_to_node_id(q->sip), did = ip_to_node_id(q->dip);
   AstraSim::ncclFlowTag flowTag;
   MockNcclLog* NcclLog = MockNcclLog::getInstance();
-  NcclLog->writeLog(NcclLogLevel::DEBUG,"数据包出发送网卡 send finish, src:  %d did:  %d port:  %d srcip  %d dstip  %d total bytes:  %d at the tick:  %d",sid,did,q->sport,q->sip,q->dip,q->m_size,AstraSim::Sys::boostedTick());
-  int all_sent_chunksize;
+  NcclLog->writeLog(NcclLogLevel::DEBUG,"[Packet sent from NIC] send finish, src:  %d did:  %d port:  %d srcip  %d dstip  %d total bytes:  %llu at the tick:  %d",sid,did,q->sport,q->sip,q->dip,q->m_size,AstraSim::Sys::boostedTick());
+  uint64_t all_sent_chunksize;
   {
     #ifdef NS3_MTP
     MtpInterface::explicitCriticalSection cs;
