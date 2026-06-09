@@ -22,7 +22,7 @@ project(SimAI)
 set(NS3_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ns-3-alibabacloud/simulation")
 set(ASTRA_SIM_DIR "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim-alibabacloud/astra-sim")
 set(BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}")
-set(RESULT_DIR "${CMAKE_CURRENT_SOURCE_DIR}}/result")
+set(RESULT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/result")
 
 # Create required directories
 file(MAKE_DIRECTORY ${BUILD_DIR})
