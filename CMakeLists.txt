@@ -106,14 +106,14 @@ if(BUILD_SIM)
     # AstraSim
     add_subdirectory(astra-sim-alibabacloud/build/astra_ns3)
 
-    file(GLOB_RECURSE astra_sim_files CONFIGURE_DEPENDS "${ASTRA_SIM_DIR}/*")
+    file(GLOB_RECURSE astra_sim_files LIST_DIRECTORIES false CONFIGURE_DEPENDS "${ASTRA_SIM_DIR}/*")
     list(FILTER astra_sim_files EXCLUDE REGEX "/network_frontend/")
     foreach(file ${astra_sim_files})
         string(REPLACE "${ASTRA_SIM_DIR}/" "astra-sim/" relative_path ${file})
         ns3_export_file("${file}" "${NS3_SRC_DIR}/src/applications/${relative_path}")
     endforeach()
 
-    file(GLOB scratch_files CONFIGURE_DEPENDS ${ASTRA_SIM_DIR}/network_frontend/ns3/*)
+    file(GLOB scratch_files LIST_DIRECTORIES false CONFIGURE_DEPENDS "${ASTRA_SIM_DIR}/network_frontend/ns3/*")
     foreach(file ${scratch_files})
         get_filename_component(filename ${file} NAME)
         ns3_export_file("${file}" "${NS3_SRC_DIR}/scratch/${filename}")
