@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Network, NetworkFormData } from '../types/network';
+import { useWizardStore } from './wizard-store';
 
 interface NetworkState {
   readonly networks: readonly Network[];
@@ -52,10 +53,27 @@ export const useNetworkStore = create<NetworkState>()(
         }));
       },
 
-      setActiveNetwork: (id) => set({ activeNetworkId: id }),
+      setActiveNetwork: (id) => {
+        set({ activeNetworkId: id });
+        useWizardStore.getState().reset();
+        localStorage.removeItem('ocs-sim-wizard');
+      },
 
       getNetwork: (id) => get().networks.find((n) => n.id === id),
     }),
-    { name: 'ocs-sim-networks' },
+    {
+      name: 'ocs-sim-networks',
+      version: 1,
+      migrate: (persisted: unknown, _version: number) => {
+        const state = persisted as { networks?: Array<Record<string, unknown>> };
+        if (state.networks) {
+          state.networks = state.networks.map((n) => ({
+            ...n,
+            serverIds: (n.serverIds as string[]) ?? (n.serverIps as string[]) ?? [],
+          }));
+        }
+        return state as typeof persisted;
+      },
+    },
   ),
 );

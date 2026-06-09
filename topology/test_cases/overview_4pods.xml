@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile>
+  <diagram name="4 PODs" id="test-4pods">
+    <mxGraphModel>
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- POD nodes in 2x2 grid -->
+        <mxCell id="p1" value="POD#1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="200" y="200" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="POD#2" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="600" y="200" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" value="POD#3" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="200" y="600" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" value="POD#4" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="600" y="600" width="60" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Edge: POD#1 - POD#2 (horizontal top) -->
+        <mxCell id="e12" style="edgeStyle=none;startArrow=classic;startFill=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="p1" target="p2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12-src" value="0.50%&#xa;x4&#xa;0.20%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e12">
+          <mxGeometry x="-0.6" y="-1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e12-tgt" value="0.45%&#xa;x4&#xa;0.15%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e12">
+          <mxGeometry x="0.6" y="1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <!-- Edge: POD#3 - POD#4 (horizontal bottom) -->
+        <mxCell id="e34" style="edgeStyle=none;startArrow=classic;startFill=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="p3" target="p4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e34-src" value="0.30%&#xa;x8&#xa;0.10%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e34">
+          <mxGeometry x="-0.6" y="-1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e34-tgt" value="0.25%&#xa;x8&#xa;0.05%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e34">
+          <mxGeometry x="0.6" y="1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <!-- Edge: POD#1 - POD#3 (vertical left) -->
+        <mxCell id="e13" style="edgeStyle=none;startArrow=classic;startFill=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="p1" target="p3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13-src" value="0.80%&#xa;x6&#xa;0.40%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e13">
+          <mxGeometry x="-0.6" y="-1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e13-tgt" value="0.75%&#xa;x6&#xa;0.35%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e13">
+          <mxGeometry x="0.6" y="1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <!-- Edge: POD#2 - POD#4 (vertical right) -->
+        <mxCell id="e24" style="edgeStyle=none;startArrow=classic;startFill=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="p2" target="p4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e24-src" value="0.60%&#xa;x4&#xa;0.30%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e24">
+          <mxGeometry x="-0.6" y="-1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e24-tgt" value="0.55%&#xa;x4&#xa;0.25%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e24">
+          <mxGeometry x="0.6" y="1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <!-- Edge: POD#1 - POD#4 (diagonal) -->
+        <mxCell id="e14" style="edgeStyle=none;startArrow=classic;startFill=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="p1" target="p4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14-src" value="1.20%&#xa;x2&#xa;0.60%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e14">
+          <mxGeometry x="-0.6" y="-1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e14-tgt" value="1.10%&#xa;x2&#xa;0.50%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e14">
+          <mxGeometry x="0.6" y="1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

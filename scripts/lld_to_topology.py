@@ -87,8 +87,8 @@ def generate_pod_xml(lld_data, pod_id='POD#1'):
             all_nodes.append((node, ntype_label, positions[i]))
 
     ip_to_cell_id = {}
-    for node, _, _ in all_nodes:
-        cell_id = _make_node_id(node, ntype).lower().replace('_', '-')
+    for node, node_type, _ in all_nodes:
+        cell_id = _make_node_id(node, node_type).lower().replace('_', '-')
         ip_to_cell_id[node["node_id"]] = cell_id
 
     mxfile = ET.Element('mxfile', host='Electron')
@@ -245,8 +245,8 @@ def generate_pod_xml_with_crosses(lld_data, crosses_list, participating_server_i
             all_nodes.append((node, ntype_label, positions[i]))
 
     ip_to_cell_id = {}
-    for node, _, _ in all_nodes:
-        cell_id = _make_node_id(node, ntype).lower().replace('_', '-')
+    for node, node_type, _ in all_nodes:
+        cell_id = _make_node_id(node, node_type).lower().replace('_', '-')
         ip_to_cell_id[node["node_id"]] = cell_id
 
     mxfile = ET.Element('mxfile', host='Electron')
@@ -348,10 +348,67 @@ def generate_pod_xml_with_crosses(lld_data, crosses_list, participating_server_i
     return _pretty_xml(mxfile)
 
 
+def _detect_group_ids(lld_data):
+    """Return sorted unique group_ids from server_nodes and leaf_nodes.
+
+    Falls back to a single '0' group if no group_id fields are present.
+    """
+    topo = lld_data.get('topology', {})
+    groups = set()
+    for node in topo.get('server_nodes', []):
+        gid = node.get('group_id')
+        if gid is not None:
+            groups.add(str(gid))
+    for node in topo.get('leaf_nodes', []):
+        gid = node.get('group_id')
+        if gid is not None:
+            groups.add(str(gid))
+    if not groups:
+        return ['0']
+    return sorted(groups, key=lambda x: int(x) if x.isdigit() else x)
+
+
+def _split_topology_by_group(lld_data, group_id):
+    """Return a subset of the topology containing only nodes/edges for the given group_id.
+
+    Servers and leaves are filtered by group_id. OXC and spine nodes are included in
+    every group since they represent shared fabric. Edges are included when at least
+    one endpoint belongs to the group.
+    """
+    topo = lld_data.get('topology', {})
+
+    shared_ntypes = ('oxc_nodes', 'spine_nodes')
+    grouped_ntypes = ('server_nodes', 'leaf_nodes')
+
+    group_node_ids = set()
+    filtered = {'edges': []}
+
+    for ntype in shared_ntypes:
+        filtered[ntype] = topo.get(ntype, [])
+        for n in filtered[ntype]:
+            group_node_ids.add(n['node_id'])
+
+    for ntype in grouped_ntypes:
+        filtered[ntype] = [
+            n for n in topo.get(ntype, [])
+            if str(n.get('group_id', '')) == group_id
+        ]
+        for n in filtered[ntype]:
+            group_node_ids.add(n['node_id'])
+
+    for edge in topo.get('edges', []):
+        a_id = edge.get('a_node_id', '')
+        b_id = edge.get('b_node_id', '')
+        if a_id in group_node_ids or b_id in group_node_ids:
+            filtered['edges'].append(edge)
+
+    return {'topology': filtered}
+
+
 def main():
     parser = argparse.ArgumentParser(description='Convert lld.json to dashboard topology XML')
     parser.add_argument('inputs', nargs='+', help='lld.json file(s)')
-    parser.add_argument('--pod-id', nargs='*', help='POD ID(s), default: POD#1, POD#2, ...')
+    parser.add_argument('--pod-id', nargs='*', help='POD ID(s), default: auto-detect from group_id')
     parser.add_argument('--output-dir', default='topology', help='Output directory (default: topology)')
     args = parser.parse_args()
 
@@ -359,17 +416,32 @@ def main():
     os.makedirs(os.path.join(output_dir, 'overview'), exist_ok=True)
     os.makedirs(os.path.join(output_dir, 'pods'), exist_ok=True)
 
-    pod_ids = args.pod_id if args.pod_id else [f'POD#{i+1}' for i in range(len(args.inputs))]
-    if len(pod_ids) < len(args.inputs):
-        pod_ids.extend(f'POD#{i+1}' for i in range(len(pod_ids), len(args.inputs)))
+    if args.pod_id:
+        pod_ids = args.pod_id
+        input_groups = [(lld_path, lld_path) for lld_path in args.inputs]
+        if len(pod_ids) < len(args.inputs):
+            pod_ids.extend(f'POD#{i+1}' for i in range(len(pod_ids), len(args.inputs)))
+    else:
+        if len(args.inputs) == 1:
+            lld_data = json.loads(open(args.inputs[0]).read())
+            group_ids = _detect_group_ids(lld_data)
+            pod_ids = [f'POD#{gid}' for gid in group_ids]
+            input_groups = [(args.inputs[0], gid) for gid in group_ids]
+        else:
+            pod_ids = [f'POD#{i+1}' for i in range(len(args.inputs))]
+            input_groups = [(lp, lp) for lp in args.inputs]
 
-    for lld_path, pod_id in zip(args.inputs, pod_ids):
+    for (lld_path, group_id), pod_id in zip(input_groups, pod_ids):
         lld_data = json.loads(open(lld_path).read())
-        pod_xml = generate_pod_xml(lld_data, pod_id)
+        if len(args.inputs) == 1 and not args.pod_id:
+            pod_lld = _split_topology_by_group(lld_data, group_id)
+        else:
+            pod_lld = lld_data
+        pod_xml = generate_pod_xml(pod_lld, pod_id)
         pod_file = os.path.join(output_dir, 'pods', f'{pod_id}.xml')
         with open(pod_file, 'w', encoding='utf-8') as f:
             f.write(pod_xml)
-        print(f"  {lld_path} -> {pod_file}")
+        print(f"  {lld_path} (group={group_id}) -> {pod_file}")
 
     overview_xml = generate_overview_xml(pod_ids)
     overview_file = os.path.join(output_dir, 'overview', 'all_pod.xml')

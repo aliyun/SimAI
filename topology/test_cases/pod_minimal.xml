@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile>
+  <diagram name="Minimal POD" id="test-minimal-pod">
+    <mxGraphModel>
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- 1 SPINE -->
+        <mxCell id="sp1" value="SPINE-MIN-01&#xa;SPINE&#xa;10.44.240.1" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="300" width="120" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- 1 LEAF -->
+        <mxCell id="lf1" value="LEAF-MIN-01&#xa;LEAF&#xa;10.44.240.10" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="550" width="120" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- 2 SERVERs -->
+        <mxCell id="srv1" value="worker-min-01&#xa;SERVER&#xa;10.44.240.101" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="250" y="800" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="srv2" value="worker-min-02&#xa;SERVER&#xa;10.44.240.102" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="550" y="800" width="120" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- SPINE to LEAF -->
+        <mxCell id="esl" style="edgeStyle=none;" edge="1" parent="1" source="sp1" target="lf1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eslu" value="0.00%~0.01%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="esl">
+          <mxGeometry x="-0.5" y="-1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="esld" value="0.00%~0.00%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="esl">
+          <mxGeometry x="0.5" y="1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <!-- LEAF to SERVER 1 -->
+        <mxCell id="els1" style="edgeStyle=none;" edge="1" parent="1" source="lf1" target="srv1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="els1u" value="0.00%~0.02%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="els1">
+          <mxGeometry x="-0.5" y="-1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="els1d" value="0.00%~0.01%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="els1">
+          <mxGeometry x="0.5" y="1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <!-- LEAF to SERVER 2 -->
+        <mxCell id="els2" style="edgeStyle=none;" edge="1" parent="1" source="lf1" target="srv2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="els2u" value="0.01%~0.03%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="els2">
+          <mxGeometry x="-0.5" y="-1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="els2d" value="0.00%~0.02%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="els2">
+          <mxGeometry x="0.5" y="1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

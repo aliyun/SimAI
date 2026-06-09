@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile>
+  <diagram name="7 PODs star" id="test-7pods">
+    <mxGraphModel>
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- 7 PODs: center hub + 6 around it -->
+        <mxCell id="p1" value="POD#1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="450" y="400" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="POD#2" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="450" y="100" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" value="POD#3" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="710" y="250" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" value="POD#4" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="710" y="550" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p5" value="POD#5" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="450" y="700" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p6" value="POD#6" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="190" y="550" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p7" value="POD#7" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="190" y="250" width="60" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Star edges: center POD#1 to all others -->
+        <mxCell id="e12" style="edgeStyle=none;startArrow=classic;startFill=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="p1" target="p2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12s" value="0.50%&#xa;x8&#xa;0.25%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e12">
+          <mxGeometry x="-0.5" y="-1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e12t" value="0.48%&#xa;x8&#xa;0.22%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e12">
+          <mxGeometry x="0.5" y="1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e13" style="edgeStyle=none;startArrow=classic;startFill=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="p1" target="p3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13s" value="0.35%&#xa;x4&#xa;0.18%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e13">
+          <mxGeometry x="-0.5" y="-1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e13t" value="0.30%&#xa;x4&#xa;0.15%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e13">
+          <mxGeometry x="0.5" y="1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e14" style="edgeStyle=none;startArrow=classic;startFill=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="p1" target="p4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14s" value="0.80%&#xa;x6&#xa;0.40%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e14">
+          <mxGeometry x="-0.5" y="-1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e14t" value="0.75%&#xa;x6&#xa;0.35%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e14">
+          <mxGeometry x="0.5" y="1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e15" style="edgeStyle=none;startArrow=classic;startFill=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="p1" target="p5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15s" value="0.20%&#xa;x8&#xa;0.10%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e15">
+          <mxGeometry x="-0.5" y="-1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e15t" value="0.18%&#xa;x8&#xa;0.08%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e15">
+          <mxGeometry x="0.5" y="1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e16" style="edgeStyle=none;startArrow=classic;startFill=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="p1" target="p6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e16s" value="1.10%&#xa;x4&#xa;0.55%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e16">
+          <mxGeometry x="-0.5" y="-1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e16t" value="1.05%&#xa;x4&#xa;0.50%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e16">
+          <mxGeometry x="0.5" y="1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e17" style="edgeStyle=none;startArrow=classic;startFill=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="p1" target="p7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e17s" value="0.65%&#xa;x6&#xa;0.33%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e17">
+          <mxGeometry x="-0.5" y="-1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e17t" value="0.60%&#xa;x6&#xa;0.30%" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e17">
+          <mxGeometry x="0.5" y="1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
