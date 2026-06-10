@@ -107,15 +107,82 @@ def write_ns3_topology(
     elif detected_types:
         header_npu_type = "MIXED"
 
-    # Node ID assignment:
-    # 0 .. num_npus-1               = NPUs
-    # num_npus .. total_nodes-1     = Leaf switches
-    leaf_start = num_npus
+    # Build unfolded topology when lld is available
+    spine_ips: List[str] = []
+    oxc_ips: List[str] = []
+    oxc_crosses: Dict[str, List[Tuple[str, str]]] = {}  # oxc_ip -> [(port_a, port_b)]
+    spine_to_leaf: Dict[str, List[str]] = {}  # spine_ip -> [leaf_ip]
+    leaf_to_spine: Dict[str, str] = {}  # leaf_ip -> spine_ip
+    spine_to_oxc: Dict[str, List[str]] = {}  # spine_ip -> [oxc_ip]
 
-    # Map leaf IP to node ID
+    if lld:
+        topo = lld.get("topology", {})
+        _strip = lambda s: __import__("re").sub(r"\(\d+\)$", "", s).strip()
+        spine_ips = sorted({_strip(n["node_id"]) for n in topo.get("spine_nodes", [])})
+        oxc_ips_raw = sorted({_strip(n["node_id"]) for n in topo.get("oxc_nodes", [])})
+        all_leaf_ips = {_strip(n["node_id"]) for n in topo.get("leaf_nodes", [])}
+
+        # Build leaf↔spine and spine↔OXC mappings from edges
+        for e in topo.get("edges", []):
+            a_id = _strip(e["a_node_id"])
+            b_id = _strip(e["b_node_id"])
+            a_port = str(e.get("a_node_port_id", ""))
+            b_port = str(e.get("b_node_port_id", ""))
+
+            # Leaf ↔ Spine
+            if a_id in all_leaf_ips and b_id in spine_ips:
+                leaf_to_spine[a_id] = b_id
+                spine_to_leaf.setdefault(b_id, []).append(a_id)
+            elif b_id in all_leaf_ips and a_id in spine_ips:
+                leaf_to_spine[b_id] = a_id
+                spine_to_leaf.setdefault(a_id, []).append(b_id)
+
+            # Spine ↔ OXC
+            if a_id in spine_ips and b_id in oxc_ips_raw:
+                spine_to_oxc.setdefault(a_id, []).append(b_id)
+            elif b_id in spine_ips and a_id in oxc_ips_raw:
+                spine_to_oxc.setdefault(b_id, []).append(a_id)
+
+        # Use only 1 OXC to avoid multi-path loops; pick the first one
+        oxc_ips = oxc_ips_raw[:1] if oxc_ips_raw else []
+
+    # Map leaf IP to node ID (needed before unfolded link pre-compute)
+    leaf_start = num_npus
     leaf_ip_to_id: Dict[str, int] = {}
     for i, leaf in enumerate(leaves):
         leaf_ip_to_id[leaf["ip"]] = leaf_start + i
+
+    num_spines = len(spine_ips)
+    num_oxc = len(oxc_ips)
+    spine_start = num_npus + num_leaf_switches
+    oxc_start = spine_start + num_spines
+    num_switch_nodes = num_leaf_switches + num_spines + num_oxc
+    total_nodes = num_npus + num_switch_nodes
+
+    # Map spine/OXC IPs to node IDs
+    spine_ip_to_id: Dict[str, int] = {}
+    for i, sip in enumerate(spine_ips):
+        spine_ip_to_id[sip] = spine_start + i
+    oxc_ip_to_id: Dict[str, int] = {}
+    for i, oip in enumerate(oxc_ips):
+        oxc_ip_to_id[oip] = oxc_start + i
+
+    # Pre-compute unfolded links
+    leaf_spine_links: List[Tuple[int, int]] = []
+    spine_oxc_links: List[Tuple[int, int]] = []
+    if lld and oxc_ips:
+        for leaf_ip, spine_ip in leaf_to_spine.items():
+            leaf_id = leaf_ip_to_id.get(leaf_ip)
+            spine_id = spine_ip_to_id.get(spine_ip)
+            if leaf_id is not None and spine_id is not None:
+                leaf_spine_links.append((leaf_id, spine_id))
+        for spine_ip, oxc_list in spine_to_oxc.items():
+            spine_id = spine_ip_to_id.get(spine_ip)
+            if spine_id is not None:
+                for oip in oxc_list:
+                    oid = oxc_ip_to_id.get(oip)
+                    if oid is not None:
+                        spine_oxc_links.append((spine_id, oid))
 
     lines: List[str] = []
 
@@ -135,15 +202,16 @@ def write_ns3_topology(
             leaf_ips = [leaf_ip] if leaf_ip else []
         leaf_count = len([lip for lip in leaf_ips if leaf_ip_to_id.get(lip) is not None])
         npu_leaf_links += npu_per_server * leaf_count if leaf_count else npu_per_server
-    total_links = total_full_mesh_links + npu_leaf_links + leaf_leaf_links
+    unfolded_links = len(leaf_spine_links) + len(spine_oxc_links)
+    total_links = total_full_mesh_links + npu_leaf_links + (unfolded_links if unfolded_links else leaf_leaf_links)
 
     # Line 1: header
     lines.append(
         f"{total_nodes} {npu_per_server} {num_nv_switches} "
-        f"{num_leaf_switches} {total_links} {header_npu_type}"
+        f"{num_switch_nodes} {total_links} {header_npu_type}"
     )
 
-    # Line 2: switch node IDs (only leaf switches)
+    # Line 2: switch node IDs (leaf + spine + OXC)
     switch_ids = list(range(leaf_start, total_nodes))
     lines.append(" ".join(str(x) for x in switch_ids))
 
@@ -180,12 +248,19 @@ def write_ns3_topology(
                 lines.append(f"{npu_id} {leaf_id} {bandwidth} {latency} {error_rate}")
                 npu_leaf_links += 1
 
-    # Leaf <-> Leaf links (from OXC crosses)
-    for (leaf_a_ip, leaf_b_ip, _oxc_ip, _pa, _pb) in leaf_leaf_edges:
-        a_id = leaf_ip_to_id.get(leaf_a_ip)
-        b_id = leaf_ip_to_id.get(leaf_b_ip)
-        if a_id is not None and b_id is not None:
-            lines.append(f"{a_id} {b_id} {ap_bandwidth} {latency} {error_rate}")
+    if unfolded_links:
+        # Unfolded: Leaf→Spine + Spine→OXC (OXC acts as circuit switch)
+        for (leaf_id, spine_id) in leaf_spine_links:
+            lines.append(f"{leaf_id} {spine_id} {bandwidth} {latency} {error_rate}")
+        for (spine_id, oxc_id) in spine_oxc_links:
+            lines.append(f"{spine_id} {oxc_id} {bandwidth} {latency} {error_rate}")
+    else:
+        # Folded: Leaf↔Leaf (OXC cross abstracted as direct link)
+        for (leaf_a_ip, leaf_b_ip, _oxc_ip, _pa, _pb) in leaf_leaf_edges:
+            a_id = leaf_ip_to_id.get(leaf_a_ip)
+            b_id = leaf_ip_to_id.get(leaf_b_ip)
+            if a_id is not None and b_id is not None:
+                lines.append(f"{a_id} {b_id} {ap_bandwidth} {latency} {error_rate}")
 
     os.makedirs(
         os.path.dirname(out_path) if os.path.dirname(out_path) else ".", exist_ok=True
