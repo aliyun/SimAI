@@ -991,26 +991,31 @@ Tick Layer::compute_time(
      }else{
       int _node_count = (tp_size * nranks) / gpus_per_server;
       uint32_t _temp_gpus_per_server = (gpus_per_server / tp_size > 1) ? (gpus_per_server / tp_size) : 1;
-      float _temp_nics_per_server = (tp_size > gpus_per_server) ? (nics_per_server / gpus_per_server) : (nics_per_server / tp_size);
+      // Promote to float BEFORE dividing; otherwise uint32/uint32 truncates to 0
+      // when nics_per_server < divisor (e.g. -n_p_s 1 with tp=4), driving the
+      // modelled bandwidth to zero and making ALLTOALL_EP silently return 0 us.
+      float _temp_nics_per_server = (tp_size > (int)gpus_per_server)
+          ? (static_cast<float>(nics_per_server) / gpus_per_server)
+          : (static_cast<float>(nics_per_server) / tp_size);
       result = cal_busbw(gpu_type,nvlink_bw,bw_per_nic,_temp_nics_per_server,_node_count,coll_type,_temp_gpus_per_server,nic_type);
      }
     }else if(group_type == MockNccl::GroupType::DP && nranks > 1){
       if(tp_size <= gpus_per_server){
         uint32_t _temp_gpus_per_server = gpus_per_server / tp_size;
-        float _temp_nics_per_server = nics_per_server / tp_size;
+        float _temp_nics_per_server = static_cast<float>(nics_per_server) / tp_size;
         result = cal_busbw(gpu_type,nvlink_bw,bw_per_nic,_temp_nics_per_server,nranks,coll_type,_temp_gpus_per_server,nic_type);
       }else{
-        float _temp_nics_per_server = nics_per_server / gpus_per_server;
+        float _temp_nics_per_server = static_cast<float>(nics_per_server) / gpus_per_server;
         result = cal_busbw(gpu_type,nvlink_bw,bw_per_nic,_temp_nics_per_server,nranks,coll_type,1,nic_type);
       }
     }else if(group_type == MockNccl::GroupType::DP_EP && nranks > 1){
       if(tp_size * ep_size <= gpus_per_server){
-        float _temp_nics_per_server = nics_per_server / (tp_size * ep_size);
+        float _temp_nics_per_server = static_cast<float>(nics_per_server) / (tp_size * ep_size);
         uint32_t _temp_gpus_per_server = gpus_per_server / (tp_size * ep_size);
         result = cal_busbw(gpu_type,nvlink_bw,bw_per_nic,_temp_nics_per_server,nranks,coll_type,_temp_gpus_per_server,nic_type);
-       
+
       }else{
-        float _temp_nics_per_server = nics_per_server / gpus_per_server;
+        float _temp_nics_per_server = static_cast<float>(nics_per_server) / gpus_per_server;
         result = cal_busbw(gpu_type,nvlink_bw,bw_per_nic,_temp_nics_per_server,nranks,coll_type,1,nic_type);
       }
     }else{

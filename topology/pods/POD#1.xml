@@ -212,16 +212,16 @@
         <mxCell id="leaf-10-118-241-68" value="LEAF_68&#10;LEAF&#10;10.118.241.68" style="rounded=0;whiteSpace=wrap;align=center;fontStyle=1;fontSize=16;" vertex="1" parent="1">
           <mxGeometry x="14195" y="1300" width="350" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="server-superpod-0-server-0" value="A5_superpod#0_server#0&#10;SERVER&#10;superpod#0_server#0&#10;[T-LLaMA-7B-g8-mq6c3xfb]" style="rounded=0;whiteSpace=wrap;align=center;fontStyle=1;fontSize=16;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+        <mxCell id="server-superpod-0-server-0" value="A5_superpod#0_server#0&#10;SERVER&#10;superpod#0_server#0&#10;[T-DeepSeek-16B-g32-mq7hm8e3]" style="rounded=0;whiteSpace=wrap;align=center;fontStyle=1;fontSize=16;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
           <mxGeometry x="-505" y="1550" width="350" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="server-superpod-0-server-1" value="A5_superpod#0_server#1&#10;SERVER&#10;superpod#0_server#1" style="rounded=0;whiteSpace=wrap;align=center;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+        <mxCell id="server-superpod-0-server-1" value="A5_superpod#0_server#1&#10;SERVER&#10;superpod#0_server#1&#10;[T-DeepSeek-16B-g32-mq7hm8e3]" style="rounded=0;whiteSpace=wrap;align=center;fontStyle=1;fontSize=16;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
           <mxGeometry x="-85" y="1550" width="350" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="server-superpod-0-server-2" value="A5_superpod#0_server#2&#10;SERVER&#10;superpod#0_server#2" style="rounded=0;whiteSpace=wrap;align=center;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+        <mxCell id="server-superpod-0-server-2" value="A5_superpod#0_server#2&#10;SERVER&#10;superpod#0_server#2&#10;[T-DeepSeek-16B-g32-mq7hm8e3]" style="rounded=0;whiteSpace=wrap;align=center;fontStyle=1;fontSize=16;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
           <mxGeometry x="335" y="1550" width="350" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="server-superpod-0-server-3" value="A5_superpod#0_server#3&#10;SERVER&#10;superpod#0_server#3" style="rounded=0;whiteSpace=wrap;align=center;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+        <mxCell id="server-superpod-0-server-3" value="A5_superpod#0_server#3&#10;SERVER&#10;superpod#0_server#3&#10;[T-DeepSeek-16B-g32-mq7hm8e3]" style="rounded=0;whiteSpace=wrap;align=center;fontStyle=1;fontSize=16;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
           <mxGeometry x="755" y="1550" width="350" height="80" as="geometry" />
         </mxCell>
         <mxCell id="server-superpod-0-server-4" value="A5_superpod#0_server#4&#10;SERVER&#10;superpod#0_server#4" style="rounded=0;whiteSpace=wrap;align=center;fontStyle=1;fontSize=16;" vertex="1" parent="1">

@@ -37,23 +37,37 @@ function cleanup_result {
 
 function compile_astrasim {
     cd "${BUILD_DIR}" || exit
-    cmake ..
+    # 支持 OXC 集成选项
+    if [ "$1" == "OXC" ]; then
+        cmake -DUSE_OXC_INTEGRATION=TRUE ..
+    else
+        cmake ..
+    fi
     make
 }
 
 function compile {
+    local oxc_option="$1"
     # Only compile & Run the AstraSimNetwork ns3program
-    # if [ ! -f '"${INPUT_DIR}"/inputs/config/SimAI.conf' ]; then
-    #     echo ""${INPUT_DIR}"/config/SimAI.conf is not exist"
-    #     cp "${INPUT_DIR}"/config/SimAI.conf "${SIM_LOG_DIR}"/config/SimAI.conf
-    # fi
     cp "${ASTRA_SIM_DIR}"/network_frontend/ns3/AstraSimNetwork.cc "${NS3_DIR}"/simulation/scratch/
     cp "${ASTRA_SIM_DIR}"/network_frontend/ns3/*.h "${NS3_DIR}"/simulation/scratch/
-    rm -rf "${NS3_APPLICATION}"/astra-sim 
+
+    # 如果启用 OXC，复制为不同的文件名
+    if [ "$oxc_option" == "OXC" ]; then
+        cp "${NS3_DIR}"/simulation/scratch/AstraSimNetwork.cc "${NS3_DIR}"/simulation/scratch/AstraSimNetwork_oxc.cc
+    fi
+
+    rm -rf "${NS3_APPLICATION}"/astra-sim
     cp -r "${ASTRA_SIM_DIR}" "${NS3_APPLICATION}"/
     cd "${NS3_DIR}/simulation"
-    CC='gcc' CXX='g++' 
-    ./ns3 configure -d debug --enable-mtp
+    CC='gcc' CXX='g++'
+
+    # 配置 NS3，如果启用 OXC 则传递 CMake 选项
+    if [ "$oxc_option" == "OXC" ]; then
+        ./ns3 configure -d debug --enable-mtp -- -DUSE_OXC_INTEGRATION=TRUE
+    else
+        ./ns3 configure -d debug --enable-mtp
+    fi
     ./ns3 build
 
     cd "${SCRIPT_DIR:?}"
@@ -84,11 +98,13 @@ case "$1" in
     debug;;
 -c|--compile)
     setup
-    compile_astrasim
-    compile;;
+    compile_astrasim "$2"
+    compile "$2";;
 -r|--run)
     setup
     compile;;
 -h|--help|*)
-    printf "Prints help message";;
+    printf "Prints help message\n"
+    printf "Run $0 -c to compile.\n"
+    printf "Run $0 -c OXC to compile with OXC integration.\n";;
 esac

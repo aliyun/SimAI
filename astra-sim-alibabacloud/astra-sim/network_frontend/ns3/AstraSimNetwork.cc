@@ -40,8 +40,16 @@
 #include "ns3/mpi-interface.h"
 #include <mpi.h>
 #endif
+#ifdef USE_OXC_INTEGRATION
+#include "astra-sim/system/OxcIntegration.h"
+#endif
 
-#define RESULT_PATH "./ncclFlowModel_"
+#define RESULT_PATH_DEFAULT "./ncclFlowModel_"
+
+static const char* get_result_path() {
+    const char* env = std::getenv("AS_RESULT_PATH");
+    return env ? env : RESULT_PATH_DEFAULT;
+}
 
 using namespace std;
 using namespace ns3;
@@ -50,6 +58,7 @@ extern std::map<std::pair<std::pair<int, int>,int>, AstraSim::ncclFlowTag> recei
 extern uint32_t node_num, switch_num, link_num, trace_num, nvswitch_num, gpus_per_server;
 extern GPUType gpu_type;
 extern std::vector<int>NVswitchs;
+extern MockNccl::MockNcclGroup* GlobalGroup;
 
 struct sim_event {
   void *buffer;
@@ -270,6 +279,22 @@ int main(int argc, char *argv[]) {
   #endif
   
   main1(user_param.network_topo,user_param.network_conf);
+
+  // Allow env var override of FLOW_FILE config (for replay mode)
+  {
+    const char* ff = std::getenv("AS_FLOW_FILE");
+    if (ff && ff[0]) flow_file = ff;
+  }
+
+#ifdef USE_OXC_INTEGRATION
+  // 初始化 OXC 集成（如果启用）
+  if (!OxcIntegration::initializeGlobalOxcAdapter()) {
+    NcclLog->writeLog(NcclLogLevel::WARNING, "[OXC] Failed to initialize OXC adapter");
+  } else {
+    NcclLog->writeLog(NcclLogLevel::INFO, "[OXC] OXC adapter initialized successfully");
+  }
+#endif
+
   int nodes_num = node_num - switch_num;
   int gpu_num = node_num - nvswitch_num - switch_num;
 
@@ -307,7 +332,7 @@ int main(int argc, char *argv[]) {
         1,          
         1,
         0,                 
-        RESULT_PATH, 
+        get_result_path(), 
         "test1",            
         true,               
         false,               
@@ -319,13 +344,23 @@ int main(int argc, char *argv[]) {
     systems[j ]->nvswitch_id = node2nvswitch[j];
     systems[j ]->num_gpus = nodes_num - nvswitch_num;
   }
+  // Check replay mode: flows loaded from file by MockNcclGroup constructor,
+  // SimAI event loop runs normally for proper timing and CSV generation.
+  const char* replay_env = std::getenv("AS_REPLAY_MODE");
+  bool replay_mode = (replay_env != nullptr && std::string(replay_env) == "1");
+
+  if (replay_mode) {
+    std::cout << "[Replay] AS_REPLAY_MODE=1 — loading flows from " << flow_file << std::endl;
+    if (GlobalGroup) GlobalGroup->loadFlowsFromFile();
+  }
+
   for (int i = 0; i < nodes_num; i++) {
     systems[i]->workload->fire();
   }
   std::cout << "simulator run " << std::endl;
 
-  Simulator::Run();
   Simulator::Stop(Seconds(2000000000));
+  Simulator::Run();
   Simulator::Destroy();
   
   #ifdef NS3_MPI

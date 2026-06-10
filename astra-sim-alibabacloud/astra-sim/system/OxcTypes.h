@@ -63,6 +63,54 @@ struct OxcAllReduceRequest {
     std::string algName;  // "ALGO_OXC_RING", "ALGO_OXC_HD", "ALGO_OXC_NB"
 };
 
+// ============================================================
+// 预留接口：以下结构体为未来 OXC 集合通信类型预留
+// Reserved interfaces for future OXC collective communication types
+// ============================================================
+
+// OXC AllGather API 请求结构（预留）
+// TODO: 待 OXC 后端实现后填充具体字段
+struct OxcAllGatherRequest {
+    RankTable ranktable;
+    std::vector<std::vector<int>> commDomain;  // 通信域
+    double commDomainVolume;                    // 通信数据量
+    std::map<std::string, std::string> rankIdRackIdMap;
+    std::string algName;  // 算法名称，待定义
+    // 预留扩展字段
+    std::map<std::string, std::string> extra_params;
+};
+
+// OXC ReduceScatter API 请求结构（预留）
+// TODO: 待 OXC 后端实现后填充具体字段
+struct OxcReduceScatterRequest {
+    RankTable ranktable;
+    std::vector<std::vector<int>> commDomain;  // 通信域
+    double commDomainVolume;                    // 通信数据量
+    std::map<std::string, std::string> rankIdRackIdMap;
+    std::string algName;  // 算法名称，待定义
+    // 预留扩展字段
+    std::map<std::string, std::string> extra_params;
+};
+
+// OXC AllToAll API 请求结构（预留）
+// TODO: 待 OXC 后端实现后填充具体字段
+struct OxcAllToAllRequest {
+    RankTable ranktable;
+    std::vector<std::vector<int>> commDomain;  // 通信域
+    double commDomainVolume;                    // 通信数据量
+    std::map<std::string, std::string> rankIdRackIdMap;
+    std::string algName;  // 算法名称，待定义
+    // AllToAll 特有字段
+    std::vector<std::vector<uint64_t>> sendCounts;  // 每个 rank 发送给其他 rank 的数据量
+    std::vector<std::vector<uint64_t>> recvCounts;  // 每个 rank 从其他 rank 接收的数据量
+    // 预留扩展字段
+    std::map<std::string, std::string> extra_params;
+};
+
+// OXC 通用响应结构（可用于所有集合通信类型）
+// 响应格式统一为: [[src_rank, dst_rank, step, datasize], ...]
+// OxcFlowEntry 已定义，可复用
+
 // OXC API 响应 - 单个流条目
 // 响应格式: [[src_rank, dst_rank, step, datasize], ...]
 struct OxcFlowEntry {
@@ -128,8 +176,8 @@ struct WorkloadConfig {
     int pp_size = 1;                   // PP size
     int vpp = 1;                       // Virtual PP
     int ga = 1;                        // Gradient Accumulation
-    int all_gpus = 0;                  // Total GPUs
-    int gpus_per_server = 8;           // GPUs per server
+    int all_gpus = 0;                  // Total NPUs
+    int gpus_per_server = 8;           // NPUs per server
     int num_layers = 0;
     std::vector<LayerCommInfo> layers;
 };
@@ -228,6 +276,43 @@ inline GroupType parseGroupType(const std::string& str, TrainingPhase phase) {
     }
     return GroupType::TP;
 }
+
+// 扩展流结构 - 包含双向链接和调度信息
+struct ScheduledFlow {
+    int flow_id;
+    int operation_id;
+    std::string layer_name;
+    TrainingPhase phase;
+    CommType comm_type;
+    GroupType group_type;
+    int src;
+    int dst;
+    uint64_t flow_size;
+    int step;
+
+    // 双向依赖链接
+    std::vector<int> parent_flow_ids;   // 父流ID列表（依赖）
+    std::vector<int> child_flow_ids;    // 子流ID列表
+
+    // 调度信息
+    int indegree;                       // 入度（未完成的父流数量）
+    int schedule_tick;                  // 调度时刻（-1表示未调度）
+    int complete_tick;                  // 完成时刻（-1表示未完成）
+    bool is_active;                     // 是否已激活
+    bool is_completed;                  // 是否已完成
+
+    ScheduledFlow() : indegree(0), schedule_tick(-1), complete_tick(-1),
+                      is_active(false), is_completed(false) {}
+};
+
+// 调度结果统计
+struct ScheduleStats {
+    int total_flows;
+    int total_ticks;
+    int max_parallel_flows;             // 最大并行流数
+    std::map<int, int> flows_per_tick;  // 每个tick的活跃流数
+    std::map<int, std::vector<int>> tick_to_flows;  // 每个tick激活的流
+};
 
 }  // namespace OXC
 

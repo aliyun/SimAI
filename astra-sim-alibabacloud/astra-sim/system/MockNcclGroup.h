@@ -120,7 +120,7 @@ namespace MockNccl {
    public:
     MockNcclGroup(){}
     MockNcclGroup(int _ngpus,int _gpus_per_nodes, int _TP_size,int _DP_size,int _PP_size,int _EP_size,int _DP_EP_size,std::vector<int>_NVSwitch,GPUType _gpu_type);
-    ~MockNcclGroup(){};
+    ~MockNcclGroup(){ if(_flow_file.is_open()) { _flow_file.seekp(0); _flow_file << _flow_count << std::endl; _flow_file.close(); } };
 
     std::map<std::pair<int,GroupType>,int> GroupIndex;
     std::map<int,GroupInfo> AllGroups;
@@ -132,6 +132,11 @@ namespace MockNccl {
 
     int g_flow_id;
     GPUType gpu_type;
+    std::ofstream _flow_file;
+    uint32_t _flow_count = 0;
+    void enableFlowFileOutput(const std::string &path);
+    void autoEnableFlowOutput();
+    void loadFlowsFromFile();
     std::map<std::string,int> FlowName2nums;
     std::map<std::string ,std::map<int,std::shared_ptr<FlowModels> >> flow_models; 
     std::map<std::string ,struct ncclInfo*> nccl_infos;  

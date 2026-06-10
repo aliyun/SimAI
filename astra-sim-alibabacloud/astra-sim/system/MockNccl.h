@@ -44,8 +44,8 @@
 #define NCCL_TOPO_CPU_VENDOR_INTEL 1
 #define NCCL_TOPO_CPU_VENDOR_AMD 2
 
-#define NCCL_TOPO_PATTERN_BALANCED_TREE 1   // 目前正在使用的 Spread NIC traffic between two GPUs (Tree parent + one child on first GPU, second child on second GPU)
-#define NCCL_TOPO_PATTERN_SPLIT_TREE 2      // Spread NIC traffic between two GPUs (Tree parent on first GPU, tree children on the second GPU)
+#define NCCL_TOPO_PATTERN_BALANCED_TREE 1   // 目前正在使用的 Spread NIC traffic between two NPUs (Tree parent + one child on first NPU, second child on second GPU)
+#define NCCL_TOPO_PATTERN_SPLIT_TREE 2      // Spread NIC traffic between two NPUs (Tree parent on first NPU, tree children on the second GPU)
 #define NCCL_TOPO_PATTERN_TREE 3            // All NIC traffic going to/from the same GPU
 #define NCCL_TOPO_PATTERN_RING 4            // Ring
 #define NCCL_TOPO_PATTERN_NVLS 5            // NVLS+SHARP and NVLS+Tree
@@ -83,12 +83,12 @@ static const double perChMaxTreeBws[3][3] = {
     /* Hopper (N1/N2/N4) */ {38.7, 41.4, 36.0},
 };
 
-// NVLink, PCI, Network 硬件时延
-#define NCCL_HW_NVLINK 0
+// 服务器内带宽, PCI, Network 硬件时延
+#define NCCL_HW_INTRA 0
 #define NCCL_HW_PCI 1
 #define NCCL_HW_NET 2
 static float hwLat [3][NCCL_NUM_ALGORITHMS][NCCL_NUM_PROTOCOLS] =
-    { /* NVLINK */
+    { /* INTRA_SRV */
      { /* Tree (LL/LL128/Simple)*/ { .6, 1.25,  4 }, /* Ring (LL/LL128/Simple)*/ { .6, 1.9, 3.4 },
       /* CollNetDirect (Simple)*/ { 0, 0, 8.0 }, /* CollNetChain (Simple)*/ { 0, 0, 4.75 },
       /* NVLS */ { 0, 0, 0 }, /* NVLSTree */ { 0, 0, 0 } },
@@ -117,10 +117,10 @@ static float hwLat [3][NCCL_NUM_ALGORITHMS][NCCL_NUM_PROTOCOLS] =
 // Local (myself)
 #define PATH_LOC 0
 
-// Connection traversing NVLink
+// Connection traversing server-internal fabric
 #define PATH_NVL 1
 
-// Connection through NVLink using an intermediate GPU
+// Connection through server-internal fabric using an intermediate NPU
 #define PATH_NVB 2
 
 // Connection traversing at most a single PCIe bridge
@@ -129,7 +129,7 @@ static float hwLat [3][NCCL_NUM_ALGORITHMS][NCCL_NUM_PROTOCOLS] =
 // Connection traversing multiple PCIe bridges (without traversing the PCIe Host Bridge)
 #define PATH_PXB 4
 
-// Connection between a GPU and a NIC using an intermediate GPU. Used to enable rail-local, aggregated network send/recv operations.
+// Connection between a NPU and a NIC using an intermediate GPU. Used to enable rail-local, aggregated network send/recv operations.
 #define PATH_PXN 5
 
 // Connection traversing PCIe as well as a PCIe Host Bridge (typically the CPU)

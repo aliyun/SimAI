@@ -65,7 +65,7 @@ static size_t writeCallback(void* contents, size_t size, size_t nmemb, void* use
 }
 
 OxcHttpClient::OxcHttpClient()
-    : timeout_seconds_(30), initialized_(false) {
+    : timeout_seconds_(30), connect_timeout_seconds_(5), initialized_(false) {
     // 确保 CURL 全局初始化（线程安全，只执行一次）
     CurlGlobalManager::instance();
 }
@@ -86,6 +86,10 @@ bool OxcHttpClient::initialize(const std::string& base_url) {
 
 void OxcHttpClient::setTimeout(int timeout_seconds) {
     timeout_seconds_ = timeout_seconds;
+}
+
+void OxcHttpClient::setConnectTimeout(int connect_timeout_seconds) {
+    connect_timeout_seconds_ = connect_timeout_seconds;
 }
 
 std::string OxcHttpClient::getLastError() const {
@@ -110,11 +114,22 @@ std::string OxcHttpClient::httpPost(const std::string& url, const std::string& j
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout_seconds_);
+    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, connect_timeout_seconds_);
 
     CURLcode res = curl_easy_perform(curl);
 
     if (res != CURLE_OK) {
-        last_error_ = std::string("CURL error: ") + curl_easy_strerror(res);
+        if (res == CURLE_OPERATION_TIMEDOUT) {
+            last_error_ = "HTTP request timed out after " +
+                          std::to_string(timeout_seconds_) + "s to " + url;
+        } else if (res == CURLE_COULDNT_CONNECT) {
+            last_error_ = "Cannot connect to OXC server at " + url +
+                          " (connect timeout: " + std::to_string(connect_timeout_seconds_) + "s)";
+        } else if (res == CURLE_COULDNT_RESOLVE_HOST) {
+            last_error_ = "Cannot resolve host for URL: " + url;
+        } else {
+            last_error_ = std::string("CURL error: ") + curl_easy_strerror(res);
+        }
         response = "";
     }
 
@@ -321,6 +336,117 @@ std::vector<OxcFlowEntry> OxcHttpClient::callAllReduceApi(const OxcAllReduceRequ
     }
 
     return entries;
+}
+
+// ============================================================
+// 预留接口实现：以下 API 为未来 OXC 集合通信类型预留
+// Reserved API implementations for future OXC collective communication types
+// ============================================================
+
+std::vector<OxcFlowEntry> OxcHttpClient::callAllGatherApi(const OxcAllGatherRequest& request) {
+    if (!initialized_) {
+        last_error_ = "HTTP client not initialized";
+        return {};
+    }
+
+    // TODO: 待 OXC 后端实现 AllGather API 后启用
+    // std::string url = base_url_ + "/api/oxc/allgather";
+    // std::string json_body = buildAllGatherRequestJson(request);
+    // std::string response = httpPost(url, json_body);
+    // return parseResponseJson(response);
+
+    last_error_ = "AllGather API not yet implemented in OXC backend";
+    std::cerr << "[OXC] Warning: callAllGatherApi called but not yet implemented" << std::endl;
+    return {};
+}
+
+std::vector<OxcFlowEntry> OxcHttpClient::callReduceScatterApi(const OxcReduceScatterRequest& request) {
+    if (!initialized_) {
+        last_error_ = "HTTP client not initialized";
+        return {};
+    }
+
+    // TODO: 待 OXC 后端实现 ReduceScatter API 后启用
+    // std::string url = base_url_ + "/api/oxc/reducescatter";
+    // std::string json_body = buildReduceScatterRequestJson(request);
+    // std::string response = httpPost(url, json_body);
+    // return parseResponseJson(response);
+
+    last_error_ = "ReduceScatter API not yet implemented in OXC backend";
+    std::cerr << "[OXC] Warning: callReduceScatterApi called but not yet implemented" << std::endl;
+    return {};
+}
+
+std::vector<OxcFlowEntry> OxcHttpClient::callAllToAllApi(const OxcAllToAllRequest& request) {
+    if (!initialized_) {
+        last_error_ = "HTTP client not initialized";
+        return {};
+    }
+
+    // TODO: 待 OXC 后端实现 AllToAll API 后启用
+    // std::string url = base_url_ + "/api/oxc/alltoall";
+    // std::string json_body = buildAllToAllRequestJson(request);
+    // std::string response = httpPost(url, json_body);
+    // return parseResponseJson(response);
+
+    last_error_ = "AllToAll API not yet implemented in OXC backend";
+    std::cerr << "[OXC] Warning: callAllToAllApi called but not yet implemented" << std::endl;
+    return {};
+}
+
+bool OxcHttpClient::isApiSupported(const std::string& api_name) {
+    // 当前仅支持 AllReduce
+    // TODO: 后续可通过调用 OXC 后端的能力查询接口动态获取
+    if (api_name == "allreduce") {
+        return true;
+    }
+    // 预留接口，暂未实现
+    if (api_name == "allgather" || api_name == "reducescatter" || api_name == "alltoall") {
+        return false;  // 待后端实现后改为 true
+    }
+    return false;
+}
+
+std::string OxcHttpClient::buildAllGatherRequestJson(const OxcAllGatherRequest& request) {
+    // TODO: 待 OXC 后端定义 AllGather API 格式后实现
+    // 预留结构，参考 AllReduce 的实现
+    std::ostringstream oss;
+    oss << "{";
+    oss << "\"ranktable\":{},";  // 简化占位
+    oss << "\"commDomain\":[],";
+    oss << "\"commDomainVolume\":" << request.commDomainVolume << ",";
+    oss << "\"rankIdRackIdMap\":{},";
+    oss << "\"algName\":\"" << request.algName << "\"";
+    oss << "}";
+    return oss.str();
+}
+
+std::string OxcHttpClient::buildReduceScatterRequestJson(const OxcReduceScatterRequest& request) {
+    // TODO: 待 OXC 后端定义 ReduceScatter API 格式后实现
+    std::ostringstream oss;
+    oss << "{";
+    oss << "\"ranktable\":{},";
+    oss << "\"commDomain\":[],";
+    oss << "\"commDomainVolume\":" << request.commDomainVolume << ",";
+    oss << "\"rankIdRackIdMap\":{},";
+    oss << "\"algName\":\"" << request.algName << "\"";
+    oss << "}";
+    return oss.str();
+}
+
+std::string OxcHttpClient::buildAllToAllRequestJson(const OxcAllToAllRequest& request) {
+    // TODO: 待 OXC 后端定义 AllToAll API 格式后实现
+    std::ostringstream oss;
+    oss << "{";
+    oss << "\"ranktable\":{},";
+    oss << "\"commDomain\":[],";
+    oss << "\"commDomainVolume\":" << request.commDomainVolume << ",";
+    oss << "\"rankIdRackIdMap\":{},";
+    oss << "\"algName\":\"" << request.algName << "\",";
+    oss << "\"sendCounts\":[],";
+    oss << "\"recvCounts\":[]";
+    oss << "}";
+    return oss.str();
 }
 
 }  // namespace OXC

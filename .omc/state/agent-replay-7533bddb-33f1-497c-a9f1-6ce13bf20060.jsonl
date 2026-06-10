@@ -1,7 +1,2 @@
-{"t":0,"agent":"system","event":"keyword_detected","keyword":"deep-interview"}
-{"t":0,"agent":"afcc6eb","agent_type":"explore","event":"agent_start","parent_mode":"none"}
-{"t":0,"agent":"afe2685","agent_type":"explore","event":"agent_start","parent_mode":"none"}
-{"t":0,"agent":"aa9fb91","agent_type":"explore","event":"agent_start","parent_mode":"none"}
-{"t":0,"agent":"afe2685","agent_type":"explore","event":"agent_stop","success":true,"duration_ms":49973}
-{"t":0,"agent":"aa9fb91","agent_type":"explore","event":"agent_stop","success":true,"duration_ms":54005}
-{"t":0,"agent":"afcc6eb","agent_type":"explore","event":"agent_stop","success":true,"duration_ms":87021}
+{"t":0,"agent":"ad92ed3","agent_type":"Explore","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"ad92ed3","agent_type":"Explore","event":"agent_stop","success":true,"duration_ms":55611}

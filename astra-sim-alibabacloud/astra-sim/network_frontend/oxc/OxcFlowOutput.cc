@@ -157,8 +157,8 @@ bool OxcFlowOutput::writeSummary(
 
     ofs << "Workload Configuration:" << std::endl;
     ofs << "  Parallelism Policy: " << config.parallelism_policy << std::endl;
-    ofs << "  Total GPUs: " << config.all_gpus << std::endl;
-    ofs << "  GPUs per Server: " << config.gpus_per_server << std::endl;
+    ofs << "  Total NPUs: " << config.all_gpus << std::endl;
+    ofs << "  NPUs per Server: " << config.gpus_per_server << std::endl;
     ofs << "  TP Size: " << config.model_parallel_npu_group << std::endl;
     ofs << "  EP Size: " << config.ep_size << std::endl;
     ofs << "  PP Size: " << config.pp_size << std::endl;

@@ -1428,6 +1428,11 @@ DataSet* Sys::generate_collective(
     SchedulingPolicy pref_scheduling,
     EventType event,
     Callable* layer_ptr ) {
+  if (size == 0) {
+    DataSet* dataset = new DataSet(0);
+    dataset->active = false;
+    return dataset;
+  }
   uint64_t chunk_size = determine_chunk_size(size, collective_type);
   if(id == 0) std::cout << "chunk size is: " << chunk_size << " , size is: " << size << " , layer_num is: " << layer_num << " , node: " << id << std::endl;
   uint64_t recommended_chunk_size = chunk_size;

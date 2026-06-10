@@ -119,6 +119,7 @@ def resolve_paths(
     topo = lld.get("topology", {})
 
     _strip = lambda s: re.sub(r"\(\d+\)$", "", s).strip()
+    _ip_key = lambda ip: tuple(int(x) for x in ip.split("."))
     oxc_ips = {_strip(n["node_id"]) for n in topo.get("oxc_nodes", [])}
     all_server_ids = {_strip(n["node_id"]) for n in topo.get("server_nodes", [])}
     all_leaf_ips = {_strip(n["node_id"]) for n in topo.get("leaf_nodes", [])}
@@ -191,7 +192,7 @@ def resolve_paths(
         if ip not in target_servers:
             continue
         node = server_node_map.get(ip, {})
-        srv_leaves = sorted(server_to_leaves.get(ip, set()))
+        srv_leaves = sorted(server_to_leaves.get(ip, set()), key=_ip_key)
         primary_leaf = srv_leaves[0] if srv_leaves else ""
         servers.append({
             "ip": ip,
@@ -202,7 +203,7 @@ def resolve_paths(
         })
 
     leaves = []
-    for lip in sorted(participating_leaves):
+    for lip in sorted(participating_leaves, key=_ip_key):
         node = leaf_node_map.get(lip, {})
         leaves.append({"ip": lip, "node_id": node.get("node_id", "")})
 

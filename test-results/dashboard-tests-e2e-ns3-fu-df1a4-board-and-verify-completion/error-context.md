@@ -1,0 +1,111 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - link "← 返回" [ref=e6] [cursor=pointer]:
+        - /url: /
+      - navigation [ref=e7]:
+        - link "首页" [ref=e8] [cursor=pointer]:
+          - /url: /
+        - link "结果分析" [ref=e9] [cursor=pointer]:
+          - /url: /results
+        - link "监控大屏" [ref=e10] [cursor=pointer]:
+          - /url: /monitor
+  - generic [ref=e11]:
+    - navigation [ref=e13]:
+      - link "✓ Workload" [ref=e15] [cursor=pointer]:
+        - /url: /deploy/workload
+        - generic [ref=e16]: ✓
+        - text: Workload
+      - link "✓ OXC 调节" [ref=e19] [cursor=pointer]:
+        - /url: /deploy/edg
+        - generic [ref=e20]: ✓
+        - text: OXC 调节
+      - link "3 启动仿真" [ref=e23] [cursor=pointer]:
+        - /url: /deploy/launch
+        - generic [ref=e24]: "3"
+        - text: 启动仿真
+    - generic [ref=e26]:
+      - generic [ref=e27]:
+        - heading "启动仿真" [level=2] [ref=e28]
+        - paragraph [ref=e29]: 选择组网并配置仿真参数后启动 OCS-Sim 仿真任务
+      - generic [ref=e31]: 仿真完成！
+      - link "查看仿真结果 →" [ref=e32] [cursor=pointer]:
+        - /url: /results
+      - generic [ref=e33]:
+        - generic [ref=e34]:
+          - generic [ref=e35]: 选择组网
+          - combobox [ref=e36]:
+            - option "-- 请选择组网 --"
+            - option "FullMesh-8G (topo_8g.txt)" [selected]
+          - paragraph [ref=e37]: "拓扑目录: topo_8g.txt"
+          - paragraph [ref=e38]: 必须选择一个组网后才能启动仿真
+        - generic [ref=e39]:
+          - heading "已配置的文件" [level=3] [ref=e40]
+          - generic [ref=e41]:
+            - generic [ref=e42]:
+              - generic [ref=e43]: Workload
+              - generic [ref=e44]: 未配置 — 请先在 Workload 步骤保存
+            - generic [ref=e45]:
+              - generic [ref=e46]: RankTable
+              - generic [ref=e47]: 未配置 — 请先在 RankTable 步骤保存
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - generic [ref=e50]: 集合通信模式
+            - generic [ref=e51]:
+              - button "NCCL 标准 NCCL 集合通信算法，适用于传统以太网 / InfiniBand 互联网络" [ref=e52] [cursor=pointer]:
+                - generic [ref=e53]: NCCL
+                - generic [ref=e54]: 标准 NCCL 集合通信算法，适用于传统以太网 / InfiniBand 互联网络
+              - button "OXC-HCCL OXC（光学电路交换）感知的 HCCL 算法，利用光交换网络的拓扑感知调度降低通信延迟" [ref=e55] [cursor=pointer]:
+                - generic [ref=e56]: OXC-HCCL
+                - generic [ref=e57]: OXC（光学电路交换）感知的 HCCL 算法，利用光交换网络的拓扑感知调度降低通信延迟
+            - paragraph [ref=e58]: 决定使用哪套集合通信算法库及对应的二进制
+          - generic [ref=e59]:
+            - generic [ref=e60]: 仿真引擎
+            - generic [ref=e61]:
+              - button "Analytical（快速） 基于 busbw 总线带宽抽象估算集合通信耗时，速度快，适合大规模扫参" [ref=e62] [cursor=pointer]:
+                - generic [ref=e63]: Analytical（快速）
+                - generic [ref=e64]: 基于 busbw 总线带宽抽象估算集合通信耗时，速度快，适合大规模扫参
+              - button "NS3 Simulation（精细） 全栈网络仿真，逐包建模物理传输，结果精度高，适合深度分析单配置" [ref=e65] [cursor=pointer]:
+                - generic [ref=e66]: NS3 Simulation（精细）
+                - generic [ref=e67]: 全栈网络仿真，逐包建模物理传输，结果精度高，适合深度分析单配置
+            - paragraph [ref=e68]: 当前将使用二进制：SimAI_simulator
+        - generic [ref=e69]:
+          - generic [ref=e70]:
+            - generic [ref=e71]: 线程数
+            - spinbutton [ref=e72]: "8"
+            - paragraph [ref=e73]: NS3 模式建议 8-16
+          - generic [ref=e74]:
+            - generic [ref=e75]: Workload 路径
+            - textbox "workload.txt" [ref=e76]
+          - generic [ref=e77]:
+            - generic [ref=e78]: RankTable 路径
+            - textbox "ranktable.json" [ref=e79]
+          - generic [ref=e80]:
+            - generic [ref=e81]: 拓扑路径
+            - textbox "选择组网后自动填充" [ref=e82]: topo_8g.txt
+            - paragraph [ref=e83]: NS3 模式需要
+        - button "启动仿真" [ref=e84]
+        - generic [ref=e85]:
+          - heading "Recent Processes (2) Updated just now" [level=3] [ref=e86]:
+            - generic [ref=e87]: Recent Processes (2)
+            - generic "Auto-refreshes every 5s" [ref=e88]: Updated just now
+          - generic [ref=e89]:
+            - generic [ref=e91]:
+              - generic [ref=e92]: finished
+              - generic [ref=e93]: PID 38118
+              - generic [ref=e94]: /Users/anthony/PycharmProjects/SimAI/bin/SimAI_simulator -t 8 -w /Users/anthony/PycharmProjects/SimAI/server/workspaces/e2etest_41bac81d-d79/workload.txt -n /Users/anthony/PycharmProjects/SimAI/server/workspaces/e2etest_41bac81d-d79/topo_8g.txt -c /Users/anthony/PycharmProjects/SimAI/server/workspaces/e2etest_41bac81d-d79/SimAI_local.conf
+            - generic [ref=e96]:
+              - generic [ref=e97]: finished
+              - generic [ref=e98]: PID 37675
+              - generic [ref=e99]: /Users/anthony/PycharmProjects/SimAI/bin/SimAI_simulator -t 8 -w /Users/anthony/PycharmProjects/SimAI/server/workspaces/e2etest_d48abb0c-9ba/workload.txt -n /Users/anthony/PycharmProjects/SimAI/server/workspaces/e2etest_d48abb0c-9ba/topo_8g.txt -c /Users/anthony/PycharmProjects/SimAI/server/workspaces/e2etest_d48abb0c-9ba/SimAI_local.conf
+        - generic [ref=e100]:
+          - generic [ref=e101]:
+            - generic [ref=e102]: Console Output
+            - generic [ref=e103]: unknown
+          - generic [ref=e105]: No output yet...
+      - link "← 上一步" [ref=e107] [cursor=pointer]:
+        - /url: /deploy/edg
+```

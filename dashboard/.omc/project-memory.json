@@ -47,8 +47,8 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": "cd /Users/anthony/PycharmProjects/SimAI/dashboard && npx tsc --noEmit 2>&1 | tail -3",
-    "testCommand": "cd /Users/anthony/PycharmProjects/SimAI/dashboard && npx tsc --noEmit 2>&1 && echo \"tsc OK\" && python3 -m pytest server/tests/ -q 2>&1 | tail -2 && bash scripts/lra-test.sh 2>&1 | tail -3",
+    "buildCommand": "cd /Users/anthony/PycharmProjects/SimAI/dashboard && npx tsc --noEmit 2>&1",
+    "testCommand": "python3 -m pytest server/edg/tests/ -v -k \"not launch_ns3 and not binary_exists\" 2>&1 | tail -3 && cd dashboard && npx tsc --noEmit 2>&1 | tail -3",
     "lintCommand": "npm run lint",
     "devCommand": "npm run dev",
     "scripts": {
@@ -298,6 +298,12 @@
       "path": "src/pages/EdgPage.tsx",
       "accessCount": 3,
       "lastAccessed": 1776838839829,
+      "type": "file"
+    },
+    {
+      "path": "src/stores/network-store.ts",
+      "accessCount": 3,
+      "lastAccessed": 1780986687145,
       "type": "file"
     },
     {

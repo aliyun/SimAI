@@ -93,6 +93,32 @@ private:
         const std::vector<int>& comm_group_ranks
     );
 
+    // ============================================================
+    // 预留接口：以下方法为未来 OXC 集合通信类型预留
+    // Reserved methods for future OXC collective communication types
+    // ============================================================
+
+    // 通过OXC API生成AllGather流（预留）
+    // TODO: 待 OXC 后端实现后完善
+    std::vector<OutputFlow> generateAllGatherViaOxc(
+        const OperationContext& ctx,
+        const std::vector<int>& comm_group_ranks
+    );
+
+    // 通过OXC API生成ReduceScatter流（预留）
+    // TODO: 待 OXC 后端实现后完善
+    std::vector<OutputFlow> generateReduceScatterViaOxc(
+        const OperationContext& ctx,
+        const std::vector<int>& comm_group_ranks
+    );
+
+    // 通过OXC API生成AllToAll流（预留）
+    // TODO: 待 OXC 后端实现后完善
+    std::vector<OutputFlow> generateAllToAllViaOxc(
+        const OperationContext& ctx,
+        const std::vector<int>& comm_group_ranks
+    );
+
     // 使用原生方式生成流（用于OXC不支持的操作）
     std::vector<OutputFlow> generateViaNative(
         const OperationContext& ctx,

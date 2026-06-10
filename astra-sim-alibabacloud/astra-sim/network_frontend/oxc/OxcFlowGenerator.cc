@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <set>
+#include <atomic>
 
 namespace OXC {
 
@@ -71,8 +72,21 @@ bool OxcFlowGenerator::hasExternalRankTable() const {
 }
 
 bool OxcFlowGenerator::isOxcSupported(CommType comm_type) const {
-    // 目前OXC只支持AllReduce
-    return comm_type == CommType::ALL_REDUCE;
+    // 当前 OXC 支持的操作类型
+    // 已实现: ALL_REDUCE
+    // 预留（待后端实现）: ALL_GATHER, REDUCE_SCATTER, ALL_TO_ALL
+    switch (comm_type) {
+        case CommType::ALL_REDUCE:
+            return true;  // 已实现
+        case CommType::ALL_GATHER:
+        case CommType::REDUCE_SCATTER:
+        case CommType::ALL_TO_ALL:
+            // 预留接口，当前返回 false，待 OXC 后端实现后改为 true
+            // return http_client_.isApiSupported(commTypeToString(comm_type));
+            return false;
+        default:
+            return false;
+    }
 }
 
 int OxcFlowGenerator::getNextFlowId() {
@@ -355,18 +369,18 @@ std::vector<OutputFlow> OxcFlowGenerator::generateAllReduceViaOxc(
 
     if (racks.size() <= 1) {
         // 所有 rank 都在同一个 rack，使用原生算法
-        static int native_log_count = 0;
-        if (native_log_count < 5) {
+        static std::atomic<int> native_log_count(0);
+        if (native_log_count.load(std::memory_order_relaxed) < 5) {
             std::cout << "[OXC] Using NATIVE (same rack): op=" << ctx.operation_id
                       << ", racks=" << racks.size() << std::endl;
-            native_log_count++;
+            native_log_count.fetch_add(1, std::memory_order_relaxed);
         }
         return generateViaNative(ctx, comm_group_ranks);
     }
 
     // 跨 rack 通信，调用 OXC API
-    static int oxc_log_count = 0;
-    if (oxc_log_count < 5) {
+    static std::atomic<int> oxc_log_count(0);
+    if (oxc_log_count.load(std::memory_order_relaxed) < 5) {
         std::cout << "[OXC] Calling OXC API (cross-rack): op=" << ctx.operation_id
                   << ", racks=" << racks.size() << ", ranks=[";
         for (size_t i = 0; i < std::min(comm_group_ranks.size(), static_cast<size_t>(4)); ++i) {
@@ -374,7 +388,7 @@ std::vector<OutputFlow> OxcFlowGenerator::generateAllReduceViaOxc(
             std::cout << comm_group_ranks[i];
         }
         std::cout << "]" << std::endl;
-        oxc_log_count++;
+        oxc_log_count.fetch_add(1, std::memory_order_relaxed);
     }
 
     OxcAllReduceRequest request;
@@ -409,6 +423,131 @@ std::vector<OutputFlow> OxcFlowGenerator::generateAllReduceViaOxc(
               << ctx.layer_name << " " << phaseToString(ctx.phase) << std::endl;
 
     return convertOxcResponse(entries, ctx);
+}
+
+// ============================================================
+// 预留接口实现：以下方法为未来 OXC 集合通信类型预留
+// Reserved method implementations for future OXC collective communication types
+// ============================================================
+
+std::vector<OutputFlow> OxcFlowGenerator::generateAllGatherViaOxc(
+    const OperationContext& ctx,
+    const std::vector<int>& comm_group_ranks) {
+
+    // 检查是否跨 rack 通信
+    std::set<std::string> racks;
+    for (int rank : comm_group_ranks) {
+        std::string rank_str = std::to_string(rank);
+        auto it = global_rank_rack_map_.find(rank_str);
+        if (it != global_rank_rack_map_.end()) {
+            racks.insert(it->second);
+        } else {
+            int rack_id = rank / gpus_per_server_;
+            racks.insert("rack_" + std::to_string(rack_id));
+        }
+    }
+
+    if (racks.size() <= 1) {
+        // 同一 rack，使用原生算法
+        return generateViaNative(ctx, comm_group_ranks);
+    }
+
+    // TODO: 待 OXC 后端实现 AllGather API 后启用以下代码
+    // OxcAllGatherRequest request;
+    // request.ranktable = global_ranktable_;
+    // request.commDomain.push_back(comm_group_ranks);
+    // request.commDomainVolume = static_cast<double>(ctx.data_size);
+    // request.rankIdRackIdMap = global_rank_rack_map_;
+    // request.algName = alg_name_;
+    //
+    // std::vector<OxcFlowEntry> entries = http_client_.callAllGatherApi(request);
+    // if (!entries.empty()) {
+    //     return convertOxcResponse(entries, ctx);
+    // }
+
+    // 当前回退到原生实现
+    std::cout << "[OXC] AllGather via OXC not yet implemented, using native" << std::endl;
+    return generateViaNative(ctx, comm_group_ranks);
+}
+
+std::vector<OutputFlow> OxcFlowGenerator::generateReduceScatterViaOxc(
+    const OperationContext& ctx,
+    const std::vector<int>& comm_group_ranks) {
+
+    // 检查是否跨 rack 通信
+    std::set<std::string> racks;
+    for (int rank : comm_group_ranks) {
+        std::string rank_str = std::to_string(rank);
+        auto it = global_rank_rack_map_.find(rank_str);
+        if (it != global_rank_rack_map_.end()) {
+            racks.insert(it->second);
+        } else {
+            int rack_id = rank / gpus_per_server_;
+            racks.insert("rack_" + std::to_string(rack_id));
+        }
+    }
+
+    if (racks.size() <= 1) {
+        // 同一 rack，使用原生算法
+        return generateViaNative(ctx, comm_group_ranks);
+    }
+
+    // TODO: 待 OXC 后端实现 ReduceScatter API 后启用以下代码
+    // OxcReduceScatterRequest request;
+    // request.ranktable = global_ranktable_;
+    // request.commDomain.push_back(comm_group_ranks);
+    // request.commDomainVolume = static_cast<double>(ctx.data_size);
+    // request.rankIdRackIdMap = global_rank_rack_map_;
+    // request.algName = alg_name_;
+    //
+    // std::vector<OxcFlowEntry> entries = http_client_.callReduceScatterApi(request);
+    // if (!entries.empty()) {
+    //     return convertOxcResponse(entries, ctx);
+    // }
+
+    // 当前回退到原生实现
+    std::cout << "[OXC] ReduceScatter via OXC not yet implemented, using native" << std::endl;
+    return generateViaNative(ctx, comm_group_ranks);
+}
+
+std::vector<OutputFlow> OxcFlowGenerator::generateAllToAllViaOxc(
+    const OperationContext& ctx,
+    const std::vector<int>& comm_group_ranks) {
+
+    // 检查是否跨 rack 通信
+    std::set<std::string> racks;
+    for (int rank : comm_group_ranks) {
+        std::string rank_str = std::to_string(rank);
+        auto it = global_rank_rack_map_.find(rank_str);
+        if (it != global_rank_rack_map_.end()) {
+            racks.insert(it->second);
+        } else {
+            int rack_id = rank / gpus_per_server_;
+            racks.insert("rack_" + std::to_string(rack_id));
+        }
+    }
+
+    if (racks.size() <= 1) {
+        // 同一 rack，使用原生算法
+        return generateViaNative(ctx, comm_group_ranks);
+    }
+
+    // TODO: 待 OXC 后端实现 AllToAll API 后启用以下代码
+    // OxcAllToAllRequest request;
+    // request.ranktable = global_ranktable_;
+    // request.commDomain.push_back(comm_group_ranks);
+    // request.commDomainVolume = static_cast<double>(ctx.data_size);
+    // request.rankIdRackIdMap = global_rank_rack_map_;
+    // request.algName = alg_name_;
+    //
+    // std::vector<OxcFlowEntry> entries = http_client_.callAllToAllApi(request);
+    // if (!entries.empty()) {
+    //     return convertOxcResponse(entries, ctx);
+    // }
+
+    // 当前回退到原生实现
+    std::cout << "[OXC] AllToAll via OXC not yet implemented, using native" << std::endl;
+    return generateViaNative(ctx, comm_group_ranks);
 }
 
 std::vector<OutputFlow> OxcFlowGenerator::generateViaNative(
@@ -582,8 +721,9 @@ std::vector<OutputFlow> OxcFlowGenerator::generateFlows(
     op_ctx.base_flow_id = global_flow_id_;
 
     // 调试输出（每1000个操作输出一次，避免输出过多）
-    static int op_log_count = 0;
-    bool should_debug = (op_log_count < 10) || (op_log_count % 1000 == 0);
+    static std::atomic<int> op_log_count(0);
+    int current_log_count = op_log_count.load(std::memory_order_relaxed);
+    bool should_debug = (current_log_count < 10) || (current_log_count % 1000 == 0);
 
     if (should_debug) {
         std::cout << "[OXC DEBUG] Op " << op_ctx.operation_id
@@ -598,10 +738,30 @@ std::vector<OutputFlow> OxcFlowGenerator::generateFlows(
         if (comm_group_ranks.size() > 4) std::cout << "...";
         std::cout << "]" << std::endl;
     }
-    op_log_count++;
+    op_log_count.fetch_add(1, std::memory_order_relaxed);
 
     if (isOxcSupported(ctx.comm_type)) {
-        flows = generateAllReduceViaOxc(op_ctx, comm_group_ranks);
+        // 根据通信类型分发到对应的 OXC 生成方法
+        switch (ctx.comm_type) {
+            case CommType::ALL_REDUCE:
+                flows = generateAllReduceViaOxc(op_ctx, comm_group_ranks);
+                break;
+            case CommType::ALL_GATHER:
+                // 预留接口，当前回退到原生实现
+                flows = generateAllGatherViaOxc(op_ctx, comm_group_ranks);
+                break;
+            case CommType::REDUCE_SCATTER:
+                // 预留接口，当前回退到原生实现
+                flows = generateReduceScatterViaOxc(op_ctx, comm_group_ranks);
+                break;
+            case CommType::ALL_TO_ALL:
+                // 预留接口，当前回退到原生实现
+                flows = generateAllToAllViaOxc(op_ctx, comm_group_ranks);
+                break;
+            default:
+                flows = generateViaNative(op_ctx, comm_group_ranks);
+                break;
+        }
     } else {
         flows = generateViaNative(op_ctx, comm_group_ranks);
     }

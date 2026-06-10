@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-06-09T03:12:48Z",
+  "reason": "session end with blockers",
+  "in_progress": [
+    {
+      "id": "F088",
+      "description": "E2E decoupled replay comparison: coupled vs replay NS3 bytes sent/received must match"
+    }
+  ],
+  "dirty_files": []
+}

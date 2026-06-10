@@ -141,6 +141,27 @@ struct FlowInput {
   uint32_t idx;
 };
 
+// Decoupled mode: SimAI outputs all flows to file, NS3 replays them.
+struct FlowRecord {
+  uint32_t flow_id;
+  uint32_t src, dst;
+  uint64_t flow_size;
+  int channel_id;
+  int chunk_id;
+  int chunk_count;
+  std::string conn_type;
+  double start_time;    // ns, relative to sim start
+  // Dependency graph (flow_ids that must complete first)
+  std::vector<uint32_t> prev;
+  uint32_t pg;           // priority group
+  uint32_t maxPacketCount;
+  uint32_t port, dport;
+  uint32_t layer_num;     // workload layer index
+  uint32_t group_type;     // GroupType enum: TP=0, DP=1, EP=2, DP_EP=3
+  uint32_t op;             // ComType enum
+  uint32_t loopstate;      // State enum: FWD=0, WG=1, IG=2
+};
+
 FlowInput flow_input = {0};
 uint32_t flow_num;
 Ipv4Address node_id_to_ip(uint32_t id) {
@@ -275,7 +296,7 @@ void CalculateRoute(Ptr<Node> host) {
         }
         if(via_nvswitch == false) {
           if(now->GetNodeType() == 2) {
-            while(nextHop[next][host].size() != 0) 
+            while(nextHop[next][host].size() != 0)
             nextHop[next][host].pop_back();
           }
           nextHop[next][host].push_back(now);
@@ -702,7 +723,15 @@ void SetupNetwork(void (*qp_finish)(FILE *, Ptr<RdmaQueuePair>),void (*send_fini
       link_num >> gpu_type_str;
   flowf >> flow_num;
   tracef >> trace_num;
-  if(gpu_type_str == "A100"){
+  if(gpu_type_str == "A2"){
+    gpu_type = GPUType::A100;   // NPU A2: server-internal BW 200Gb/s
+  } else if(gpu_type_str == "A3"){
+    gpu_type = GPUType::A100;   // NPU A3: server-internal BW 400Gb/s
+  } else if(gpu_type_str == "A5"){
+    gpu_type = GPUType::A100;   // NPU A5: server-internal BW 400Gb/s
+  } else if(gpu_type_str == "A6"){
+    gpu_type = GPUType::A100;   // NPU A6: server-internal BW 400Gb/s
+  } else if(gpu_type_str == "A100"){
     gpu_type = GPUType::A100;
   } else if(gpu_type_str == "A800"){
     gpu_type = GPUType::A800;

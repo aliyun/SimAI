@@ -3,7 +3,7 @@
   "updated": "2026-06-04T07:00:00Z",
   "summary": {
     "done": 5,
-    "pending": 2,
+    "pending": 1,
     "in_progress": 1,
     "by_type": {
       "refactor": 4,
@@ -76,7 +76,7 @@
       "type": "test",
       "category": "decouple",
       "description": "E2E decoupled replay comparison: coupled vs replay NS3 bytes sent/received must match",
-      "status": "pending",
+      "status": "in_progress",
       "priority": "P0",
       "files": [
         "astra-sim-alibabacloud/**",
@@ -86,7 +86,10 @@
         "/tmp/*",
         "bin/*",
         "scripts/*",
-        "."
+        ".",
+        "dashboard",
+        "server",
+        "dashboard/src/stores/network-store.ts"
       ],
       "verification_steps": [
         "coupled bytes sent/recv == replay bytes sent/recv per node"
@@ -217,7 +220,7 @@
       "type": "refactor",
       "category": "naming",
       "description": "Rename serverIps/server_ips to serverIds/server_ids: v3 lld server node_id is a name (superpod#0_server#0), not an IP. Keep server_ip in npu_match (external EDG protocol).",
-      "status": "in_progress",
+      "status": "done",
       "priority": "P1",
       "phase": "phase3",
       "files": [

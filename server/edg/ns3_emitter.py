@@ -125,8 +125,16 @@ def write_ns3_topology(
     #   Leaf<->Leaf (cross-server)      = len(leaf_leaf_edges)
     full_mesh_per_server = npu_per_server * (npu_per_server - 1) // 2
     total_full_mesh_links = num_servers * full_mesh_per_server
-    npu_leaf_links = num_npus
     leaf_leaf_links = len(leaf_leaf_edges)
+    # Each NPU connects to all its server's leaves (one port per leaf)
+    npu_leaf_links = 0
+    for srv in servers:
+        leaf_ips = srv.get("leaf_ips", [])
+        if not leaf_ips:
+            leaf_ip = srv.get("leaf_ip", "")
+            leaf_ips = [leaf_ip] if leaf_ip else []
+        leaf_count = len([lip for lip in leaf_ips if leaf_ip_to_id.get(lip) is not None])
+        npu_leaf_links += npu_per_server * leaf_count if leaf_count else npu_per_server
     total_links = total_full_mesh_links + npu_leaf_links + leaf_leaf_links
 
     # Line 1: header
@@ -149,7 +157,7 @@ def write_ns3_topology(
                     f"{npu_base + i} {npu_base + j} {link_bw} {nv_latency} {error_rate}"
                 )
 
-    # NPU <-> Leaf links (distribute NPUs evenly across all connected leaves)
+    # NPU <-> Leaf links (each NPU connects to ALL assigned leaves via per-port links)
     for srv_idx, srv in enumerate(servers):
         leaf_ips = srv.get("leaf_ips", [])
         if not leaf_ips:
@@ -167,9 +175,10 @@ def write_ns3_topology(
         npu_base = srv_idx * npu_per_server
         for npu_offset in range(npu_per_server):
             npu_id = npu_base + npu_offset
-            # Round-robin NPUs across available leaves
-            leaf_id = leaf_ids[npu_offset % len(leaf_ids)]
-            lines.append(f"{npu_id} {leaf_id} {bandwidth} {latency} {error_rate}")
+            # Each NPU connects to ALL leaves (one port per leaf)
+            for leaf_id in leaf_ids:
+                lines.append(f"{npu_id} {leaf_id} {bandwidth} {latency} {error_rate}")
+                npu_leaf_links += 1
 
     # Leaf <-> Leaf links (from OXC crosses)
     for (leaf_a_ip, leaf_b_ip, _oxc_ip, _pa, _pb) in leaf_leaf_edges:

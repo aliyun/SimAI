@@ -9,6 +9,7 @@
 
 | 日期 | 工作 |
 |------|------|
+| 2026-06-09 | v3 lld NPU-Leaf 连接分析: server#0 36端口每端口连2 leaf(滑窗), 共64边, 非用户的8NPU×8端口×1leaf拓扑. + F092 localStorage migration fix (旧serverIps映射到serverIds) |
 | 2026-06-08 | F092: serverIps→serverIds rename — v3 lld server node_id is name not IP. 10 files: network.ts, network-store.ts, edg-api.ts, HomePage.tsx, EdgPage.tsx, EdgDiffGraph.tsx, routes.py, merger.py, conftest.py, test_merger.py, test_e2e_ns3_oxc.py. npu_match server_ip preserved. 79 tests + tsc + E2E pass |
 | 2026-06-08 | Deep Interview: MegatronWorkload vs MegatronModel 选型分析 — 4轮访谈(14.0%), 逐函数对标NCCL trace, 发现PP double-step bug. spec: .omc/specs/deep-interview-megatron-workload-vs-model.md |
 | 2026-06-08 | F091: EDG init 全局持久化 — config.py加EDG_DATA_ROOT, routes.py新增_edg_global_dir()/_edg_load()支持global store(优先)/workspace(回退), init双写, baseline-graph+register-task读global. 前端: edg-api.ts传topology_dir, EdgPage.tsx传topologyDir, wizard-store.ts加zustand/persist(EDG graph数据跨refresh存活) |

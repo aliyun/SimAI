@@ -24,6 +24,7 @@
 #include "astra-sim/system/OxcTypes.h"
 #include "OxcFlowGenerator.h"
 #include "OxcFlowOutput.h"
+#include "OxcFlowScheduler.h"
 
 using namespace std;
 using namespace OXC;
@@ -51,8 +52,8 @@ void printUsage(const char* prog_name) {
     cout << "Options:" << endl;
     cout << "  -w, --workload <path>     Path to workload file (required)" << endl;
     cout << "  -ranktable <path>         Path to RankTable JSON file (required)" << endl;
-    cout << "  -g, --gpus <num>          Number of GPUs (default: 16)" << endl;
-    cout << "  -g_p_s, --gpus-per-server <num>  GPUs per server (default: 8)" << endl;
+    cout << "  -g, --gpus <num>          Number of NPUs (default: 16)" << endl;
+    cout << "  -g_p_s, --gpus-per-server <num>  NPUs per server (default: 8)" << endl;
     cout << "  -oxc_url <url>            OXC server URL (default: http://localhost:8080)" << endl;
     cout << "  -oxc_algo <algo>          OXC algorithm (default: ALGO_OXC_RING)" << endl;
     cout << "  -o, --output <prefix>     Output file prefix (default: ./results/oxc_output)" << endl;
@@ -488,8 +489,8 @@ int main(int argc, char* argv[]) {
     cout << "SimAI-OXC Flow Generator" << endl;
     cout << "========================" << endl;
     cout << "Workload: " << params.workload_path << endl;
-    cout << "GPUs: " << params.num_gpus << endl;
-    cout << "GPUs per Server: " << params.gpus_per_server << endl;
+    cout << "NPUs: " << params.num_gpus << endl;
+    cout << "NPUs per Server: " << params.gpus_per_server << endl;
     cout << "RankTable: " << params.ranktable_path << endl;
     cout << "OXC URL: " << params.oxc_url << endl;
     cout << "OXC Algorithm: " << params.oxc_algo << endl;
@@ -628,10 +629,20 @@ int main(int argc, char* argv[]) {
     output.writeDependencyGraph(all_ops, all_flows);
     output.writeSummary(config, all_ops, all_flows, params.oxc_url, params.oxc_algo);
 
+    // 运行流调度模拟
+    cout << endl;
+    cout << "[OXC] Running flow scheduling simulation..." << endl;
+    OxcFlowScheduler scheduler;
+    scheduler.buildScheduledFlows(all_flows);
+    ScheduleStats stats = scheduler.runSimulation();
+    scheduler.writeScheduleResult(params.output_prefix);
+
     cout << endl;
     cout << "SimAI-OXC completed successfully." << endl;
     cout << "  Total Operations: " << all_ops.size() << endl;
     cout << "  Total Flows: " << all_flows.size() << endl;
+    cout << "  Schedule Ticks: " << stats.total_ticks << endl;
+    cout << "  Max Parallel Flows: " << stats.max_parallel_flows << endl;
 
     return 0;
 }

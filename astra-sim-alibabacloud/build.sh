@@ -51,17 +51,18 @@ function compile {
     mkdir -p "${SIM_LOG_DIR}"/topo/
     mkdir -p "${SIM_LOG_DIR}"/results/
     local option="$1"
+    local oxc_option="$2"
     cd "${BUILD_DIR}" || exit
     case "$option" in
     "ns3")
         cd "${NS3_BUILD_DIR}"
-        ./build.sh -c;;
+        ./build.sh -c "$oxc_option";;
     "phy")
         cd "${SIMAI_PHY_BUILD_DIR}"
         ./build.sh -c RDMA;;
     "analytical")
         cd "${SIMAI_ANALYTICAL_BUILD_DIR}"
-        ./build.sh -c;;
+        ./build.sh -c "$oxc_option";;
     "oxc")
         cd "${SIMAI_OXC_BUILD_DIR}"
         ./build.sh -c;;
@@ -75,10 +76,12 @@ case "$1" in
 -lr|--clean-result)
     cleanup_result "$2";;
 -c|--compile)
-    compile "$2";;
+    compile "$2" "$3";;
 -h|--help|*)
     printf -- "help message\n"
     printf -- "-c|--compile mode supported ns3/phy/analytical/oxc  (example:./build.sh -c ns3)\n"
+    printf -- "-c|--compile mode with OXC integration (example:./build.sh -c ns3 OXC)\n"
+    printf -- "-c|--compile mode with OXC integration (example:./build.sh -c analytical OXC)\n"
     printf -- "-l|--clean  (example:./build.sh -l ns3)\n"
     printf -- "-lr|--clean-result mode  (example:./build.sh -lr ns3)\n"
 esac
