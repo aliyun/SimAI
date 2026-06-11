@@ -25,7 +25,7 @@ function setup {
 
 function compile {
     cd "${BUILD_DIR}" || exit
-    cmake -DUSE_ANALYTICAL=TRUE ..
+    cmake -DSIMAI_MODE="analytical" ..
     make
 }
 

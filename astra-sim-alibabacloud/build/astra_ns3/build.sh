@@ -84,7 +84,7 @@ case "$1" in
     debug;;
 -c|--compile)
     setup
-    compile_astrasim
+    #compile_astrasim
     compile;;
 -r|--run)
     setup

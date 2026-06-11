@@ -1,23 +1,16 @@
-# CMake requirement
-cmake_minimum_required(VERSION 3.15)
-
-
 project(SimAI_phynet)
-file(GLOB SOURCES "*.cc") 
-file(GLOB HEADERS "*.h")    
-include_directories("${PROJECT_SOURCE_DIR}/../../../")
-include_directories("$ENV{MPI_INCLUDE_PATH}")
 
-set(use_rdma ${USE_RDMA})
-if(use_rdma)
-    add_definitions(-DPHY_RDMA)
-    message("PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
-endif()
-set(CMAKE_BUILD_TYPE Debug)
+file(GLOB SOURCES CONFIGURE_DEPENDS "*.cc")
+file(GLOB HEADERS CONFIGURE_DEPENDS "*.hh" "*.h")
+
 add_executable(SimAI_phynet ${SOURCES} ${HEADERS})
-
+target_include_directories(SimAI_phynet PRIVATE "${ASTRA_SIM_DIR}")
 target_link_options(SimAI_phynet PRIVATE "-static-libstdc++")
+target_compile_definitions(SimAI_phynet PRIVATE PHY_MTP)
 
-if(use_rdma)
-    target_link_libraries(SimAI_phynet AstraSim mpi ibverbs pthread)
+if(USE_RDMA)
+    target_compile_definitions(SimAI_phynet PRIVATE PHY_RDMA)
+    target_link_libraries(SimAI_phynet PRIVATE AstraSim ibverbs pthread)
+else()
+    target_link_libraries(SimAI_phynet PRIVATE AstraSim)
 endif()

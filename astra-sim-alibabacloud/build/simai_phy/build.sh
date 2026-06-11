@@ -27,7 +27,7 @@ function compile {
     cd "${BUILD_DIR}" || exit
     case "$option" in
     "RDMA")
-        cmake -DUSE_RDMA=TRUE ..
+        cmake -DSIMAI_MODE="phy" -DUSE_RDMA=TRUE ..
         make;;
     esac
 }
