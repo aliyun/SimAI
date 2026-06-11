@@ -254,8 +254,16 @@ def write_ns3_topology(
             lines.append(f"{leaf_id} {spine_id} {bandwidth} {latency} {error_rate}")
         for (spine_id, oxc_id) in spine_oxc_links:
             lines.append(f"{spine_id} {oxc_id} {bandwidth} {latency} {error_rate}")
+    elif lld and (spine_ips or oxc_ips_raw):
+        # lld has spine/OXC but unfolding produced zero links — this is a bug
+        raise RuntimeError(
+            f"Unfolding failed: lld has {len(spine_ips)} spine(s), "
+            f"{len(oxc_ips_raw)} OXC(s), but 0 unfolded links were generated. "
+            f"leaf_to_spine={len(leaf_to_spine)}, spine_to_oxc={len(spine_to_oxc)}, "
+            f"participating_leaves_in_graph={len(leaf_ip_to_id)}"
+        )
     else:
-        # Folded: Leaf↔Leaf (OXC cross abstracted as direct link)
+        # No lld available — folded Leaf↔Leaf (OXC cross abstracted as direct link)
         for (leaf_a_ip, leaf_b_ip, _oxc_ip, _pa, _pb) in leaf_leaf_edges:
             a_id = leaf_ip_to_id.get(leaf_a_ip)
             b_id = leaf_ip_to_id.get(leaf_b_ip)

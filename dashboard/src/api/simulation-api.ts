@@ -308,6 +308,8 @@ interface ProcessEntry {
   readonly status: string;
   readonly command: string;
   readonly started_at: string;
+  readonly return_code: number | null;
+  readonly error_message: string | null;
 }
 
 interface ListProcessesResponse {

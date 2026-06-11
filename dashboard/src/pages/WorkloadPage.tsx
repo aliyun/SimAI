@@ -37,6 +37,7 @@ export function WorkloadPage() {
     workloadConfig, setWorkloadConfig,
     workloadContent, setWorkloadContent,
     setWorkloadSaved, setWorkloadSavedPath,
+    setEdgTopologyPath, setEdgBaselineGraph, setEdgAdjustedGraph, setEdgDiff,
   } = useWizardStore();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -150,6 +151,11 @@ export function WorkloadPage() {
       const result = await saveFile(wlName, content);
       setWorkloadSaved(true, result.path);
       setWorkloadSavedPath(result.path);
+      // Clear stale EDG data from previous task so LaunchPage won't use the wrong topology
+      setEdgTopologyPath('');
+      setEdgBaselineGraph(null);
+      setEdgAdjustedGraph(null);
+      setEdgDiff(null);
       navigate('/deploy/edg');
     } catch (err) {
       setError(err instanceof Error ? err.message : '操作失败');
