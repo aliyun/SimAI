@@ -1,40 +1,52 @@
-set(use_rdma ${USE_RDMA})
-set(use_analytical ${USE_ANALYTICAL})
-file(GLOB astra_SRC 
-	"${PROJECT_SOURCE_DIR}/../../astra-sim/system/collective/*.cc"
-	"${PROJECT_SOURCE_DIR}/../../astra-sim/system/fast-backend/*.cc"
-	"${PROJECT_SOURCE_DIR}/../../astra-sim/system/memory/*.cc"
-	"${PROJECT_SOURCE_DIR}/../../astra-sim/system/scheduling/*.cc"
-	"${PROJECT_SOURCE_DIR}/../../astra-sim/system/topology/*.cc"
-	"${PROJECT_SOURCE_DIR}/../../astra-sim/system/*.cc"
-	"${PROJECT_SOURCE_DIR}/../../astra-sim/system/*.cc"
-	"${PROJECT_SOURCE_DIR}/../../astra-sim/workload/*.cc"
-    )
-file(GLOB HEADERS
-    "${PROJECT_SOURCE_DIR}/../../astra-sim/system/collective/*.hh"
-	"${PROJECT_SOURCE_DIR}/../../astra-sim/system/fast-backend/*.hh"
-	"${PROJECT_SOURCE_DIR}/../../astra-sim/system/memory/*.hh"
-	"${PROJECT_SOURCE_DIR}/../../astra-sim/system/scheduling/*.hh"
-	"${PROJECT_SOURCE_DIR}/../../astra-sim/system/topology/*.hh"
-	"${PROJECT_SOURCE_DIR}/../../astra-sim/system/*.hh"
-	"${PROJECT_SOURCE_DIR}/../../astra-sim/system/*.hh"
-	"${PROJECT_SOURCE_DIR}/../../astra-sim/workload/*.hh"
-)
-if(use_rdma)
-	add_definitions(-DPHY_RDMA)
-	include_directories("$ENV{MPI_INCLUDE_PATH}")
-	add_definitions(-DPHY_MTP)
-	set(CMAKE_BUILD_TYPE Debug)
-elseif(use_analytical)
-	list(FILTER HEADERS EXCLUDE  REGEX ".*SimAiFlowModelRdma.hh")
-	list(FILTER astra_SRC EXCLUDE REGEX ".*SimAiFlowModelRdma.cc")
-	list(FILTER HEADERS EXCLUDE REGEX "${PROJECT_SOURCE_DIR}/../../astra-sim/system/BootStrapnet.hh")
-	list(FILTER astra_SRC EXCLUDE REGEX "${PROJECT_SOURCE_DIR}/../../astra-sim/system/BootStrapnet.cc")
-	list(FILTER HEADERS EXCLUDE REGEX "${PROJECT_SOURCE_DIR}/../../astra-sim/system/PhyMultiThread.hh")
-	list(FILTER astra_SRC EXCLUDE REGEX "${PROJECT_SOURCE_DIR}/../../astra-sim/system/PhyMultiThread.cc")
-	add_definitions(-DANALYTI)
-endif()
-include_directories("${PROJECT_SOURCE_DIR}/../../")
-add_library(AstraSim ${astra_SRC})
-set_property(TARGET AstraSim PROPERTY CXX_STANDARD 11)
+cmake_minimum_required(VERSION 3.15)
 
+file(GLOB ASTRA_SIM_SOURCES CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim/system/collective/*.cc"
+        "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim/system/fast-backend/*.cc"
+        "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim/system/memory/*.cc"
+        "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim/system/scheduling/*.cc"
+        "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim/system/topology/*.cc"
+        "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim/system/*.cc"
+        "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim/workload/*.cc"
+)
+
+file(GLOB ASTRA_SIM_HEADERS CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim/system/collective/*.hh"
+        "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim/system/collective/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim/system/fast-backend/*.hh"
+        "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim/system/fast-backend/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim/system/memory/*.hh"
+        "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim/system/memory/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim/system/scheduling/*.hh"
+        "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim/system/scheduling/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim/system/topology/*.hh"
+        "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim/system/topology/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim/system/*.hh"
+        "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim/system/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim/workload/*.hh"
+        "${CMAKE_CURRENT_SOURCE_DIR}/astra-sim/workload/*.h"
+)
+
+if(SIMAI_MODE STREQUAL "analytical")
+    list(FILTER ASTRA_SIM_HEADERS EXCLUDE REGEX ".*SimAiFlowModelRdma\\.hh$")
+    list(FILTER ASTRA_SIM_SOURCES EXCLUDE REGEX ".*SimAiFlowModelRdma\\.cc$")
+    list(FILTER ASTRA_SIM_HEADERS EXCLUDE REGEX ".*BootStrapnet\\.hh$")
+    list(FILTER ASTRA_SIM_SOURCES EXCLUDE REGEX ".*BootStrapnet\\.cc$")
+    list(FILTER ASTRA_SIM_HEADERS EXCLUDE REGEX ".*PhyMultiThread\\.hh$")
+    list(FILTER ASTRA_SIM_SOURCES EXCLUDE REGEX ".*PhyMultiThread\\.cc$")
+endif()
+
+add_library(AstraSim ${ASTRA_SIM_SOURCES} ${ASTRA_SIM_HEADERS})
+target_compile_features(AstraSim PUBLIC cxx_std_17)
+target_include_directories(AstraSim PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+
+if(USE_RDMA)
+    target_compile_definitions(AstraSim PRIVATE PHY_RDMA PHY_MTP)
+
+    find_package(MPI REQUIRED)
+    target_link_libraries(AstraSim PUBLIC MPI::MPI_CXX)
+endif()
+
+if(SIMAI_MODE STREQUAL "analytical")
+    target_compile_definitions(AstraSim PRIVATE ANALYTI)
+endif()
