@@ -395,6 +395,7 @@ class MOEMLP(MockedModel):
         topk,
         num_experts,
         id,
+        num_shared_experts=0,
     ):
         self.name = "mlp_moelayer"
         self.layer_id = id
@@ -412,6 +413,25 @@ class MOEMLP(MockedModel):
         self.num_experts = num_experts
         self.batch_size = batch_size
         self.hidden_size = hidden_size
+        self.ffn_hidden_size = ffn_hidden_size
+        self.num_shared_experts = num_shared_experts
+
+        # Shared experts: always-active FFN layers, not routed via EP.
+        # Each shared expert has gate+up+down projections (modeled as weight params).
+        if num_shared_experts > 0:
+            shared_ffn_per_partition = divide(ffn_hidden_size, tp)
+            for i in range(num_shared_experts):
+                # gate + up projection weights (two ColumnLinear-style weights)
+                setattr(self, f"shared_expert_{i}_gate_w",
+                        MockedParam((hidden_size, shared_ffn_per_partition),
+                                    name=f"shared_expert_{i}_gate"))
+                setattr(self, f"shared_expert_{i}_up_w",
+                        MockedParam((hidden_size, shared_ffn_per_partition),
+                                    name=f"shared_expert_{i}_up"))
+                # down projection weight (RowLinear-style)
+                setattr(self, f"shared_expert_{i}_down_w",
+                        MockedParam((shared_ffn_per_partition, hidden_size),
+                                    name=f"shared_expert_{i}_down"))
 
     def permutation(self, stage):
         workloads = Workload()
@@ -485,6 +505,32 @@ class MOEMLP(MockedModel):
                     ))
         workloads.extend(self.permutation(stage="forward"))
         workloads.extend(self.unpermutation(stage="forward"))
+
+        # Shared experts: always-active FFN, no EP routing needed.
+        if self.num_shared_experts > 0:
+            shared_ffn_size = divide(self.ffn_hidden_size, self.tp_size)
+            for i in range(self.num_shared_experts):
+                workloads.append(
+                    LogItem(
+                        comm_type=CommType.computation,
+                        msg_size=(
+                            (self.seq_len, self.batch_size, self.hidden_size),
+                            (self.hidden_size, shared_ffn_size),
+                        ),
+                        stage=f"forward.MoE.shared_expert_{i}.gate_up",
+                    )
+                )
+                workloads.append(
+                    LogItem(
+                        comm_type=CommType.computation,
+                        msg_size=(
+                            (self.seq_len, self.batch_size, shared_ffn_size),
+                            (shared_ffn_size, self.hidden_size),
+                        ),
+                        stage=f"forward.MoE.shared_expert_{i}.down",
+                    )
+                )
+
         assert all([isinstance(workload, LogItem) for workload in workloads.workload])
         return workloads
 
@@ -492,6 +538,32 @@ class MOEMLP(MockedModel):
         workloads = Workload()
         self.permutation(stage="backward")
         self.unpermutation(stage="backward")
+
+        # Shared experts backward: reverse order of forward computation.
+        if self.num_shared_experts > 0:
+            shared_ffn_size = divide(self.ffn_hidden_size, self.tp_size)
+            for i in range(self.num_shared_experts):
+                workloads.append(
+                    LogItem(
+                        comm_type=CommType.computation,
+                        msg_size=(
+                            (shared_ffn_size, self.seq_len * self.batch_size),
+                            (self.seq_len * self.batch_size, self.hidden_size),
+                        ),
+                        stage=f"backward.MoE.shared_expert_{i}.down",
+                    )
+                )
+                workloads.append(
+                    LogItem(
+                        comm_type=CommType.computation,
+                        msg_size=(
+                            (self.hidden_size, self.seq_len * self.batch_size),
+                            (self.seq_len * self.batch_size, shared_ffn_size),
+                        ),
+                        stage=f"backward.MoE.shared_expert_{i}.gate_up",
+                    )
+                )
+
         assert all([isinstance(workload, LogItem) for workload in workloads.workload])
         return workloads
 
@@ -520,6 +592,7 @@ class MegatronTransformorLayer(MockedModel):
         computation_enable=False,
         add_bias_linear=False,
         moe_enable=False,
+        num_shared_experts=0,
     ):
         self.attention = MegatronAttention(
             num_attention_heads,
@@ -545,6 +618,7 @@ class MegatronTransformorLayer(MockedModel):
                 moe_router_topk,
                 num_experts,
                 layer_id,
+                num_shared_experts=num_shared_experts,
             )
         else:
             self.mlp = MegatronMlp(
@@ -625,6 +699,7 @@ class MegatronModel(MockedModel):
             config.seq_length,
             config.micro_batch,
         )
+        num_shared_experts = getattr(config, "n_shared_expert", 0)
         self.layers = [
             MegatronTransformorLayer(
                 config.hidden_size,
@@ -642,6 +717,7 @@ class MegatronModel(MockedModel):
                 config.computation_enable,
                 config.add_bias_linear,
                 config.moe_enable,
+                num_shared_experts=num_shared_experts,
             )
             for i in range(config.num_layers)
         ]

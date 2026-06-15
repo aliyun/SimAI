@@ -21,7 +21,17 @@ from utils.utils import CommGroup, CommType, get_params, WorkloadWriter, num_par
 from workload_generator.workload_generator import WorkloadGenerator
 from workload_generator.mocked_model.training.MockedMegatron import MegatronModel
 from workload_generator.mocked_model.training.MockedDeepSeek import DeepSeekV3Model
+from workload_generator.mocked_model.training.MockedLlama import LlamaModel
 from log_analyzer.log import LogItem
+
+# Model registry: maps --frame values to model classes.
+# Add new entries here when extending to LLaMA, Mixtral, Qwen, etc.
+# Example: "LLaMA": LlamaModel  (after importing from MockedLlama)
+MODEL_REGISTRY = {
+    "Megatron": MegatronModel,
+    "DeepSeek": DeepSeekV3Model,
+    "LLaMA": LlamaModel,
+}
 
 
 class MegatronWorkload(WorkloadGenerator):
@@ -434,10 +444,14 @@ class MegatronWorkload(WorkloadGenerator):
 
 if __name__ == "__main__":
     args = get_params()
-    if args.frame == "DeepSeek":
-        model = DeepSeekV3Model(args)
-    elif args.frame == "Megatron":
-        model = MegatronModel(args)
+    model_cls = MODEL_REGISTRY.get(args.frame)
+    if model_cls is None:
+        supported = ", ".join(sorted(MODEL_REGISTRY.keys()))
+        raise ValueError(
+            f"Unknown model frame '{args.frame}'. "
+            f"Supported frames for this generator: {supported}"
+        )
+    model = model_cls(args)
     workload_generator = MegatronWorkload(args, model)
     workload = workload_generator()
     filename = f"{workload_generator.name}_{args.model_name}_sp_{args.enable_sequence_parallel}_iteration_{args.epoch_num}_computationEnable_{args.computation_enable}_{args.world_size}n.csv"

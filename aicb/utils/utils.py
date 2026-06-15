@@ -12,7 +12,10 @@ limitations under the License.
 """
 
 from typing import List, Dict, Tuple
-import pandas as pd
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 import pickle
 from enum import Enum
 import argparse
@@ -576,12 +579,18 @@ class CommGroup(str, Enum):
     ep_dp_group = "ep_dp_group"
     ep_tp_group = "ep_tp_group"
     embedding_group = "embedding_group"
+    cp_group = "cp_group"
     all = "all_nodes"
 
 
 class WorkloadWriter:
     @staticmethod
     def write_workload(workload: List[Dict], args, filename: str):
+        if pd is None:
+            raise ImportError(
+                "pandas is required for CSV workload output. "
+                "Install it with: pip install pandas"
+            )
         df = pd.DataFrame.from_dict(workload)
         df = df.fillna(-1)
         df.to_csv(filename, index=False)
@@ -597,10 +606,21 @@ class WorkloadWriter:
 
 def get_params():
     parser = argparse.ArgumentParser()
+    # Dynamically derive --frame choices from the model registry.
+    # Uses a lazy import to avoid hard dependency: if the registry has not been
+    # populated (e.g., utils imported standalone), fall back to the static list.
+    try:
+        from workload_generator.registry import get_registered_frames
+        _frame_choices = get_registered_frames()
+    except Exception:
+        _frame_choices = []
+    if not _frame_choices:
+        _frame_choices = ["Megatron", "DeepSpeed", "collective_test", "DeepSeek"]
+
     parser.add_argument(
         "--frame",
         help="communication framework",
-        choices=["Megatron", "DeepSpeed", "collective_test", "DeepSeek"],
+        choices=_frame_choices,
         default="Megatron",
     )
     parser.add_argument("--gpu_type", type=str, default=None),
@@ -638,6 +658,14 @@ def get_params():
         "This is set to 4*hidden-size if not provided",
     )
     parser.add_argument(
+        "--num_kv_heads",
+        type=int,
+        default=None,
+        help="Number of key-value heads for Group Query Attention (GQA). "
+        "Defaults to num_attention_heads if not set (standard MHA). "
+        "Used by LLaMA, Mistral, and other GQA architectures.",
+    )
+    parser.add_argument(
         "--enable_visual",
         action="store_true",
         help="Enable visualization",
@@ -670,7 +698,20 @@ def get_params():
     if args.num_attention_heads is None:
         args.num_attention_heads = args.num_layers
 
-                    
+    # GQA validation: num_kv_heads defaults to num_attention_heads (standard MHA).
+    if args.num_kv_heads is None:
+        args.num_kv_heads = args.num_attention_heads
+    if args.num_attention_heads % args.num_kv_heads != 0:
+        raise ValueError(
+            f"num_attention_heads ({args.num_attention_heads}) must be divisible "
+            f"by num_kv_heads ({args.num_kv_heads}) for Group Query Attention."
+        )
+    if args.num_attention_heads % args.tensor_model_parallel_size != 0:
+        raise ValueError(
+            f"num_attention_heads ({args.num_attention_heads}) must be divisible "
+            f"by tensor_model_parallel_size ({args.tensor_model_parallel_size})."
+        )
+
     args.padded_vocab_size = get_padded_vocab_size(args)
     if args.ffn_hidden_size is None:
         if args.swiglu:
@@ -816,16 +857,18 @@ def get_moe_params(parser: argparse.ArgumentParser):
     parser.add_argument('--moe_grouped_gemm', action='store_true',
                        help='When there are multiple experts per rank, compress multiple local (potentially small) gemms in a single kernel launch to improve the utilization and performance by leveraging the Grouped GEMM feature introduced since CUTLASS 2.8 (https://github.com/fanshiqing/grouped_gemm).')
     parser.add_argument('--activation_func', type=str,help='activation_func for mlp')
+    parser.add_argument(
+        "--n_shared_expert",
+        type=int,
+        default=0,
+        help="Number of shared experts (always activated, not routed). "
+        "Used by DeepSeek (default=2) and other MoE architectures with shared experts. "
+        "Set to 0 for standard MoE without shared experts (Mixtral, DBRX).",
+    )
 
 def get_deepseek_params(parser: argparse.ArgumentParser):
     parser.add_argument(
         "--n_dense_layers", type=int, default=3, help="Number of dense (non-MoE) layers"
-    )
-    parser.add_argument(
-        "--n_shared_expert",
-        type=int,
-        default=2,
-        help="Number of shared experts for DeepSeek model",
     )
     parser.add_argument(
         "--qk_rope_dim",

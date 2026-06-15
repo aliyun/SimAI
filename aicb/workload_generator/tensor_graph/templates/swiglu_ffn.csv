@@ -1,0 +1,9 @@
+op_id,op_type,inputs,output,attrs
+p_x,placeholder,,x,"shape=B,S,H"
+p_gate_w,placeholder,,gate_w,"shape=H,I"
+p_up_w,placeholder,,up_w,"shape=H,I"
+p_down_w,placeholder,,down_w,"shape=I,H"
+einsum_gate,einsum,"x,gate_w",gate_hidden,"equation=bmn,mk->bnk"
+einsum_up,einsum,"x,up_w",up_hidden,"equation=bmn,mk->bnk"
+einsum_down,einsum,"gate_hidden,up_hidden,down_w",ffn_out,"equation=bnk,bnk,km->bnm"
+o_ffn,output,ffn_out,y,""
