@@ -296,7 +296,7 @@ class DeepSeekMoE(MockedModel):
                     comm_type=CommType.all_to_all,
                     comm_group=CommGroup.ep_group,
                     msg_size=(
-                        self.seq_len * self.hidden_size * self.batch_size * self.topk // self.tp_size
+                        self.seq_len * self.hidden_size * self.batch_size * self.topk // self.tp_size // self.expert_model_parallel_size
                     )
                     * 2
                     * scaled,
@@ -304,12 +304,13 @@ class DeepSeekMoE(MockedModel):
                 )
             )
         if self.tp_size > 1:
+            # Dividing by ep_size: after dispatch each EP rank holds ~1/ep of tokens
             workloads.append(
                 LogItem(
                     comm_type=CommType.all_gather,
                     comm_group=CommGroup.tp_group,
                     msg_size=(
-                        self.hidden_size * self.topk * self.batch_size * self.seq_len
+                        self.hidden_size * self.topk * self.batch_size * self.seq_len // self.expert_model_parallel_size
                     )
                     * 2,
                     stage=f"{stage}.MoE.permutation",
@@ -321,7 +322,7 @@ class DeepSeekMoE(MockedModel):
     def unpermutation(self, stage):
         workloads = Workload()
         if self.tp_size > 1:
-            # TODO:we assume tokens consistent split to all experts, but actually its not
+            # Dividing by ep_size: after dispatch each EP rank holds ~1/ep of tokens
             workloads.append(
                 LogItem(
                     comm_type=CommType.reduce_scatter,
@@ -330,7 +331,7 @@ class DeepSeekMoE(MockedModel):
                     * self.batch_size
                     * self.topk
                     * self.seq_len
-                    * 2,
+                    * 2 // self.expert_model_parallel_size,
                     stage=f"{stage}.MoE.unpermutation",
                 )
             )
@@ -342,7 +343,7 @@ class DeepSeekMoE(MockedModel):
                     comm_type=CommType.all_to_all,
                     comm_group=CommGroup.ep_group,
                     msg_size=(
-                        self.seq_len * self.hidden_size * self.batch_size * self.topk // self.tp_size
+                        self.seq_len * self.hidden_size * self.batch_size * self.topk // self.tp_size // self.expert_model_parallel_size
                     )
                     * 2,
                     stage=f"{stage}.MoE.combine",

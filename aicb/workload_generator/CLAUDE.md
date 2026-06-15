@@ -399,11 +399,18 @@ Config file keys use HuggingFace naming: `num_hidden_layers`, `intermediate_size
    trade-off for accurate DP gradient sync sizing. Future work: implement a
    communication-free GatedDeltaNet mock to capture the full 44% reduction.
 
-4. **Inference workload mocks for Qwen3/Qwen3.5 are skeletal.** Only the
+4. **MoE backward communication was undercounted** (fixed 2025-06-15).
+   MOEMLP.backward() in MockedMegatron.py was missing two `workloads.extend()`
+   calls on the return values of `self.permutation()` and `self.unpermutation()`.
+   This caused all MoE models (Megatron, Qwen3, Qwen3.5, DeepSeek) to report
+   ~43-57% of the correct backward communication. The fix (2 lines) restored
+   backward-forward parity for MoE layers. Pre-existing since original commit.
+
+5. **Inference workload mocks for Qwen3/Qwen3.5 are skeletal.** Only the
    AIOB compute benchmarks exist for inference. Training workload mocks are
    complete.
 
-5. **AIOB training benchmarks for Qwen3/Qwen3.5 do not exist.** Only inference
+6. **AIOB training benchmarks for Qwen3/Qwen3.5 do not exist.** Only inference
    AIOB benchmarks are implemented (`inference/AiobQwen3Moe.py`,
    `inference/AiobQwen3Next.py`). Training AIOB would require implementing
    backward-pass kernels not present in the inference benchmarks.

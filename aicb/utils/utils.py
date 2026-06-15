@@ -600,7 +600,7 @@ def get_params():
     parser.add_argument(
         "--frame",
         help="communication framework",
-        choices=["Megatron", "DeepSpeed", "collective_test", "DeepSeek"],
+        choices=["Megatron", "DeepSpeed", "collective_test", "DeepSeek", "Qwen3", "Qwen3.5"],
         default="Megatron",
     )
     parser.add_argument("--gpu_type", type=str, default=None),
@@ -651,6 +651,7 @@ def get_params():
     get_simAI_workload_params(parser)
     get_aiob_params(parser)
     get_deepseek_params(parser)
+    get_qwen3_params(parser)
     args = parser.parse_args()
 
     assert (
@@ -816,6 +817,21 @@ def get_moe_params(parser: argparse.ArgumentParser):
     parser.add_argument('--moe_grouped_gemm', action='store_true',
                        help='When there are multiple experts per rank, compress multiple local (potentially small) gemms in a single kernel launch to improve the utilization and performance by leveraging the Grouped GEMM feature introduced since CUTLASS 2.8 (https://github.com/fanshiqing/grouped_gemm).')
     parser.add_argument('--activation_func', type=str,help='activation_func for mlp')
+
+def get_qwen3_params(parser: argparse.ArgumentParser):
+    parser.add_argument(
+        "--head_dim",
+        type=int,
+        default=128,
+        help="Dimension per attention head. Qwen3 uses fixed head_dim=128.",
+    )
+    parser.add_argument(
+        "--num_key_value_heads",
+        type=int,
+        default=None,
+        help="Number of key/value heads for GQA. Defaults to num_attention_heads if not set.",
+    )
+
 
 def get_deepseek_params(parser: argparse.ArgumentParser):
     parser.add_argument(

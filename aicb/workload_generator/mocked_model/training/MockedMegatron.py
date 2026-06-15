@@ -421,14 +421,14 @@ class MOEMLP(MockedModel):
                     comm_type=CommType.all_to_all,
                     comm_group=CommGroup.ep_group,
                     msg_size=(
-                        self.seq_len * self.hidden_size * self.batch_size * self.topk // self.tp_size
+                        self.seq_len * self.hidden_size * self.batch_size * self.topk // self.tp_size // self.ep_size
                     )
                     * 2,
                     stage=f"{stage}.MoE.dispatch",
                 )
             )
         if self.tp_size > 1:
-            # TODO:we assume tokens consistent split to all experts, but actually its not
+            # Dividing by ep_size: after dispatch each EP rank holds ~1/ep of tokens
             workloads.append(
                 LogItem(
                     comm_type=CommType.all_gather,
@@ -436,7 +436,7 @@ class MOEMLP(MockedModel):
                     msg_size=2
                     * self.hidden_size
                     * self.topk * self.batch_size
-                    * self.seq_len,
+                    * self.seq_len // self.ep_size,
                     stage=f"{stage}.MoE.permutation",
                 )
             )
@@ -446,7 +446,7 @@ class MOEMLP(MockedModel):
     def unpermutation(self, stage):
         workloads = Workload()
         if self.tp_size > 1:
-            # TODO:we assume tokens consistent split to all experts, but actually its not
+            # Dividing by ep_size: after dispatch each EP rank holds ~1/ep of tokens
             workloads.append(
                 LogItem(
                     comm_type=CommType.reduce_scatter,
@@ -454,7 +454,7 @@ class MOEMLP(MockedModel):
                     msg_size=2
                     * self.hidden_size * self.batch_size
                     * self.topk
-                    * self.seq_len,
+                    * self.seq_len // self.ep_size,
                     stage=f"{stage}.MoE.unpermutation",
                 )
             )
@@ -465,7 +465,7 @@ class MOEMLP(MockedModel):
                     comm_type=CommType.all_to_all,
                     comm_group=CommGroup.ep_group,
                     msg_size=(
-                        self.seq_len * self.hidden_size * self.batch_size * self.topk // self.tp_size
+                        self.seq_len * self.hidden_size * self.batch_size * self.topk // self.tp_size // self.ep_size
                     )
                     * 2,
                     stage=f"{stage}.MoE.combine",
@@ -490,8 +490,8 @@ class MOEMLP(MockedModel):
 
     def backward(self):
         workloads = Workload()
-        self.permutation(stage="backward")
-        self.unpermutation(stage="backward")
+        workloads.extend(self.permutation(stage="backward"))
+        workloads.extend(self.unpermutation(stage="backward"))
         assert all([isinstance(workload, LogItem) for workload in workloads.workload])
         return workloads
 
