@@ -683,6 +683,9 @@ def get_params():
     args.num_hidden_layers = args.num_layers
     if not hasattr(args, 'padded_vocab_size') or args.padded_vocab_size is None:
         args.padded_vocab_size = get_padded_vocab_size(args)
+    # Qwen3/Qwen3.5 models use vocab_size but the embedding needs padded_vocab_size
+    # (divisible by tp). Alias so the HF field name picks up the padded value.
+    args.vocab_size = args.padded_vocab_size
 
     # Resolve intermediate_size: --intermediate_size > --ffn_hidden_size > auto
     if args.intermediate_size is None:
