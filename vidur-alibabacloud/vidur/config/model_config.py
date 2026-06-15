@@ -31,7 +31,6 @@ class BaseModelConfig(BaseFixedConfig):
 
 
 @dataclass
-@dataclass
 class DeepseekV3ModelConfig(BaseModelConfig):
     # "num_hidden_layers": 61,
     num_layers: int = 61
@@ -115,6 +114,127 @@ class DeepseekV3ModelConfig(BaseModelConfig):
     @staticmethod
     def get_name():
         return "deepseek-671B"
+    
+    
+    
+
+@dataclass
+class Qwen3Next80BA3BModelConfig(BaseModelConfig):
+    # architectures: list = field(default_factory=lambda: ["Qwen3NextForCausalLM"])
+    architectures: str = "Qwen3NextForCausalLM"
+    attention_dropout: float = 0.0
+    bos_token_id: int = 151643
+    decoder_sparse_step: int = 1
+    eos_token_id: int = 151645
+    full_attention_interval: int = 4
+    head_dim: int = 256
+    hidden_act: str = "silu"
+    hidden_size: int = 2048
+    initializer_range: float = 0.02
+    intermediate_size: int = 5120
+    linear_conv_kernel_dim: int = 4
+    linear_key_head_dim: int = 128
+    linear_num_key_heads: int = 16
+    linear_num_value_heads: int = 32
+    linear_value_head_dim: int = 128
+    max_position_embeddings: int = 262144
+    mlp_only_layers: list = field(default_factory=list)
+    model_type: str = "qwen3_next"
+    moe_intermediate_size: int = 512
+    norm_topk_prob: bool = True
+    num_attention_heads: int = 16
+    num_experts: int = 512
+    num_experts_per_tok: int = 10
+    num_hidden_layers: int = 48
+    num_key_value_heads: int = 2
+    output_router_logits: bool = False
+    partial_rotary_factor: float = 0.25
+    rms_norm_eps: float = 1e-06
+    rope_scaling: Optional[Dict[str, Any]] = None
+    rope_theta: float = 10000000
+    router_aux_loss_coef: float = 0.001
+    shared_expert_intermediate_size: int = 512
+    tie_word_embeddings: bool = False
+    torch_dtype: str = "bfloat16"
+    transformers_version: str = "4.57.0.dev0"
+    use_cache: bool = True
+    use_sliding_window: bool = False
+    vocab_size: int = 151936
+    # Fields mapped from base class parameters / 与基类参数对应的字段
+    num_layers: int = 48  # maps to num_hidden_layers / 对应 num_hidden_layers
+    num_q_heads: int = 16  # maps to num_attention_heads / 对应 num_attention_heads
+    num_kv_heads: int = 2  # maps to num_key_value_heads / 对应 num_key_value_heads
+    embedding_dim: int = 2048  # maps to hidden_size / 对应 hidden_size
+    mlp_hidden_dim: int = 5120  # maps to intermediate_size / 对应 intermediate_size
+    use_gated_mlp: bool = True  # per model arch / 根据模型架构设定
+    use_bias: bool = False  # per model arch / 根据模型架构设定
+    use_qkv_bias: bool = False  # per model arch / 根据模型架构设定
+    activation: ActivationType = ActivationType.SILU  # maps to hidden_act / 对应 hidden_act
+    norm: NormType = NormType.RMS_NORM  # per model arch / 根据模型架构设定
+    post_attn_norm: bool = True  # per model arch / 根据模型架构设定
+
+
+    @staticmethod
+    def get_name():
+        return "qwen3-next-80B"
+    
+    
+@dataclass
+class Qwen3Moe235BA22BModelConfig(BaseModelConfig):
+    # architectures: list = field(default_factory=lambda: ["Qwen3MoeForCausalLM"])
+    architectures: str = "Qwen3MoeForCausalLM"
+    attention_bias: bool = False
+    attention_dropout: float = 0.0
+    bos_token_id: int = 151643
+    decoder_sparse_step: int = 1
+    eos_token_id: int = 151645
+    head_dim: int = 128
+    hidden_act: str = "silu"
+    hidden_size: int = 4096
+    initializer_range: float = 0.02
+    intermediate_size: int = 12288
+    max_position_embeddings: int = 262144
+    max_window_layers: int = 94
+    mlp_only_layers: list = field(default_factory=list)
+    model_type: str = "qwen3_moe"
+    moe_intermediate_size: int = 1536
+    norm_topk_prob: bool = True
+    num_attention_heads: int = 64
+    num_experts: int = 128
+    num_experts_per_tok: int = 8
+    num_hidden_layers: int = 94
+    num_key_value_heads: int = 4
+    output_router_logits: bool = False
+    rms_norm_eps: float = 1e-06
+    rope_scaling: Optional[Dict[str, Any]] = None
+    rope_theta: float = 5000000
+    router_aux_loss_coef: float = 0.001
+    sliding_window: Optional[int] = None
+    tie_word_embeddings: bool = False
+    torch_dtype: str = "bfloat16"
+    transformers_version: str = "4.51.0"
+    use_cache: bool = True
+    use_sliding_window: bool = False
+    vocab_size: int = 151936
+    # Fields mapped from base class parameters / 与基类参数对应的字段
+    num_layers: int = 94  # maps to num_hidden_layers / 对应 num_hidden_layers
+    num_q_heads: int = 64  # maps to num_attention_heads / 对应 num_attention_heads
+    num_kv_heads: int = 4  # maps to num_key_value_heads / 对应 num_key_value_heads
+    embedding_dim: int = 4096  # maps to hidden_size / 对应 hidden_size
+    mlp_hidden_dim: int = 12288  # maps to intermediate_size / 对应 intermediate_size
+    use_gated_mlp: bool = True  # per model arch / 根据模型架构设定
+    use_bias: bool = False  # per model arch / 根据模型架构设定
+    use_qkv_bias: bool = False  # per model arch / 根据模型架构设定
+    activation: ActivationType = ActivationType.SILU  # maps to hidden_act / 对应 hidden_act
+    norm: NormType = NormType.RMS_NORM  # per model arch / 根据模型架构设定
+    post_attn_norm: bool = True  # per model arch / 根据模型架构设定
+
+
+
+    @staticmethod
+    def get_name():
+        # return "qwen3-235B-A22B"
+        return "qwen3-moe-235B"
 
 
 @dataclass

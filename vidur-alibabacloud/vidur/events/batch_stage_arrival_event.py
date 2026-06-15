@@ -10,6 +10,7 @@ from vidur.types import EventType
 logger = init_logger(__name__)
 
 
+# A micro-batch arrives at a PP stage
 # 一个micro-batch到达某个PP stage
 class BatchStageArrivalEvent(BaseEvent):
     def __init__(self, time: float, replica_id: int, stage_id: int, batch: Batch):

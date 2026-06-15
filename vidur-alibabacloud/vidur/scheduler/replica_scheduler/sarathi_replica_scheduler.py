@@ -84,7 +84,6 @@ class SarathiReplicaScheduler(BaseReplicaScheduler):
         return next_num_tokens
 
     def _get_next_batch(self) -> Batch:
-        # import pdb; pdb.set_trace() # >
         requests = []
         num_tokens = []
         skipped_requests = []

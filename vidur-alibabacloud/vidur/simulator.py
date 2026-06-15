@@ -81,13 +81,15 @@ class Simulator:
             # 设置系统时间为事件发生的时间
             # Set system time to the event occurrence time
             self._set_time(event._time)
-            if tmp_pre_debug_time == 0 and event._time > tmp_pre_debug_time :
+            if tmp_pre_debug_time == 0 and event._time > tmp_pre_debug_time:
                 tmp_pre_debug_time = event._time
-            elif tmp_pre_debug_time > 0 and  tmp_pre_debug_time > event._time:
-                assert tmp_pre_debug_time <= event._time, f"> debug tmp_pre_debug_time={tmp_pre_debug_time} event._time={event._time}"
+            elif tmp_pre_debug_time > 0 and tmp_pre_debug_time > event._time:
+                assert tmp_pre_debug_time <= event._time, (
+                    f"Event time went backwards: prev={tmp_pre_debug_time} cur={event._time}"
+                )
                 
-            assert event._time >= 0, "> debug"
-            print(f"> Debug: len(_event_queue){len(self._event_queue)}, event_type={event._event_type} , time={event._time}")
+            assert event._time >= 0, "Event time must be non-negative"
+            logger.debug(f"len(_event_queue){len(self._event_queue)}, event_type={event._event_type}, time={event._time}")
             
             # 处理事件，事件可能会触发新的事件
             # Handle the event, events may trigger new events
@@ -106,6 +108,14 @@ class Simulator:
         assert self._scheduler.is_empty() or self._terminate
 
         logger.info(f"Simulation ended at: {self._time}s")
+        
+        # [AICB优化] 模拟结束时打印缓存统计并保存查表
+        try:
+            from vidur.entities.execution_time import _GLOBAL_AICB_CACHE
+            _GLOBAL_AICB_CACHE.print_stats()
+            _GLOBAL_AICB_CACHE.save_lookup_table()
+        except Exception as e:
+            logger.warning(f"Cannot print AICB cache stats (无法打印AICB缓存统计): {e}")
 
     def _write_output(self) -> None:
         logger.info("Writing output")
@@ -136,7 +146,7 @@ class Simulator:
         # 生成请求，把请求加入到时间队列中
         # Generate requests and add them to the time queue
         for request in requests:
-            print(f"> Debug: arrived_at={request.arrived_at} 从 simulator的_init_event_queue() 生成 1个 RequestArrivalEvent, request_id={request._id}")
+            logger.debug(f"arrived_at={request.arrived_at} RequestArrivalEvent generated, request_id={request._id}")
             self._add_event(RequestArrivalEvent(request.arrived_at, request))
 
     def _set_time(self, time: float) -> None:

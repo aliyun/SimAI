@@ -681,9 +681,18 @@ class SklearnExecutionTimePredictor(BaseExecutionTimePredictor):
         return models
 
     def _predict_for_compute_models_by_aicb(self) -> Dict[str, Any]:
-        # 存储预测结果
+        # NOTE: AICB backend uses empirical linear formulas (time = a * batch_size + b)
+        # instead of ML model predictions. These formulas are derived from profiling data
+        # on specific hardware (H20) and represent the designed approach for AICB backend,
+        # not a temporary placeholder.
+        # 注意: AICB 后端使用基于经验的线性公式 (time = a * batch_size + b)
+        # 代替 ML 模型预测。这些公式来自特定硬件 (H20) 的 profiling 数据，
+        # 是 AICB 后端的设计方案，而非临时占位代码。
+        
+        # Store prediction results / 存储预测结果
         predictions = {}
 
+        # Define compute layer model names for prediction
         # 定义需要预测的计算层模型名
         model_names = [
             "attn_pre_proj",
@@ -691,84 +700,100 @@ class SklearnExecutionTimePredictor(BaseExecutionTimePredictor):
             "mlp_up_proj",
             "mlp_down_proj",
             "mlp_act",
-            # "attn_rope",  # 当前未启用RoPE层建模
+            # "attn_rope",  # RoPE layer modeling not enabled / 当前未启用RoPE层建模
             "attn_kv_cache_save",
             "input_layernorm",
             "post_attention_layernorm",
             "add",
         ]
 
+        # Add send/recv comm model if pipeline parallelism exists
         # 若存在流水线并行，则加入send/recv通信模型
         if self._replica_config.num_pipeline_stages > 1:
             model_names.append("send_recv")
 
+        # Add all_reduce comm model if tensor parallelism exists
         # 若存在张量并行，则加入all_reduce通信模型
         if self._replica_config.tensor_parallel_size > 1:
             model_names.append("all_reduce")
 
+        # Generate range from 1 to max tokens for batch prediction
         # 生成从1到最大token数的范围，用于批量预测
         num_token_range = np.arange(1, self._max_tokens + 1)
-        # 构造输入DataFrame
+        # Construct input DataFrame / 构造输入DataFrame
         X = pd.DataFrame({"num_tokens": num_token_range})
 
+        # Predict and cache results for each compute model
         # 对每个计算模型进行预测，并将结果缓存
         for model_name in model_names:
+            # Create simulated predictions with linear growth based on num_tokens
+            # Set different base time and growth rate per model type
             # 创建模拟的预测值，基于num_tokens线性增长
             # 根据模型类型设置不同的基础时间和增长率
             if model_name in ["attn_pre_proj", "attn_post_proj"]:
+                # Attention projection: base 0.001ms, +0.0001ms per token
                 # 注意力投影层：基础时间0.001ms，每token增加0.0001ms
                 predictions[model_name] = {
                     (num_tokens,): 0.001 + 0.0001 * num_tokens 
                     for num_tokens in num_token_range
                 }
             elif model_name in ["mlp_up_proj", "mlp_down_proj"]:
+                # MLP layer: base 0.0015ms, +0.00015ms per token
                 # MLP层：基础时间0.0015ms，每token增加0.00015ms
                 predictions[model_name] = {
                     (num_tokens,): 0.0015 + 0.00015 * num_tokens 
                     for num_tokens in num_token_range
                 }
             elif model_name == "mlp_act":
+                # MLP activation: base 0.0005ms, +0.00005ms per token
                 # MLP激活层：基础时间0.0005ms，每token增加0.00005ms
                 predictions[model_name] = {
                     (num_tokens,): 0.0005 + 0.00005 * num_tokens 
                     for num_tokens in num_token_range
                 }
             elif model_name == "attn_kv_cache_save":
+                # KV cache save: base 0.0002ms, +0.00002ms per token
                 # KV缓存保存：基础时间0.0002ms，每token增加0.00002ms
                 predictions[model_name] = {
                     (num_tokens,): 0.0002 + 0.00002 * num_tokens 
                     for num_tokens in num_token_range
                 }
             elif model_name in ["input_layernorm", "post_attention_layernorm"]:
+                # LayerNorm: base 0.0003ms, +0.00003ms per token
                 # LayerNorm层：基础时间0.0003ms，每token增加0.00003ms
                 predictions[model_name] = {
                     (num_tokens,): 0.0003 + 0.00003 * num_tokens 
                     for num_tokens in num_token_range
                 }
             elif model_name == "add":
+                # Add op: base 0.0001ms, +0.00001ms per token
                 # Add操作：基础时间0.0001ms，每token增加0.00001ms
                 predictions[model_name] = {
                     (num_tokens,): 0.0001 + 0.00001 * num_tokens 
                     for num_tokens in num_token_range
                 }
             elif model_name == "send_recv":
+                # Send/Recv comm: base 0.01ms, +0.001ms per token
                 # Send/Recv通信：基础时间0.01ms，每token增加0.001ms
                 predictions[model_name] = {
                     (num_tokens,): 0.01 + 0.001 * num_tokens 
                     for num_tokens in num_token_range
                 }
             elif model_name == "all_reduce":
+                # All-reduce comm: base 0.02ms, +0.002ms per token
                 # All-reduce通信：基础时间0.02ms，每token增加0.002ms
                 predictions[model_name] = {
                     (num_tokens,): 0.02 + 0.002 * num_tokens 
                     for num_tokens in num_token_range
                 }
 
+        # Predict and cache results for each compute model
         # 对每个计算模型进行预测，并将结果缓存
         # for model_name in model_names:
         #     model = self._models[model_name]
         #     predictions[model_name] = self._get_model_prediction(model_name, model, X)
 
+        # Return all compute layer predictions (for later lookup)
         # 返回所有计算相关层的预测结果（用于后续查表）
         return predictions
 
@@ -809,14 +834,14 @@ class SklearnExecutionTimePredictor(BaseExecutionTimePredictor):
 
 
     def _predict_for_cpu_overhead_models_by_aicb(self) -> Dict[str, Any]:
-        # 若跳过CPU开销建模，则直接返回空
+        # Skip if CPU overhead modeling is disabled / 若跳过CPU开销建模，则直接返回空
         if self._config.skip_cpu_overhead_modeling:
             return {}
 
-        # 存储CPU开销预测结果
+        # Store CPU overhead predictions / 存储CPU开销预测结果
         predictions = {}
 
-        # CPU相关的开销模型名称
+        # CPU-related overhead model names / CPU相关的开销模型名称
         model_names = [
             "schedule",
             "sampler_e2e",
@@ -825,52 +850,58 @@ class SklearnExecutionTimePredictor(BaseExecutionTimePredictor):
             "ray_comm_time",
         ]
 
+        # Batch size range: 1 to max prediction batch size
         # 批处理大小范围：1 到 最大预测批大小
         batch_size_range = np.arange(1, self._config.prediction_max_batch_size + 1)
-        # 构造输入数据
+        # Construct input data / 构造输入数据
         X = pd.DataFrame({"batch_size": batch_size_range})
 
-        # 对每个CPU开销模型进行预测
+        # Predict for each CPU overhead model / 对每个CPU开销模型进行预测
         # for model_name in model_names:
         #     model = self._models[model_name]
         #     predictions[model_name] = self._get_model_prediction(model_name, model, X)
 
 
-        # 对每个CPU开销模型进行预测
+        # Predict for each CPU overhead model / 对每个CPU开销模型进行预测
         for model_name in model_names:
-            # 为每个模型生成模拟值
+            # Generate simulated values for each model / 为每个模型生成模拟值
             if model_name == "schedule":
+                # Scheduling overhead: base 0.5ms, +0.05ms per batch
                 # 调度开销：基础时间0.5ms，每增加一个batch增加0.05ms
                 predictions[model_name] = {
                     (batch_size,): 0.5 + 0.05 * batch_size
                     for batch_size in batch_size_range
                 }
             elif model_name == "sampler_e2e":
+                # Sampler e2e overhead: base 1.0ms, +0.1ms per batch
                 # 采样端到端开销：基础时间1.0ms，每增加一个batch增加0.1ms
                 predictions[model_name] = {
                     (batch_size,): 1.0 + 0.1 * batch_size
                     for batch_size in batch_size_range
                 }
             elif model_name == "prepare_inputs_e2e":
+                # Prepare inputs e2e overhead: base 0.8ms, +0.08ms per batch
                 # 准备输入端到端开销：基础时间0.8ms，每增加一个batch增加0.08ms
                 predictions[model_name] = {
                     (batch_size,): 0.8 + 0.08 * batch_size
                     for batch_size in batch_size_range
                 }
             elif model_name == "process_model_outputs":
+                # Process model outputs overhead: base 0.3ms, +0.03ms per batch
                 # 处理模型输出开销：基础时间0.3ms，每增加一个batch增加0.03ms
                 predictions[model_name] = {
                     (batch_size,): 0.3 + 0.03 * batch_size
                     for batch_size in batch_size_range
                 }
             elif model_name == "ray_comm_time":
+                # Ray comm time: base 0.2ms, +0.02ms per batch
                 # Ray通信时间：基础时间0.2ms，每增加一个batch增加0.02ms
                 predictions[model_name] = {
                     (batch_size,): 0.2 + 0.02 * batch_size
                     for batch_size in batch_size_range
                 }
 
-        # 返回CPU开销部分的预测结果
+        # Return CPU overhead predictions / 返回CPU开销部分的预测结果
         return predictions
 
     def _predict_for_cpu_overhead_models(self) -> Dict[str, Any]:
@@ -897,21 +928,23 @@ class SklearnExecutionTimePredictor(BaseExecutionTimePredictor):
         return predictions
 
     def _predict_for_attention_layer_models_by_aicb(self) -> Dict[str, Any]:
-        # 存储注意力层预测结果
+        # Store attention layer predictions / 存储注意力层预测结果
         predictions = {}
 
-        # 解码阶段的batch size枚举范围
+        # Decode batch size enumeration range / 解码阶段的batch size枚举范围
         decode_batch_size_range = np.arange(
             1, self._config.prediction_max_batch_size + 1
         )
+        # KV cache size range, incremented by block granularity
         # kv缓存大小的枚举范围，按block粒度递增
         decode_kv_cache_size_range = np.arange(
             0,
             self._config.prediction_max_tokens_per_request + 1,
-            self._config.kv_cache_prediction_granularity,       # kv cache存储为block，这里就是block_size
+            self._config.kv_cache_prediction_granularity,       # KV cache stored in blocks / kv cache存储为block，这里就是block_size
         )
-        # 解码时prefill chunk size固定为0
+        # Decode prefill_chunk_size is fixed at 0 / 解码时prefill chunk size固定为0
         decode_prefill_chunk_size_range = [0]
+        # Generate all combinations (Cartesian product)
         # 生成所有组合（笛卡尔积）
         decode_batch_size, decode_kv_cache_size, decode_prefill_chunk_size = zip(
             *product(
@@ -921,18 +954,21 @@ class SklearnExecutionTimePredictor(BaseExecutionTimePredictor):
             )
         )
 
+        # Prefill only supports batch_size=1 (single request typically)
         # Prefill阶段仅支持batch_size=1（通常单请求）
         prefill_batch_size_range = [1]
+        # Also enumerate KV cache size by block granularity
         # 同样按block粒度枚举kv缓存大小
         prefill_kv_cache_size_range = np.arange(
             0,
             self._config.prediction_max_tokens_per_request + 1,
             self._config.kv_cache_prediction_granularity,
         )
-        # Prefill chunk大小从1到最大允许值
+        # Prefill chunk size from 1 to max / Prefill chunk大小从1到最大允许值
         prefill_prefill_chunk_size_range = np.arange(
             1, self._config.prediction_max_prefill_chunk_size + 1
         )
+        # Generate all prefill parameter combinations
         # 生成所有prefill参数组合
         prefill_batch_size, prefill_kv_cache_size, prefill_prefill_chunk_size = zip(
             *product(
@@ -942,6 +978,7 @@ class SklearnExecutionTimePredictor(BaseExecutionTimePredictor):
             )
         )
 
+        # Merge decode and prefill combinations into one DataFrame
         # 合并decode和prefill的所有参数组合成一个DataFrame
         attention_df = pd.DataFrame(
             {
@@ -952,47 +989,56 @@ class SklearnExecutionTimePredictor(BaseExecutionTimePredictor):
             }
         )
 
-        # 标记是否为decode阶段（chunk_size == 0）
+        # Mark decode stage (chunk_size == 0) / 标记是否为decode阶段
         attention_df["is_decode"] = attention_df["prefill_chunk_size"] == 0
+        # num_tokens = max(prefill_chunk_size, batch_size)
         # num_tokens取prefill_chunk_size和batch_size的最大值
         attention_df["num_tokens"] = attention_df[
             ["prefill_chunk_size", "batch_size"]
         ].max(axis=1)
+        # Add squared prefill chunk size feature (for model input)
         # 添加prefill chunk大小的平方项（用于模型输入）
         attention_df["prefill_chunk_size_squared"] = (
             attention_df["prefill_chunk_size"] ** 2
         )
 
-        # 分离出prefill和decode的数据子集
+        # Split into prefill and decode subsets / 分离出prefill和decode的数据子集
         prefill_df = attention_df[~attention_df["is_decode"]]
         decode_df = attention_df[attention_df["is_decode"]]
-        # 进一步筛选有缓存的prefill数据
+        # Filter prefill data with existing cache / 进一步筛选有缓存的prefill数据
         chunked_prefill_df = prefill_df[prefill_df["kv_cache_size"] > 0].copy()
-        # 计算总的prefill token数量
+        # Calculate total prefill token count / 计算总的prefill token数量
         chunked_prefill_df["total_prefill_tokens"] = (
             chunked_prefill_df["kv_cache_size"]
             + chunked_prefill_df["prefill_chunk_size"]
         )
         
 
+        # Predict prefill attention time using simulated values (based on kv_cache and chunk^2)
         # 使用模拟值预测prefill注意力时间（基于kv缓存和chunk^2）
         prefill_data = prefill_df[["kv_cache_size", "prefill_chunk_size_squared"]].values
         predictions["attn_prefill"] = {}
         for kv_cache_size, prefill_chunk_size_squared in prefill_data:
+            # Prefill time based on kv_cache size and chunk size squared
+            # base 0.01ms + kv_cache/100 * 0.001ms + chunk_size_sq/10000 * 0.0001ms
             # Prefill时间基于kv_cache大小和chunk大小平方计算
             # 基础时间0.01ms + kv_cache每增加100增加0.001ms + chunk_size_squared每增加10000增加0.0001ms
             time = 0.01 + (kv_cache_size * 0.001 / 100) + (prefill_chunk_size_squared * 0.0001 / 10000)
             predictions["attn_prefill"][(int(kv_cache_size), int(prefill_chunk_size_squared))] = time
 
+        # Predict decode attention time using simulated values (based on batch_size and kv_cache)
         # 使用模拟值预测decode注意力时间（基于batch_size和kv缓存）
         decode_data = decode_df[["batch_size", "kv_cache_size"]].values
         predictions["attn_decode"] = {}
         for batch_size, kv_cache_size in decode_data:
+            # Decode time based on batch_size and kv_cache size
+            # base 0.005ms + 0.002ms per batch_size + kv_cache/100 * 0.0005ms
             # Decode时间基于batch_size和kv_cache大小计算
             # 基础时间0.005ms + batch_size每增加1增加0.002ms + kv_cache_size每增加100增加0.0005ms
             time = 0.005 + (batch_size * 0.002) + (kv_cache_size * 0.0005 / 100)
             predictions["attn_decode"][(int(batch_size), int(kv_cache_size))] = time
 
+        # # Predict prefill attention time using trained model (based on kv_cache and chunk^2)
         # # 使用训练好的模型预测prefill注意力时间（基于kv缓存和chunk^2）
         # predictions["attn_prefill"] = self._get_model_prediction(
         #     "attn_prefill",
@@ -1000,6 +1046,7 @@ class SklearnExecutionTimePredictor(BaseExecutionTimePredictor):
         #     prefill_df[["kv_cache_size", "prefill_chunk_size_squared"]],
         # )
 
+        # # Predict decode attention time using trained model (based on batch_size and kv_cache)
         # # 使用训练好的模型预测decode注意力时间（基于batch_size和kv缓存）
         # predictions["attn_decode"] = self._get_model_prediction(
         #     "attn_decode",
@@ -1007,7 +1054,7 @@ class SklearnExecutionTimePredictor(BaseExecutionTimePredictor):
         #     decode_df[["batch_size", "kv_cache_size"]],
         # )
 
-        # 返回注意力层所有预测结果
+        # Return all attention layer predictions / 返回注意力层所有预测结果
         return predictions
 
     def _predict_for_attention_layer_models(self) -> Dict[str, Any]:
@@ -1235,7 +1282,8 @@ class SklearnExecutionTimePredictor(BaseExecutionTimePredictor):
         ) = self._get_batch_decode_attention_params(batch)
         if decode_batch_size == 0:
             return 0
-        #TODO decode 打印
+        # TODO(tianhao909): add decode output logging
+        # TODO(tianhao909): 添加 decode 输出日志
         return self._predictions["attn_decode"][
             (decode_batch_size, decode_avg_kv_cache_size)
         ] * (
@@ -1251,7 +1299,7 @@ class SklearnExecutionTimePredictor(BaseExecutionTimePredictor):
             return 0
 
         kv_cache_sizes, prefill_chunk_sizes = zip(*prefill_params)
-        print(len(prefill_chunk_sizes))
+        logger.debug(f"prefill_chunk_sizes length: {len(prefill_chunk_sizes)}")
 
         agg_kv_cache_size = sum(kv_cache_sizes)
         agg_prefill_chunk_size = sum([x**2 for x in prefill_chunk_sizes]) ** 0.5

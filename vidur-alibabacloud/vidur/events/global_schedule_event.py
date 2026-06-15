@@ -21,12 +21,9 @@ class GlobalScheduleEvent(BaseEvent):
     ) -> List[BaseEvent]:
         from vidur.events.replica_schedule_event import ReplicaScheduleEvent
         
-        # import pdb; pdb.set_trace() # >
-        
         self._replica_set = set()
         # _request_mapping: [(replica_id, request), ...]
         
-        # import pdb; pdb.set_trace() # >
         self._request_mapping = scheduler.schedule()
         
 

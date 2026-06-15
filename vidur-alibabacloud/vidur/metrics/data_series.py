@@ -11,6 +11,34 @@ from vidur.logger import init_logger
 logger = init_logger(__name__)
 
 
+# Chrome/Kaleido 是否可用的标记, 首次失败后跳过后续所有 write_image 调用
+# Flag for Chrome/Kaleido availability, skip all subsequent write_image after first failure
+_KALEIDO_AVAILABLE = True
+
+
+def _safe_write_image(fig, path: str):
+    """
+    安全地写入图片, Chrome/Kaleido 不可用时优雅跳过
+    Safely write image, gracefully skip when Chrome/Kaleido is unavailable
+    """
+    global _KALEIDO_AVAILABLE
+    if not _KALEIDO_AVAILABLE:
+        return
+    try:
+        fig.write_image(path)
+    except RuntimeError as e:
+        if "Chrome" in str(e) or "Kaleido" in str(e):
+            _KALEIDO_AVAILABLE = False
+            logger.warning(
+                f"[Plot] Chrome/Kaleido 不可用, 跳过 PNG 生成. "
+                f"运行 'plotly_get_chrome' 安装 Chrome 后可恢复. "
+                f"CSV 数据仍会正常保存."
+            )
+        else:
+            raise
+
+
+
 class DataSeries:
     def __init__(
         self,
@@ -83,6 +111,11 @@ class DataSeries:
 
         if y_name is None:
             y_name = self._y_name
+            
+        # 跳过非数值列的统计 | Skip statistics for non-numeric columns
+        if not pd.api.types.is_numeric_dtype(df[y_name]):
+            logger.debug(f"{plot_name}: {y_name} is non-numeric, skipping stats")
+            return
 
         logger.debug(
             f"{plot_name}: {y_name} stats:"
@@ -108,6 +141,12 @@ class DataSeries:
 
         if y_name is None:
             y_name = self._y_name
+            
+        # 跳过非数值列的统计 (如 pd_p2p_comm_dtype='fp8' 等字符串指标)
+        # Skip statistics for non-numeric columns (e.g., string metrics)
+        if not pd.api.types.is_numeric_dtype(df[y_name]):
+            logger.debug(f"{plot_name}: {y_name} is non-numeric, skipping stats")
+            return
 
         logger.debug(
             f"{plot_name}: {y_name} stats:"
@@ -207,7 +246,8 @@ class DataSeries:
                 labels={"x": y_axis_label},
             )
             fig.update_traces(marker=dict(color="red", size=2))
-            fig.write_image(f"{path}/{plot_name}.png")
+            # fig.write_image(f"{path}/{plot_name}.png")
+            _safe_write_image(fig, f"{path}/{plot_name}.png")
 
         self._save_df(df, path, plot_name)
 
@@ -219,6 +259,11 @@ class DataSeries:
             y_axis_label = self._y_name
 
         df = self._to_df()
+        
+        # 跳过非数值列 | Skip non-numeric columns
+        if not pd.api.types.is_numeric_dtype(df[self._y_name]):
+            self._save_df(df, path, plot_name)
+            return
 
         self.print_distribution_stats(df, plot_name)
 
@@ -252,7 +297,8 @@ class DataSeries:
                 df, x=self._y_name, y="cdf", markers=True, labels={"x": y_axis_label}
             )
             fig.update_traces(marker=dict(color="red", size=2))
-            fig.write_image(f"{path}/{plot_name}.png")
+            # fig.write_image(f"{path}/{plot_name}.png")
+            _safe_write_image(fig, f"{path}/{plot_name}.png")
         self._save_df(df, path, plot_name)
 
     def plot_histogram(self, path: str, plot_name: str) -> None:
@@ -260,6 +306,10 @@ class DataSeries:
             return
 
         df = self._to_df()
+        
+        # 跳过非数值列 | Skip non-numeric columns
+        if not pd.api.types.is_numeric_dtype(df[self._y_name]):
+            return
 
         self.print_distribution_stats(df, plot_name)
 
@@ -292,7 +342,8 @@ class DataSeries:
 
         if self._save_plots:
             fig = px.histogram(df, x=self._y_name, nbins=25)
-            fig.write_image(f"{path}/{plot_name}.png")
+            # fig.write_image(f"{path}/{plot_name}.png")
+            _safe_write_image(fig, f"{path}/{plot_name}.png")
 
     def plot_differential(self, path: str, plot_name: str) -> None:
         if len(self._data_series) == 0:
@@ -333,6 +384,7 @@ class DataSeries:
         if self._save_plots:
             fig = px.line(df, x=self._x_name, y=differential_col_name, markers=True)
             fig.update_traces(marker=dict(color="red", size=2))
-            fig.write_image(f"{path}/{plot_name}.png")
+            # fig.write_image(f"{path}/{plot_name}.png")
+            _safe_write_image(fig, f"{path}/{plot_name}.png")
 
         self._save_df(df, path, plot_name)

@@ -1,6 +1,36 @@
+<p align="left">
+    <a href="README_CN.md">中文</a> ｜ <a href="README.md">English</a> ｜ 日本語
+</p>
+
+# SimAI
+
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![NSDI'25](https://img.shields.io/badge/NSDI'25-SimAI-blue.svg)](https://ennanzhai.github.io/pub/nsdi25spring-simai.pdf)
+
 # 最新ニュース
-### SimCCLのアップデート
-[2025/06] SimCCLのコードが最初に[SimCCL](https://github.com/aliyun/SimAI/tree/SimCCL)ブランチで公開され、まもなくSimCCLリポジトリでリリースされます。
+
+### 最近のアップデート
+
+- [2026/04] **SimAI 1.6 リリース！** 主な更新：
+  - 推論シミュレーション向け GPU メモリモデリング（パラメータカウント＆KV Cache）。
+  - Decode 時間推定の線形補間（最近傍探索の代替）。
+  - PD Disaggregation メモリプランニング（Prefill/Decode 独立バジェット）。
+
+- [2025/12] **SimAI 1.5 リリース！** このリリースでは、マルチリクエスト**推論**ワークロード向けのエンドツーエンドシミュレーションが実現されました。主な機能：
+
+  - **高度な推論シミュレーション：** Prefill/Decode 分離を用いた複雑なシナリオのモデリング。
+  - **最新モデルサポート：** DeepSeek、Qwen3Moe、Qwen3Next に対応。詳細は [AICB の README](./aicb/README.md) を参照してください。
+  - **リクエストスケジューリング：** リクエストスケジューリングは、Microsoft の [Vidur](https://github.com/microsoft/vidur) から適応したコンポーネントによって処理されます。詳細は [Vidur-Alibabacloud の README](./vidur-alibabacloud/README.md) を参照してください。
+
+- [2025/11] [AICB](https://github.com/aliyun/aicb/tree/master) が **DeepSeek**、**Qwen3-MoE**、**Qwen3-Next** 向けの **prefill/decode** 推論ワークロード生成に対応しました。
+
+- [2025/09] [AICB](https://github.com/aliyun/aicb/tree/master) が DeepSeek 向けのトレーニングワークロード生成に対応しました。[@parthpower](https://github.com/parthpower) 氏のコントリビューションに感謝します。
+
+- [2025/06] SimCCLのコードが最初に[SimCCL](https://github.com/aliyun/SimAI/tree/SimCCL)ブランチで公開され、まもなくSimCCLリポジトリでリリースされます。
+
+**コミュニティからの貢献を歓迎します！** SimAI の未来を一緒に作りたい方は、お気軽に Issue を開いてアイデアを議論したり、プルリクエストを送信してください。
+
+
 <div align="center">
 🎯 <b>イベントとコミュニティ活動</b> 🎯
 
@@ -8,43 +38,54 @@
 
 | 日付 | イベント | 場所 | 内容 | 形式 |
 |:----:|:------|:---------|:--------|:----:|
-| 未定 | SimAI 2.0 | 🌐 オンライン | SimAI 2.0のリリース | 💻 バーチャル |
+| --   |       |          |         |      |
 
 ### 🌟 過去のイベント
 
-| 日付 | イベント | 場所 | 内容 | 形式 |
-|:----:|:------|:---------|:--------|:----:|
-| 2025年6月4日 | SimAIコミュニティ第1回ワークショップ | 📍 北京大学 | コミュニティ貢献者による3つの講演 | 🎓 現地 |
-| 2025年5月24日 | 第28回Chinasysワークショップ | 📍 重慶大学 | SimAIに関する招待講演 | 🎓 現地 |
-| 2024年12月27日 | SimAI技術発表会 | 📍 北京航空航天大学 | SimAI技術共有とディスカッション | 🎓 現地 |
-| 2024年12月6日 | HKUST技術ワークショップ | 📍 香港科技大学(広州) | SimAI技術共有とディスカッション | 🎓 現地 |
-| 2024年12月5日 | [Bench'24カンファレンス](https://mp.weixin.qq.com/s/STic_E12xMhZRxhzK9wRnw) | 📍 広州 | SimAIチュートリアルと詳細セッション | 🎓 現地 |
-| 2024年11月26日 | SimAIコミュニティライブストリーム | 🌐 オンライン | インタラクティブな技術ディスカッションとデモ（400人以上参加） | 💻 バーチャル |
-| 2024年11月15日 | 技術ワークショップ | 📍 千島湖 | SimAIオフライン技術交流会 | 🎯 現地 |
-| 2024年10月18日 | ゲスト講義 | 📍 復旦大学 | SimAIチュートリアルと公開講座 | 🎓 現地 |
-| 2024年9月24-26日 | CCF HPC China 2024 | 📍 武漢 | SimAI紹介と技術発表 | 🎤 カンファレンス |
+| 日付             | イベント                                                                  | 場所                     | 内容                                                      | 形式           |
+|:----------------:|:------------------------------------------------------------------------ |:----------------------- |:-------------------------------------------------------- |:-------------:|
+| 2026年4月23日    | SimAI 1.6                                                                | 🌐 オンライン            | SimAI 1.6 のリリース                                     | 💻 バーチャル  |
+| 2025年12月30日   | SimAI 1.5                                                                | 🌐 オンライン            | SimAI 1.5 のリリース                                     | 💻 バーチャル  |
+| 2025年6月4日     | SimAIコミュニティ第1回ワークショップ                                      | 📍 北京大学              | コミュニティ貢献者による3つの講演                          | 🎓 現地        |
+| 2025年5月24日    | 第28回Chinasysワークショップ                                              | 📍 重慶大学              | SimAIに関する招待講演                                     | 🎓 現地        |
+| 2024年12月27日   | SimAI技術発表会                                                           | 📍 北京航空航天大学       | SimAI技術共有とディスカッション                            | 🎓 現地        |
+| 2024年12月6日    | HKUST技術ワークショップ                                                   | 📍 香港科技大学(広州)     | SimAI技術共有とディスカッション                            | 🎓 現地        |
+| 2024年12月5日    | [Bench'24カンファレンス](https://mp.weixin.qq.com/s/STic_E12xMhZRxhzK9wRnw) | 📍 広州                  | SimAIチュートリアルと詳細セッション                        | 🎓 現地        |
+| 2024年11月26日   | SimAIコミュニティライブストリーム                                          | 🌐 オンライン            | インタラクティブな技術ディスカッションとデモ（400人以上参加）| 💻 バーチャル  |
+| 2024年11月15日   | 技術ワークショップ                                                        | 📍 千島湖                | SimAIオフライン技術交流会                                  | 🎯 現地        |
+| 2024年10月18日   | ゲスト講義                                                                | 📍 復旦大学              | SimAIチュートリアルと公開講座                              | 🎓 現地        |
+| 2024年9月24-26日 | CCF HPC China 2024                                                       | 📍 武漢                  | SimAI紹介と技術発表                                       | 🎤 カンファレンス |
+
 </div>
 
 ---
 
+## ドキュメント
+
+詳細なドキュメントは [チュートリアル](./docs/Tutorial.md) を参照してください。
+
+---
+
 # 目次
+
 - [SimAI 概要](#simai-概要)
   - [はじめに](#はじめに)
   - [コンポーネント](#コンポーネント)
   - [シナリオ](#シナリオ)
   - [引用](#引用)
-- [使い方](#使い方)
+- [クイックスタート](#クイックスタート)
   - [セットアップ](#セットアップ)
-    - [ソースコードから](#ソースコードから)
   - [SimAI-Analyticalの使い方](#simai-analyticalの使い方)
   - [SimAI-Simulationの使い方](#simai-simulationの使い方)
+  - [マルチリクエスト推論シミュレーションの使い方](#マルチリクエスト推論シミュレーションの使い方)
 
 # SimAI 概要
+
 ## はじめに
 
-**SimAI**は、業界初のフルスタック・高精度な大規模AIトレーニング用**Sim**ulator（**シミュレーター**）です。フレームワーク、集合通信、ネットワーク層など、LLMトレーニングプロセス全体を詳細にモデリング・シミュレーションします。この包括的なアプローチにより、エンドツーエンドのパフォーマンスデータが提供され、研究者は以下のことが可能になります：
+**SimAI**は、業界初のフルスタック・高精度な大規模AI**推論**および**トレーニング**用**Sim**ulator（**シミュレーター**）です。フレームワーク、集合通信、ネットワーク層など、LLMトレーニングプロセス全体を詳細にモデリング・シミュレーションします。この包括的なアプローチにより、エンドツーエンドのパフォーマンスデータが提供され、研究者は以下のことが可能になります：
 
-- トレーニングプロセスの詳細分析
+- 推論/トレーニングプロセスの詳細分析
 - 特定条件下でのAIタスクの時間消費の評価
 - 以下を含む様々なアルゴリズム最適化によるE2Eパフォーマンスゲインの評価：
   - フレームワークのパラメータ設定
@@ -63,9 +104,10 @@
 SimAI --|--- <a href="https://github.com/aliyun/SimCCL">SimCCL</a>
         |--- <a href="https://github.com/aliyun/SimAI/tree/master/astra-sim-alibabacloud">astra-sim-alibabacloud</a>
         |--- <a href="https://github.com/aliyun/ns-3-alibabacloud">ns-3-alibabacloud</a>
+        |--- vidur-alibabacloud
 </pre>
 
-純粋なシミュレーション能力を基盤に、SimAIは4つのコンポーネント（[aicb](https://github.com/aliyun/aicb)、[SimCCL](https://github.com/aliyun/SimCCL)、[astra-sim-alibabacloud](https://github.com/aliyun/SimAI/tree/master/astra-sim-alibabacloud)、[ns-3-alibabacloud](https://github.com/aliyun/ns-3-alibabacloud)）からなる多機能なフルスタックツールキットに進化しました。これらのコンポーネントは、様々な方法で組み合わせて異なる機能を実現できます。以下に、SimAIの6つの主な使用シナリオを示します。この強力なツールでさらに多くの可能性を探求することをお勧めします。
+純粋なシミュレーション能力を基盤に、SimAIは4つのコンポーネント（[aicb](https://github.com/aliyun/aicb)、[SimCCL](https://github.com/aliyun/SimCCL)、[astra-sim-alibabacloud](https://github.com/aliyun/SimAI/tree/master/astra-sim-alibabacloud)、[ns-3-alibabacloud](https://github.com/aliyun/ns-3-alibabacloud)）からなる多機能なフルスタックツールキットに進化しました。これらのコンポーネントは、様々な方法で組み合わせて異なる機能を実現できます。以下に、SimAIの主な使用シナリオを示します。この強力なツールでさらに多くの可能性を探求することをお勧めします。
 
 以下はSimAIシミュレータのアーキテクチャ図です：
 ![SimAI_Arc](./docs/images/SimAI_Arc.png)
@@ -85,12 +127,12 @@ SimAIは、さまざまなシミュレーション要件を満たすために、
 | シナリオ | 説明 | コンポーネントの組み合わせ |
 |----------|-------------|------------------------|
 | 1. AICBテストスイート | AICBテストスイートを使用してGPUクラスタで通信パターンを実行 | [AICB](https://github.com/aliyun/aicb) |
-| 2. AICB/AIOBワークロード | トレーニングプロセスの計算/通信パターンをモデル化してワークロードを生成 | [AICB](https://github.com/aliyun/aicb) |
+| 2. AICB/AIOBワークロード | **推論**/トレーニングプロセスの計算/通信パターンをモデル化してワークロードを生成 | [AICB](https://github.com/aliyun/aicb) |
 | 3. 集合通信分析 | 集合通信操作をポイントツーポイント通信セットに分解 | [SimCCL](https://github.com/aliyun/SimCCL) |
 | 4. GPUなしでの集合通信 | 非GPUクラスタでRDMA集合通信トラフィックを実行 | [AICB](https://github.com/aliyun/aicb) + [SimCCL](https://github.com/aliyun/SimCCL) + [astra-sim-alibabacloud](https://github.com/aliyun/SimAI/tree/master/astra-sim-alibabacloud)(physical) |
 | 5. SimAI-Analytical | 任意のサーバーで迅速なAICBワークロード分析とシミュレーションを実施（基盤となるネットワークの詳細は無視） | [AICB](https://github.com/aliyun/aicb) + [astra-sim-alibabacloud](https://github.com/aliyun/SimAI/tree/master/astra-sim-alibabacloud)(analytical) |
 | 6. SimAI-Simulation | 任意のサーバーで完全なシミュレーションを実行 | [AICB](https://github.com/aliyun/aicb) + [SimCCL](https://github.com/aliyun/SimCCL) + [astra-sim-alibabacloud](https://github.com/aliyun/SimAI/tree/master/astra-sim-alibabacloud)(simulation) + [ns-3-alibabacloud](https://github.com/aliyun/ns-3-alibabacloud) |
-
+| 7. マルチリクエスト推論シミュレーション | 1台のGPUサーバーを使用してマルチリクエスト**推論**のフルシミュレーションを実行 | [AICB](https://github.com/aliyun/aicb) + [SimCCL](https://github.com/aliyun/SimCCL) + [vidur-alibabacloud](./vidur-alibabacloud) + [astra-sim-alibabacloud](https://github.com/aliyun/SimAI/tree/master/astra-sim-alibabacloud)(analytical/simulation) |
 
 ## 引用
 
@@ -133,18 +175,18 @@ $ ./scripts/build.sh -c analytical
 
 # SimAI-Simulation (ns3)をコンパイル
 $ ./scripts/build.sh -c ns3
-
 ```
 
 ## SimAI-Analyticalの使い方
 
 ```bash
-$  ./bin/SimAI_analytical -w example/workload_analytical.txt -g 9216 -g_p_s 8 -r test- -busbw example/busbw.yaml
+$ ./bin/SimAI_analytical -w example/workload_analytical.txt -g 9216 -g_p_s 8 -r test- -busbw example/busbw.yaml
 ```
 
 バス帯域幅を自動で計算するには、次のコマンドを試してください：
+
 ```bash
-$  ./bin/SimAI_analytical -w ./example/workload_analytical.txt -g 9216  -nv 360 -nic 48.5 -n_p_s 8 -g_p_s 8 -r example-
+$ ./bin/SimAI_analytical -w ./example/workload_analytical.txt -g 9216 -nv 360 -nic 48.5 -n_p_s 8 -g_p_s 8 -r example-
 ```
 
 ## SimAI-Simulationの使い方
@@ -155,18 +197,69 @@ $ python3 ./astra-sim-alibabacloud/inputs/topo/gen_Topo_Template.py -topo Spectr
 
 # 実行
 $ AS_SEND_LAT=3 AS_NVLS_ENABLE=1 ./bin/SimAI_simulator -t 16 -w ./example/microAllReduce.txt -n ./Spectrum-X_128g_8gps_100Gbps_A100 -c astra-sim-alibabacloud/inputs/config/SimAI.conf
-
 ```
+
+## マルチリクエスト推論シミュレーションの使い方
+
+詳細については、`vidur-alibabacloud` ディレクトリ内の [README](./vidur-alibabacloud/README.md) ファイルを参照してください。このモジュールは AICB を活用して**推論**ワークロードの計算時間をプロファイリングします。DeepGEMM や FlashMLA などの特定のハードウェアアクセラレーションライブラリに依存するため、**Hopper (SM90)** および **Blackwell (SM100)** アーキテクチャベースの NVIDIA GPU のみに対応しています。
+
+```bash
+# Dockerfile からビルド
+docker build -t image:latest .
+docker run --gpus all -it --rm image:latest
+```
+
+**注意：** Hopper GPU を使用する場合は、Dockerfile に `ENV FLASH_MLA_DISABLE_SM100=1` を追加してください。
+
+サポートされているすべての推論シナリオ（Qwen3-Next-80B、DeepSeek-671B、Qwen3-MoE-235B）を迅速に検証するには、同梱の4シナリオテストスイートを使用してください：
+
+```bash
+# 前提条件: conda activate vidur
+bash vidur-alibabacloud/examples/vidur-ali-scenarios/run_scenarios.sh --all
+# または単一シナリオを実行:
+bash vidur-alibabacloud/examples/vidur-ali-scenarios/run_scenarios.sh --scenario 1
+```
+
+> **前提条件：** `conda activate vidur` 環境が必要です。詳細は [環境セットアップ](./vidur-alibabacloud/README.md#-environment-setup) を参照してください。
+>
+> シナリオ設定テーブルと出力ファイルの詳細については、[Vidur-AlibabaCloud README](./vidur-alibabacloud/README.md#4-scenario-configuration) を参照してください。
+
+# 謝辞
+
+このプロジェクトに貢献してくださった以下の方々と組織に深く感謝いたします：
+
+- TianHao Fu（北京大学）および [TELOS-syslab](https://github.com/TELOS-syslab/)
+- Parth Parikh（KEYSIGHT）
+- Sarah-Michelle Hammer & Ziyi Wang（TU-Berlin）
+- Xinyue Li（BUPT）
+- Tong Chen（浙江大学）
+- Ming Wang（BUPT）
+- Tao Jiang（中国科学院計算技術研究所）
+
+...その他、コミュニティからの多くの個人コントリビューター（[Contributors to aliyun/SimAI](https://github.com/aliyun/SimAI/graphs/contributors) を参照）。
+
+Chenning Li（MIT CSAIL）にも感謝いたします。革新的な新しいシミュレーター [M4](https://github.com/netiken/m4) への SimAI 統合の協力を開始してくれました。
+
+**このプロジェクトは引き続き、より多くの貢献と提案を歓迎しています。**
+
+# コントリビューションガイド
+
+すべての貢献を歓迎します！始める前に、以下のガイドをお読みください：
+
+| | |
+|---|---|
+| [コントリビューションガイド](./CONTRIBUTING.md) | Issue やプルリクエストの提出方法 |
+| [セキュリティポリシー](./SECURITY.md) | セキュリティ脆弱性の報告方法 |
+| [行動規範](./CODE_OF_CONDUCT.md) | 私たちのコミュニティ基準 |
+| [変更履歴](./CHANGELOG.md) | v1.5 以降のバージョン履歴 |
 
 # お問い合わせ
 
-ご不明な点がございましたら、Gang Lu (yunding.lg@alibaba-inc.com) または Qingxu Li (qingxu.lqx@alibaba-inc.com) までメールでお問い合わせください。
+ご不明な点がございましたら、Gang Lu (yunding.lg@alibaba-inc.com)、Feiyang Xue (xuefeiyang.xfy@alibaba-inc.com) または Qingxu Li (qingxu.lqx@alibaba-inc.com) までメールでお問い合わせください。
 
 SimAIコミュニティのチャットグループへの参加を歓迎します。左がDingTalkグループ、右がWeChatグループです。
 
 <div style="display: flex; justify-content: flex-start; align-items: center; gap: 20px; margin-left: 20px;">
     <img src="./docs/images/simai_dingtalk.jpg" alt="SimAI DingTalk" style="width: 300px; height: auto;">
-    <img src="./docs/images/simai_wechat.jpg" alt="SimAI WeChat" style="width: 300px; height: auto;">
+    <img src="./docs/images/simai_wechat.jpeg" alt="SimAI WeChat" style="width: 300px; height: auto;">
 </div>
-
-<br/>

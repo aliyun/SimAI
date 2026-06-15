@@ -62,7 +62,4 @@ class LORGlobalScheduler(BaseGlobalScheduler):
             replica_id = min(pending_requests_map.items(), key=lambda x: x[1])[0] 
             pending_requests_map[replica_id] += 1
             request_mapping.append((replica_id, request))
-            
-            # import pdb; pdb.set_trace() # >
-        # print(f"> Debug: {request_mapping}{pending_requests_map}")
         return request_mapping

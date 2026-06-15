@@ -57,5 +57,4 @@ class BaseRegistry(ABC):
     
     @classmethod
     def get_from_str(cls, key_str: str, *args, **kwargs) -> Any:
-        # import pdb; pdb.set_trace() # >
         return cls.get(cls.get_key_from_str(key_str), *args, **kwargs)

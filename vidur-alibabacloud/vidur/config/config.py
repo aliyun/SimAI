@@ -483,22 +483,111 @@ class ReplicaConfig:
     
     pd_p2p_comm_dtype: str = field(
         default='float16',
-        metadata={"help": "> add: pd_p2p_comm_dtype for pd disaggregation."},
+        metadata={
+            "help": "Data type for PD disaggregation P2P communication. "
+                    "Tested: fp8, float16, float32. "
+                    "Other dtypes (float64, bfloat16, int8, int16, int32, int64) are "
+                    "theoretically supported but untested.",
+            "choices": ['fp8', 'float16', 'float32'],
+        },
     )
     
+    # pd_node_ratio: float = field(
+    #     default=0.5,
+    #     metadata={"help": "Number of p replicas : number of d replicas."},
+    # )
+    
+    # when pd_node_ratio = 1, all replicas are P-nodes; no D-nodes; that means not pd disaggregation
     pd_node_ratio: float = field(
-        default=0.5,
-        metadata={"help": "Number of p replicas : number of d replicas."},
+        default=1,
+        metadata={"help": "Fraction of replicas allocated as prefill (P) nodes. "
+                  "pd_node_ratio=1 (default): MIXED mode, all replicas handle both prefill "
+                  "and decode; PD-specific params (prefill_*/decode_*) are ignored. "
+                  "0 < pd_node_ratio < 1: PD separation enabled, prefill and decode run "
+                  "as independent clusters with potentially different TP/PP/EP. "
+                  "E.g., 0.5 means P:D = 1:1. Must be in range (0, 1]."},
     )
-    
-    # parser.add_argument('--expert_model_parallel_size', type=int, default=1, help='Degree of expert model parallelism.')
+  
+    # ============================================================
+    # [EP] EP 不支持手动指定。当前实现中 EP 会被自动覆盖为 cluster world_size
+    # (tp×pp×dp)，在 cluster.py 中执行覆盖。若用户传入的值 != world_size，
+    # 将抛出 ValueError。
+    # [EP] EP is not user-configurable. It is auto-set to cluster world_size
+    # (tp*pp*dp) in cluster.py. ValueError raised if user value != world_size.
+    # ============================================================
     expert_model_parallel_size: int = field(
         default=1,
-        metadata={"help": "Degree of expert model parallelism."},
+        metadata={"help": "Auto-set to world_size in cluster.py. "
+                  "User value != world_size raises ValueError."},
     )
 
+    # ============================================================
+    # PD separation specific params (optional, fallback to shared values above if not set)
+    # Reference vLLM: PD separation runs prefill/decode as completely independent clusters
+    # with potentially different TP/PP/EP
+    # PD 分离专用参数 (可选, 未指定时 fallback 到上方共享值)
+    # 参考 vLLM: PD 分离时 prefill/decode 是完全独立的集群
+    # 可以有不同 TP/PP/EP
+    # ============================================================
+    prefill_tensor_parallel_size: Optional[int] = field(
+        default=None,
+        metadata={"help": "Prefill-specific TP size. Falls back to tensor_parallel_size if not set."},
+    )
+    prefill_num_pipeline_stages: Optional[int] = field(
+        default=None,
+        metadata={"help": "Prefill-specific PP size. Falls back to num_pipeline_stages if not set."},
+    )
+    decode_tensor_parallel_size: Optional[int] = field(
+        default=None,
+        metadata={"help": "Decode-specific TP size. Falls back to tensor_parallel_size if not set."},
+    )
+    decode_num_pipeline_stages: Optional[int] = field(
+        default=None,
+        metadata={"help": "Decode-specific PP size. Falls back to num_pipeline_stages if not set."},
+    )
+    # Directly specify prefill replica count, takes priority over pd_node_ratio
+    # More flexible: avoids pd_node_ratio indivisibility issues
+    # 直接指定 prefill replica 数量, 优先于 pd_node_ratio 计算
+    # 更灵活: 避免 pd_node_ratio 不整除的问题
+    num_prefill_replicas: Optional[int] = field(
+        default=None,
+        metadata={"help": "Directly specify number of prefill replicas. "
+                  "Takes priority over pd_node_ratio when set. "
+                  "num_decode_replicas = total_replicas - num_prefill_replicas."},
+    )
+
+
     def __post_init__(self):
+        # Base world_size: per-replica GPU count (excluding dp)
+        # 基础 world_size: per-replica 的 GPU 数 (不含 dp)
         self.world_size = self.num_pipeline_stages * self.tensor_parallel_size
+        
+        # ============================================================
+        # [EP] Reject user-specified EP != world_size, then auto-set
+        # [EP] 拒绝用户传入的 EP != world_size，然后自动设置
+        # ============================================================
+        if self.expert_model_parallel_size != 1 and self.expert_model_parallel_size != self.world_size:
+            raise ValueError(
+                f"EP 不支持手动指定。当前 EP={self.expert_model_parallel_size}，"
+                f"但 world_size={self.world_size}。EP 会在运行时自动设为 world_size。"
+                f"请移除 --replica_config_expert_model_parallel_size 参数或设为 {self.world_size}。"
+            )
+        self.expert_model_parallel_size = self.world_size  # Auto-set, overridden again in cluster.py / 自动设置, cluster.py 会再次覆盖
+        
+        # 打印 ReplicaConfig 配置摘要 | Print ReplicaConfig summary
+        logger.debug(f"[ReplicaConfig] tp={self.tensor_parallel_size}, pp={self.num_pipeline_stages}, "
+              f"per_replica_ws={self.world_size}, ep(temp)={self.expert_model_parallel_size}, "
+              f"pd_ratio={self.pd_node_ratio}")
+        if self.pd_node_ratio < 1:
+            p_tp = self.prefill_tensor_parallel_size or self.tensor_parallel_size
+            p_pp = self.prefill_num_pipeline_stages or self.num_pipeline_stages
+            d_tp = self.decode_tensor_parallel_size or self.tensor_parallel_size
+            d_pp = self.decode_num_pipeline_stages or self.num_pipeline_stages
+            logger.debug(f"[ReplicaConfig] PD separation enabled: "
+                  f"prefill(tp={p_tp}, pp={p_pp}), decode(tp={d_tp}, pp={d_pp})")
+            if self.num_prefill_replicas is not None:
+                logger.debug(f"[ReplicaConfig] User specified num_prefill_replicas={self.num_prefill_replicas}")
+        
         self.model_config: BaseModelConfig = BaseModelConfig.create_from_name(
             self.model_name
         )
@@ -640,6 +729,17 @@ class BaseExecutionTimePredictorConfig(BasePolyConfig):
         # default="../SimAI/astra-sim-alibabacloud/inputs/config/SimAI.conf",
         default="../astra-sim-alibabacloud/inputs/config/SimAI.conf",
         metadata={"help": "Path to the simai config file."},
+    )
+    aicb_force_bs1: bool = field(
+        default=False,
+        metadata={"help": "AICB fallback switch: force bs=1 for CSV generation. "
+                  "Default OFF. "
+                  "Known limitation: DeepSeek-V3-671B prefill AICB profiling fails on "
+                  "H20 (SM90) when tp>=4, due to FlashMLA flash_mla_sparse_fwd kernel's "
+                  "h_q alignment requirement (B_H=64). This does not affect decode or "
+                  "other models. The simulator will automatically fall back when CSV is "
+                  "unavailable. Set to True only if you encounter CUDA errors during "
+                  "AICB profiling."},
     )
 
 

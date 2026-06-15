@@ -3,7 +3,6 @@ from typing import Tuple
 from vidur.entities.base_entity import BaseEntity
 from vidur.logger import init_logger
 
-# >
 from vidur.entities.task import Task
 import networkx as nx
 from vidur.entities.flow import Flow
@@ -69,8 +68,7 @@ class Request(BaseEntity):
 
         self._num_restarts = 0
         
-        # >: Add DAG property
-        # self.dag: nx.DiGraph = field(default_factory=nx.DiGraph)
+        # DAG property for PD separation
         self.dag = nx.DiGraph()
         self.node_id = 0
         self.nodes = {}
@@ -91,7 +89,7 @@ class Request(BaseEntity):
         self.pd_p2p_bytes_per_token = None
         self.pd_p2p_comm_dtype = None
         
-        # > add: Convenient for obtaining the replica corresponding to decode_replica_id through global_scheduler
+        # Reference to global_scheduler for obtaining decode replica
         self.global_scheduler = None
         
 
@@ -265,15 +263,6 @@ class Request(BaseEntity):
         # Absolute time
         self._latest_iteration_completed_at = time
 
-        # if self._num_processed_tokens == self.total_tokens:
-        #     print(f"> Debug: ")
-        
-        # print(f"> Debug: req on_batch_end Request {self._id} processed {num_tokens_processed} tokens, \
-            # total processed {self._num_processed_tokens} tokens.")
-        # print(f"> Debug: req on_batch_end num_processed_tokens={self._num_processed_tokens}, \
-            # total_tokens={self.total_tokens} request_type={self.request_type}")
-        # print(f"> Debug: req on_batch_end At time={time}, \
-            # this request's self._completed_at={self._completed_at} self._completed={self._completed}")
         assert self._num_processed_tokens <= self.total_tokens
 
 
@@ -282,40 +271,28 @@ class Request(BaseEntity):
         if self._num_processed_tokens == self._num_prefill_tokens:
             self._is_prefill_complete = True
             
-            # >
             self.request_type = RequestType.DECODE
             
             # we get one decode token when the prefill processing completes
             self._num_processed_tokens += 1
-            # print(f"> Debug: self._num_processed_tokens += 1 \
-                # Request {self._id} processed {num_tokens_processed} tokens, \
-                # total processed {self._num_processed_tokens} tokens")
 
 
             # we must record the prefill completion time only in the first time
             # in the subsequent restarts, we keep adding the previously decoded
             # tokens to the prefill tokens - that is irrelevant to the original prefill
             if self._prefill_completed_at == 0:
-                # > At this point it is absolute time,
+                # Record absolute time of prefill completion
                 self._prefill_completed_at = time
         
         # Here; decode batching
         # elif self._num_processed_tokens == self._num_prefill_tokens:
         elif self._num_processed_tokens > self._num_prefill_tokens :
             
-            # >
-            assert self._is_prefill_complete == True, "> debug"
-            assert self.request_type == RequestType.DECODE, "> debug"
-            
-            # we get one decode token when the prefill processing completes
-            # self._num_processed_tokens += 1
-            # print(f"> Debug: Request {self._id} at this point _num_processed_tokens > _num_prefill_tokens, \
-                # total processed {self._num_processed_tokens} tokens")
+            assert self._is_prefill_complete == True, "prefill must be complete at this point"
+            assert self.request_type == RequestType.DECODE, "request type must be DECODE at this point"
 
 
         elif self._num_processed_tokens < self._num_prefill_tokens:
-            # print(f"> Debug: Request {self._id} at this point _num_processed_tokens < _num_prefill_tokens, \
-                # total processed {self._num_processed_tokens} tokens")
             pass
         
         # check if request is completed
@@ -323,18 +300,15 @@ class Request(BaseEntity):
             self._completed_at = time
             self._completed = True
             self.decode_time = self._completed_at - self.prefill_completed_at
-            assert self.decode_time > 0 and self.decode_time < float("inf") , "> Debug: decode time error"
-            # print(f"> Debug: At this point the request should end!!, \
-                # Request {self._id} completed at {self._completed_at} ")
+            assert self.decode_time > 0 and self.decode_time < float("inf"), "decode_time must be positive and finite"
             
             
             logger.debug(f"Request {self._id} completed at {self._completed_at}")
             
             
         if self._num_processed_tokens >= self._num_prefill_tokens:
-            # print(f"> Debug: request ID={self._id} self.decode_arrived_at={self.decode_arrived_at} self.request_type={self.request_type} self.prefill_completed_at={self.prefill_completed_at} self._is_prefill_complete={self._is_prefill_complete}")
-            # assert self.decode_arrived_at < float("inf")  and self.request_type == RequestType.DECODE and self.prefill_completed_at > 0 and self._is_prefill_complete == True, "> debug"
-            assert self.request_type == RequestType.DECODE and self.prefill_completed_at > 0 and self._is_prefill_complete == True, "> debug"
+            assert self.request_type == RequestType.DECODE and self.prefill_completed_at > 0 and self._is_prefill_complete == True, \
+                "post-prefill request must be DECODE with valid prefill_completed_at"
 
         
 
@@ -346,8 +320,7 @@ class Request(BaseEntity):
         if self._latest_stage_completed_at == 0:
             self._preempted_time = 0
         else:
-            # TODO > fy test each time
-            # print(f"> Debug: request_id={self._id} time={time} self._latest_stage_completed_a={self._latest_stage_completed_at}")
+            # TODO: verify preempted_time calculation each iteration
             self._preempted_time += time - self._latest_stage_completed_at
         self._preempted = False
 
@@ -402,16 +375,11 @@ class Request(BaseEntity):
 
         self._num_restarts += 1
     
-    # >
     def create_task(self, task_type, **kwargs):
         """
         Creates a Task and adds it to the DAG.
         """
         
-        # task = Task.from_type(task_type=task_type,
-        #                       node_id=next(self.node_id),
-        #                       request=self,
-        #                       **kwargs)
         task = Task.from_type(task_type=task_type,
                               node_id=self.node_id,
                               request=self,
@@ -419,19 +387,12 @@ class Request(BaseEntity):
         self.node_id += 1
         self.dag.add_node(task)
         self.nodes[task.node_id] = task
-        # print(f"> self.dag={self.dag} self.nodes={self.nodes}")
-        # print(f"> self.dag={self.dag} ")
-        # import pdb; pdb.set_trace() # >
         return task
     
     def create_flow(self, flow_type, **kwargs):
         """
         Create a flow and add it to the DAG.
         """
-        # flow = Flow.from_type(flow_type=flow_type,
-        #                       node_id=next(self.node_id),  # Generate unique node ID
-        #                       request=self,
-        #                       **kwargs)  # Create flow based on flow type
         flow = Flow.from_type(flow_type=flow_type,
                               node_id=self.node_id,  # Generate unique node ID
                               request=self,
@@ -441,65 +402,74 @@ class Request(BaseEntity):
         self.nodes[flow.node_id] = flow  # Add flow to node dictionary
         return flow  # Return created flow
     
-    # >
     def successors(self, node):
         """
         Returns the next Task or Flow to be executed after node.
         """
         return self.dag.successors(node)
     
-    # estimate_kv_cache_size
-    # def estimate_kv_cache_size(self, num_tokens=None, model=None):
     def estimate_kv_cache_size(self, num_tokens=None, replica=None):
         """
-        返回生成num_tokens后的KV缓存大小。
-        需要请求的根节点分配到某个实例上。
-        Returns the KV-cache size after generating num_tokens
-        Requires the Request root node to be allocated on an Instance.
-        """
-        # if num_tokens is None:  # If num_tokens is not specified
-        #     num_tokens = self.generated_tokens  # Use the number of generated tokens
-        # if model is None:  # If model is not specified
-        #     # model = self.root_node.instance.model  # Use root node's model
-        #     model = self.root_node.replica.model  # Use root node's model
-                    
-        # return 2 * self.batch_size * num_tokens * model.architecture.hidden_size \
-        #         * model.architecture.num_layers * model.size.dtype_size  # Calculate KV cache size
-        # return 2 * self.batch_size * num_tokens * replica.mlp_hidden_dim \
-        #         * replica.num_layers * replica.size.dtype_size  # Calculate KV cache size
-        # TODO  :p2p   > self.batch_size and replica.size.dtype_size from vidur
-        # Point-to-point communication padding; Global parameters; Comm size/bandwidth; 
-        # TODO Another version of ns3; Support writing a stream in config; For later
+        Calculate KV Cache size for the given number of tokens (unit: Bytes).
+        计算指定token数量的KV Cache大小 (单位: Bytes)
         
-        if replica.pd_p2p_comm_dtype == 'float16':
-            pd_p2p_bytes_per_token = 2
-        elif replica.pd_p2p_comm_dtype == 'float32':
-            pd_p2p_bytes_per_token = 4
-        elif replica.pd_p2p_comm_dtype == 'float64':
-            pd_p2p_bytes_per_token = 8
-        elif replica.pd_p2p_comm_dtype == 'bfloat16':
-            pd_p2p_bytes_per_token = 2
-        elif replica.pd_p2p_comm_dtype == 'int8':
-            pd_p2p_bytes_per_token = 1
-        elif replica.pd_p2p_comm_dtype == 'int16':
-            pd_p2p_bytes_per_token = 2
-        elif replica.pd_p2p_comm_dtype == 'int32':
-            pd_p2p_bytes_per_token = 4
-        elif replica.pd_p2p_comm_dtype == 'int64':
-            pd_p2p_bytes_per_token = 8
-
-        self.pd_p2p_bytes_per_token = pd_p2p_bytes_per_token
+        KV Cache formula / 公式:
+        kv_cache_size = 2 (K+V) * num_tokens * num_kv_heads * head_dim * num_layers * bytes_per_element
+        
+        Args:
+            num_tokens: Token count (prefill_tokens + decode_tokens)
+            replica: Replica instance with model config
+            
+        Returns:
+            int: KV Cache size (Bytes)
+        """
+        # ===== 1. Determine bytes per element (by data type) =====
+        # ===== 1. 确定每个元素的字节数 (根据数据类型) =====
+        dtype_to_bytes = {
+            'float16': 2, 'bfloat16': 2,
+            'float32': 4, 'float64': 8,
+            'fp8': 1, 'int8': 1,
+            'int16': 2, 'int32': 4, 'int64': 8
+        }
+        bytes_per_element = dtype_to_bytes.get(replica.pd_p2p_comm_dtype, 2)  # Default 2 bytes / 默认2字节
+        
+        # Save to instance for reuse elsewhere
+        # 保存到实例属性供其他地方使用
+        self.pd_p2p_bytes_per_token = bytes_per_element
         self.pd_p2p_comm_dtype = replica.pd_p2p_comm_dtype
         
-        assert self.pd_p2p_bytes_per_token is not None and self.pd_p2p_comm_dtype is not None, "> Debug: PD P2P dtype is not set"
+        # ===== 2. Get KV Cache related dimensions =====
+        # ===== 2. 获取KV Cache相关维度 =====
+        # Use correct KV cache dims: num_kv_heads * attention_head_dim
+        # 使用正确的KV cache维度: num_kv_heads * attention_head_dim
+        # (NOT mlp_hidden_dim, which is MLP's dimension)
+        # (而不是mlp_hidden_dim, 那是MLP的维度)
+        num_kv_heads = replica.num_kv_heads
+        head_dim = replica.attention_head_dim  # embedding_dim // num_q_heads
+        num_layers = replica.num_layers
         
-        # TODO : >: double check this
-        return 2 * num_tokens * replica.mlp_hidden_dim \
-                * replica.num_layers * pd_p2p_bytes_per_token  # Calculate KV cache size
-
+        # ===== 3. Calculate KV Cache size =====
+        # ===== 3. 计算KV Cache大小 =====
+        # Formula: 2(K+V) * num_tokens * num_kv_heads * head_dim * num_layers * bytes_per_element
+        # 公式同上
+        kv_cache_size = (
+            2                    # K和V两个缓存
+            * num_tokens         # token数量
+            * num_kv_heads       # KV heads数量
+            * head_dim           # 每个head的维度
+            * num_layers         # 层数
+            * bytes_per_element  # 每个元素的字节数
+        )
         
-        # return 2 * num_tokens * replica.mlp_hidden_dim \
-        #         * replica.num_layers  # Calculate KV cache size
+        # ===== 4. Print debug info (first call only) =====
+        # ===== 4. 打印调试信息 (首次调用时) =====
+        if not hasattr(self, '_kv_cache_debug_printed'):
+            logger.debug(f"[KV Cache] params: num_tokens={num_tokens}, num_kv_heads={num_kv_heads}, "
+                        f"head_dim={head_dim}, num_layers={num_layers}, bytes={bytes_per_element}")
+            logger.debug(f"[KV Cache] result: {kv_cache_size} bytes = {kv_cache_size/(1024**3):.4f} GB")
+            self._kv_cache_debug_printed = True
+        
+        return kv_cache_size
 
 
     

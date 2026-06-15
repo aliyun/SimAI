@@ -5,6 +5,7 @@ import wandb
 from ddsketch.ddsketch import DDSketch
 
 from vidur.logger import init_logger
+from vidur.metrics.data_series import _safe_write_image # qoder
 
 logger = init_logger(__name__)
 
@@ -146,5 +147,6 @@ class CDFSketch:
                 labels={"x": x_axis_label},
             )
             fig.update_traces(marker=dict(color="red", size=2))
-            fig.write_image(f"{path}/{plot_name}.png")
+            # fig.write_image(f"{path}/{plot_name}.png")
+            _safe_write_image(fig, f"{path}/{plot_name}.png") # qoder
         self._save_df(df, path, plot_name)
