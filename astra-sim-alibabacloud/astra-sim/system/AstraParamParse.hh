@@ -107,7 +107,7 @@ int parse(int argc, char *argv[]) {
             std::cout << "-r,     --result            Output results path" << std::endl;
             std::cout << "-nv, --nvlink     Nvlink" << std::endl;
             std::cout << "-nic, --nic_busbw     NIC busbw" << std::endl;
-            std::cout << "-n_p_s, --bus-bandwidth     Bus bandwidth file" << std::endl;
+            std::cout << "-n_p_s, --nic_per_server     NICs per server" << std::endl;
             std::cout << "-nic_t, --nic_type     NIC type(cx7,bf3),choose when disable nic " << std::endl;
             std::cout << "-g_type, --gpu_type     GPU type(A100,H100),choose when disable nvlink " << std::endl;
             std::cout << "-v, --visual    Enable visual output" << std::endl;
