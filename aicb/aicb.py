@@ -13,32 +13,45 @@ limitations under the License.
 import torch
 from utils.utils import get_args, get_comp_out, extract_averages, Comp_with_aiob
 from utils.benchmark_logger import bench_logger
+from workload_generator.mocked_model.training.MockedDeepspeed import DeepspeedForCausalLM
+from workload_generator.mocked_model.training.MockedDeepSeek import DeepSeekV3Model
+from workload_generator.mocked_model.training.MockedMegatron import MegatronModel
+from workload_generator.generate_deepspeed_stage1_2_workload import (
+    DeepSpeedStage1,
+    DeepSpeedStage2,
+)
+from workload_generator.generate_deepspeed_stage3_workload import DeepSpeedStage3
+from workload_generator.generate_megatron_workload import MegatronWorkload
+from workload_generator.generate_collective_test import Collective_Test
 from workload_applyer import WorkloadApplyer
 from utils.utils import *
 
 if __name__ == "__main__":
-    # Import bootstrap FIRST to populate MODEL_REGISTRY before arg parsing.
-    # This must happen before get_args() so that --frame choices are dynamic.
-    import workload_generator._bootstrap as _  # noqa: F401 -- side-effect import
-    from workload_generator.registry import lookup
-
     args = get_args()
     if not hasattr(args, "backend"):
         args.backend = "nccl"
     torch.distributed.init_process_group(backend=args.backend)
     args.world_size = torch.distributed.get_world_size()
     args.rank = torch.distributed.get_rank()
-
-    entry = lookup(args.frame)
-    if entry.model_cls is not None:
-        model = entry.model_cls(args)
-    else:
-        model = None
-    workload_generator = entry.wl_cls(args, model)
-
+    if args.frame == "Megatron":
+        model = MegatronModel(args)
+        workload_generator = MegatronWorkload(args, model)
+    elif args.frame == "DeepSpeed":
+        model = DeepspeedForCausalLM(args)
+        if args.stage == 1:
+            workload_generator = DeepSpeedStage1(args, model)
+        elif args.stage == 2:
+            workload_generator = DeepSpeedStage2(args, model)
+        elif args.stage == 3:
+            workload_generator = DeepSpeedStage3(args, model)
+    elif args.frame == "collective_test":
+        workload_generator = Collective_Test(args, None)
+    elif args.frame == "DeepSeek":
+        model = DeepSeekV3Model(args)
+        workload_generator = MegatronWorkload(args, model)
     workload = workload_generator()
     if args.aiob_enable and (args.frame == "Megatron" or args.frame == "DeepSeek"):
-
+        
         params = model.parameters()
         args.model_param = sum(p.numel() for p in params)
         args.activation_memory = 0
@@ -73,7 +86,7 @@ if __name__ == "__main__":
                 try:
                     from visualize.generate import visualize_output
                     visualize_output(csv_filename,False)
-                except ImportError:
+                except ImportError: 
                     print("visualize_output is not available because required library is not found")
 
             print(

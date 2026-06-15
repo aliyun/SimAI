@@ -3,13 +3,11 @@
 ## 状态
 
 **当前阶段**: Phase 3 — 功能扩展  
-**完成**: 43 features | **待开发**: 55 items | **进行中**: 1 | **LLD→OXC→NS3 端到端**: ✅
+**完成**: 33 features | **待开发**: 13 items | **LLD→OXC→NS3 端到端**: ✅
 
 ## 近期 Session
 
 | 日期 | 工作 |
-|------|------|
-| 2026-06-15 | **AICB 可扩展性研究 + 7 features 全部完成 (F093-F099)**: (1) F093 模型注册表 — MODEL_REGISTRY dict 替代硬编码 if/elif 调度, generate_megatron_workload.py + _bootstrap.py 注册模式; (2) F094 LLaMA MockedModel — MockedLlama.py (405行), GQA+SwiGLU+RMSNorm pre-norm, 复用 MegatronColumn/RowLinear; (3) F095 参数化 MoE 路由 — --n_shared_expert 从 DeepSeek 专属移至 get_moe_params (所有 MoE 模型可用), MOEMLP 加 shared expert 计算; (4) F096 Qwen3 推理 workload — MockedQwen3Moe.py (362行, 8类) + MockedQwen3Next.py (276行, 4类, 含 GatedDeltaNet); (5) F097 Context Parallelism — CommGroup.cp_group + ContextParallelRing (110行) 实现 ring-attention isend/irecv; (6) F098 Chakra 输出格式 — ChakraWriter (178行) 转换 LogItem 到 MLCommons Chakra JSON; (7) F099 声明式 Tensor Graph — tensor_graph 包 (345行, 4文件): TensorGraph CSV 加载, ReplicateGraph 层栈, ConnectGraph 端口连接, SwiGLU FFN 8行 CSV 示例. 研究产出: research_aicb_extensibility.md (500+ 行完整报告) |
 |------|------|
 | 2026-06-09 | v3 lld NPU-Leaf 连接分析: server#0 36端口每端口连2 leaf(滑窗), 共64边, 非用户的8NPU×8端口×1leaf拓扑. + F092 localStorage migration fix (旧serverIps映射到serverIds) |
 | 2026-06-08 | F092: serverIps→serverIds rename — v3 lld server node_id is name not IP. 10 files: network.ts, network-store.ts, edg-api.ts, HomePage.tsx, EdgPage.tsx, EdgDiffGraph.tsx, routes.py, merger.py, conftest.py, test_merger.py, test_e2e_ns3_oxc.py. npu_match server_ip preserved. 79 tests + tsc + E2E pass |

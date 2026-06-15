@@ -2,12 +2,12 @@
   "project": "SimAI-OXC",
   "updated": "2026-06-04T07:00:00Z",
   "summary": {
-    "done": 43,
-    "pending": 55,
+    "done": 5,
+    "pending": 1,
     "in_progress": 1,
     "by_type": {
       "refactor": 4,
-      "feature": 19,
+      "feature": 12,
       "test": 3,
       "bugfix": 17,
       "unknown": 14
@@ -1441,173 +1441,6 @@
         "Multi-file or new-file edits still require feature"
       ],
       "passes": false
-    },
-    {
-      "id": "F093",
-      "type": "feature",
-      "category": "aicb-extensibility",
-      "description": "AICB model registry: replace hardcoded if/elif dispatch in generate_megatron_workload.py with dict-based MODEL_REGISTRY for plugin-style model registration",
-      "status": "done",
-      "priority": "P1",
-      "files": [
-        "aicb/workload_generator/generate_megatron_workload.py"
-      ],
-      "verification_steps": [
-        "MODEL_REGISTRY dict exists with Megatron, DeepSeek entries",
-        "args.frame lookup via MODEL_REGISTRY.get() with clear error on unknown model",
-        "Existing Megatron and DeepSeek workloads generate identically to before"
-      ],
-      "passes": true,
-      "created_at": "2026-06-15T00:00:00Z",
-      "updated_at": "2026-06-15T00:00:00Z",
-      "confidence": "HIGH: ~20 line change, pure refactor of dispatch logic, no behavioral change. AST verification: old if/elif removed, MODEL_REGISTRY.get() dispatch confirmed.",
-      "source": "research_aicb_extensibility.md section 7.1 recommendation 1"
-    },
-    {
-      "id": "F094",
-      "type": "feature",
-      "category": "aicb-extensibility",
-      "description": "LLaMA MockedModel: implement MockedLlama.py with GQA attention, SwiGLU gate-up-down FFN (3 projections), RMSNorm pre-norm. Reuse MegatronRowLinear/MegatronColumnLinear for TP.",
-      "status": "done",
-      "priority": "P1",
-      "files": [
-        "aicb/workload_generator/mocked_model/training/MockedLlama.py",
-        "aicb/workload_generator/generate_megatron_workload.py",
-        "aicb/workload_generator/_bootstrap.py",
-        "aicb/utils/utils.py"
-      ],
-      "verification_steps": [
-        "LlamaMLP class: gate_proj, up_proj, down_proj ColumnLinear/RowLinear with correct TP sharding",
-        "LlamaAttention class: Q with num_heads TP, K/V with num_kv_heads (kv_tp capped at num_kv_heads)",
-        "LlamaDecoderLayer: input_norm -> attention -> residual -> post_attn_norm -> mlp -> residual (pre-norm)",
-        "LlamaModel assembles embedding + N x LlamaDecoderLayer + final_norm + lm_head",
-        "Registered in _bootstrap.py, MODEL_REGISTRY in generate_megatron_workload.py, and --num_kv_heads in utils.py"
-      ],
-      "passes": true,
-      "created_at": "2026-06-15T00:00:00Z",
-      "updated_at": "2026-06-15T00:00:00Z",
-      "confidence": "HIGH: follows MockedMegatron.py pattern, reuses MegatronRowLinear/MegatronColumnLinear for TP. 4 classes, 405 lines. All 4 files AST-verified.",
-      "source": "research_aicb_extensibility.md section 7.1 recommendation 2"
-    },
-    {
-      "id": "F095",
-      "type": "feature",
-      "category": "aicb-extensibility",
-      "description": "Parameterized MoE routing: move --n_shared_expert from get_deepseek_params to get_moe_params (available to all MoE models), add num_shared_experts support to MOEMLP with computation LogItems, wire through MegatronTransformorLayer and MegatronModel. --num_experts and --moe_router_topk were already configurable.",
-      "status": "done",
-      "priority": "P1",
-      "files": [
-        "aicb/utils/utils.py",
-        "aicb/workload_generator/mocked_model/training/MockedMegatron.py"
-      ],
-      "verification_steps": [
-        "MOEMLP accepts num_shared_experts (default 0), adds shared expert weight params and computation LogItems",
-        "--n_shared_expert in get_moe_params (default=0), removed from get_deepseek_params",
-        "MegatronTransformorLayer and MegatronModel pass num_shared_experts through",
-        "Mixtral config (--num_experts 8 --moe_router_topk 2) generates correct all_to_all sizes",
-        "DBRX config (--num_experts 16 --moe_router_topk 4) generates correct all_to_all sizes",
-        "Backward compatible: MOEMLP without num_shared_experts behaves identically to before"
-      ],
-      "passes": true,
-      "created_at": "2026-06-15T00:00:00Z",
-      "confidence": "HIGH: MOEMLP already supports configurable ep_size and topk; extend to num_experts and shared_experts",
-      "source": "research_aicb_extensibility.md section 7.1 recommendation 3"
-    },
-    {
-      "id": "F096",
-      "type": "feature",
-      "category": "aicb-extensibility",
-      "description": "Qwen3 inference workload completion: implement forward()/backward() in MockedQwen3Moe.py (8 classes, 362 lines) and MockedQwen3Next.py (4 classes, 276 lines) with actual LogItem generation. GatedDeltaNet in Qwen3Next approximated as attention-level computation with P2P sequence dependency.",
-      "status": "done",
-      "priority": "P1",
-      "files": [
-        "aicb/workload_generator/mocked_model/inference/MockedQwen3Moe.py",
-        "aicb/workload_generator/mocked_model/inference/MockedQwen3Next.py"
-      ],
-      "verification_steps": [
-        "Qwen3MoeAttention.forward() generates TP all_gather/reduce_scatter + computation LogItems",
-        "Qwen3MoeRoute.forward() generates all_to_all LogItems for EP dispatch",
-        "Qwen3MoeExpert.forward() generates SwiGLU gate_up + down computation LogItems",
-        "Qwen3NextModel layers alternate full attention / GatedDeltaNet based on full_attention_interval",
-        "Both models generate valid workload CSV via standalone __main__ block"
-      ],
-      "passes": true,
-      "created_at": "2026-06-15T00:00:00Z",
-      "updated_at": "2026-06-15T00:00:00Z",
-      "confidence": "HIGH for Qwen3Moe (follows established MockedMegatron/MockedLlama pattern with GQA + SwiGLU + EP routing). MEDIUM for Qwen3Next GatedDeltaNet (novel architecture, approximated as attention-level computation with P2P scan dependency).",
-      "source": "research_aicb_extensibility.md section 7.2 recommendation 6"
-    },
-    {
-      "id": "F097",
-      "type": "feature",
-      "category": "aicb-extensibility",
-      "description": "Context Parallelism (CP) support: add CommGroup.cp_group to CommGroup enum, create ContextParallelRing utility (110 lines) for ring-attention isend/irecv between CP neighbors. --context-parallel-size already existed in get_params().",
-      "status": "done",
-      "priority": "P2",
-      "files": [
-        "aicb/utils/utils.py",
-        "aicb/utils/context_parallel.py"
-      ],
-      "verification_steps": [
-        "CommGroup.cp_group enum value exists in CommGroup",
-        "ContextParallelRing.ring_attention_forward() generates (cp_size-1) rounds of isend/irecv",
-        "CP degree configurable via --context-parallel-size arg (already in get_params)",
-        "ring_send_recv() produces correct msg_size = (seq_len/cp_size) * batch * kv_size"
-      ],
-      "passes": true,
-      "created_at": "2026-06-15T00:00:00Z",
-      "updated_at": "2026-06-15T00:00:00Z",
-      "confidence": "HIGH: ring-attention protocol is well-documented in literature. ContextParallelRing class handles (cp_size-1) exchange rounds with correct message sizes. CP+TP combination is left for future per-model integration.",
-      "source": "research_aicb_extensibility.md section 7.2 recommendation 4"
-    },
-    {
-      "id": "F098",
-      "type": "feature",
-      "category": "aicb-extensibility",
-      "description": "Chakra output format: implement ChakraWriter (178 lines) to convert AICB Workload/LogItem to Chakra-compatible JSON. Maps CommType to Chakra node types (COMP_ONLY, COMM_COLL, COMM_SEND, COMM_RECV). No protobuf dependency needed.",
-      "status": "done",
-      "priority": "P2",
-      "files": [
-        "aicb/utils/chakra_writer.py"
-      ],
-      "verification_steps": [
-        "ChakraWriter.convert() maps all CommType values to correct Chakra node types",
-        "Sequential dependency chain: each node depends on previous node",
-        "COMM_RECV nodes depend on matching COMM_SEND (send/recv pairing)",
-        "Output JSON includes schema version, num_nodes, and node list with attrs",
-        "Tensor shapes preserved in attrs for computation nodes"
-      ],
-      "passes": true,
-      "created_at": "2026-06-15T00:00:00Z",
-      "updated_at": "2026-06-15T00:00:00Z",
-      "confidence": "HIGH: Chakra JSON schema is well-defined. CommType-to-Chakra mapping is straightforward. Sequential dependency chain is correct for single-GPU traces; multi-GPU dependency reconstruction is deferred.",
-      "source": "research_aicb_extensibility.md section 7.2 recommendation 5"
-    },
-    {
-      "id": "F099",
-      "type": "feature",
-      "category": "aicb-extensibility",
-      "description": "Declarative tensor graph (STAGE pattern): created tensor_graph package (4 files, 345 lines): TensorGraph (CSV load/dump/to_workload), ReplicateGraph (N-replica layer stacking), ConnectGraph (named port wiring). SwiGLU FFN template (8-line CSV) demonstrates CSV-driven component definition. Phase 1 proof-of-concept complete.",
-      "status": "done",
-      "priority": "P2",
-      "files": [
-        "aicb/workload_generator/tensor_graph/__init__.py",
-        "aicb/workload_generator/tensor_graph/graph.py",
-        "aicb/workload_generator/tensor_graph/demo.py",
-        "aicb/workload_generator/tensor_graph/templates/swiglu_ffn.csv"
-      ],
-      "verification_steps": [
-        "TensorGraph.load(csv_path) loads operator graph from CSV with 8 nodes",
-        "ReplicateGraph.apply() creates N replicas with unique tensor name prefixes",
-        "ConnectGraph.apply() connects subgraphs by matching named tensor ports, resolving links",
-        "SwiGLU FFN defined in 8-line CSV (no Python LogItem code per operation)",
-        "Demo script loads CSV, replicates layers, connects graphs, generates workload"
-      ],
-      "passes": true,
-      "created_at": "2026-06-15T00:00:00Z",
-      "updated_at": "2026-06-15T00:00:00Z",
-      "confidence": "LOW for full production adoption (STAGE-level refactoring needed). HIGH for Phase 1 proof-of-concept: CSV load/write, ReplicateGraph, ConnectGraph all functionally demonstrated.",
-      "source": "research_aicb_extensibility.md section 7.3 recommendation 7"
     }
   ],
   "in_progress": 2
