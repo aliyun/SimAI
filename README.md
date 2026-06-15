@@ -118,7 +118,7 @@ astra-sim-alibabacloud is extended from [astra-sim](https://github.com/astra-sim
 
 SimAI supports three major operation modes to meet different simulation requirements:
 
-**SimAI-Analytical** offers fast simulation by abstracting network communication details using bus bandwidth (busbw) to estimate collective communication time. While it currently supports user-defined busbw, automatic busbw calculation feature is coming soon.
+**SimAI-Analytical** offers fast simulation by abstracting network communication details using configured NVLink and NIC bandwidth values to estimate collective communication time. Automatic bus bandwidth calculation feature is coming soon.
 
 **SimAI-Simulation** provides full-stack simulation with fine-grained network communication modeling. It leverages NS3 or other network simulators (NS3 currently open-sourced) to achieve detailed simulation of all communication behaviors, aiming for high-fidelity reproduction of actual training environments.
 
@@ -179,11 +179,7 @@ $ ./scripts/build.sh -c ns3
 
 ## Use SimAI-Analytical
 
-```bash
-$ ./bin/SimAI_analytical -w example/workload_analytical.txt -g 9216 -g_p_s 8 -r test- -busbw example/busbw.yaml
-```
-
-For calculating bus bandwidth automatically, please try the following command:
+Provide the supported bandwidth parameters explicitly:
 
 ```bash
 $ ./bin/SimAI_analytical -w ./example/workload_analytical.txt -g 9216 -nv 360 -nic 48.5 -n_p_s 8 -g_p_s 8 -r example-
