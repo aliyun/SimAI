@@ -21,6 +21,8 @@ from utils.utils import CommGroup, CommType, get_params, WorkloadWriter, num_par
 from workload_generator.workload_generator import WorkloadGenerator
 from workload_generator.mocked_model.training.MockedMegatron import MegatronModel
 from workload_generator.mocked_model.training.MockedDeepSeek import DeepSeekV3Model
+from workload_generator.mocked_model.training.MockedQwen3 import Qwen3Model
+from workload_generator.mocked_model.training.MockedQwen3_5 import Qwen3_5Model
 from log_analyzer.log import LogItem
 
 
@@ -436,6 +438,10 @@ if __name__ == "__main__":
     args = get_params()
     if args.frame == "DeepSeek":
         model = DeepSeekV3Model(args)
+    elif args.frame == "Qwen3":
+        model = Qwen3Model(args)
+    elif args.frame == "Qwen3.5":
+        model = Qwen3_5Model(args)
     elif args.frame == "Megatron":
         model = MegatronModel(args)
     workload_generator = MegatronWorkload(args, model)
