@@ -679,8 +679,10 @@ def get_params():
     if args.num_attention_heads is None:
         args.num_attention_heads = args.num_layers
 
-                    
-    args.padded_vocab_size = get_padded_vocab_size(args)
+    # Aliases for HF config.json field names used by Qwen3 / Qwen3.5 models
+    args.num_hidden_layers = args.num_layers
+    if not hasattr(args, 'padded_vocab_size') or args.padded_vocab_size is None:
+        args.padded_vocab_size = get_padded_vocab_size(args)
 
     # Resolve intermediate_size: --intermediate_size > --ffn_hidden_size > auto
     if args.intermediate_size is None:
