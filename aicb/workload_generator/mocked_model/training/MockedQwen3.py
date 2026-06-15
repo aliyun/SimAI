@@ -8,7 +8,7 @@ Based on MockedMegatron.py.  Qwen3-specific changes versus LLAMA / GPT-3:
   * QK-Norm – compute-only RMSNorm on query / key  (hardcoded, always on)
   * MLP fix – SwiGLU down-projection uses intermediate_size, not 2*intermediate
 
-Imports MegatronColumnLinear, MegatronRowLinear, MegatronEmbedding, MOEMLP
+Imports MegatronColumnLinear, MegatronRowLinear, MOEMLP
 from MockedMegatron so TP communication primitives are NOT duplicated.
 """
 
@@ -22,7 +22,6 @@ from log_analyzer.log import Workload, LogItem
 from workload_generator.mocked_model.training.MockedMegatron import (
     MegatronColumnLinear,
     MegatronRowLinear,
-    MegatronEmbedding,
     MOEMLP,
 )
 
@@ -38,6 +37,48 @@ class Qwen3RMSNorm(MockedModel):
         self.layer_id = layer_id
         self.name = prefix_name
         self.weight = MockedParam((dim, 1), name=prefix_name)
+
+
+# ---------------------------------------------------------------------------
+# Embedding  (no Megatron artifacts: no 4x vocab multiplier, no learned pos)
+# ---------------------------------------------------------------------------
+
+class Qwen3Embedding(MockedModel):
+    """Qwen3 embedding layer.  Qwen3 uses RoPE, not learned position embeddings."""
+
+    def __init__(self, vocab_size, hidden_size, tp, seq_len, batch_size):
+        self.name = "embedding_layer"
+        self.layer_id = 0
+        num_embedding_per_partition = divide(vocab_size, tp)
+        self.word_embedding = MockedParam(
+            (num_embedding_per_partition, hidden_size), name="word_embedding"
+        )
+        self.tensor_model_parallel_size = tp
+        self.comm_size = 2 * batch_size * seq_len * hidden_size
+
+    def forward(self):
+        w = Workload()
+        if self.tensor_model_parallel_size > 1:
+            w.append(LogItem(
+                comm_type=CommType.all_reduce,
+                comm_group=CommGroup.tp_group,
+                comm_group_size=self.tensor_model_parallel_size,
+                msg_size=self.comm_size,
+                stage="forward.Qwen3Embedding",
+            ))
+        return w
+
+    def backward(self):
+        w = Workload()
+        if self.tensor_model_parallel_size > 1:
+            w.append(LogItem(
+                comm_type=CommType.all_reduce,
+                comm_group=CommGroup.tp_group,
+                comm_group_size=self.tensor_model_parallel_size,
+                msg_size=self.comm_size,
+                stage="backward.Qwen3Embedding",
+            ))
+        return w
 
 
 # ---------------------------------------------------------------------------
@@ -293,7 +334,9 @@ class Qwen3Model(MockedModel):
         moe_n_exp = getattr(config, "num_experts", 0)
         moe_ep = getattr(config, "expert_model_parallel_size", 1)
 
-        self.embedding = MegatronEmbedding(V, h, tp, S, B)
+        tie_emb = getattr(config, "tie_word_embeddings", False)
+
+        self.embedding = Qwen3Embedding(V, h, tp, S, B)
 
         self.layers = [
             Qwen3TransformerLayer(
@@ -319,6 +362,12 @@ class Qwen3Model(MockedModel):
             computation_enable=comp,
             add_bias_linear=bias,
         )
+
+        # When tie_word_embeddings=True the lm_head shares weights with the
+        # embedding table.  Communication is unchanged (the ColumnLinear still
+        # runs), but we must not double-count the weight in parameter totals.
+        if tie_emb:
+            self.lm_head.weight = MockedParam((0,), name="lm_head_tied")
 
     def forward(self):
         w = Workload()
