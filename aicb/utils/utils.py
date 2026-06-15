@@ -634,8 +634,16 @@ def get_params():
         "--ffn_hidden_size",
         type=int,
         default=None,
-        help="Transformer Feed-Forward Network hidden size. "
-        "This is set to 4*hidden-size if not provided",
+        help="[DEPRECATED] Use --intermediate_size instead.",
+    )
+    parser.add_argument(
+        "--intermediate_size",
+        type=int,
+        default=None,
+        help="Transformer Feed-Forward Network intermediate size. "
+        "For SwiGLU: the gated intermediate dim (e.g., 12288 for 8B). "
+        "For standard FFN: 4*hidden_size. "
+        "Auto-computed from --swiglu and --hidden_size if not provided.",
     )
     parser.add_argument(
         "--enable_visual",
@@ -673,17 +681,19 @@ def get_params():
 
                     
     args.padded_vocab_size = get_padded_vocab_size(args)
-    if args.ffn_hidden_size is None:
-        if args.swiglu:
-            # reduce the dimnesion for MLP since projections happens on
-            # two linear layers. this keeps the number of paramters in
-            # the same ballpark as the counterpart with 4*h size
-            # we keep it a multiple of 64, which means the actual tensor size
-            # will be a multiple of 64 / tp_size
-            args.ffn_hidden_size = int((4 * args.hidden_size * 2 / 3) / 64) * 64
 
+    # Resolve intermediate_size: --intermediate_size > --ffn_hidden_size > auto
+    if args.intermediate_size is None:
+        args.intermediate_size = args.ffn_hidden_size
+    if args.intermediate_size is None:
+        if args.swiglu:
+            # SwiGLU intermediate ≈ 8/3 * hidden_size, rounded to multiple of 64
+            args.intermediate_size = int((4 * args.hidden_size * 2 / 3) / 64) * 64
         else:
-            args.ffn_hidden_size = 4 * args.hidden_size
+            args.intermediate_size = 4 * args.hidden_size
+    # Keep ffn_hidden_size for backward compat with code still using the old name
+    args.ffn_hidden_size = args.intermediate_size
+
     if args.swiglu:
         args.gated_linear_unit = True
         args.bias_gelu_fusion = False

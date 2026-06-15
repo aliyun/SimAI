@@ -56,9 +56,9 @@ all communication events across the entire forward/backward pass.
 **Critical rule: the mock ONLY models events that cross GPU boundaries.**
 Pure local compute (RMSNorm, SiLU, softmax, RoPE, QK-Norm, GatedDeltaNet
 recurrence) produces ZERO LogItems. Only TP/EP/DP/PP collectives generate
-entries. Note: the current mock conservatively routes GatedDeltaNet through
-ColumnLinear/RowLinear for accurate parameter counting; a future
-communication-accurate mock would have GatedDeltaNet return empty workloads.
+entries. GatedDeltaNet layers return empty Workload -- all projections are
+replicated (not TP-sharded); parameters are tracked via raw MockedParam for
+DP gradient sync sizing.
 
 ---
 
@@ -127,11 +127,11 @@ Forward:
 Backward: same operations in reverse with gradient data
 ```
 
-Message size formulas:
-- EP dispatch: `seq_len * hidden_size * batch_size * topk / tp * 2` bytes
-- TP all-gather: `2 * hidden_size * topk * batch_size * seq_len` bytes
-  (NOTE: does not divide by ep_size — known conservative overestimate, same in
-  Megatron and DeepSeek mocks. TODO in code acknowledges this.)
+Message size formulas (all divide by ep_size after dispatch, fixed 2025-06-15):
+- EP dispatch: `seq_len * hidden_size * batch_size * topk / tp / ep * 2` bytes
+- TP all-gather: `2 * hidden_size * topk * batch_size * seq_len / ep` bytes
+- TP reduce-scatter: same as TP all-gather
+- EP combine: same as EP dispatch
 
 ### Why Qwen3/Qwen3.5 Don't Need New MoE Classes
 
@@ -165,7 +165,7 @@ Qwen3Attention:
 This correctly handles models where `num_heads * head_dim != hidden_size`
 (e.g., Qwen3-4B: 32×128=4096 ≠ hidden=2560; Qwen3-0.6B: 16×128=2048 ≠ 1024).
 
-### Qwen3.5 GatedDeltaNet: Implementation Note
+### Qwen3.5 GatedDeltaNet: Communication-Accurate Mock
 
 GatedDeltaNet is a linear attention mechanism (O(L) complexity):
 
@@ -173,26 +173,34 @@ GatedDeltaNet is a linear attention mechanism (O(L) complexity):
 S_t = S_{t-1} * α_t * (I - β_t * k_t * k_t^T) + β_t * v_t * k_t^T
 ```
 
-In a real Qwen3.5 model, all GatedDeltaNet operations are local compute
-(causal conv1d, gated delta rule recurrence, output projection — no TP
-collectives needed). However, the current mock implementation routes
-GatedDeltaNet attention through the standard ColumnLinear/RowLinear
-primitives for accurate parameter counting (DP gradient sync sizing).
-This means GatedDeltaNet layers contribute 4 comm ops per layer — the same
-as full-attention layers — rather than the 2 comm ops (MLP-only) that a
-communication-accurate model would produce.
+All GatedDeltaNet operations are local compute -- the QKVZ/BA input
+projections and output projection are replicated across TP ranks (not
+TP-sharded) because their parameter count is small relative to the MLP/MoE
+that follows, and the recurrent state makes TP complex. The mock models
+this correctly: `Qwen3_5GatedDeltaNet.forward()` returns `Workload()` (empty).
 
-This results in a conservative overestimate of Qwen3.5 communication.
-Verified end-to-end on 2025-06-15:
+Raw `MockedParam` objects track full-size parameters for accurate DP gradient
+sync sizing in the `step()` method. This achieves both communication accuracy
+(zero TP collectives from DeltaNet layers) and parameter-count accuracy
+(full-size weights counted for DP all-reduce sizing).
+
+Verified end-to-end (2025-06-15):
 
 ```
-Qwen3.5-9B (32L, h=4096, TP=8):  130 fwd ops  (NOT 82)
-Qwen3-8B   (36L, h=4096, TP=8):  146 fwd ops
-Observed reduction: 11% (16 ops from 4 fewer layers), not 44% (64 ops)
+Qwen3.5-9B (32L, h=4096, TP=8):  82 fwd ops   (24 DeltaNet x 2 MLP + 8 FullAttn x 4 + 2)
+Qwen3-8B   (36L, h=4096, TP=8):  146 fwd ops  (36 layers x 4 + 2)
+Observed reduction: 44% (64 fewer ops: 48 from DeltaNet + 16 from 4 fewer layers)
 ```
 
-Future work: implement a true communication-free GatedDeltaNet mock to
-capture the real 44% reduction in attention communication.
+Per-layer comparison:
+
+| Layer type | Count | Attn comms | MLP comms | Per-layer | Total |
+|---|---|---|---|---|---|
+| Qwen3-8B (all full-attn) | 36 | 2 | 2 | 4 | 144 |
+| Qwen3.5 FullAttention | 8 | 2 | 2 | 4 | 32 |
+| Qwen3.5 GatedDeltaNet | 24 | **0** | 2 | 2 | 48 |
+| Embedding + LM head | 2 | -- | -- | 1 | 2 |
+| **Qwen3.5-9B total** | | | | | **82** |
 
 ---
 
@@ -384,33 +392,16 @@ Config file keys use HuggingFace naming: `num_hidden_layers`, `intermediate_size
    backbone. These add ~2% extra compute but negligible communication. Documented
    as known gap.
 
-2. **TP all-gather message size in MoE permutation** overestimates by `ep_size`
-   factor. The formula `2 * hidden * topk * batch * seq` computes total tokens
-   across all EP ranks, but after EP dispatch each rank holds ~1/ep of tokens.
-   This is a pre-existing issue in both `MOEMLP` and `DeepSeekMoE` (noted by
-   TODO comments). Not Qwen3-specific.
-
-3. **GatedDeltaNet communication is conservatively overestimated.** The current
-   mock routes GatedDeltaNet attention through ColumnLinear/RowLinear primitives
-   (4 comm ops per layer). A real Qwen3.5 model would have only 2 comm ops
-   (MLP-only) for GatedDeltaNet layers since all linear attention operations are
-   local compute. Verified 2025-06-15: Qwen3.5-9B produces 130 fwd ops vs
-   expected 82 with communication-free GatedDeltaNet. This is a deliberate
-   trade-off for accurate DP gradient sync sizing. Future work: implement a
-   communication-free GatedDeltaNet mock to capture the full 44% reduction.
-
-4. **MoE backward communication was undercounted** (fixed 2025-06-15).
+2. **MoE backward communication was undercounted** (fixed 2025-06-15).
    MOEMLP.backward() in MockedMegatron.py was missing two `workloads.extend()`
    calls on the return values of `self.permutation()` and `self.unpermutation()`.
-   This caused all MoE models (Megatron, Qwen3, Qwen3.5, DeepSeek) to report
-   ~43-57% of the correct backward communication. The fix (2 lines) restored
-   backward-forward parity for MoE layers. Pre-existing since original commit.
+   Pre-existing since original commit. Fix restored backward-forward parity.
 
-5. **Inference workload mocks for Qwen3/Qwen3.5 are skeletal.** Only the
+3. **Inference workload mocks for Qwen3/Qwen3.5 are skeletal.** Only the
    AIOB compute benchmarks exist for inference. Training workload mocks are
    complete.
 
-6. **AIOB training benchmarks for Qwen3/Qwen3.5 do not exist.** Only inference
+4. **AIOB training benchmarks for Qwen3/Qwen3.5 do not exist.** Only inference
    AIOB benchmarks are implemented (`inference/AiobQwen3Moe.py`,
    `inference/AiobQwen3Next.py`). Training AIOB would require implementing
    backward-pass kernels not present in the inference benchmarks.
@@ -439,12 +430,39 @@ Config file keys use HuggingFace naming: `num_hidden_layers`, `intermediate_size
        model = <Family>Model(args)
    ```
 
-5. Test with config file and verify workload counts. The key sanity check:
+5. Test with config file and verify workload counts. The definitive formulas
+   (verified 2025-06-15 across all configs, TP=8, SP enabled):
+
    ```
-   forward_items = layers * (attn_comm_per_layer + mlp_comm_per_layer) + embedding + lm_head
+   DENSE (TP only):
+     Megatron:            fwd = 1 + L * 4         bwd = fwd * 1.50
+       (MegatronModel.forward omits final_norm ColumnLinear; no +1 at end)
+       Megatron-8B: 1 + 32*4 = 129
+
+     Qwen3:               fwd = 1 + L * 4 + 1     bwd = fwd * 1.50
+       (Qwen3Model.forward includes lm_head ColumnLinear; +1 at end)
+       (4 per layer: attn QKV col + attn out row + MLP gate_up col + MLP down row)
+       Qwen3-8B: 1 + 36*4 + 1 = 146
+
+     Qwen3.5:             fwd = 1 + L_f * 4 + L_d * 2 + 1     bwd = fwd * 1.50
+       L_f = full-attention layers (L // full_attention_interval)
+       L_d = DeltaNet layers (L - L_f)
+       Qwen3.5-9B: 1 + 8*4 + 24*2 + 1 = 82
+
+   MOE (TP + EP, no shared experts):
+     Megatron:            fwd = 1 + L * 7         bwd ≈ fwd
+     Qwen3:               fwd = 1 + L * 7 + 1     bwd ≈ fwd
+       (7 per layer: 2 attn + 5 MoE dispatch/combine; MoE=preprocess+dispatch+perm+unperm+combine)
+       Qwen3-235B: 1 + 94*7 + 1 = 660
+
+   MOE (TP + EP, with shared experts — Qwen3.5):
+     fwd = 1 + L_f * 9 + L_d * 7 + 1     bwd ≈ fwd * 1.04
+       FullAttn layers: 9 (2 attn + 2 shared expert + 5 MoE)
+       DeltaNet layers: 7 (0 attn + 2 shared expert + 5 MoE)
+       Qwen3.5-397B: 1 + 15*9 + 45*7 + 1 = 452
    ```
-   where `attn_comm_per_layer` is 2 for Megatron/Qwen3 (all-gather + reduce-scatter),
-   2 for Qwen3.5 full-attention layers, and 2 for Qwen3.5 GatedDeltaNet layers
-   (current mock routes GatedDeltaNet through ColumnLinear/RowLinear for accurate
-   parameter counting; see Implementation Note above). Future work: reduce
-   GatedDeltaNet to 0 attn comms for communication-accurate modeling.
+
+   MoE per-layer breakdown (5 ops): preprocess all-gather + dispatch all-to-all
+   + TP all-gather + TP reduce-scatter + combine all-to-all.
+   Shared expert adds 2 ops: ColumnLinear all-gather + RowLinear reduce-scatter.
+   All MoE msg_size formulas divide by ep_size (fixed 2025-06-15).

@@ -327,10 +327,20 @@ class MegatronAttention(MockedModel):
 
 
 class MegatronMlp(MockedModel):
+    """Standard or SwiGLU MLP.
+
+    When swiglu=False (standard FFN):  intermediate_size = 4 * hidden_size.
+      ColumnLinear: hidden -> intermediate_size.  RowLinear same.
+
+    When swiglu=True:  intermediate_size is the SwiGLU intermediate dim.
+      ColumnLinear: hidden -> 2 * intermediate_size  (gate_proj + up_proj fused).
+      RowLinear:     intermediate_size -> hidden       (down_proj, NOT 2×).
+    """
+
     def __init__(
         self,
         hidden_size,
-        ffn_hidden_size,
+        intermediate_size,
         tp,
         seq_len,
         batch_size,
@@ -338,32 +348,29 @@ class MegatronMlp(MockedModel):
         sequence_parallel_enabled,
         computation_enable,
         add_bias_linear,
+        swiglu=False,
     ):
         self.name = "mlp_layer"
         self.layer_id = layer_id
+
+        gate_up_dim = 2 * intermediate_size if swiglu else intermediate_size
+        down_dim   = intermediate_size
+
         self.dense_h_to_4h = MegatronColumnLinear(
             hidden_size,
-            ffn_hidden_size,
-            tp,
-            seq_len,
-            batch_size,
-            layer_id,
-            "mlp",
-            sequence_parallel_enabled,
-            computation_enable,
+            gate_up_dim,
+            tp, seq_len, batch_size,
+            layer_id, "mlp",
+            sequence_parallel_enabled, computation_enable,
             name="mlp_column",
             add_bias_linear=add_bias_linear,
         )
         self.dense_4h_to_h = MegatronRowLinear(
-            ffn_hidden_size,
+            down_dim,
             hidden_size,
-            tp,
-            seq_len,
-            batch_size,
-            layer_id,
-            "mlp",
-            sequence_parallel_enabled,
-            computation_enable,
+            tp, seq_len, batch_size,
+            layer_id, "mlp",
+            sequence_parallel_enabled, computation_enable,
             name="mlp_row",
             add_bias_linear=add_bias_linear,
         )
@@ -506,7 +513,7 @@ class MegatronTransformorLayer(MockedModel):
     def __init__(
         self,
         hidden_size,
-        ffn_hidden_size,
+        intermediate_size,
         tp,
         seq_len,
         batch_size,
@@ -520,6 +527,8 @@ class MegatronTransformorLayer(MockedModel):
         computation_enable=False,
         add_bias_linear=False,
         moe_enable=False,
+        swiglu=False,
+        moe_intermediate_size=None,
     ):
         self.attention = MegatronAttention(
             num_attention_heads,
@@ -540,7 +549,7 @@ class MegatronTransformorLayer(MockedModel):
                 hidden_size,
                 tp,
                 expert_model_parallel_size,
-                ffn_hidden_size,
+                moe_intermediate_size or intermediate_size,
                 seq_len,
                 moe_router_topk,
                 num_experts,
@@ -549,7 +558,7 @@ class MegatronTransformorLayer(MockedModel):
         else:
             self.mlp = MegatronMlp(
                 hidden_size,
-                ffn_hidden_size,
+                intermediate_size,
                 tp,
                 seq_len,
                 batch_size,
@@ -557,6 +566,7 @@ class MegatronTransformorLayer(MockedModel):
                 sequence_parallel_enabled,
                 computation_enable,
                 add_bias_linear,
+                swiglu=swiglu,
             )
 
     def forward(self):
@@ -618,6 +628,10 @@ class MegatronEmbedding(MockedModel):
 
 class MegatronModel(MockedModel):
     def __init__(self, config):
+        intermediate_size = getattr(config, "intermediate_size", getattr(config, "ffn_hidden_size", 4 * config.hidden_size))
+        swiglu = getattr(config, "swiglu", False)
+        moe_intermediate_size = getattr(config, "moe_intermediate_size", None)
+
         self.embedding = MegatronEmbedding(
             config.padded_vocab_size,
             config.hidden_size,
@@ -628,7 +642,7 @@ class MegatronModel(MockedModel):
         self.layers = [
             MegatronTransformorLayer(
                 config.hidden_size,
-                config.ffn_hidden_size,
+                intermediate_size,
                 config.tensor_model_parallel_size,
                 config.seq_length,
                 config.micro_batch,
@@ -642,6 +656,8 @@ class MegatronModel(MockedModel):
                 config.computation_enable,
                 config.add_bias_linear,
                 config.moe_enable,
+                swiglu=swiglu,
+                moe_intermediate_size=moe_intermediate_size,
             )
             for i in range(config.num_layers)
         ]
