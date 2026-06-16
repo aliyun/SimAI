@@ -110,6 +110,30 @@ MODEL_CONFIGS = {
         "qk_nope_dim": 128, "qk_rope_dim": 64, "v_head_dim": 128,
         "recommended": {"tp": 8, "pp": 8, "ep": 16, "gpus": 2048},
     },
+    # Qwen3 family — same architecture as LLaMA (RMSNorm + SwiGLU + GQA + RoPE),
+    # reuses MegatronModel workload generator. Differs in layer count, hidden dim,
+    # and uses qk_norm (negligible compute, zero comm impact).
+    "Qwen3-8B": {
+        "family": "Qwen3",
+        "hidden_size": 4096, "num_layers": 36, "num_attention_heads": 32,
+        "ffn_hidden_size": 12288, "vocab_size": 151936, "seq_length": 4096,
+        "num_kv_heads": 8, "head_dim": 128,
+        "recommended": {"tp": 2, "pp": 1, "ep": 1, "gpus": 16},
+    },
+    "Qwen3-14B": {
+        "family": "Qwen3",
+        "hidden_size": 5120, "num_layers": 40, "num_attention_heads": 40,
+        "ffn_hidden_size": 17408, "vocab_size": 151936, "seq_length": 4096,
+        "num_kv_heads": 8, "head_dim": 128,
+        "recommended": {"tp": 4, "pp": 1, "ep": 1, "gpus": 32},
+    },
+    "Qwen3-32B": {
+        "family": "Qwen3",
+        "hidden_size": 5120, "num_layers": 64, "num_attention_heads": 64,
+        "ffn_hidden_size": 25600, "vocab_size": 151936, "seq_length": 4096,
+        "num_kv_heads": 8, "head_dim": 128,
+        "recommended": {"tp": 8, "pp": 1, "ep": 1, "gpus": 64},
+    },
 }
 
 _LEGACY_MODEL_MAP = {"7B": "LLaMA-7B", "13B": "LLaMA-13B", "70B": "LLaMA-65B", "175B": "GPT-175B", "405B": "Llama3-405B"}
