@@ -2,5 +2,6 @@
 /*
 !.gitignore
 !subdir/
+!decoupled_replay/
 !scratch-simulator.cc
 !CMakeLists.txt
