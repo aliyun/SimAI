@@ -3,6 +3,7 @@
 
 ## Priority Context
 <!-- ALWAYS loaded. Keep under 500 chars. Critical discoveries only. -->
+SimAI decoupled replay: Workspace-generated workloads cause empty flow files (count=0). Workaround: copy workload to SimAI root, run with -w ./workload.txt. Ensure AS_DECOUPLED_OUTPUT is set and NS3 backend is active (not analytical mode).
 
 ## Working Memory
 <!-- Session notes. Auto-pruned after 7 days. -->
@@ -22,6 +23,23 @@ Next: Provide detailed report to user
 ## MANUAL
 <!-- User content. Never auto-pruned. -->
 ### 2026-04-14 08:45
+### 2026-06-18 05:32
+## SimAI Decoupled Replay -- Known Issues & Workarounds
+
+**Problem**: Flow file empty (count=0) with workspace-generated workloads.
+**Root cause**: Workload files in `server/workspaces/default_*/` reference paths that don't resolve during simulation. The file is open but write position is never updated.
+**Workaround**: Copy workload to SimAI root dir, reference with `-w ./workload.txt`.
+**Verification**: Check flow file size after run -- `wc -l /tmp/test_flows.txt`. Should show count + N flow lines.
+
+**Problem**: All `relative_delay_ns=0` in flow file.
+**Root cause**: AS_DECOUPLED_OUTPUT was set but analytical mode was active (no sim_send() calls → no send times recorded).
+**Fix**: Ensure NS3 backend build is used (`./scripts/build.sh -c ns3`). finalizeFlowFile() warns "X flows have send_time=0" on stderr.
+
+**Problem**: legacy flow files parsed by independent binary.
+**Fix**: flow_reader.h handles missing relative_delay_ns column (defaults to 0). Backward compatible.
+
+
+## 2026-04-14 08:45
 ## SimAI Frontend/GUI Exploration Summary
 
 ### Project Structure

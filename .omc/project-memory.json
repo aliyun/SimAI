@@ -44,7 +44,14 @@
       "branchingStrategy": null
     }
   },
-  "customNotes": [],
+  "customNotes": [
+    {
+      "timestamp": 1781760731322,
+      "source": "manual",
+      "category": "debugging",
+      "content": "Decoupled Replay Troubleshooting: (1) Empty flow file (count=0): Copy workspace workload to SimAI root dir, reference with relative path -w ./workload.txt. Source: paths in workspace-generated workloads don't resolve during simulation. (2) All-zero relative_delay_ns: NS3 backend must be active; analytical mode doesn't call sim_send() → no send times recorded. Verify with AS_DECOUPLED_OUTPUT set before run. (3) flow_reader.h backward compat: legacy files without relative_delay_ns column default to 0."
+    }
+  ],
   "directoryMap": {
     "DataCollector": {
       "path": "DataCollector",
@@ -363,8 +370,8 @@
     },
     {
       "path": "astra-sim-alibabacloud/astra-sim/system/MockNcclGroup.cc",
-      "accessCount": 78,
-      "lastAccessed": 1780889003478,
+      "accessCount": 80,
+      "lastAccessed": 1781759684601,
       "type": "file"
     },
     {
@@ -416,6 +423,12 @@
       "type": "file"
     },
     {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/applications/CMakeLists.txt",
+      "accessCount": 4,
+      "lastAccessed": 1781760530881,
+      "type": "file"
+    },
+    {
       "path": "ncclFlowModel_EndToEnd.csv",
       "accessCount": 3,
       "lastAccessed": 1780565276396,
@@ -461,12 +474,6 @@
       "path": "fullmesh_8g_cmp.txt",
       "accessCount": 1,
       "lastAccessed": 1780122066500,
-      "type": "file"
-    },
-    {
-      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/applications/CMakeLists.txt",
-      "accessCount": 1,
-      "lastAccessed": 1780122286788,
       "type": "file"
     },
     {
