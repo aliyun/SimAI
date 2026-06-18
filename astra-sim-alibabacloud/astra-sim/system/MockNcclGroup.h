@@ -120,7 +120,7 @@ namespace MockNccl {
    public:
     MockNcclGroup(){}
     MockNcclGroup(int _ngpus,int _gpus_per_nodes, int _TP_size,int _DP_size,int _PP_size,int _EP_size,int _DP_EP_size,std::vector<int>_NVSwitch,GPUType _gpu_type);
-    ~MockNcclGroup(){ if(_flow_file.is_open()) { _flow_file.seekp(0); _flow_file << _flow_count << std::endl; _flow_file.close(); } };
+    ~MockNcclGroup();
 
     std::map<std::pair<int,GroupType>,int> GroupIndex;
     std::map<int,GroupInfo> AllGroups;
@@ -133,10 +133,24 @@ namespace MockNccl {
     int g_flow_id;
     GPUType gpu_type;
     std::ofstream _flow_file;
-    uint32_t _flow_count = 0;
+
+    // Decoupled mode: accumulate flows for deferred write
+    struct FlowWriteEntry {
+      SingleFlow sf;
+      uint32_t max_pkts, port, dport;
+      int layer_num, group_type, op, loopstate;
+      uint64_t relative_delay_ns;
+    };
+    std::vector<FlowWriteEntry> _flow_buffer;
+    std::unordered_map<uint32_t, uint64_t> _flow_send_times;
+    std::unordered_map<uint32_t, uint64_t> _flow_completion_times;
+
     void enableFlowFileOutput(const std::string &path);
     void autoEnableFlowOutput();
     void loadFlowsFromFile();
+    void recordFlowSendTime(uint32_t flow_id);
+    void recordFlowCompletionTime(uint32_t flow_id);
+    void finalizeFlowFile();
     std::map<std::string,int> FlowName2nums;
     std::map<std::string ,std::map<int,std::shared_ptr<FlowModels> >> flow_models; 
     std::map<std::string ,struct ncclInfo*> nccl_infos;  

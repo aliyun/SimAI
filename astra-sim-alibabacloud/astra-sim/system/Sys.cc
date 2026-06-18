@@ -114,6 +114,11 @@ Sys::~Sys() {
   #else
     exitSimLoop("Exiting");
   #endif
+  if (GlobalGroup != nullptr) {
+    GlobalGroup->finalizeFlowFile();
+    delete GlobalGroup;
+    GlobalGroup = nullptr;
+  }
 }
 
 Sys::Sys(

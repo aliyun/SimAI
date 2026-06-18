@@ -14,6 +14,7 @@
 */
 #include "MockNcclGroup.h"
 #include "MockNcclChannel.h"
+#include "astra-sim/system/Sys.hh"
 #include <fstream>
 #include<set>
 #include <sstream>
@@ -33,7 +34,8 @@ namespace MockNccl {
 static void _writeFlowRecord(std::ofstream &f, const SingleFlow &sf,
                              uint32_t maxPkts, uint32_t port, uint32_t dport,
                              double start_ns, int layer_num,
-                             int group_type, int op, int loopstate) {
+                             int group_type, int op, int loopstate,
+                             uint64_t relative_delay_ns) {
   f << sf.flow_id << " " << sf.src << " " << sf.dest << " "
     << sf.flow_size << " " << sf.channel_id << " " << sf.chunk_id << " "
     << sf.chunk_count << " " << sf.conn_type << " "
@@ -44,7 +46,8 @@ static void _writeFlowRecord(std::ofstream &f, const SingleFlow &sf,
   for (int pid : sf.parent_flow_id) f << " " << pid;
   f << " " << sf.child_flow_id.size();
   for (int cid : sf.child_flow_id) f << " " << cid;
-  f << " " << layer_num << " " << group_type << " " << op << " " << loopstate << "\n";
+  f << " " << layer_num << " " << group_type << " " << op << " " << loopstate
+    << " " << relative_delay_ns << "\n";
   f.flush();
 }
 
@@ -369,11 +372,17 @@ static void _writeFlowRecord(std::ofstream &f, const SingleFlow &sf,
           for (auto& fkv : *rkv.second)
             if (written.insert(fkv.first.second).second) {
               const SingleFlow& sf = fkv.second;
-              _writeFlowRecord(_flow_file, sf,
+              _flow_buffer.push_back({
+                  sf,
                   (uint32_t)((sf.flow_size + 4095) / 4096),
-                  (uint32_t)(sf.src * 100 + sf.dest), 100, 0.0,
-                  layer_num, (int)type, (int)op, (int)loopstate);
-              _flow_count++;
+                  (uint32_t)(sf.src * 100 + sf.dest),
+                  100,
+                  layer_num,
+                  (int)type,
+                  (int)op,
+                  (int)loopstate,
+                  0
+              });
             }
       }
       FlowName2nums[flow_model_name]= 1;
@@ -2230,6 +2239,87 @@ void MockNcclGroup::autoEnableFlowOutput() {
   if (p && p[0]) enableFlowFileOutput(p);
 }
 
+void MockNcclGroup::recordFlowSendTime(uint32_t flow_id) {
+    _flow_send_times[flow_id] = Sys::boostedTick();
+}
+
+void MockNcclGroup::recordFlowCompletionTime(uint32_t flow_id) {
+    _flow_completion_times[flow_id] = Sys::boostedTick();
+}
+
+void MockNcclGroup::finalizeFlowFile() {
+    if (!_flow_file.is_open() || _flow_buffer.empty()) {
+        if (_flow_file.is_open()) {
+            _flow_file << "0\n";
+            _flow_file.close();
+        }
+        return;
+    }
+
+    // Compute relative_delay_ns for each flow using completion times
+    // relative_delay_ns = send_time - max(prev completion times), clamped to 0
+    // When a predecessor completed before we sent → gap = 0 (they overlapped)
+    // When a predecessor was still in-flight → gap = remaining SimAI gap
+    int zero_send_count = 0;
+    int zero_completion_count = 0;
+    for (auto& entry : _flow_buffer) {
+        const auto& sf = entry.sf;
+        uint64_t my_send_time = 0;
+
+        if (_flow_send_times.count(sf.flow_id)) {
+            my_send_time = _flow_send_times[sf.flow_id];
+        } else {
+            zero_send_count++;
+        }
+
+        if (sf.prev.empty()) {
+            entry.relative_delay_ns = my_send_time;
+        } else {
+            uint64_t max_prev_completion = 0;
+            bool any_completion_recorded = false;
+            for (int pid : sf.prev) {
+                if (_flow_completion_times.count(pid)) {
+                    max_prev_completion = std::max(max_prev_completion,
+                        _flow_completion_times[pid]);
+                    any_completion_recorded = true;
+                }
+            }
+            if (!any_completion_recorded) {
+                zero_completion_count++;
+                entry.relative_delay_ns = my_send_time;
+            } else {
+                entry.relative_delay_ns = (my_send_time > max_prev_completion)
+                    ? (my_send_time - max_prev_completion) : 0;
+            }
+        }
+    }
+
+    if (zero_send_count > 0) {
+        std::cerr << "[Decoupled] WARNING: " << zero_send_count
+                  << " flows have send_time=0 (never recorded via sim_send())" << std::endl;
+    }
+    if (zero_completion_count > 0) {
+        std::cerr << "[Decoupled] WARNING: " << zero_completion_count
+                  << " flows have no predecessor completion times recorded" << std::endl;
+    }
+
+    // Step 3: Write all flows to file
+    _flow_file.seekp(0);
+    _flow_file << _flow_buffer.size() << "\n";
+
+    for (auto& entry : _flow_buffer) {
+        _writeFlowRecord(_flow_file, entry.sf,
+            entry.max_pkts, entry.port, entry.dport,
+            0.0,
+            entry.layer_num, entry.group_type, entry.op, entry.loopstate,
+            entry.relative_delay_ns);
+    }
+
+    _flow_file.close();
+    std::cout << "[Decoupled] Flow file written: " << _flow_buffer.size()
+              << " flows" << std::endl;
+}
+
 // ── Replay mode: pre-load flows from file into flow_models cache ──
 void MockNcclGroup::loadFlowsFromFile() {
   const char *p = std::getenv("AS_REPLAY_MODE");
@@ -2263,6 +2353,7 @@ void MockNcclGroup::loadFlowsFromFile() {
         for (uint32_t j=0; j<nchi; j++) { int cid; is >> cid; pf.sf.child_flow_id.push_back(cid); }
       }
     is >> pf.layer_num >> pf.group_type >> pf.op >> pf.loopstate;
+    { uint64_t dummy_rdn; if (!(is >> dummy_rdn)) { /* legacy format, no relative_delay_ns */ } }
     // Build cache key: group_type_layerNum_loopstate_op (no rank)
     char key[128];
     snprintf(key, sizeof(key), "%d_%d_%d_%d",
@@ -2286,5 +2377,17 @@ void MockNcclGroup::loadFlowsFromFile() {
   }
   MockNcclLog* NcclLog = MockNcclLog::getInstance();
   NcclLog->writeLog(NcclLogLevel::INFO, "[Replay] pre-loaded %d flow groups from %s", groups.size(), p);
+}
+
+MockNcclGroup::~MockNcclGroup() {
+    if (_flow_file.is_open() && !_flow_buffer.empty()) {
+        std::cerr << "[Decoupled] WARNING: finalizeFlowFile() was not called explicitly; calling from destructor" << std::endl;
+        finalizeFlowFile();
+    }
+    if (_flow_file.is_open()) {
+        _flow_file.seekp(0);
+        _flow_file << _flow_buffer.size() << std::endl;
+        _flow_file.close();
+    }
 }
 }

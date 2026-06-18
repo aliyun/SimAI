@@ -137,6 +137,11 @@ public:
       cs.ExitSection();
       #endif
     }
+    // Record send time for decoupled replay
+    if (request && GlobalGroup) {
+        GlobalGroup->recordFlowSendTime(request->flowTag.current_flow_id);
+    }
+
     SendFlow(rank, dst, count, msg_handler, fun_arg, tag, request);
     return 0;
   }
@@ -361,10 +366,20 @@ int main(int argc, char *argv[]) {
 
   Simulator::Stop(Seconds(2000000000));
   Simulator::Run();
+
+  // Decoupled mode: finalize flow file while simulation state is valid
+  if (GlobalGroup != nullptr) {
+      GlobalGroup->finalizeFlowFile();
+  }
+
   Simulator::Destroy();
   
   #ifdef NS3_MPI
   MpiInterface::Disable ();
   #endif
+  if (GlobalGroup != nullptr) {
+    delete GlobalGroup;
+    GlobalGroup = nullptr;
+  }
   return 0;
 }
