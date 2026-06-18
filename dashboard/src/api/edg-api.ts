@@ -1,0 +1,45 @@
+import apiClient from './client';
+import type { EdgInitResponse, EdgTaskResponse, EdgBaselineGraphResponse } from '../types/edg';
+
+export async function initNetwork(lld: Record<string, unknown>, topologyDir?: string): Promise<EdgInitResponse> {
+  const { data } = await apiClient.post<EdgInitResponse>('/api/edg/init', {
+    lld,
+    topology_dir: topologyDir,
+  });
+  return data;
+}
+
+export interface EdgTopoParams {
+  readonly npu_per_server?: string;
+  readonly npu_type?: string;
+  readonly intra_bw?: string;
+  readonly bandwidth?: string;
+}
+
+export async function fetchBaselineGraph(
+  serverIds: readonly string[],
+  npuPerServer: number,
+  topologyDir?: string,
+): Promise<EdgBaselineGraphResponse> {
+  const { data } = await apiClient.post<EdgBaselineGraphResponse>('/api/edg/baseline-graph', {
+    server_ids: [...serverIds],
+    npu_per_server: npuPerServer,
+    topology_dir: topologyDir ?? '',
+  });
+  return data;
+}
+
+export async function registerTask(
+  npuMatch: Record<string, unknown>,
+  taskId: string,
+  topoParams?: EdgTopoParams,
+  topologyDir?: string,
+): Promise<EdgTaskResponse> {
+  const { data } = await apiClient.post<EdgTaskResponse>('/api/edg/register-task', {
+    npu_match: npuMatch,
+    task_id: taskId,
+    topo_params: topoParams,
+    topology_dir: topologyDir ?? '',
+  });
+  return data;
+}

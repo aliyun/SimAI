@@ -1,0 +1,43 @@
+
+diagram {
+
+	SimProgramOrHelper ASpectrumPhy BSpectrumPhy CSpectrumPhy SpectrumChannel;
+
+	=== initialization: B and C are added to the set of receivers ===
+
+	SimProgramOrHelper ->> SpectrumChannel [label="AddRx (BSpectrumPhy)"];
+	SimProgramOrHelper ->> SpectrumChannel [label="AddRx (CSpectrumPhy)"];
+
+	=== A transmits; both B and C receive === 
+
+	ASpectrumPhy ->> SpectrumChannel [label="StartTx (SpectrumSignalParameters)"]
+
+	BSpectrumPhy <<- SpectrumChannel [label="GetMobility ()"]
+	BSpectrumPhy <<- SpectrumChannel [label="GetRxSpectrumModel ()"]
+	BSpectrumPhy <<- SpectrumChannel [label="GetAntenna ()"]
+	SpectrumChannel -> SpectrumChannel [label="evaluate propagation between A and B"]
+	BSpectrumPhy  <<- SpectrumChannel[label="StartRx (SpectrumSignalParameters)"]
+
+	CSpectrumPhy  <<- SpectrumChannel[label="GetMobility ()"]
+	CSpectrumPhy  <<- SpectrumChannel[label="GetRxSpectrumModel ()"]
+	CSpectrumPhy  <<- SpectrumChannel[label="GetRxSpectrumModel ()"]
+	CSpectrumPhy  <<- SpectrumChannel[label="GetAntenna ()"]
+	SpectrumChannel ->> SpectrumChannel [label="evaluate propagation between A and C"]
+	CSpectrumPhy  <<- SpectrumChannel[label="StartRx (SpectrumSignalParameters)"]
+
+	=== B transmits; only C receives  (A is not in the set of receivers) === 
+		
+	BSpectrumPhy ->> SpectrumChannel [label="StartTx (SpectrumSignalParameters)"]	
+
+	CSpectrumPhy  <<- SpectrumChannel[label="GetMobility ()"]
+	CSpectrumPhy  <<- SpectrumChannel[label="GetRxSpectrumModel ()"]
+	CSpectrumPhy  <<- SpectrumChannel[label="GetRxSpectrumModel ()"]
+	CSpectrumPhy  <<- SpectrumChannel[label="GetAntenna ()"]
+	SpectrumChannel ->> SpectrumChannel [label="evaluate propagation between B and C"]
+	CSpectrumPhy  <<- SpectrumChannel[label="StartRx (SpectrumSignalParameters)"]
+
+	
+}
+
+
+

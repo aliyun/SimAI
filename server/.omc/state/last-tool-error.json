@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"ls server/edg/tests/ && python3 -m pytest server/edg/tests/test_crosses.py server/edg/tests/test_e2e_ns3_oxc.py -v -k \\\"not launch and not binary\\\" 2>&1 | tail -20\",\"description\":\"Run test...",
+  "error": "Exit code 1\nls: server/edg/tests/: No such file or directory",
+  "timestamp": "2026-06-04T03:04:27.378Z",
+  "retry_count": 2
+}

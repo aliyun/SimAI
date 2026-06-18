@@ -1,0 +1,126 @@
+{
+  "active": true,
+  "interview_id": "megatron-workload-vs-model",
+  "type": "brownfield",
+  "initial_idea": "用户想理解 SimAI 中 MegatronWorkload 和 MegatronModel 的区别：应该用哪个来生成 workload？为什么两个都存在？哪个产生的仿真结果更真实、更可信？",
+  "initial_context_summary": "代码库探索已完成。存在三个关键类：1) MegatronWorkload（训练循环编排器，继承WorkloadGenerator）；2) MegatronModel/MockedMegatron（分析型模拟模型，继承MockedModel，产生每层通信模式）；3) MegatronModel/AiobMegatron（真实GPU profiler，继承torch.nn.Module）。另外还有 SIMAI_workload（新格式，扁平化层列表）。MegatronWorkload 组合 MegatronModel 来产生完整训练trace。用户核心关注点是：哪个方案产生的仿真结果更接近真实训练行为。",
+  "rounds": [
+    {
+      "round": 1,
+      "question": "你最终想用 workload 生成的结果来做什么？",
+      "answer": "不是给 SimAI 用的，我要拿出去分析真实的 AI 任务建模",
+      "ambiguity": 0.655
+    },
+    {
+      "round": 2,
+      "question": "你说的更真实更可信具体指什么？",
+      "answer": "通信模式精确匹配——collective 操作的顺序、消息大小、通信组必须与 Megatron-LM 实际运行时完全一致",
+      "ambiguity": 0.4
+    },
+    {
+      "round": 3,
+      "question": "你的分析工作有什么硬性约束？",
+      "answer": "全都要：TP+PP+DP+EP+SP 全并行策略，需支持 DeepSeek 等非 Megatron 架构，计算时间可通过 --comp-filepath 外部注入",
+      "ambiguity": 0.265
+    },
+    {
+      "round": 4,
+      "question": "你怎么判断 workload 是对的还是错的？",
+      "answer": "有 Megatron-LM 实测 trace 可以对标验证",
+      "ambiguity": 0.14
+    }
+  ],
+  "current_ambiguity": 0.14,
+  "threshold": 0.2,
+  "codebase_context": "MegatronWorkload = 训练循环层（init/forward/backward/step/1F1B pipeline），MegatronModel = 模型架构层（每层通信模式），两者是组合关系。SIMAI_workload = 更新的扁平化格式。AIOB = GPU实测计算时间注入。用户有真实 NCCL trace 可对标。",
+  "challenge_modes_used": [
+    "contrarian"
+  ],
+  "ontology_snapshots": [
+    {
+      "round": 1,
+      "entities": [
+        "MegatronWorkload",
+        "MegatronModel",
+        "Workload",
+        "AI Training Task",
+        "LogItem",
+        "Work_Item",
+        "SIMAI_workload"
+      ],
+      "stability_ratio": null,
+      "new": 7,
+      "changed": 0,
+      "stable": 0
+    },
+    {
+      "round": 2,
+      "entities": [
+        "MegatronWorkload",
+        "MegatronModel",
+        "Workload",
+        "Communication Pattern",
+        "Collective Operation",
+        "Megatron-LM Framework",
+        "LogItem",
+        "Work_Item"
+      ],
+      "stability_ratio": 0.625,
+      "new": 3,
+      "changed": 0,
+      "stable": 5,
+      "matching_reasoning": "MegatronWorkload/MegatronModel/Workload/LogItem/Work_Item stable; 新增 Communication Pattern/Collective Operation/Megatron-LM Framework; AI Training Task 和 SIMAI_workload 不再出现"
+    },
+    {
+      "round": 3,
+      "entities": [
+        "MegatronWorkload",
+        "MegatronModel",
+        "Workload",
+        "Communication Pattern",
+        "Collective Operation",
+        "Megatron-LM Framework",
+        "DeepSeek Architecture",
+        "Compute Time",
+        "Parallel Strategy",
+        "comp-filepath",
+        "LogItem",
+        "Work_Item"
+      ],
+      "stability_ratio": 0.667,
+      "new": 4,
+      "changed": 0,
+      "stable": 8,
+      "matching_reasoning": "上一轮 8 个全部稳定；新增 DeepSeek Architecture/Compute Time/Parallel Strategy/comp-filepath"
+    },
+    {
+      "round": 4,
+      "entities": [
+        "MegatronWorkload",
+        "MegatronModel",
+        "Workload",
+        "Communication Pattern",
+        "Collective Operation",
+        "Megatron-LM Framework",
+        "DeepSeek Architecture",
+        "Compute Time",
+        "Parallel Strategy",
+        "NCCL Trace",
+        "comp-filepath",
+        "LogItem",
+        "Work_Item"
+      ],
+      "stability_ratio": 0.923,
+      "new": 1,
+      "changed": 0,
+      "stable": 12,
+      "matching_reasoning": "上一轮 12 个全部稳定；仅新增 NCCL Trace/Ground Truth"
+    }
+  ],
+  "_meta": {
+    "mode": "deep-interview",
+    "sessionId": null,
+    "updatedAt": "2026-06-08T02:31:39.151Z",
+    "updatedBy": "state_write_tool"
+  }
+}

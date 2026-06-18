@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cat > /tmp/test_flows.txt << 'EOF'\\n3\\n1001 0 1 16384 0 0 1 RING 0.0 3 4 100 100 2 1000 1002 0 0 1 1 1 0 500\\n1002 1 2 16384 0 0 1 RING 0.0 3 4 200 100 0 0 0 1 1 1 0 200\\n1003 2 3 16384 0 ...",
+  "error": "Exit code 1\nVALIDATION FAILED (1 errors):\n  flow 1001: prev[] references non-existent flow 1000",
+  "timestamp": "2026-06-18T05:44:25.740Z",
+  "retry_count": 2
+}

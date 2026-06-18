@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"EXISTING=$(lsof -ti :5001 2>/dev/null) && kill $EXISTING 2>/dev/null; sleep 1\\n\\nSIMAI_SERVER_PORT=5001 nohup python3 -m server.app -t /Users/anthony/PycharmProjects/SimAI > /tmp/simai_ser...",
+  "error": "Exit code 7",
+  "timestamp": "2026-06-09T02:43:17.945Z",
+  "retry_count": 1
+}

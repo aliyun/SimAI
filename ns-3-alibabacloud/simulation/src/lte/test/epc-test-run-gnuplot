@@ -1,0 +1,70 @@
+set style line 11 lc rgb "black"  lt 3 lw 2 pt 1  ps 2
+set style line 12 lc rgb "red"    lt 3 lw 2 pt 2  ps 2
+set style line 13 lc rgb "blue"   lt 3 lw 2 pt 1  ps 2
+set style line 14 lc rgb "orange" lt 3 lw 2 pt 1  ps 2
+set style line 15 lc rgb "green"  lt 3 lw 2 pt 1  ps 2
+set style line 16 lc rgb "yellow" lt 3 lw 2 pt 1  ps 2
+
+
+set style line 21 lc rgb "black"   lt 1 lw 2 pt  1  ps 1
+set style line 22 lc rgb "red"     lt 1 lw 2 pt  2  ps 1
+set style line 23 lc rgb "blue"    lt 1 lw 2 pt  3  ps 1
+set style line 24 lc rgb "orange"  lt 1 lw 1 pt  4  ps 1
+set style line 25 lc rgb "green"   lt 1 lw 1 pt  5  ps 1
+set style line 26 lc rgb "purple"  lt 1 lw 1 pt  6  ps 1
+set style line 27 lc rgb "yellow"  lt 1 lw 1 pt  7  ps 1
+set style line 28 lc rgb "pink"    lt 1 lw 1 pt  8  ps 1
+set style line 29 lc rgb "magenta" lt 1 lw 1 pt  9  ps 1
+
+set style line 31 lc rgb "black"   lt 2 lw 2 pt  1  ps 1
+set style line 32 lc rgb "red"     lt 2 lw 2 pt  2  ps 1
+set style line 33 lc rgb "blue"    lt 2 lw 2 pt  3  ps 1
+set style line 34 lc rgb "orange"  lt 2 lw 1 pt  4  ps 1
+set style line 35 lc rgb "green"   lt 2 lw 1 pt  5  ps 1
+set style line 36 lc rgb "purple"  lt 2 lw 1 pt  6  ps 1
+set style line 37 lc rgb "yellow"  lt 2 lw 1 pt  7  ps 1
+set style line 38 lc rgb "pink"    lt 2 lw 1 pt  8  ps 1
+set style line 39 lc rgb "magenta" lt 2 lw 1 pt  9  ps 1
+
+set style line  50 lc rgb "black"  lt 1 lw 2 pt 0 ps 0
+
+
+
+set term postscript eps enhanced
+set output 'epcRunningTime.eps' 
+set grid
+set xrange [*:23]
+set yrange [*:*]
+set ylabel "Running time [s]"
+set xlabel 'Number  eNodeB'
+set title 'Simulation time = 5 s - 1 UE per eNodeB'
+set key on top left
+plot \
+"../../../epcTimes.csv" using 2:($1==5 ? $3 : 1/0) with linespoints ls 21 title "" 
+
+set term postscript eps enhanced
+set output 'epcSimulationTime.eps' 
+set grid
+set xrange [*:11]
+set yrange [*:*]
+set ylabel "Running time [s]"
+set xlabel 'Simulation time [s]'
+set title '1 UE per eNodeB'
+set key on top left
+plot \
+"../../../epcTimes.csv" using 1:2 with linespoints ls 21 title "8 eNodeBs" 
+
+
+set term postscript eps enhanced
+set output 'epcEutranRunningTime.eps' 
+set grid
+set xrange [*:23]
+set yrange [*:*]
+set ylabel "Running time [s]"
+set xlabel 'Number  eNodeB'
+set title 'Simulation time = 5 s - 1 UE per eNodeB'
+set key on top left
+plot \
+"../../../epcTimes.csv" using 2:3 with linespoints ls 21 title "EUTRAN + EPC", \
+"../../../lteTimes.csv" using 3:($3==$4 ? $5 : 1/0) with linespoints ls 22 title "EUTRAN"
+

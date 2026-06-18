@@ -175,7 +175,7 @@ float calculateBusBw(CalculationParameters* params) {
                     return -1;
                 }
             } else {
-                strcpy(info, "Warning: unsupported GPU count for NVLS algorithm. Please use 8 GPUs per node.");
+                strcpy(info, "Warning: unsupported NPU count for NVLS algorithm. Please use 8 NPUs per node.");
                 retcode = 1;
                 return -1;
             }
@@ -322,7 +322,7 @@ BusBwResult cal_busbw(GPUType node_type,float bw_intra,float bw_per_nic, float n
         params.group_split_mask = 0;
     } else if (params.group_split_mask != 0 && params.gpus_pernode != 8) {
         // 当前只支持8GPU机型的multi- 测试
-        strcpy(info, "Warning: currently, only 8GPU nodes are supported for split_mask testing.");
+        strcpy(info, "Warning: currently, only 8NPU nodes are supported for split_mask testing.");
         params.group_split_mask = 0;
     }
 

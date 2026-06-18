@@ -47,11 +47,13 @@
 #include <map>
 #include"astra-sim/system/MockNcclQps.h"
 #include "astra-sim/system/MockNcclLog.h"
+// #include "astra-sim/system/StreamBaseline.hh" — removed, causes hang
 using namespace ns3;
 using namespace std;
 
 
 std::map<std::pair<std::pair<int, int>,int>, AstraSim::ncclFlowTag> receiver_pending_queue;
+uint64_t last_flow_finish_ns = 0;  // updated by qp_finish/send_finish for replay timing
 
 
 std::map<std::pair<int, std::pair<int, int>>, AstraSim::ncclFlowTag> sender_src_port_map; 
@@ -125,7 +127,7 @@ void SendFlow(int src, int dst, uint64_t maxPacketCount,
   int flow_id = request->flowTag.current_flow_id;
   bool nvls_on = request->flowTag.nvls_on;
   int pg = 3, dport = 100;
-  int send_lat = 6000;
+  int send_lat = 6;  // microseconds (multiplied by 1000 to ns below)
   const char* send_lat_env = std::getenv("AS_SEND_LAT");
   if (send_lat_env) {
     try {
@@ -161,6 +163,115 @@ void SendFlow(int src, int dst, uint64_t maxPacketCount,
   }
   NcclLog->writeLog(NcclLogLevel::DEBUG,"waiting_to_notify_receiver  current_flow_id  %d src  %d dst  %d count  %d",request->flowTag.current_flow_id,src,dst,waiting_to_notify_receiver[std::make_pair(request->flowTag.tag_id,std::make_pair(src,dst))]);
   }
+}
+
+// ── Decoupled mode: read flow file, schedule all flows via NS3 Simulator ──
+// Each flow runs independently at its start_time offset. Dependencies
+// (prev flow_ids) are resolved via completion-triggered scheduling.
+void ImportFlows(AstraSim::Sys* sys) {
+  if (flow_file.empty()) return;
+
+  std::ifstream ff(flow_file);
+  if (!ff.is_open()) {
+    std::cerr << "ImportFlows: cannot open " << flow_file << std::endl;
+    return;
+  }
+
+  uint32_t total = 0;
+  // Read header line — auto-detect if it's valid or placeholder "0"
+  std::string firstLine;
+  if (!std::getline(ff, firstLine) || firstLine.empty()) {
+    std::cerr << "ImportFlows: empty or invalid flow file " << flow_file << std::endl;
+    return;
+  }
+  try {
+    total = std::stoul(firstLine);
+  } catch (...) {
+    std::cerr << "ImportFlows: bad header in " << flow_file << std::endl;
+    return;
+  }
+  if (total == 0) {
+    // Placeholder — count actual flow lines
+    total = 0;
+    while (std::getline(ff, firstLine)) {
+      if (!firstLine.empty()) total++;
+    }
+    // Reset to read flow records
+    ff.clear();
+    ff.seekg(0);
+    std::getline(ff, firstLine); // skip header line
+  }
+  std::cout << "ImportFlows: " << total << " flows from " << flow_file << std::endl;
+
+  struct FlowRec { FlowRecord fr; int pending; };
+  std::vector<FlowRec> recs(total);
+  std::map<uint32_t, int> id2idx;
+  for (uint32_t i = 0; i < total; i++) {
+    FlowRecord &r = recs[i].fr;
+    uint32_t np;
+    ff >> r.flow_id >> r.src >> r.dst >> r.flow_size
+       >> r.channel_id >> r.chunk_id >> r.chunk_count
+       >> r.conn_type >> r.start_time >> r.pg
+       >> r.maxPacketCount >> r.port >> r.dport >> np;
+    for (uint32_t j = 0; j < np; j++) { uint32_t p; ff >> p; r.prev.push_back(p); }
+    ff >> r.layer_num;
+    recs[i].pending = (int)np;
+    id2idx[r.flow_id] = i;
+  }
+  ff.close();
+
+  // Allocate request objects on heap and inject ALL flows unconditionally.
+  // Ring allreduce: prev[] is informational — flows are serialized by the
+  // SimAI event chain in coupled mode; in replay mode NS3 schedules all
+  // RdmaClient apps independently via TRACE callbacks.
+  std::vector<AstraSim::sim_request*> reqs(total, nullptr);
+  for (int i = 0; i < (int)total; i++) {
+    reqs[i] = new AstraSim::sim_request();
+    FlowRecord &r = recs[i].fr;
+    reqs[i]->srcRank = r.src;
+    reqs[i]->dstRank = r.dst;
+    reqs[i]->reqCount = r.maxPacketCount;
+    reqs[i]->flowTag.sender_node = r.src;
+    reqs[i]->flowTag.receiver_node = r.dst;
+    reqs[i]->flowTag.current_flow_id = r.flow_id;
+    reqs[i]->flowTag.channel_id = r.channel_id;
+    reqs[i]->flowTag.chunk_id = r.chunk_id;
+    reqs[i]->flowTag.flow_size = r.flow_size;
+    reqs[i]->flowTag.nvls_on = (r.conn_type == "NVLS" || r.conn_type == "NVLS_TREE");
+    reqs[i]->flowTag.tag_id = r.flow_id;
+  }
+
+  int injected = 0;
+  for (int i = 0; i < (int)total; i++) {
+    FlowRecord &r = recs[i].fr;
+    AstraSim::sim_request *req = reqs[i];
+
+    // Register receive expectation: allocate raw buffer with correct layout
+    // (RecvPacketEventHadndlerData is 168 bytes; flowTag at offset 88,
+    // current_flow_id at 88+8=96, child_flow_id at 88+12=100)
+    int tag = (int)r.flow_id;
+    auto key = make_pair(tag, make_pair((int)r.src, (int)r.dst));
+    if (expeRecvHash.find(key) == expeRecvHash.end()) {
+      task1 t;
+      t.src = (int)r.src;
+      t.dest = (int)r.dst;
+      t.count = r.maxPacketCount;
+      t.type = 1;
+      t.msg_handler = [](void*){};
+      char *buf = new char[168]();
+      *(int*)(buf + 96) = -1;   // flowTag.current_flow_id
+      *(int*)(buf + 100) = -1;  // flowTag.child_flow_id
+      t.fun_arg = buf;
+      expeRecvHash[key] = t;
+    }
+
+    // r.flow_size is the actual byte count (e.g. 16384); r.maxPacketCount is
+    // the number of 4096-byte packets. SendFlow expects the byte count.
+    SendFlow(r.src, r.dst, r.flow_size,
+             [](void*){}, nullptr, r.flow_id, req);
+    injected++;
+  }
+  std::cout << "ImportFlows: injected " << injected << " flows." << std::endl;
 }
 
 void notify_receiver_receive_data(int sender_node, int receiver_node,
@@ -342,6 +453,7 @@ void qp_finish(FILE *fout, Ptr<RdmaQueuePair> q) {
     #endif
   }
   notify_receiver_receive_data(sid, did, notify_size, flowTag);
+  last_flow_finish_ns = Simulator::Now().GetNanoSeconds();
 }
 
 void send_finish(FILE *fout, Ptr<RdmaQueuePair> q) {

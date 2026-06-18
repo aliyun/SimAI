@@ -1,0 +1,17 @@
+
+diagram {
+
+  LtePdcp->LteRlc [label="send SDU"]
+  LteRlc->LteMacSapProvider [label="ReportBufferStatus ()"]
+  LteMacSapProvider->LteUeMac [label="DoReportBufferStatus ()"]
+  LteUeMac-->> LteEnbMac [label="send ideal CTRL message"]
+  LteMacSapProvider <--LteUeMac
+  LteRlc <--LteMacSapProvider
+  LtePdcp <--LteRlc
+  LteEnbMac->FfMacSchedSapProvider [label="SchedUlMacCtrlInfoReq ()"]
+  FfMacSchedSapProvider->Scheduler [label="DoSchedUlMacCtrlInfoReq ()"]
+  FfMacSchedSapProvider <--Scheduler
+  LteEnbMac <--FfMacSchedSapProvider
+}
+
+

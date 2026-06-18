@@ -1,0 +1,2967 @@
+{
+  "version": "2.0",
+  "status": "completed",
+  "rank_count": 16,
+  "rank_list": [
+    {
+      "rank_id": 0,
+      "device_id": 0,
+      "local_id": 0,
+      "level_list": [
+        {
+          "net_layer": 0,
+          "net_instance_id": "superpod1_0",
+          "net_type": "TOPO_FILE_DESC",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001001",
+              "ports": [
+                "0/0"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001002",
+              "ports": [
+                "0/1"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001003",
+              "ports": [
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001004",
+              "ports": [
+                "0/3"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001005",
+              "ports": [
+                "0/4"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001006",
+              "ports": [
+                "0/5"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001007",
+              "ports": [
+                "0/6"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001008",
+              "ports": [
+                "0/7"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001009",
+              "ports": [
+                "0/8"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00100a",
+              "ports": [
+                "1/0"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00100b",
+              "ports": [
+                "1/1"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00100c",
+              "ports": [
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00100d",
+              "ports": [
+                "1/3"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00100e",
+              "ports": [
+                "1/4"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00100f",
+              "ports": [
+                "1/5"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001010",
+              "ports": [
+                "1/6"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001011",
+              "ports": [
+                "1/7"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001012",
+              "ports": [
+                "1/8"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        },
+        {
+          "net_layer": 1,
+          "net_instance_id": "superpod1",
+          "net_type": "CLOS",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010b6",
+              "ports": [
+                "0/1",
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010b8",
+              "ports": [
+                "1/1",
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rank_id": 1,
+      "device_id": 1,
+      "local_id": 1,
+      "level_list": [
+        {
+          "net_layer": 0,
+          "net_instance_id": "superpod1_0",
+          "net_type": "TOPO_FILE_DESC",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001015",
+              "ports": [
+                "0/0"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001016",
+              "ports": [
+                "0/1"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001017",
+              "ports": [
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001018",
+              "ports": [
+                "0/3"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001019",
+              "ports": [
+                "0/4"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00101a",
+              "ports": [
+                "0/5"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00101b",
+              "ports": [
+                "0/6"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00101c",
+              "ports": [
+                "0/7"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00101d",
+              "ports": [
+                "0/8"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00101e",
+              "ports": [
+                "1/0"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00101f",
+              "ports": [
+                "1/1"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001020",
+              "ports": [
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001021",
+              "ports": [
+                "1/3"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001022",
+              "ports": [
+                "1/4"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001023",
+              "ports": [
+                "1/5"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001024",
+              "ports": [
+                "1/6"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001025",
+              "ports": [
+                "1/7"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001026",
+              "ports": [
+                "1/8"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        },
+        {
+          "net_layer": 1,
+          "net_instance_id": "superpod1",
+          "net_type": "CLOS",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010b8",
+              "ports": [
+                "0/1",
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010ba",
+              "ports": [
+                "1/1",
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rank_id": 2,
+      "device_id": 2,
+      "local_id": 2,
+      "level_list": [
+        {
+          "net_layer": 0,
+          "net_instance_id": "superpod1_0",
+          "net_type": "TOPO_FILE_DESC",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001029",
+              "ports": [
+                "0/0"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00102a",
+              "ports": [
+                "0/1"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00102b",
+              "ports": [
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00102c",
+              "ports": [
+                "0/3"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00102d",
+              "ports": [
+                "0/4"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00102e",
+              "ports": [
+                "0/5"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00102f",
+              "ports": [
+                "0/6"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001030",
+              "ports": [
+                "0/7"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001031",
+              "ports": [
+                "0/8"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001032",
+              "ports": [
+                "1/0"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001033",
+              "ports": [
+                "1/1"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001034",
+              "ports": [
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001035",
+              "ports": [
+                "1/3"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001036",
+              "ports": [
+                "1/4"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001037",
+              "ports": [
+                "1/5"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001038",
+              "ports": [
+                "1/6"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001039",
+              "ports": [
+                "1/7"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00103a",
+              "ports": [
+                "1/8"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        },
+        {
+          "net_layer": 1,
+          "net_instance_id": "superpod1",
+          "net_type": "CLOS",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010ba",
+              "ports": [
+                "0/1",
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010bc",
+              "ports": [
+                "1/1",
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rank_id": 3,
+      "device_id": 3,
+      "local_id": 3,
+      "level_list": [
+        {
+          "net_layer": 0,
+          "net_instance_id": "superpod1_0",
+          "net_type": "TOPO_FILE_DESC",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00103d",
+              "ports": [
+                "0/0"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00103e",
+              "ports": [
+                "0/1"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00103f",
+              "ports": [
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001040",
+              "ports": [
+                "0/3"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001041",
+              "ports": [
+                "0/4"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001042",
+              "ports": [
+                "0/5"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001043",
+              "ports": [
+                "0/6"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001044",
+              "ports": [
+                "0/7"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001045",
+              "ports": [
+                "0/8"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001046",
+              "ports": [
+                "1/0"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001047",
+              "ports": [
+                "1/1"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001048",
+              "ports": [
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001049",
+              "ports": [
+                "1/3"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00104a",
+              "ports": [
+                "1/4"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00104b",
+              "ports": [
+                "1/5"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00104c",
+              "ports": [
+                "1/6"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00104d",
+              "ports": [
+                "1/7"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00104e",
+              "ports": [
+                "1/8"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        },
+        {
+          "net_layer": 1,
+          "net_instance_id": "superpod1",
+          "net_type": "CLOS",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010bc",
+              "ports": [
+                "0/1",
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010be",
+              "ports": [
+                "1/1",
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rank_id": 4,
+      "device_id": 0,
+      "local_id": 0,
+      "level_list": [
+        {
+          "net_layer": 0,
+          "net_instance_id": "superpod1_1",
+          "net_type": "TOPO_FILE_DESC",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001051",
+              "ports": [
+                "0/0"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001052",
+              "ports": [
+                "0/1"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001053",
+              "ports": [
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001054",
+              "ports": [
+                "0/3"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001055",
+              "ports": [
+                "0/4"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001056",
+              "ports": [
+                "0/5"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001057",
+              "ports": [
+                "0/6"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001058",
+              "ports": [
+                "0/7"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001059",
+              "ports": [
+                "0/8"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00105a",
+              "ports": [
+                "1/0"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00105b",
+              "ports": [
+                "1/1"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00105c",
+              "ports": [
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00105d",
+              "ports": [
+                "1/3"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00105e",
+              "ports": [
+                "1/4"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00105f",
+              "ports": [
+                "1/5"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001060",
+              "ports": [
+                "1/6"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001061",
+              "ports": [
+                "1/7"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001062",
+              "ports": [
+                "1/8"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        },
+        {
+          "net_layer": 1,
+          "net_instance_id": "superpod1",
+          "net_type": "CLOS",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010be",
+              "ports": [
+                "0/1",
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010c0",
+              "ports": [
+                "1/1",
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rank_id": 5,
+      "device_id": 1,
+      "local_id": 1,
+      "level_list": [
+        {
+          "net_layer": 0,
+          "net_instance_id": "superpod1_1",
+          "net_type": "TOPO_FILE_DESC",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001065",
+              "ports": [
+                "0/0"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001066",
+              "ports": [
+                "0/1"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001067",
+              "ports": [
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001068",
+              "ports": [
+                "0/3"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001069",
+              "ports": [
+                "0/4"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00106a",
+              "ports": [
+                "0/5"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00106b",
+              "ports": [
+                "0/6"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00106c",
+              "ports": [
+                "0/7"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00106d",
+              "ports": [
+                "0/8"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00106e",
+              "ports": [
+                "1/0"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00106f",
+              "ports": [
+                "1/1"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001070",
+              "ports": [
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001071",
+              "ports": [
+                "1/3"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001072",
+              "ports": [
+                "1/4"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001073",
+              "ports": [
+                "1/5"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001074",
+              "ports": [
+                "1/6"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001075",
+              "ports": [
+                "1/7"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001076",
+              "ports": [
+                "1/8"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        },
+        {
+          "net_layer": 1,
+          "net_instance_id": "superpod1",
+          "net_type": "CLOS",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010c0",
+              "ports": [
+                "0/1",
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010c2",
+              "ports": [
+                "1/1",
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rank_id": 6,
+      "device_id": 2,
+      "local_id": 2,
+      "level_list": [
+        {
+          "net_layer": 0,
+          "net_instance_id": "superpod1_1",
+          "net_type": "TOPO_FILE_DESC",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001079",
+              "ports": [
+                "0/0"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00107a",
+              "ports": [
+                "0/1"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00107b",
+              "ports": [
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00107c",
+              "ports": [
+                "0/3"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00107d",
+              "ports": [
+                "0/4"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00107e",
+              "ports": [
+                "0/5"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00107f",
+              "ports": [
+                "0/6"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001080",
+              "ports": [
+                "0/7"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001081",
+              "ports": [
+                "0/8"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001082",
+              "ports": [
+                "1/0"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001083",
+              "ports": [
+                "1/1"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001084",
+              "ports": [
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001085",
+              "ports": [
+                "1/3"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001086",
+              "ports": [
+                "1/4"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001087",
+              "ports": [
+                "1/5"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001088",
+              "ports": [
+                "1/6"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001089",
+              "ports": [
+                "1/7"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00108a",
+              "ports": [
+                "1/8"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        },
+        {
+          "net_layer": 1,
+          "net_instance_id": "superpod1",
+          "net_type": "CLOS",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010c2",
+              "ports": [
+                "0/1",
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010c4",
+              "ports": [
+                "1/1",
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rank_id": 7,
+      "device_id": 3,
+      "local_id": 3,
+      "level_list": [
+        {
+          "net_layer": 0,
+          "net_instance_id": "superpod1_1",
+          "net_type": "TOPO_FILE_DESC",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00108d",
+              "ports": [
+                "0/0"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00108e",
+              "ports": [
+                "0/1"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00108f",
+              "ports": [
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001090",
+              "ports": [
+                "0/3"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001091",
+              "ports": [
+                "0/4"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001092",
+              "ports": [
+                "0/5"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001093",
+              "ports": [
+                "0/6"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001094",
+              "ports": [
+                "0/7"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001095",
+              "ports": [
+                "0/8"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001096",
+              "ports": [
+                "1/0"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001097",
+              "ports": [
+                "1/1"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001098",
+              "ports": [
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001099",
+              "ports": [
+                "1/3"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00109a",
+              "ports": [
+                "1/4"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00109b",
+              "ports": [
+                "1/5"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00109c",
+              "ports": [
+                "1/6"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00109d",
+              "ports": [
+                "1/7"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00109e",
+              "ports": [
+                "1/8"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        },
+        {
+          "net_layer": 1,
+          "net_instance_id": "superpod1",
+          "net_type": "CLOS",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010c4",
+              "ports": [
+                "0/1",
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010c6",
+              "ports": [
+                "1/1",
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rank_id": 8,
+      "device_id": 0,
+      "local_id": 0,
+      "level_list": [
+        {
+          "net_layer": 0,
+          "net_instance_id": "superpod1_2",
+          "net_type": "TOPO_FILE_DESC",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010a1",
+              "ports": [
+                "0/0"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010a2",
+              "ports": [
+                "0/1"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010a3",
+              "ports": [
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010a4",
+              "ports": [
+                "0/3"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010a5",
+              "ports": [
+                "0/4"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010a6",
+              "ports": [
+                "0/5"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010a7",
+              "ports": [
+                "0/6"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010a8",
+              "ports": [
+                "0/7"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010a9",
+              "ports": [
+                "0/8"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010aa",
+              "ports": [
+                "1/0"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010ab",
+              "ports": [
+                "1/1"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010ac",
+              "ports": [
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010ad",
+              "ports": [
+                "1/3"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010ae",
+              "ports": [
+                "1/4"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010af",
+              "ports": [
+                "1/5"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010b0",
+              "ports": [
+                "1/6"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010b1",
+              "ports": [
+                "1/7"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010b2",
+              "ports": [
+                "1/8"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        },
+        {
+          "net_layer": 1,
+          "net_instance_id": "superpod1",
+          "net_type": "CLOS",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010c6",
+              "ports": [
+                "0/1",
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010c8",
+              "ports": [
+                "1/1",
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rank_id": 9,
+      "device_id": 1,
+      "local_id": 1,
+      "level_list": [
+        {
+          "net_layer": 0,
+          "net_instance_id": "superpod1_2",
+          "net_type": "TOPO_FILE_DESC",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010b5",
+              "ports": [
+                "0/0"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010b6",
+              "ports": [
+                "0/1"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010b7",
+              "ports": [
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010b8",
+              "ports": [
+                "0/3"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010b9",
+              "ports": [
+                "0/4"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010ba",
+              "ports": [
+                "0/5"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010bb",
+              "ports": [
+                "0/6"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010bc",
+              "ports": [
+                "0/7"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010bd",
+              "ports": [
+                "0/8"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010be",
+              "ports": [
+                "1/0"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010bf",
+              "ports": [
+                "1/1"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010c0",
+              "ports": [
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010c1",
+              "ports": [
+                "1/3"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010c2",
+              "ports": [
+                "1/4"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010c3",
+              "ports": [
+                "1/5"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010c4",
+              "ports": [
+                "1/6"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010c5",
+              "ports": [
+                "1/7"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010c6",
+              "ports": [
+                "1/8"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        },
+        {
+          "net_layer": 1,
+          "net_instance_id": "superpod1",
+          "net_type": "CLOS",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010c8",
+              "ports": [
+                "0/1",
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010ca",
+              "ports": [
+                "1/1",
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rank_id": 10,
+      "device_id": 2,
+      "local_id": 2,
+      "level_list": [
+        {
+          "net_layer": 0,
+          "net_instance_id": "superpod1_2",
+          "net_type": "TOPO_FILE_DESC",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010c9",
+              "ports": [
+                "0/0"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010ca",
+              "ports": [
+                "0/1"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010cb",
+              "ports": [
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010cc",
+              "ports": [
+                "0/3"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010cd",
+              "ports": [
+                "0/4"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010ce",
+              "ports": [
+                "0/5"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010cf",
+              "ports": [
+                "0/6"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010d0",
+              "ports": [
+                "0/7"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010d1",
+              "ports": [
+                "0/8"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010d2",
+              "ports": [
+                "1/0"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010d3",
+              "ports": [
+                "1/1"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010d4",
+              "ports": [
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010d5",
+              "ports": [
+                "1/3"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010d6",
+              "ports": [
+                "1/4"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010d7",
+              "ports": [
+                "1/5"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010d8",
+              "ports": [
+                "1/6"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010d9",
+              "ports": [
+                "1/7"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010da",
+              "ports": [
+                "1/8"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        },
+        {
+          "net_layer": 1,
+          "net_instance_id": "superpod1",
+          "net_type": "CLOS",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010ca",
+              "ports": [
+                "0/1",
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010cc",
+              "ports": [
+                "1/1",
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rank_id": 11,
+      "device_id": 3,
+      "local_id": 3,
+      "level_list": [
+        {
+          "net_layer": 0,
+          "net_instance_id": "superpod1_2",
+          "net_type": "TOPO_FILE_DESC",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010dd",
+              "ports": [
+                "0/0"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010de",
+              "ports": [
+                "0/1"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010df",
+              "ports": [
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010e0",
+              "ports": [
+                "0/3"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010e1",
+              "ports": [
+                "0/4"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010e2",
+              "ports": [
+                "0/5"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010e3",
+              "ports": [
+                "0/6"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010e4",
+              "ports": [
+                "0/7"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010e5",
+              "ports": [
+                "0/8"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010e6",
+              "ports": [
+                "1/0"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010e7",
+              "ports": [
+                "1/1"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010e8",
+              "ports": [
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010e9",
+              "ports": [
+                "1/3"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010ea",
+              "ports": [
+                "1/4"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010eb",
+              "ports": [
+                "1/5"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010ec",
+              "ports": [
+                "1/6"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010ed",
+              "ports": [
+                "1/7"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010ee",
+              "ports": [
+                "1/8"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        },
+        {
+          "net_layer": 1,
+          "net_instance_id": "superpod1",
+          "net_type": "CLOS",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010cc",
+              "ports": [
+                "0/1",
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010ce",
+              "ports": [
+                "1/1",
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rank_id": 12,
+      "device_id": 0,
+      "local_id": 0,
+      "level_list": [
+        {
+          "net_layer": 0,
+          "net_instance_id": "superpod1_3",
+          "net_type": "TOPO_FILE_DESC",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010f1",
+              "ports": [
+                "0/0"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010f2",
+              "ports": [
+                "0/1"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010f3",
+              "ports": [
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010f4",
+              "ports": [
+                "0/3"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010f5",
+              "ports": [
+                "0/4"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010f6",
+              "ports": [
+                "0/5"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010f7",
+              "ports": [
+                "0/6"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010f8",
+              "ports": [
+                "0/7"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010f9",
+              "ports": [
+                "0/8"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010fa",
+              "ports": [
+                "1/0"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010fb",
+              "ports": [
+                "1/1"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010fc",
+              "ports": [
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010fd",
+              "ports": [
+                "1/3"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010fe",
+              "ports": [
+                "1/4"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df0010ff",
+              "ports": [
+                "1/5"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001100",
+              "ports": [
+                "1/6"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001101",
+              "ports": [
+                "1/7"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001102",
+              "ports": [
+                "1/8"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        },
+        {
+          "net_layer": 1,
+          "net_instance_id": "superpod1",
+          "net_type": "CLOS",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010ce",
+              "ports": [
+                "0/1",
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010d0",
+              "ports": [
+                "1/1",
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rank_id": 13,
+      "device_id": 1,
+      "local_id": 1,
+      "level_list": [
+        {
+          "net_layer": 0,
+          "net_instance_id": "superpod1_3",
+          "net_type": "TOPO_FILE_DESC",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001105",
+              "ports": [
+                "0/0"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001106",
+              "ports": [
+                "0/1"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001107",
+              "ports": [
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001108",
+              "ports": [
+                "0/3"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001109",
+              "ports": [
+                "0/4"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00110a",
+              "ports": [
+                "0/5"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00110b",
+              "ports": [
+                "0/6"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00110c",
+              "ports": [
+                "0/7"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00110d",
+              "ports": [
+                "0/8"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00110e",
+              "ports": [
+                "1/0"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00110f",
+              "ports": [
+                "1/1"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001110",
+              "ports": [
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001111",
+              "ports": [
+                "1/3"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001112",
+              "ports": [
+                "1/4"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001113",
+              "ports": [
+                "1/5"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001114",
+              "ports": [
+                "1/6"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001115",
+              "ports": [
+                "1/7"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001116",
+              "ports": [
+                "1/8"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        },
+        {
+          "net_layer": 1,
+          "net_instance_id": "superpod1",
+          "net_type": "CLOS",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010d0",
+              "ports": [
+                "0/1",
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010d2",
+              "ports": [
+                "1/1",
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rank_id": 14,
+      "device_id": 2,
+      "local_id": 2,
+      "level_list": [
+        {
+          "net_layer": 0,
+          "net_instance_id": "superpod1_3",
+          "net_type": "TOPO_FILE_DESC",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001119",
+              "ports": [
+                "0/0"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00111a",
+              "ports": [
+                "0/1"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00111b",
+              "ports": [
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00111c",
+              "ports": [
+                "0/3"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00111d",
+              "ports": [
+                "0/4"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00111e",
+              "ports": [
+                "0/5"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00111f",
+              "ports": [
+                "0/6"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001120",
+              "ports": [
+                "0/7"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001121",
+              "ports": [
+                "0/8"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001122",
+              "ports": [
+                "1/0"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001123",
+              "ports": [
+                "1/1"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001124",
+              "ports": [
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001125",
+              "ports": [
+                "1/3"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001126",
+              "ports": [
+                "1/4"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001127",
+              "ports": [
+                "1/5"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001128",
+              "ports": [
+                "1/6"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001129",
+              "ports": [
+                "1/7"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00112a",
+              "ports": [
+                "1/8"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        },
+        {
+          "net_layer": 1,
+          "net_instance_id": "superpod1",
+          "net_type": "CLOS",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010d2",
+              "ports": [
+                "0/1",
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010d4",
+              "ports": [
+                "1/1",
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rank_id": 15,
+      "device_id": 3,
+      "local_id": 3,
+      "level_list": [
+        {
+          "net_layer": 0,
+          "net_instance_id": "superpod1_3",
+          "net_type": "TOPO_FILE_DESC",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00112d",
+              "ports": [
+                "0/0"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00112e",
+              "ports": [
+                "0/1"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00112f",
+              "ports": [
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001130",
+              "ports": [
+                "0/3"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001131",
+              "ports": [
+                "0/4"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001132",
+              "ports": [
+                "0/5"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001133",
+              "ports": [
+                "0/6"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001134",
+              "ports": [
+                "0/7"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001135",
+              "ports": [
+                "0/8"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001136",
+              "ports": [
+                "1/0"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001137",
+              "ports": [
+                "1/1"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001138",
+              "ports": [
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df001139",
+              "ports": [
+                "1/3"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00113a",
+              "ports": [
+                "1/4"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00113b",
+              "ports": [
+                "1/5"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00113c",
+              "ports": [
+                "1/6"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00113d",
+              "ports": [
+                "1/7"
+              ],
+              "plane_id": "plane1"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000002000100000df00113e",
+              "ports": [
+                "1/8"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        },
+        {
+          "net_layer": 1,
+          "net_instance_id": "superpod1",
+          "net_type": "CLOS",
+          "net_attr": "",
+          "rank_addr_list": [
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010d4",
+              "ports": [
+                "0/1",
+                "0/2"
+              ],
+              "plane_id": "plane0"
+            },
+            {
+              "addr_type": "EID",
+              "addr": "000000000000000000100000df0010d6",
+              "ports": [
+                "1/1",
+                "1/2"
+              ],
+              "plane_id": "plane1"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

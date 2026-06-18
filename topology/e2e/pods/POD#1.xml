@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="Electron">
+  <diagram name="LLD Topology" id="lld-topo">
+    <mxGraphModel dx="1477" dy="864" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="2400">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="pod-boundary" value="para_plane_id: POD#1" style="rounded=0;whiteSpace=wrap;fontSize=12;fillColor=none;dashed=1;verticalAlign=top;align=left;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="550" y="900" width="1780" height="780" as="geometry" />
+        </mxCell>
+        <mxCell id="oxc-24150" value="OXC_24150&#10;OXC&#10;10.118.241.50" style="rounded=0;whiteSpace=wrap;align=center;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="580" y="940" width="770" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="leaf-24125" value="LEAF_24125&#10;LEAF&#10;10.118.241.25" style="rounded=0;whiteSpace=wrap;align=center;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="335" y="1300" width="350" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="leaf-24126" value="LEAF_24126&#10;LEAF&#10;10.118.241.26" style="rounded=0;whiteSpace=wrap;align=center;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="755" y="1300" width="350" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="leaf-24127" value="LEAF_24127&#10;LEAF&#10;10.118.241.27" style="rounded=0;whiteSpace=wrap;align=center;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="1175" y="1300" width="350" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="leaf-24128" value="LEAF_24128&#10;LEAF&#10;10.118.241.28" style="rounded=0;whiteSpace=wrap;align=center;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="1595" y="1300" width="350" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="server-2411" value="A100_2411&#10;SERVER&#10;10.118.241.1" style="rounded=0;whiteSpace=wrap;align=center;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="335" y="1550" width="350" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="server-2417" value="A100_2417&#10;SERVER&#10;10.118.241.7" style="rounded=0;whiteSpace=wrap;align=center;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="755" y="1550" width="350" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="server-24112" value="A100_24112&#10;SERVER&#10;10.118.241.12" style="rounded=0;whiteSpace=wrap;align=center;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="1175" y="1550" width="350" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="server-24115" value="A100_24115&#10;SERVER&#10;10.118.241.15" style="rounded=0;whiteSpace=wrap;align=center;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="1595" y="1550" width="350" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="e-oxc-24150-leaf-24125" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;fontStyle=1;" edge="1" parent="1" source="oxc-24150" target="leaf-24125">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-oxc-24150-leaf-24125-up" value="0.00%~0.00%" style="edgeLabel;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e-oxc-24150-leaf-24125">
+          <mxGeometry relative="1" as="geometry" x="-0.5" />
+        </mxCell>
+        <mxCell id="e-oxc-24150-leaf-24125-down" value="0.00%~0.00%" style="edgeLabel;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e-oxc-24150-leaf-24125">
+          <mxGeometry relative="1" as="geometry" x="0.5" />
+        </mxCell>
+        <mxCell id="e-oxc-24150-leaf-24126" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;fontStyle=1;" edge="1" parent="1" source="oxc-24150" target="leaf-24126">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-oxc-24150-leaf-24126-up" value="0.00%~0.00%" style="edgeLabel;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e-oxc-24150-leaf-24126">
+          <mxGeometry relative="1" as="geometry" x="-0.5" />
+        </mxCell>
+        <mxCell id="e-oxc-24150-leaf-24126-down" value="0.00%~0.00%" style="edgeLabel;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e-oxc-24150-leaf-24126">
+          <mxGeometry relative="1" as="geometry" x="0.5" />
+        </mxCell>
+        <mxCell id="e-oxc-24150-leaf-24127" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;fontStyle=1;" edge="1" parent="1" source="oxc-24150" target="leaf-24127">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-oxc-24150-leaf-24127-up" value="0.00%~0.00%" style="edgeLabel;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e-oxc-24150-leaf-24127">
+          <mxGeometry relative="1" as="geometry" x="-0.5" />
+        </mxCell>
+        <mxCell id="e-oxc-24150-leaf-24127-down" value="0.00%~0.00%" style="edgeLabel;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e-oxc-24150-leaf-24127">
+          <mxGeometry relative="1" as="geometry" x="0.5" />
+        </mxCell>
+        <mxCell id="e-oxc-24150-leaf-24128" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;fontStyle=1;" edge="1" parent="1" source="oxc-24150" target="leaf-24128">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-oxc-24150-leaf-24128-up" value="0.00%~0.00%" style="edgeLabel;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e-oxc-24150-leaf-24128">
+          <mxGeometry relative="1" as="geometry" x="-0.5" />
+        </mxCell>
+        <mxCell id="e-oxc-24150-leaf-24128-down" value="0.00%~0.00%" style="edgeLabel;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e-oxc-24150-leaf-24128">
+          <mxGeometry relative="1" as="geometry" x="0.5" />
+        </mxCell>
+        <mxCell id="e-leaf-24125-server-2411" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;fontStyle=1;" edge="1" parent="1" source="leaf-24125" target="server-2411">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-leaf-24125-server-2411-up" value="0.00%~0.00%" style="edgeLabel;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e-leaf-24125-server-2411">
+          <mxGeometry relative="1" as="geometry" x="-0.5" />
+        </mxCell>
+        <mxCell id="e-leaf-24125-server-2411-down" value="0.00%~0.00%" style="edgeLabel;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e-leaf-24125-server-2411">
+          <mxGeometry relative="1" as="geometry" x="0.5" />
+        </mxCell>
+        <mxCell id="e-leaf-24126-server-2417" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;fontStyle=1;" edge="1" parent="1" source="leaf-24126" target="server-2417">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-leaf-24126-server-2417-up" value="0.00%~0.00%" style="edgeLabel;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e-leaf-24126-server-2417">
+          <mxGeometry relative="1" as="geometry" x="-0.5" />
+        </mxCell>
+        <mxCell id="e-leaf-24126-server-2417-down" value="0.00%~0.00%" style="edgeLabel;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e-leaf-24126-server-2417">
+          <mxGeometry relative="1" as="geometry" x="0.5" />
+        </mxCell>
+        <mxCell id="e-leaf-24127-server-24112" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;fontStyle=1;" edge="1" parent="1" source="leaf-24127" target="server-24112">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-leaf-24127-server-24112-up" value="0.00%~0.00%" style="edgeLabel;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e-leaf-24127-server-24112">
+          <mxGeometry relative="1" as="geometry" x="-0.5" />
+        </mxCell>
+        <mxCell id="e-leaf-24127-server-24112-down" value="0.00%~0.00%" style="edgeLabel;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e-leaf-24127-server-24112">
+          <mxGeometry relative="1" as="geometry" x="0.5" />
+        </mxCell>
+        <mxCell id="e-leaf-24128-server-24115" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;fontStyle=1;" edge="1" parent="1" source="leaf-24128" target="server-24115">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-leaf-24128-server-24115-up" value="0.00%~0.00%" style="edgeLabel;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e-leaf-24128-server-24115">
+          <mxGeometry relative="1" as="geometry" x="-0.5" />
+        </mxCell>
+        <mxCell id="e-leaf-24128-server-24115-down" value="0.00%~0.00%" style="edgeLabel;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;" vertex="1" connectable="0" parent="e-leaf-24128-server-24115">
+          <mxGeometry relative="1" as="geometry" x="0.5" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

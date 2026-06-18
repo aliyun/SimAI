@@ -1,0 +1,3 @@
+.. |ns3| replace:: *ns-3*
+
+.. |ns2| replace:: *ns-2*

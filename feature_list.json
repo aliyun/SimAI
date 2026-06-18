@@ -1,0 +1,1447 @@
+{
+  "project": "SimAI-OXC",
+  "updated": "2026-06-04T07:00:00Z",
+  "summary": {
+    "done": 5,
+    "pending": 1,
+    "in_progress": 1,
+    "by_type": {
+      "refactor": 4,
+      "feature": 12,
+      "test": 3,
+      "bugfix": 17,
+      "unknown": 14
+    }
+  },
+  "active": [
+    {
+      "id": "F086",
+      "type": "feature",
+      "category": "decouple",
+      "description": "E2E decoupled test: add AS_DECOUPLED_OUTPUT env var, generate flow file, replay via ImportFlows, compare",
+      "status": "done",
+      "priority": "P0",
+      "files": [
+        "astra-sim-alibabacloud/astra-sim/system/MockNcclGroup.cc",
+        "astra-sim-alibabacloud/astra-sim/system/MockNcclGroup.h",
+        "astra-sim-alibabacloud/astra-sim/network_frontend/ns3/**",
+        "bin/*",
+        "scripts/build.sh",
+        "astra-sim-alibabacloud/extern/**",
+        "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/build/scratch/ns3.36.1-AstraSimNetwork-debug",
+        "*.txt",
+        "*.csv",
+        "*.conf",
+        ".",
+        "/tmp/*.txt",
+        "/tmp/*.conf"
+      ],
+      "verification_steps": [
+        "coupled total_time == decoupled total_time"
+      ],
+      "passes": true,
+      "created_at": "2026-05-30T00:00:00Z",
+      "confidence": "HIGH: env var trigger + file replay, well-defined test",
+      "updated_at": "2026-05-30T09:32:36Z"
+    },
+    {
+      "id": "F087",
+      "type": "feature",
+      "category": "decouple",
+      "description": "AS_REPLAY_MODE env var to skip SimAI workload, enabling true decoupled NS3 replay via ImportFlows",
+      "status": "done",
+      "priority": "P0",
+      "files": [
+        "astra-sim-alibabacloud/astra-sim/network_frontend/ns3/AstraSimNetwork.cc",
+        "astra-sim-alibabacloud/astra-sim/network_frontend/ns3/entry.h",
+        "astra-sim-alibabacloud/extern/**",
+        ".",
+        "*.txt",
+        "*.csv",
+        "*.conf",
+        "/tmp/*.txt",
+        "/tmp/*.conf"
+      ],
+      "verification_steps": [
+        "replay mode: SimAI skipped, ImportFlows reads flow file, NS3 simulates",
+        "bytes sent/received match coupled run"
+      ],
+      "passes": true,
+      "created_at": "2026-05-30T07:08:59Z",
+      "confidence": "HIGH: straightforward env var check in main()",
+      "updated_at": "2026-05-30T09:32:36Z"
+    },
+    {
+      "id": "F088",
+      "type": "test",
+      "category": "decouple",
+      "description": "E2E decoupled replay comparison: coupled vs replay NS3 bytes sent/received must match",
+      "status": "in_progress",
+      "priority": "P0",
+      "files": [
+        "astra-sim-alibabacloud/**",
+        "*.txt",
+        "*.csv",
+        "*.conf",
+        "/tmp/*",
+        "bin/*",
+        "scripts/*",
+        ".",
+        "dashboard",
+        "server",
+        "dashboard/src/stores/network-store.ts"
+      ],
+      "verification_steps": [
+        "coupled bytes sent/recv == replay bytes sent/recv per node"
+      ],
+      "passes": true,
+      "created_at": "2026-05-30T07:08:59Z",
+      "confidence": "HIGH: compare sim_finish output",
+      "updated_at": "2026-05-30T09:32:36Z"
+    },
+    {
+      "id": "F089",
+      "type": "feature",
+      "category": "workload",
+      "description": "AICB LogItem CSV增加通信域ranks列+sidecar rank_mapping.csv, Python-only hybrid填充",
+      "status": "pending",
+      "priority": "P1",
+      "files": [
+        "aicb/**",
+        "aicb/log_analyzer/log.py",
+        "aicb/utils/rank_mapper.py",
+        "aicb/workload_generator/workload_generator.py",
+        "aicb/workload_generator/generate_megatron_workload.py",
+        "aicb/workload_generator/generate_deepspeed_stage1_2_workload.py",
+        "aicb/workload_generator/generate_deepspeed_stage3_workload.py",
+        "aicb/workload_generator/generate_collective_test.py",
+        "aicb/tests",
+        "aicb/tests/*",
+        "aicb/tests/verify_ranks.py",
+        "aicb/tests/test_rank_mapper.py",
+        "aicb/tests/test_logitem_ranks.py",
+        "aicb/visualize/generate.py",
+        "aicb/visualize/example.html",
+        "aicb/scripts/generate_per_rank_csv.py"
+      ],
+      "verification_steps": [
+        "LogItem.ranks字段存在且CSV正确序列化",
+        "rank_mapper.get_rank_list_for_comm_group() 对tp/dp/pp/ep/all返回正确rank列表",
+        "所有generator创建的LogItem有非空ranks",
+        "mock model LogItem在dump时自动填充ranks+comm_group_size",
+        "sidecar _rank_mapping.csv写入正确的group分解",
+        "verify_ranks.py交叉校验CSV vs RankGenerator通过"
+      ],
+      "passes": false,
+      "created_at": "2026-06-02T06:00:00Z",
+      "confidence": "HIGH: 3轮Architect+Critic审查通过, Python-only改动, 范围明确",
+      "updated_at": "2026-06-02T07:00:00Z"
+    },
+    {
+      "id": "F090",
+      "type": "refactor",
+      "category": "lld-v3-migration",
+      "description": "LLDP topology parsing pipeline v2→v3 migration: refactor 9 files (merger.py, ns3_emitter.py, edg_client.py, HomePage.tsx, lld_to_topology.py, lld.json, conftest.py, test_e2e_ns3_oxc.py) to support new LLDP v3.0.260530 format",
+      "status": "done",
+      "priority": "P0",
+      "phase": "phase3",
+      "files": [
+        "lld.json",
+        "server/edg/merger.py",
+        "server/edg/ns3_emitter.py",
+        "server/edg/edg_client.py",
+        "dashboard/src/pages/HomePage.tsx",
+        "scripts/lld_to_topology.py",
+        "server/edg/tests/conftest.py",
+        "server/edg/tests/test_e2e_ns3_oxc.py",
+        "astra-sim-alibabacloud/inputs/config/SimAI.conf",
+        "harness-lra-workflow",
+        "harness-lra-workflow/**",
+        "harness-lra-workflow.skill",
+        "COMPETITION_SUBMISSION.md",
+        "server/edg/tests/test_merger.py",
+        "example/aiob_data/gpu_compute_timing.txt",
+        "ncclFlowModel_EndToEnd.csv",
+        "/tmp/*",
+        "aicb/utils/utils.py",
+        "aicb/aicb.py",
+        "aicb/results/workload/**",
+        "aicb/*.py",
+        "aicb/workload_generator/**",
+        "aicb",
+        "."
+      ],
+      "verification_steps": [
+        "python3 -c \"import json; lld=json.load(open(\"lld.json\")); assert lld[\"version\"]==\"v3.0.260530\"\"",
+        "cd server && python3 -m pytest edg/tests/ -v",
+        "cd dashboard && npx tsc --noEmit",
+        "python3 scripts/lld_to_topology.py lld.json --output-dir /tmp/topo_test",
+        "python3 server/edg/tests/test_e2e_ns3_oxc.py"
+      ],
+      "passes": true,
+      "created_at": "2026-06-04T02:55:00Z",
+      "updated_at": "2026-06-08T00:00:00Z",
+      "confidence": "HIGH: 确定性字段重命名重构。v2-v3映射已在用户提供的JSON中明确：node_ip→node_id, a_node_ip→a_node_id, port_infos→port_id_list, port_name→port_id, server_type→chassis_topo。新增_chassis_to_npu_type()是简单split操作。无架构/算法/数据流变更。",
+      "confidence_reason": "确定性字段重命名重构。v2-v3映射已在用户提供的JSON中明确：node_ip→node_id, a_node_ip→a_node_id, port_infos→port_id_list, port_name→port_id, server_type→chassis_topo。新增_chassis_to_npu_type()是简单split操作。无架构/算法/数据流变更。"
+    },
+    {
+      "id": "F091",
+      "type": "feature",
+      "category": "edg-persistence",
+      "description": "EDG init data global persistence: migrate lld.json/init_crosses.json from per-session workspace to global EDG_DATA_ROOT/{topology_dir}/. wizard-store add zustand/persist for EDG graph data.",
+      "status": "done",
+      "priority": "P0",
+      "phase": "phase3",
+      "files": [
+        "server/config.py",
+        "server/edg/routes.py",
+        "dashboard/src/api/edg-api.ts",
+        "dashboard/src/pages/EdgPage.tsx",
+        "dashboard/src/stores/wizard-store.ts",
+        "/tmp/*",
+        "feature_list.json",
+        "progress.md",
+        "."
+      ],
+      "verification_steps": [
+        "EDG init saves to global EDG_DATA_ROOT/{topology_dir}/",
+        "New session/workspace: baseline-graph loads without re-init",
+        "register-task loads from global store",
+        "wizard-store EDG graph data survives page refresh",
+        "Backward compatible: old workspace data still readable"
+      ],
+      "passes": true,
+      "created_at": "2026-06-08T00:00:00Z",
+      "updated_at": "2026-06-08T00:00:00Z",
+      "confidence": "HIGH: 确定性存储迁移。根因明确(workspace session隔离)，修复路径清晰(全局路径+topology_dir索引)，改动范围可控(5文件)"
+    },
+    {
+      "id": "F092",
+      "type": "refactor",
+      "category": "naming",
+      "description": "Rename serverIps/server_ips to serverIds/server_ids: v3 lld server node_id is a name (superpod#0_server#0), not an IP. Keep server_ip in npu_match (external EDG protocol).",
+      "status": "done",
+      "priority": "P1",
+      "phase": "phase3",
+      "files": [
+        "dashboard/src/types/network.ts",
+        "dashboard/src/stores/network-store.ts",
+        "dashboard/src/api/edg-api.ts",
+        "dashboard/src/pages/HomePage.tsx",
+        "dashboard/src/pages/EdgPage.tsx",
+        "server/edg/routes.py",
+        "server/edg/merger.py",
+        "server/edg/tests/conftest.py",
+        "server/edg/tests/test_merger.py",
+        "server/edg/tests/test_e2e_ns3_oxc.py",
+        "dashboard/src/components/edg/EdgDiffGraph.tsx",
+        "feature_list.json",
+        "progress.md",
+        "."
+      ],
+      "verification_steps": [
+        "tsc --noEmit passes",
+        "backend tests pass",
+        "E2E tests pass",
+        "npu_match server_ip field unchanged (external EDG contract)"
+      ],
+      "passes": true,
+      "created_at": "2026-06-08T00:00:00Z",
+      "updated_at": "2026-06-08T00:00:00Z",
+      "confidence": "HIGH: 确定性重命名。搜索确认所有出现位置，npu_match server_ip 保留不改。"
+    }
+  ],
+  "done": [
+    {
+      "id": "F001",
+      "type": "feature",
+      "category": "workload",
+      "description": "Workload 配置与生成",
+      "files": [],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F002",
+      "type": "feature",
+      "category": "ranktable",
+      "description": "RankTable 配置与生成",
+      "files": [],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F003",
+      "type": "feature",
+      "category": "topology",
+      "description": "拓扑编辑器",
+      "files": [],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F004",
+      "type": "feature",
+      "category": "launch",
+      "description": "仿真启动配置",
+      "files": [],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F005",
+      "type": "feature",
+      "category": "visualization",
+      "description": "可视化面板（5 个标签页）",
+      "files": [],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F006",
+      "type": "feature",
+      "category": "integration",
+      "description": "端到端仿真流程（Workload -> RankTable -> Topology -> Launch -> Viz）",
+      "files": [],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F007",
+      "type": "bugfix",
+      "category": "robustness",
+      "description": "OXC HTTP 超时处理",
+      "files": [],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F015",
+      "type": "bugfix",
+      "category": "backend-safety",
+      "description": "全局单例线程安全修复",
+      "files": [],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F030",
+      "type": "bugfix",
+      "category": "backend-server",
+      "description": "Dashboard Process Service 参数契约修复（SimAI_analytical_oxc 子进程 255 退出）",
+      "files": [],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F031",
+      "type": "feature",
+      "category": "topology",
+      "description": "多 OXC 多组网拓扑发射支持 — merger.py 按 OXC domain 拆分拓扑，ns3 routes 生成多个 pod 拓扑文件",
+      "files": [
+        "server/edg/merger.py",
+        "server/edg/routes.py"
+      ],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F032",
+      "type": "bugfix",
+      "category": "topology",
+      "description": "监控大屏移除 leaf-to-leaf OXC 交叉边，拓扑显示与 XML 原文完全一致",
+      "files": [
+        "dashboard/src/types/wizard.ts",
+        "dashboard/src/stores/wizard-store.ts",
+        "dashboard/src/pages/LaunchPage.tsx",
+        "server/process/process_service.py"
+      ],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F033",
+      "type": "feature",
+      "category": "workload",
+      "description": "workload 生成集成 AIOB 真实 GPU compute timing（--comp_filepath + --aiob_enable）",
+      "files": [],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F034",
+      "type": "bugfix",
+      "category": "workload",
+      "description": "31204 compute_time=1 根因 — Dashboard workload 生成未传 AIOB 参数，需 --aiob_enable --comp_filepath",
+      "files": [
+        "server/simulation/workload_generator.py",
+        "server/simulation/workload_routes.py"
+      ],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F035",
+      "type": "refactor",
+      "category": "portability",
+      "description": "Linux 移植 — 消除硬编码路径，CWD 依赖改为 PROJECT_ROOT 动态推导，绝对路径符号链接改为相对链接",
+      "files": [
+        "server/simulation/workload_routes.py",
+        "server/simulation/visualizer.py",
+        "scripts/build.sh",
+        "start_dashboard.sh",
+        "dashboard/start.sh",
+        "dashboard/stop.sh"
+      ],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F036",
+      "type": "bugfix",
+      "category": "backend-server",
+      "description": "SimAI_analytical_oxc 路由修复 — binary 用 AstraParamParse CLI 但被错误分发到 OxcMain 分支，启动即 help 退出",
+      "files": [
+        "server/process/process_service.py",
+        "dashboard/src/pages/WorkloadPage.tsx",
+        "dashboard/src/api/simulation-api.ts"
+      ],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F037",
+      "type": "bugfix",
+      "category": "workload",
+      "description": "comp_filepath 默认值解析失败 — inline import server.config 改为 __file__ 推导 PROJECT_ROOT",
+      "files": [
+        "server/simulation/workload_routes.py"
+      ],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F038",
+      "type": "refactor",
+      "category": "frontend-refactor",
+      "description": "清理死代码 — 删除 TopologyPage, WizardStepper, debug tests, wizard.ts 僵尸类型",
+      "files": [
+        "dashboard/src/types/wizard.ts",
+        "dashboard/src/pages/TopologyPage.tsx",
+        "dashboard/src/components/wizard/WizardStepper.tsx",
+        "dashboard/tests/e2e/debug/"
+      ],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F039",
+      "type": "bugfix",
+      "category": "infra",
+      "description": "start_dashboard.sh 漏洞 — 不检查旧进程就启动，导致旧 Flask 持续运行旧代码，重启后 fix 不生效",
+      "files": [
+        "start_dashboard.sh"
+      ],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F040",
+      "type": "bugfix",
+      "category": "backend-results",
+      "description": "结果分析页面无法选中 analytical 任务 — _extract_result_prefix 取首个 -r 而非末个，且 process_service 重复加 -r",
+      "files": [
+        "server/simulation/results_routes.py",
+        "server/process/process_service.py"
+      ],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F041",
+      "type": "feature",
+      "category": "results",
+      "description": "仿真结果命名全局唯一且体现任务特征 — frontend 用 model-tpX-ppY-dpZ-gN-ts 格式，后端 fallback 用 sim_result_ts",
+      "files": [
+        "server/process/process_service.py",
+        "dashboard/src/pages/LaunchPage.tsx",
+        "dashboard/src/pages/WorkloadPage.tsx"
+      ],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F042",
+      "type": "bugfix",
+      "category": "backend-cpp",
+      "description": "Sys::generate_collective() size=0 死锁根因 — 修复 0 字节 EndToEnd.csv 和 Linux OOM Kill",
+      "files": [
+        "astra-sim-alibabacloud/astra-sim/system/Sys.cc"
+      ],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F043",
+      "type": "bugfix",
+      "category": "backend-results",
+      "description": "ncclFlowModel_EndToEnd.csv 多仿真互相覆盖 + 按 prefix 匹配",
+      "files": [
+        "server/process/process_service.py",
+        "server/simulation/results_routes.py"
+      ],
+      "passes": true,
+      "verification_steps": [
+        "simulation 结束后按 result_prefix 重命名 EndToEnd.csv",
+        "同一 workspace 多任务各自指向自己的 CSV"
+      ]
+    },
+    {
+      "id": "F044",
+      "type": "feature",
+      "category": "frontend-launch",
+      "description": "LaunchPage + WorkloadPage 暴露全部参数 — overlap/带宽/vpp/ga",
+      "files": [
+        "dashboard/src/types/wizard.ts",
+        "dashboard/src/stores/wizard-store.ts",
+        "dashboard/src/pages/LaunchPage.tsx",
+        "server/simulation/workload_generator.py",
+        "server/simulation/workload_routes.py",
+        "dashboard/src/api/simulation-api.ts",
+        "dashboard/src/pages/WorkloadPage.tsx"
+      ],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "F045",
+      "type": "bugfix",
+      "category": "backend-process",
+      "description": "NS3 并发防护 + is_ns3 顺序 fix — 同一 workspace 禁止同时跑两个 NS3 仿真",
+      "priority": "P0",
+      "files": [
+        "server/process/process_service.py"
+      ],
+      "verification_steps": [
+        "同一 workspace 已有 NS3 运行时第二次 launch 被拦截",
+        "ns3 launch works"
+      ],
+      "passes": true,
+      "notes": "NS3 hardcodes ncclFlowModel_ 输出路径，并发必然覆盖"
+    },
+    {
+      "id": "F046",
+      "type": "bugfix",
+      "category": "topology",
+      "description": "修复 EDG NS3 拓扑生成：GPU→Leaf 链路改为 NVSwitch→Leaf，消除 intra-server TP 通信走 NIC Switch 的 ECMP 问题",
+      "priority": "P0",
+      "phase": "phase1",
+      "verification_steps": [
+        "重新生成 EDG 拓扑，确认 GPU 不直连 Leaf switch",
+        "运行 NS3 仿真，确认 Expose TP comm 占比 < 10%",
+        "确认跨 server 通信路径正常（NVSwitch→Leaf→Leaf→NVSwitch）"
+      ],
+      "passes": true,
+      "created_at": "2026-04-30T14:01:17.264120",
+      "updated_at": "2026-04-30T06:29:37Z"
+    },
+    {
+      "id": "F047",
+      "type": "feature",
+      "category": "topology",
+      "description": "GPU 直连 Leaf — emitter 为每个 GPU 生成独立 Leaf uplink，同时保留 NVSwitch intra-server 路径",
+      "priority": "P0",
+      "verification_steps": [
+        "GPU↔NVSwitch=32 + GPU↔Leaf=32 + NVSwitch↔Leaf=4 + Leaf↔Leaf=6, total=74 links ✓",
+        "每 GPU 有独立 Leaf uplink, cross-server 400Gbps/GPU ✓",
+        "intra TP: GPU→NVSwitch→GPU (2400Gbps) ✓",
+        "NS3 仿真通过, 101/101 测试全过 ✓"
+      ],
+      "created_at": "2026-04-30T07:40:00Z",
+      "updated_at": "2026-04-30T07:45:00Z",
+      "passes": true
+    },
+    {
+      "id": "T001",
+      "category": "test-backend",
+      "description": "仿真模式冒烟测试矩阵（analytical/NS3 × OXC on/off）",
+      "priority": "P0",
+      "type": "test",
+      "verification_steps": [
+        "analytical 模式冒烟 ✓ (2层 workload, 8 GPU, 0.5s)",
+        "analytical_oxc 模式冒烟 ✓ (OXC 禁用回退)",
+        "NS3 模式冒烟 ✓ (Spectrum-X topology, local config)",
+        "NS3_oxc 模式冒烟 ✓"
+      ],
+      "created_at": "2026-04-30T07:25:00Z",
+      "updated_at": "2026-04-30T07:35:00Z",
+      "passes": true
+    },
+    {
+      "id": "T021",
+      "type": "test",
+      "category": "test-automation",
+      "description": "pytest 基础设施 (pyproject.toml + conftest.py)",
+      "files": [],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "T023",
+      "type": "bugfix",
+      "category": "bugfix",
+      "description": "Fix workload dumper emitting literal 'None' for compute_time, which corrupts C++ ifstream parse and drops all layers after the first failure",
+      "files": [],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "T024",
+      "type": "bugfix",
+      "category": "enhancement",
+      "description": "结果分析页分页 + NS3 OXC 启动参数修复",
+      "files": [],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "T025",
+      "type": "bugfix",
+      "category": "bugfix",
+      "description": "NS3 OXC 结果可观测：csv 落到 workspace；结果页显示全部 finished 任务；ProcessList fail-loud",
+      "files": [],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "T026",
+      "type": "bugfix",
+      "category": "bugfix",
+      "description": "结果页 task label 用 workload 名而非 ncclFlowModel_ 前缀；0 字节 EndToEnd.csv 视为无结果",
+      "files": [],
+      "passes": true,
+      "verification_steps": [
+        "verified in session"
+      ]
+    },
+    {
+      "id": "T027",
+      "type": "test",
+      "category": "test-cleanup",
+      "description": "清理过时测试：删除 TestApiClientSingleUser/TestDeployScripts/旧 GUI 语法检查，修复 bin/ 符号链接冲突",
+      "priority": "P0",
+      "verification_steps": [
+        "pytest 76 test 全部通过",
+        "lra-test.sh backend + tsc 阶段通过"
+      ],
+      "passes": true,
+      "created_at": "2026-04-30T07:00:00Z",
+      "updated_at": "2026-04-30T07:04:15Z"
+    },
+    {
+      "id": "F048",
+      "type": "refactor",
+      "category": "naming",
+      "description": "全局命名调整: GPU→NPU, NVLink→服务器内带宽, 型号 A2(200G)/A3A5A6(400G)",
+      "priority": "P0",
+      "verification_steps": [
+        "C++ comments and identifiers use NPU not GPU",
+        "ns3_emitter NPU_INTRA_BW_MAP has A2(200G)/A3A5A6(400G)",
+        "common.h supports new GPU types"
+      ],
+      "passes": true,
+      "updated_at": "2026-05-07T07:53:33Z"
+    },
+    {
+      "id": "F049",
+      "type": "bugfix",
+      "category": "results",
+      "description": "Dashboard 所有任务结果显示同一旧文件：_find_ns3_result_files 未按进程匹配各自结果文件",
+      "priority": "P0",
+      "verification_steps": [
+        "Flask 重启加载新 results_routes.py",
+        "dashboard /results 页面每个任务显示各自的结果文件，不再全部相同",
+        "最新任务文件名为 sim_result_1778138950 而非 1777446519"
+      ],
+      "passes": true,
+      "updated_at": "2026-05-07T08:18:42Z"
+    },
+    {
+      "id": "F063",
+      "type": "bugfix",
+      "category": "lra",
+      "description": "Fix lra-mark-dirty.py: use 3-format parser from lra_common, respect status field in active items",
+      "files": [
+        "scripts/lra-mark-dirty.py"
+      ],
+      "status": "done",
+      "priority": "P0",
+      "verification_steps": [
+        "Dirty marker finds correct in_progress feature",
+        "Done features in active[] not marked as in_progress"
+      ],
+      "passes": true
+    },
+    {
+      "id": "T028",
+      "type": "test",
+      "category": "e2e",
+      "description": "NS3 full-mesh end-to-end dashboard launch verification (2-layer workload)",
+      "files": [
+        "dashboard/tests/e2e/ns3-fullmesh-launch.spec.ts",
+        "dashboard/",
+        "scripts/",
+        "bin/**"
+      ],
+      "status": "done",
+      "verification_steps": [
+        "Playwright test logs in, generates 2-layer workload, creates full-mesh topology, launches NS3 via dashboard",
+        "Simulation completes within 4 minutes",
+        "Results page shows end-to-end CSV with communication/compute breakdown"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F055",
+      "type": "refactor",
+      "category": "lra",
+      "description": "LRA gate: 禁止无 files scope 的 in_progress feature，杜绝临时改 in_progress 绕过创建 feature",
+      "status": "done",
+      "priority": "P0",
+      "files": [
+        "scripts/lra-gate.py",
+        "scripts/lra-mark-dirty.py",
+        "scripts/lra-stop.py",
+        "scripts/lra-test.sh",
+        "install-lra.sh"
+      ],
+      "verification_steps": [
+        "gate block 无 scope 的 in_progress ✓",
+        "dirty marker 不在 scope 则不标记 ✓",
+        "stop hook done-feature immutability ✓",
+        "install-lra.sh cp-based 最新脚本 ✓"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F056",
+      "type": "refactor",
+      "category": "lra",
+      "description": "LRA: progress.md historical entries immutability",
+      "status": "done",
+      "priority": "P0",
+      "files": [
+        "scripts/lra-stop.py",
+        "scripts/lra-test.sh",
+        "install-lra.sh"
+      ],
+      "verification_steps": [
+        "old progress entries tampered → BLOCK ✓",
+        "new entries appended → PASS ✓"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F057",
+      "type": "bugfix",
+      "category": "lra",
+      "description": "uninstall-lra.sh missing .lra_done_hash cleanup",
+      "status": "done",
+      "priority": "P0",
+      "files": [
+        "uninstall-lra.sh"
+      ],
+      "verification_steps": [
+        "uninstall removes .lra_done_hash ✓"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F058",
+      "type": "test",
+      "category": "lra",
+      "description": "Verify install/uninstall round-trip covers all new files",
+      "status": "done",
+      "priority": "P0",
+      "files": [
+        "install-lra.sh",
+        "uninstall-lra.sh"
+      ],
+      "verification_steps": [
+        "install + uninstall --all round-trip clean ✓"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F059",
+      "type": "bugfix",
+      "category": "lra",
+      "description": "install-lra.sh: detect missing source scripts, print LRA_SRC hint",
+      "status": "done",
+      "priority": "P0",
+      "files": [
+        "install-lra.sh"
+      ],
+      "verification_steps": [
+        "self-contained: works on any machine without cp ✓"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F060",
+      "type": "bugfix",
+      "category": "lra",
+      "description": "Bug-triage rule install at project level, not global",
+      "status": "done",
+      "priority": "P0",
+      "files": [
+        "install-lra.sh",
+        "uninstall-lra.sh"
+      ],
+      "verification_steps": [
+        "rule installed in .claude/rules/common/ not ~/.claude/ ✓"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F061",
+      "type": "feature",
+      "category": "lra",
+      "description": "LRA Loop: autonomous execution engine with claude -p for 5h unattended runs",
+      "status": "done",
+      "priority": "P0",
+      "files": [
+        "scripts/lra-loop.sh",
+        "scripts/lra-gate.py",
+        "scripts/lra-stop.py",
+        "install-lra.sh"
+      ],
+      "verification_steps": [
+        "gate: phase-aware (empty=Phase1, all-done, pending) ✓",
+        "stop: hollow feature detection ✓",
+        "CLAUDE.md: two-phase workflow ✓",
+        "install-lra.sh synced ✓"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F062",
+      "type": "refactor",
+      "category": "lra",
+      "description": "Extract lra_common.py: shared parser, find_root, is_allowed, parse_ts, compute_done_hash, compute_progress_hash",
+      "files": [
+        "scripts/lra_common.py",
+        "scripts/lra-gate.py",
+        "scripts/lra-stop.py",
+        "scripts/lra-mark-dirty.py",
+        "scripts/lra-test.sh",
+        "scripts/lra-context-save.sh",
+        "scripts/lra-loop.sh",
+        "init.sh",
+        "install-lra.sh",
+        "uninstall-lra.sh"
+      ],
+      "status": "done",
+      "priority": "P0",
+      "verification_steps": [
+        "All 8+ components import from lra_common",
+        "No duplicated parser logic remains"
+      ],
+      "passes": true,
+      "created_at": "2026-05-13T03:54:13Z"
+    },
+    {
+      "id": "F067",
+      "type": "bugfix",
+      "category": "workload",
+      "description": "Dashboard workload generator: aiob_enable defaults to False even when comp_filepath exists, causing 99% comm ratio",
+      "status": "done",
+      "priority": "P0",
+      "files": [
+        "server/simulation/workload_routes.py"
+      ],
+      "verification_steps": [
+        "comp_filepath exists → aiob_enable auto-enabled",
+        "workload has real compute times from AIOB cache"
+      ],
+      "passes": true,
+      "created_at": "2026-05-13T12:00:00Z"
+    },
+    {
+      "id": "F068",
+      "type": "bugfix",
+      "category": "dashboard",
+      "description": "Remove simulation architecture diagram box from homepage",
+      "status": "done",
+      "priority": "P3",
+      "files": [
+        "dashboard/src/pages/HomePage.tsx"
+      ],
+      "verification_steps": [
+        "HomePage no longer shows 仿真架构 box"
+      ],
+      "passes": true,
+      "created_at": "2026-05-13T12:00:00Z"
+    },
+    {
+      "id": "F069",
+      "type": "bugfix",
+      "category": "lra",
+      "description": "Update install-lra.sh and uninstall-lra.sh to reflect all session changes",
+      "status": "done",
+      "priority": "P2",
+      "files": [
+        "install-lra.sh",
+        "uninstall-lra.sh"
+      ],
+      "verification_steps": [
+        "install in fresh repo works",
+        "uninstall cleans all"
+      ],
+      "passes": true,
+      "created_at": "2026-05-13T12:00:00Z"
+    },
+    {
+      "id": "F070",
+      "type": "bugfix",
+      "category": "lra",
+      "description": "Sync install-lra.sh and uninstall-lra.sh with confidence enforcement",
+      "status": "done",
+      "priority": "P2",
+      "files": [
+        "install-lra.sh"
+      ],
+      "verification_steps": [
+        "install-lra.sh embeds confidence gate"
+      ],
+      "passes": true,
+      "created_at": "2026-05-13T12:00:00Z",
+      "confidence": "HIGH: pure sync, no logic change"
+    },
+    {
+      "id": "F071",
+      "type": "bugfix",
+      "category": "lra",
+      "description": "Fix install-lra.sh: matcher empty string to * so SessionStart hook actually fires",
+      "status": "done",
+      "priority": "P0",
+      "files": [
+        "install-lra.sh"
+      ],
+      "verification_steps": [
+        "new project: SessionStart auto-runs init.sh without manual trigger"
+      ],
+      "passes": true,
+      "created_at": "2026-05-13T12:00:00Z",
+      "confidence": "HIGH: one-char fix, root cause confirmed"
+    },
+    {
+      "id": "F072",
+      "type": "bugfix",
+      "category": "lra",
+      "description": "Fix LRA hooks: handle non-git directories gracefully, stop error spam",
+      "status": "done",
+      "priority": "P0",
+      "files": [
+        "install-lra.sh",
+        "scripts/lra-gate.py",
+        "scripts/lra-stop.py"
+      ],
+      "verification_steps": [
+        "Non-git dir: hooks fail silently, no error spam",
+        "Git repo without LRA: hooks fail silently"
+      ],
+      "passes": true,
+      "created_at": "2026-05-13T12:00:00Z",
+      "confidence": "HIGH: graceful degradation, well-understood path"
+    },
+    {
+      "id": "F073",
+      "type": "bugfix",
+      "category": "backend-process",
+      "description": "Change default simulation timeout from 72h to 48h",
+      "status": "done",
+      "priority": "P3",
+      "files": [
+        "server/process/process_service.py",
+        "install-lra.sh"
+      ],
+      "verification_steps": [
+        "process_service default timeout = 172800 (48h)"
+      ],
+      "passes": true,
+      "created_at": "2026-05-13T13:00:00Z",
+      "confidence": "HIGH: one constant value change, no logic risk"
+    },
+    {
+      "id": "F074",
+      "type": "bugfix",
+      "category": "backend-server",
+      "description": "Fix _ensure_local_ns3_config: os.path.abspath depends on CWD, use PROJECT_ROOT instead",
+      "status": "done",
+      "priority": "P0",
+      "files": [
+        "server/process/process_service.py",
+        "server/app.py"
+      ],
+      "verification_steps": [
+        "NS3 simulation launched via API uses correct local config path"
+      ],
+      "passes": true,
+      "created_at": "2026-05-14T17:10:00Z",
+      "confidence": "HIGH: same CWD bug as topology_dir, exact same fix pattern"
+    },
+    {
+      "id": "F075",
+      "type": "bugfix",
+      "category": "ns3",
+      "description": "Investigate why 67198 shows 169577 total time vs expected 555 (identical topology/config/workload)",
+      "status": "done",
+      "priority": "P0",
+      "files": [
+        "server/workspaces/default_3d16028e-1d0/edg_topo_*",
+        "server/workspaces/default_3d16028e-1d0/logs/67198.log"
+      ],
+      "verification_steps": [
+        "Root cause: Dashboard generates 2-layer microAllReduce (343 bytes) instead of 141-layer Llama-7B with AIOB ✓"
+      ],
+      "passes": true,
+      "created_at": "2026-05-14T17:10:00Z",
+      "confidence": "HIGH: running binary to compare results, not modifying code"
+    },
+    {
+      "id": "F076",
+      "type": "bugfix",
+      "category": "oxc",
+      "description": "Fix SimAI_simulator_oxc SIGSEGV on macOS: curl FD leak when OXC server unreachable. Add circuit breaker after first connection failure.",
+      "status": "done",
+      "priority": "P0",
+      "files": [
+        "astra-sim-alibabacloud/astra-sim/system/OxcIntegration.cc"
+      ],
+      "verification_steps": [
+        "141-layer workload with AS_OXC_ENABLE=1 runs without SIGSEGV on macOS"
+      ],
+      "passes": true,
+      "created_at": "2026-05-14T17:10:00Z",
+      "confidence": "HIGH: root cause confirmed (macOS libcurl FD leak), fix is 4-line circuit breaker"
+    },
+    {
+      "id": "F077",
+      "type": "bugfix",
+      "category": "ns3",
+      "description": "Fix AS_SEND_LAT default from 6000 to 6 (was 6ms, should be 6us)",
+      "status": "done",
+      "priority": "P0",
+      "files": [
+        "astra-sim-alibabacloud/astra-sim/network_frontend/ns3/entry.h",
+        "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/scratch/entry.h",
+        "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/applications/astra-sim/network_frontend/ns3/entry.h"
+      ],
+      "verification_steps": [
+        "Without AS_SEND_LAT env var, simulation time matches AS_SEND_LAT=6"
+      ],
+      "passes": true,
+      "created_at": "2026-05-14T17:10:00Z",
+      "confidence": "HIGH: one-line constant fix, root cause confirmed by A/B testing"
+    },
+    {
+      "id": "F078",
+      "type": "test",
+      "category": "ns3",
+      "description": "E2E Dashboard API test: SimAI_simulator_oxc through Flask process_service",
+      "status": "done",
+      "priority": "P0",
+      "files": [
+        "server/process/process_service.py",
+        "server/workspaces/"
+      ],
+      "verification_steps": [
+        "API-launched OXC simulation returns ~509K total (not 9362K)"
+      ],
+      "passes": true,
+      "created_at": "2026-05-15T00:00:00Z",
+      "confidence": "HIGH: running API test to verify fix"
+    },
+    {
+      "id": "F079",
+      "type": "refactor",
+      "category": "cleanup",
+      "description": "Delete workspace simulation data for migration",
+      "status": "done",
+      "priority": "P0",
+      "files": [
+        "server/workspaces/"
+      ],
+      "verification_steps": [
+        "workspaces cleaned"
+      ],
+      "passes": true,
+      "created_at": "2026-05-18T00:00:00Z",
+      "confidence": "HIGH: data cleanup, no code change"
+    },
+    {
+      "id": "F052",
+      "type": "bugfix",
+      "category": "dashboard",
+      "description": "HomePage NPU_INTRA_MAP 缺少 A100/H100/H800 → 显示 400Gbps 而非 2400Gbps",
+      "priority": "P0",
+      "verification_steps": [
+        "导入 A100 lld.json 后显示服务器内带宽 2400Gbps",
+        "生成拓扑 header 为 A100 NVLink 2400Gbps"
+      ],
+      "passes": true,
+      "status": "done",
+      "confidence": "HIGH: testing ga=1 workload",
+      "files": [
+        "server/workspaces/default_7807720d-03f/"
+      ]
+    },
+    {
+      "id": "F080",
+      "type": "feature",
+      "category": "decouple",
+      "description": "Define FlowRecord struct in common.h — extended flow format with dependency graph",
+      "files": [
+        "astra-sim-alibabacloud/astra-sim/network_frontend/ns3/common.h"
+      ],
+      "status": "done",
+      "priority": "P0",
+      "verification_steps": [
+        "FlowRecord compiles, contains all SingleFlow fields + dependency vectors"
+      ],
+      "passes": true,
+      "created_at": "2026-05-30T00:00:00Z",
+      "confidence": "HIGH: simple struct definition, no logic change"
+    },
+    {
+      "id": "F081",
+      "type": "feature",
+      "category": "decouple",
+      "description": "NS3 ImportFlows() — read flow file, parse FlowRecord, schedule flows via Simulator::Schedule",
+      "files": [
+        "astra-sim-alibabacloud/astra-sim/network_frontend/ns3/entry.h"
+      ],
+      "status": "done",
+      "priority": "P0",
+      "verification_steps": [
+        "NS3 reads flow file and executes all flows without SimAI process"
+      ],
+      "passes": true,
+      "created_at": "2026-05-30T00:00:00Z",
+      "confidence": "HIGH: read file, parse, schedule — well-defined pattern"
+    },
+    {
+      "id": "F082",
+      "type": "feature",
+      "category": "decouple",
+      "description": "Wire ImportFlows() into AstraSimNetwork.cc — call before Simulator::Run() when FLOW_FILE config present",
+      "files": [
+        "astra-sim-alibabacloud/astra-sim/network_frontend/ns3/AstraSimNetwork.cc"
+      ],
+      "status": "done",
+      "priority": "P0",
+      "verification_steps": [
+        "NS3 startup loads flows from file when FLOW_FILE is set"
+      ],
+      "passes": true,
+      "created_at": "2026-05-30T00:00:00Z",
+      "confidence": "HIGH: one call before Simulator::Run"
+    },
+    {
+      "id": "F083",
+      "type": "feature",
+      "category": "decouple",
+      "description": "FlowFileWriter — new class to serialize FlowRecord with variable-length dependency vectors to file",
+      "files": [
+        "astra-sim-alibabacloud/astra-sim/system/FlowFileWriter.h",
+        "astra-sim-alibabacloud/astra-sim/system/FlowFileWriter.cc"
+      ],
+      "status": "done",
+      "priority": "P0",
+      "verification_steps": [
+        "Flow file format round-trips: write then read produces identical FlowRecord"
+      ],
+      "passes": true,
+      "created_at": "2026-05-30T00:00:00Z",
+      "confidence": "HIGH: simple file I/O class"
+    },
+    {
+      "id": "F084",
+      "type": "feature",
+      "category": "decouple",
+      "description": "SimAI output mode — gen*FlowModels() in MockNcclGroup writes flows to file via FlowFileWriter instead of calling sim_send",
+      "files": [
+        "astra-sim-alibabacloud/astra-sim/system/MockNcclGroup.cc",
+        "astra-sim-alibabacloud/astra-sim/system/MockNcclGroup.h"
+      ],
+      "status": "done",
+      "priority": "P0",
+      "verification_steps": [
+        "SimAI generates flow.txt with all expected flows for 2-layer workload"
+      ],
+      "passes": true,
+      "created_at": "2026-05-30T00:00:00Z",
+      "confidence": "HIGH: add flow file output alongside existing sim_send path"
+    },
+    {
+      "id": "F085",
+      "type": "test",
+      "category": "decouple",
+      "description": "End-to-end comparison: 2-layer microAllReduce workload — coupled (current) vs decoupled (new) results match",
+      "files": [
+        "scripts/test_decouple.sh",
+        "astra-sim-alibabacloud/astra-sim/network_frontend/ns3/common.h",
+        "astra-sim-alibabacloud/astra-sim/network_frontend/ns3/entry.h",
+        "astra-sim-alibabacloud/astra-sim/network_frontend/ns3/AstraSimNetwork.cc",
+        "astra-sim-alibabacloud/astra-sim/system/MockNcclGroup.cc",
+        "astra-sim-alibabacloud/astra-sim/system/MockNcclGroup.h",
+        "astra-sim-alibabacloud/astra-sim/system/FlowFileWriter.h",
+        "astra-sim-alibabacloud/astra-sim/system/FlowFileWriter.cc",
+        "scripts/build.sh",
+        "bin/*"
+      ],
+      "status": "done",
+      "priority": "P0",
+      "verification_steps": [
+        "total_time identical",
+        "TP_comm identical",
+        "compute identical",
+        "ring size same"
+      ],
+      "passes": true,
+      "created_at": "2026-05-30T00:00:00Z",
+      "confidence": "HIGH: build + compare test"
+    }
+  ],
+  "pending_bugs": [
+    {
+      "id": "F010",
+      "category": "collective",
+      "description": "AllGather 集合通信支持",
+      "priority": "P1"
+    },
+    {
+      "id": "F011",
+      "category": "collective",
+      "description": "ReduceScatter 集合通信支持",
+      "priority": "P1"
+    },
+    {
+      "id": "F012",
+      "category": "collective",
+      "description": "AllToAll 集合通信支持",
+      "priority": "P2"
+    },
+    {
+      "id": "F014",
+      "category": "build",
+      "description": "Linux 迁移：移除 macOS -undefined dynamic_lookup 链接 workaround",
+      "priority": "P1"
+    },
+    {
+      "id": "F016",
+      "category": "backend-refactor",
+      "description": "OxcIntegration.cc 拆分（977行 -> 4个文件）",
+      "priority": "P1"
+    },
+    {
+      "id": "F017",
+      "category": "backend-refactor",
+      "description": "引入 nlohmann/json 替换手写 JSON 解析器",
+      "priority": "P1"
+    },
+    {
+      "id": "F018",
+      "category": "backend-perf",
+      "description": "OXC API 响应缓存",
+      "priority": "P1"
+    },
+    {
+      "id": "F019",
+      "category": "frontend-ui",
+      "description": "GUI 设计系统和 UI 美化",
+      "priority": "P1"
+    },
+    {
+      "id": "F022",
+      "category": "frontend-feature",
+      "description": "实验快照与回放",
+      "priority": "P1"
+    },
+    {
+      "id": "F023",
+      "category": "frontend-feature",
+      "description": "配置对比视图",
+      "priority": "P2"
+    },
+    {
+      "id": "F024",
+      "category": "frontend-feature",
+      "description": "Demo 模式和预置示例数据",
+      "priority": "P1"
+    },
+    {
+      "id": "F026",
+      "category": "frontend-feature",
+      "description": "批量参数扫描模式",
+      "priority": "P3"
+    },
+    {
+      "id": "T007",
+      "category": "test-backend",
+      "description": "配置/拓扑/Workload 格式验证测试",
+      "priority": "P2"
+    },
+    {
+      "id": "T015",
+      "category": "test-gui-integration",
+      "description": "前端集成回归测试（数据持久化/可视化/端到端）",
+      "priority": "P2"
+    },
+    {
+      "id": "F051",
+      "type": "feature",
+      "category": "dashboard",
+      "description": "仿真任务进度条：显示当前层数/总层数、完成百分比、预估剩余时间",
+      "priority": "P1",
+      "verification_steps": [
+        "API /api/simulation/results/progress/<pid> 返回 layer 进度和预估时间",
+        "前端运行中任务显示进度条组件",
+        "84419 真实仿真验证进度条准确"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F050",
+      "type": "bugfix",
+      "category": "ns3",
+      "description": "DeepSeek-16B 32GPU communication analysis",
+      "priority": "P0",
+      "status": "done",
+      "verification_steps": [
+        "Analyze DeepSeek-16B simulation results to identify root cause of 97% communication ratio"
+      ],
+      "passes": true,
+      "created_at": "2026-05-06",
+      "updated_at": "2026-05-12T08:25:00Z"
+    },
+    {
+      "id": "F053",
+      "type": "feature",
+      "category": "dashboard",
+      "description": "运维工具：调用记录（OXC/EDG API 交互，按算法分类）+ 日志查询（平台运行日志搜索）",
+      "priority": "P1",
+      "verification_steps": [
+        "调用记录显示 OXC/EDG 请求/响应",
+        "日志查询可搜索过滤",
+        "前端页面可访问"
+      ],
+      "passes": false
+    }
+  ],
+  "pending": [
+    {
+      "id": "F064",
+      "type": "bugfix",
+      "category": "lra",
+      "description": "Fix lra-loop.sh: add --allowedTools for permission bypass, stop swallowing errors with ||true, add pre-iteration validation",
+      "files": [
+        "scripts/lra-loop.sh"
+      ],
+      "status": "pending",
+      "priority": "P0",
+      "verification_steps": [
+        "claude -p runs without hanging on permissions",
+        "Errors propagate instead of being swallowed",
+        "Pre-iteration validation catches corrupted state"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F066",
+      "type": "bugfix",
+      "category": "lra",
+      "description": "Fix install-lra.sh drift: switch from heredoc to cp-from-scripts approach, with LRA_SRC fallback",
+      "files": [
+        "install-lra.sh"
+      ],
+      "status": "pending",
+      "priority": "P1",
+      "verification_steps": [
+        "install-lra.sh installs current versions of all scripts",
+        "No stale heredoc versions diverge from deployed"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F065",
+      "type": "feature",
+      "category": "lra",
+      "description": "Add quick-fix bypass to gate: allow single-file changes without full feature paperwork when existing feature scope covers the file",
+      "files": [
+        "scripts/lra-gate.py"
+      ],
+      "status": "pending",
+      "priority": "P1",
+      "verification_steps": [
+        "Typo fixes in scoped files pass without new feature",
+        "Multi-file or new-file edits still require feature"
+      ],
+      "passes": false
+    }
+  ],
+  "in_progress": 2
+}

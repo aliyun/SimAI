@@ -25,7 +25,12 @@ function setup {
 
 function compile {
     cd "${BUILD_DIR}" || exit
-    cmake -DUSE_ANALYTICAL=TRUE ..
+    # 支持 OXC 集成选项
+    if [ "$1" == "OXC" ]; then
+        cmake -DUSE_ANALYTICAL=TRUE -DUSE_OXC_INTEGRATION=TRUE ..
+    else
+        cmake -DUSE_ANALYTICAL=TRUE ..
+    fi
     make
 }
 
@@ -39,9 +44,10 @@ case "$1" in
     cleanup_result;;
 -c|--compile)
     setup
-    compile;;
+    compile "$2";;
 -h|--help|*)
     echo "AnalyticalAstra build script."
-    echo "Run $0 -c to compile.";;
+    echo "Run $0 -c to compile."
+    echo "Run $0 -c OXC to compile with OXC integration.";;
 esac
 

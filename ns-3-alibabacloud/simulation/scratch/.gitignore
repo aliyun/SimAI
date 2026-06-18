@@ -1,0 +1,7 @@
+# Ignore everything on scratch by default, except the provided examples
+/*
+!.gitignore
+!subdir/
+!decoupled_replay/
+!scratch-simulator.cc
+!CMakeLists.txt

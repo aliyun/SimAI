@@ -1,0 +1,18 @@
+
+diagram {
+         "LtePdcp at eNb";"LteRlc at eNb";LteEnbComponentCarrierManager;LteEnbMac0;LteEnbMac1;
+         
+         "LtePdcp at eNb" -> "LteRlc at eNb" [label="DoTransmitPdcpPdu ()"];
+         "LteRlc at eNb" -> LteEnbComponentCarrierManager [label="ReportBufferStatus ()"];
+         LteEnbComponentCarrierManager -> LteEnbMac0 [label="ReportBufferStatus (x%)"];
+         LteEnbComponentCarrierManager -> LteEnbMac1 [label="ReportBufferStatus ((100-x)%)"];
+         LteEnbComponentCarrierManager <- LteEnbMac0 [label="NotifyTxOpportunity ()"];
+         LteEnbComponentCarrierManager <- LteEnbMac1 [label="NotifyTxOpportunity ()"];
+         LteEnbComponentCarrierManager -> "LteRlc at eNb" [label="NotifyTx Opportunity (Mac0)"];         
+         LteEnbComponentCarrierManager -> "LteRlc at eNb" [label="NotifyTxOpportunity (Mac1)"];
+         "LteRlc at eNb" -> LteEnbComponentCarrierManager [label="TransmitPdu ()"];
+         "LteRlc at eNb" -> LteEnbComponentCarrierManager [label="TransmitPdu ()"];
+         LteEnbComponentCarrierManager -> LteEnbMac0 [label="TransmitPdu ()"];
+         LteEnbComponentCarrierManager -> LteEnbMac1 [label="TransmitPdu ()"];
+  }
+

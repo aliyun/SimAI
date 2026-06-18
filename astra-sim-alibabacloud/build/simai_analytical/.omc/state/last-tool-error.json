@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cd /Users/anthony/PycharmProjects/SimAI && git ls-files | wc -l && git ls-files | grep -c \\\"server/\\\" && echo \\\"---\\\" && git ls-files server 2>&1 | head -5\",\"description\":\"Check git tracke...",
+  "error": "Exit code 1\n     385\n0",
+  "timestamp": "2026-05-03T11:43:19.089Z",
+  "retry_count": 6
+}

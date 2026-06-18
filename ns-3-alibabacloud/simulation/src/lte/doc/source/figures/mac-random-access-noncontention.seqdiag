@@ -1,0 +1,34 @@
+
+diagram {
+   UeRrc;  UeMac; UePhy; EnbRrc; EnbPhy; EnbMac; FfSched; 	
+
+   EnbRrc ->> EnbRrc [label="AddUe"]	
+   EnbRrc ->> EnbMac [label="ConfigureUe (C-RNTI = T-C-RNTI)"] 
+   EnbMac ->> FfSched  [label="CSCHED_UE_CONFIG_REQ"]
+   EnbMac <<- FfSched  [label="CSCHED_UE_CONFIG_CNF"]
+   EnbMac ->> FfSched  [label="CSCHED_LC_CONFIG_REQ (SRB1)"]
+   EnbMac <<- FfSched  [label="CSCHED_LC_CONFIG_CNF"]
+   EnbMac <<- EnbRrc [label=" AllocateNcRaPreamble (T-C-RNTI)"]	
+   EnbMac ->> EnbRrc [label="rach preamble id"]	
+   UeRrc <<- EnbRrc [label="rach preamble id (e.g., within handoverCommand inside X2 HO REQ ACK"]	
+   UeRrc ->> UeMac [label="StartNonContentionBasedRandomAccessProcedure"]
+   UeMac ->> UeMac [label="start RAR timeout"]
+   UeMac ->> UePhy [label="SendRachPreamble"] 
+   UePhy ->> EnbPhy [label="RachPreambleLteControlMessage"]	
+   EnbPhy ->> EnbMac [label="ReceiveRachPreamble (this UE)"]
+   EnbMac ->> EnbMac [label="add to list of received Rach preamble"]
+   EnbPhy ->> EnbMac [label="SubframeIndication"]
+   EnbMac ->> EnbMac [label="preamble matches known T-C-RNTI"]		
+   EnbMac ->> FfSched [label="SCHED_DL_RACH_INFO_REQ (T-C-RNTI list)"]		
+   EnbMac ->> FfSched [label="SCHED_DL_TRIGGER_REQ"]	
+   EnbMac <<- FfSched  [label="SCHED_DL_CONFIG_IND (RAR list with UL grant per RNTI)"]
+   EnbMac ->> EnbMac [label="build RARs"]
+   EnbPhy <<- EnbMac [label="SendLteControlMessage (RARs)"]
+   UePhy <<- EnbPhy [label="RARs as RarLteControlMessage"]
+   UeMac <<- UePhy [label="ReceiveLteControlMessage (RARs)"] 
+   UeMac ->> UeMac [label="RecvRaResponse"]
+   UeRrc <<- UeMac [label="NotifyRandomAccessSuccessful"]
+}
+
+
+

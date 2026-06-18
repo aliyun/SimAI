@@ -1,0 +1,37 @@
+[project]
+name = "simai"
+version = "1.0.0"
+description = "SimAI - Full-stack AI Training Simulator"
+requires-python = ">=3.8"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+markers = [
+    "unit: Fast unit tests (< 1s each)",
+    "integration: Integration tests requiring multiple components",
+    "e2e: End-to-end tests requiring running services (Streamlit, OXC)",
+    "backend: C++ backend smoke tests (require compiled binaries)",
+    "slow: Long-running tests (> 30s)",
+]
+
+[tool.coverage.run]
+source = [
+    "astra-sim-alibabacloud/astra-sim/network_frontend/oxc/gui/utils",
+    "astra-sim-alibabacloud/astra-sim/network_frontend/oxc/gui/api_client.py",
+]
+omit = [
+    "*/test_*.py",
+    "*/tests/*",
+    "*/__pycache__/*",
+    "*/pages/*",
+    "*/app.py",
+]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+skip_empty = true

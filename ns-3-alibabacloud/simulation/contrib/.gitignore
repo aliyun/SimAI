@@ -1,0 +1,5 @@
+# Ignore everything by default, contrib sources are coming from other places
+*
+
+# Include specific files that should be tracked by Git
+!.gitignore

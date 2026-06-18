@@ -1,0 +1,115 @@
+set style line 11 lc rgb "black"  lt 3 lw 2 pt 1  ps 2
+set style line 12 lc rgb "red"    lt 3 lw 2 pt 2  ps 2
+set style line 13 lc rgb "blue"   lt 3 lw 2 pt 1  ps 2
+set style line 14 lc rgb "orange" lt 3 lw 2 pt 1  ps 2
+set style line 15 lc rgb "green"  lt 3 lw 2 pt 1  ps 2
+set style line 16 lc rgb "yellow" lt 3 lw 2 pt 1  ps 2
+
+
+set style line 21 lc rgb "black"   lt 1 lw 2 pt  1  ps 1
+set style line 22 lc rgb "red"     lt 1 lw 2 pt  2  ps 1
+set style line 23 lc rgb "blue"    lt 1 lw 2 pt  3  ps 1
+set style line 24 lc rgb "orange"  lt 1 lw 1 pt  4  ps 1
+set style line 25 lc rgb "green"   lt 1 lw 1 pt  5  ps 1
+set style line 26 lc rgb "purple"  lt 1 lw 1 pt  6  ps 1
+set style line 27 lc rgb "yellow"  lt 1 lw 1 pt  7  ps 1
+set style line 28 lc rgb "pink"    lt 1 lw 1 pt  8  ps 1
+set style line 29 lc rgb "magenta" lt 1 lw 1 pt  9  ps 1
+
+set style line 31 lc rgb "black"   lt 2 lw 2 pt  1  ps 1
+set style line 32 lc rgb "red"     lt 2 lw 2 pt  2  ps 1
+set style line 33 lc rgb "blue"    lt 2 lw 2 pt  3  ps 1
+set style line 34 lc rgb "orange"  lt 2 lw 1 pt  4  ps 1
+set style line 35 lc rgb "green"   lt 2 lw 1 pt  5  ps 1
+set style line 36 lc rgb "purple"  lt 2 lw 1 pt  6  ps 1
+set style line 37 lc rgb "yellow"  lt 2 lw 1 pt  7  ps 1
+set style line 38 lc rgb "pink"    lt 2 lw 1 pt  8  ps 1
+set style line 39 lc rgb "magenta" lt 2 lw 1 pt  9  ps 1
+
+set style line  50 lc rgb "black"  lt 1 lw 2 pt 0 ps 0
+
+
+
+set term postscript eps enhanced
+set output 'runningTime10s.eps' 
+set grid
+set xrange [0:31]
+set yrange [*:*]
+set ylabel "Running time [s]"
+set xlabel 'Number of UEs per eNodeB'
+set title 'Simulation time = 10 s - Friis Model'
+set key on top left
+plot \
+"../../../lteTimes.csv" using 4:($1==10 && $3==1  && $2==0 ? $5 : 1/0) with linespoints ls 21 title "1 eNodeB", \
+"../../../lteTimes.csv" using 4:($1==10 && $3==2  && $2==0 ? $5 : 1/0) with linespoints ls 22 title "2 eNodeB", \
+"../../../lteTimes.csv" using 4:($1==10 && $3==4  && $2==0 ? $5 : 1/0) with linespoints ls 23 title "4 eNodeB", \
+"../../../lteTimes.csv" using 4:($1==10 && $3==6  && $2==0 ? $5 : 1/0) with linespoints ls 24 title "6 eNodeB", \
+"../../../lteTimes.csv" using 4:($1==10 && $3==8  && $2==0 ? $5 : 1/0) with linespoints ls 25 title "8 eNodeB", \
+"../../../lteTimes.csv" using 4:($1==10 && $3==12 && $2==0 ? $5 : 1/0) with linespoints ls 26 title "12 eNodeB",\
+"../../../lteTimes.csv" using 4:($1==10 && $3==14 && $2==0 ? $5 : 1/0) with linespoints ls 27 title "14 eNodeB",\
+"../../../lteTimes.csv" using 4:($1==10 && $3==18 && $2==0 ? $5 : 1/0) with linespoints ls 28 title "18 eNodeB",\
+"../../../lteTimes.csv" using 4:($1==10 && $3==22 && $2==0 ? $5 : 1/0) with linespoints ls 29 title "22 eNodeB"
+
+set term postscript eps enhanced
+set output 'runningTime5s.eps' 
+set grid
+set xrange [*:31]
+set yrange [*:*]
+set ylabel "Running time [s]"
+set xlabel 'Number of UEs per eNodeB'
+set title 'Simulation time = 5 s - Friis Model'
+set key on top left
+plot \
+"../../../lteTimes.csv" using 4:($1==5 && $3==1  && $2==0 ? $5 : 1/0) with linespoints ls 21 title "1 eNodeB", \
+"../../../lteTimes.csv" using 4:($1==5 && $3==2  && $2==0 ? $5 : 1/0) with linespoints ls 22 title "2 eNodeB", \
+"../../../lteTimes.csv" using 4:($1==5 && $3==4  && $2==0 ? $5 : 1/0) with linespoints ls 23 title "4 eNodeB", \
+"../../../lteTimes.csv" using 4:($1==5 && $3==6  && $2==0 ? $5 : 1/0) with linespoints ls 24 title "6 eNodeB", \
+"../../../lteTimes.csv" using 4:($1==5 && $3==8  && $2==0 ? $5 : 1/0) with linespoints ls 25 title "8 eNodeB", \
+"../../../lteTimes.csv" using 4:($1==5 && $3==12 && $2==0 ? $5 : 1/0) with linespoints ls 26 title "12 eNodeB",\
+"../../../lteTimes.csv" using 4:($1==5 && $3==14 && $2==0 ? $5 : 1/0) with linespoints ls 27 title "14 eNodeB",\
+"../../../lteTimes.csv" using 4:($1==5 && $3==18 && $2==0 ? $5 : 1/0) with linespoints ls 28 title "18 eNodeB",\
+"../../../lteTimes.csv" using 4:($1==5 && $3==22 && $2==0 ? $5 : 1/0) with linespoints ls 29 title "22 eNodeB"
+
+set term postscript eps enhanced
+set output 'propagationModel.eps' 
+set grid
+set xrange [0:31]
+set yrange [*:*]
+set ylabel "Running time [s]"
+set xlabel 'Number of UEs per eNodeB'
+set title 'Simulation time = 10 s'
+set key on top left
+plot \
+"../../../lteTimes.csv" using 4:($1==10 && $3==4  && $2==0 ? $5 : 1/0) with linespoints ls 21 title "4 eNodeB - Friis", \
+"../../../lteTimes.csv" using 4:($1==10 && $3==4  && $2==1 ? $5 : 1/0) with linespoints ls 31 title "4 eNodeB - Building", \
+"../../../lteTimes.csv" using 4:($1==10 && $3==8  && $2==0 ? $5 : 1/0) with linespoints ls 22 title "8 eNodeB - Friis", \
+"../../../lteTimes.csv" using 4:($1==10 && $3==8  && $2==1 ? $5 : 1/0) with linespoints ls 32 title "8 eNodeB - Building", \
+"../../../lteTimes.csv" using 4:($1==10 && $3==12 && $2==0 ? $5 : 1/0) with linespoints ls 23 title "12 eNodeB - Friis", \
+"../../../lteTimes.csv" using 4:($1==10 && $3==12 && $2==1 ? $5 : 1/0) with linespoints ls 33 title "12 eNodeB - Building", \
+"../../../lteTimes.csv" using 4:($1==10 && $3==14 && $2==0 ? $5 : 1/0) with linespoints ls 24 title "14 eNodeB - Friis", \
+"../../../lteTimes.csv" using 4:($1==10 && $3==14 && $2==1 ? $5 : 1/0) with linespoints ls 34 title "14 eNodeB - Building", \
+"../../../lteTimes.csv" using 4:($1==10 && $3==18 && $2==0 ? $5 : 1/0) with linespoints ls 25 title "18 eNodeB - Friis", \
+"../../../lteTimes.csv" using 4:($1==10 && $3==18 && $2==1 ? $5 : 1/0) with linespoints ls 35 title "18 eNodeB - Building", \
+"../../../lteTimes.csv" using 4:($1==10 && $3==22 && $2==0 ? $5 : 1/0) with linespoints ls 26 title "22 eNodeB - Friis", \
+"../../../lteTimes.csv" using 4:($1==10 && $3==22 && $2==1 ? $5 : 1/0) with linespoints ls 36 title "22 eNodeB - Building"
+
+set term postscript eps enhanced
+set output 'simulationTime.eps' 
+set grid
+set xrange [0:16]
+set yrange [*:*]
+set ylabel "Running time [s]"
+set xlabel 'Simulation time'
+set title 'Friis propagation model 15 UE per eNodeB'
+set key on top left
+plot \
+"../../../lteTimes.csv" using 1:($4==15 && $3==1  && $2==0 ? $5 : 1/0) with linespoints ls 21 title "1 eNodeB", \
+"../../../lteTimes.csv" using 1:($4==15 && $3==2  && $2==0 ? $5 : 1/0) with linespoints ls 22 title "2 eNodeB", \
+"../../../lteTimes.csv" using 1:($4==15 && $3==4  && $2==0 ? $5 : 1/0) with linespoints ls 23 title "4 eNodeB", \
+"../../../lteTimes.csv" using 1:($4==15 && $3==6  && $2==0 ? $5 : 1/0) with linespoints ls 24 title "6 eNodeB", \
+"../../../lteTimes.csv" using 1:($4==15 && $3==8  && $2==0 ? $5 : 1/0) with linespoints ls 25 title "8 eNodeB", \
+"../../../lteTimes.csv" using 1:($4==15 && $3==12  && $2==0 ? $5 : 1/0) with linespoints ls 26 title "12 eNodeB", \
+"../../../lteTimes.csv" using 1:($4==15 && $3==14  && $2==0 ? $5 : 1/0) with linespoints ls 27 title "14 eNodeB", \
+"../../../lteTimes.csv" using 1:($4==15 && $3==18  && $2==0 ? $5 : 1/0) with linespoints ls 28 title "18 eNodeB", \
+"../../../lteTimes.csv" using 1:($4==15 && $3==22  && $2==0 ? $5 : 1/0) with linespoints ls 29 title "22 eNodeB"
+

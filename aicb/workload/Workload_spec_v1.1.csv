@@ -1,0 +1,11 @@
+id	Name	Parameter_size	Hidden_size	Num_of_layers	Attention_heads	Sequence_length	FFN_hidden_size	Name	World_size	TP	DP	PP	SP	Zero_level	expert parallel number	Expert num	TopK	group_gemm	reduce_bucket_size	allgather_bucket_size	prefetch_bucket_size	max_live_parameters	param_persistence_threshold
+1	LLaMA_7B	7B	4096	32	32	2048	16384	Megatron	128	1	world_size/(PP*TP)	1	-	-	-	-	-	-	-	-	-	-	-
+2	GPT_13B	13B	5120	40	32	2048	20480	Megatron	128	2	world_size/(PP*TP)	1	enable	-	-	-	-	-	-	-	-	-	-
+3	GPT_22B	22B	6144	48	64	2048	24576	Megatron	128	4	world_size/(PP*TP)	1	-	-	-	-	-	-	-	-	-	-	-
+4	LLaMA_65B	65B	8192	80	64	4096	28672	Megatron	128	8	world_size/(PP*TP)	2	enable	-	-	-	-	-	-	-	-	-	-
+5	GPT_175B	175B	12288	96	96	2048	49152	Megatron	128	8	world_size/(PP*TP)	8	enable	-	-	-	-	-	-	-	-	-	-
+6	GPT_175B	175B	12288	96	96	2048	49152	Megatron	128	8	world_size/(PP*TP)	8	disable	-	-	-	-	-	-	-	-	-	-
+7	Llama3 405B	405B	16384	126	128	8192	53248	Megetron	128	8	world_size/(PP*TP)	16	enable	-	-	-			-	-	-	-	-
+8	LLaMA_7B	7B	4096	32	32	4096	11008	Deepspeed	128	1	world_size	1	-	2	-	-	-	-	1.00E+09	1.00E+09	-	-	-
+9	LLaMA_65B	65B	8192	80	64	4096	28672	Deepspeed	128	1	world_size	1	-	3	-	-	-	-	1.00E+09	-	1.00E+09	6.00E+08	1.00E+06
+10	Mistral_8*7B	56B	4096	32	32	2048	14336	Megatron	128	2	world_size/(PP*TP)	1	enable	-	8	8	2	true	-	-	-	-	-

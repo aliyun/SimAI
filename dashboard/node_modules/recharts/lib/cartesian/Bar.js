@@ -1,0 +1,714 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Bar = void 0;
+exports.computeBarRectangles = computeBarRectangles;
+exports.defaultBarProps = void 0;
+var _react = _interopRequireWildcard(require("react"));
+var React = _react;
+var _clsx = require("clsx");
+var _Layer = require("../container/Layer");
+var _Cell = require("../component/Cell");
+var _LabelList = require("../component/LabelList");
+var _DataUtils = require("../util/DataUtils");
+var _ReactUtils = require("../util/ReactUtils");
+var _ChartUtils = require("../util/ChartUtils");
+var _types = require("../util/types");
+var _BarUtils = require("../util/BarUtils");
+var _tooltipContext = require("../context/tooltipContext");
+var _SetTooltipEntrySettings = require("../state/SetTooltipEntrySettings");
+var _ErrorBarContext = require("../context/ErrorBarContext");
+var _GraphicalItemClipPath = require("./GraphicalItemClipPath");
+var _chartLayoutContext = require("../context/chartLayoutContext");
+var _barSelectors = require("../state/selectors/barSelectors");
+var _hooks = require("../state/hooks");
+var _PanoramaContext = require("../context/PanoramaContext");
+var _tooltipSelectors = require("../state/selectors/tooltipSelectors");
+var _SetLegendPayload = require("../state/SetLegendPayload");
+var _useAnimationId = require("../util/useAnimationId");
+var _resolveDefaultProps = require("../util/resolveDefaultProps");
+var _RegisterGraphicalItemId = require("../context/RegisterGraphicalItemId");
+var _SetGraphicalItem = require("../state/SetGraphicalItem");
+var _svgPropertiesNoEvents = require("../util/svgPropertiesNoEvents");
+var _JavascriptAnimate = require("../animation/JavascriptAnimate");
+var _ZIndexLayer = require("../zIndex/ZIndexLayer");
+var _DefaultZIndexes = require("../zIndex/DefaultZIndexes");
+var _getZIndexFromUnknown = require("../zIndex/getZIndexFromUnknown");
+var _propsAreEqual = require("../util/propsAreEqual");
+var _BarStack = require("./BarStack");
+var _excluded = ["onMouseEnter", "onMouseLeave", "onClick"],
+  _excluded2 = ["value", "background", "tooltipPosition"],
+  _excluded3 = ["id"],
+  _excluded4 = ["onMouseEnter", "onClick", "onMouseLeave"];
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _objectWithoutProperties(e, t) { if (null == e) return {}; var o, r, i = _objectWithoutPropertiesLoose(e, t); if (Object.getOwnPropertySymbols) { var n = Object.getOwnPropertySymbols(e); for (r = 0; r < n.length; r++) o = n[r], -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]); } return i; }
+function _objectWithoutPropertiesLoose(r, e) { if (null == r) return {}; var t = {}; for (var n in r) if ({}.hasOwnProperty.call(r, n)) { if (-1 !== e.indexOf(n)) continue; t[n] = r[n]; } return t; }
+var computeLegendPayloadFromBarData = props => {
+  var {
+    dataKey,
+    name,
+    fill,
+    legendType,
+    hide
+  } = props;
+  return [{
+    inactive: hide,
+    dataKey,
+    type: legendType,
+    color: fill,
+    value: (0, _ChartUtils.getTooltipNameProp)(name, dataKey),
+    payload: props
+  }];
+};
+var SetBarTooltipEntrySettings = /*#__PURE__*/React.memo(_ref => {
+  var {
+    dataKey,
+    stroke,
+    strokeWidth,
+    fill,
+    name,
+    hide,
+    unit,
+    tooltipType,
+    id
+  } = _ref;
+  var tooltipEntrySettings = {
+    dataDefinedOnItem: undefined,
+    getPosition: _DataUtils.noop,
+    settings: {
+      stroke,
+      strokeWidth,
+      fill,
+      dataKey,
+      nameKey: undefined,
+      name: (0, _ChartUtils.getTooltipNameProp)(name, dataKey),
+      hide,
+      type: tooltipType,
+      color: fill,
+      unit,
+      graphicalItemId: id
+    }
+  };
+  return /*#__PURE__*/React.createElement(_SetTooltipEntrySettings.SetTooltipEntrySettings, {
+    tooltipEntrySettings: tooltipEntrySettings
+  });
+});
+function BarBackground(props) {
+  var activeIndex = (0, _hooks.useAppSelector)(_tooltipSelectors.selectActiveTooltipIndex);
+  var {
+    data,
+    dataKey,
+    background: backgroundFromProps,
+    allOtherBarProps
+  } = props;
+  var {
+      onMouseEnter: onMouseEnterFromProps,
+      onMouseLeave: onMouseLeaveFromProps,
+      onClick: onItemClickFromProps
+    } = allOtherBarProps,
+    restOfAllOtherProps = _objectWithoutProperties(allOtherBarProps, _excluded);
+
+  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
+  var onMouseEnterFromContext = (0, _tooltipContext.useMouseEnterItemDispatch)(onMouseEnterFromProps, dataKey, allOtherBarProps.id);
+  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
+  var onMouseLeaveFromContext = (0, _tooltipContext.useMouseLeaveItemDispatch)(onMouseLeaveFromProps);
+  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
+  var onClickFromContext = (0, _tooltipContext.useMouseClickItemDispatch)(onItemClickFromProps, dataKey, allOtherBarProps.id);
+  if (!backgroundFromProps || data == null) {
+    return null;
+  }
+  var backgroundProps = (0, _svgPropertiesNoEvents.svgPropertiesNoEventsFromUnknown)(backgroundFromProps);
+  return /*#__PURE__*/React.createElement(_ZIndexLayer.ZIndexLayer, {
+    zIndex: (0, _getZIndexFromUnknown.getZIndexFromUnknown)(backgroundFromProps, _DefaultZIndexes.DefaultZIndexes.barBackground)
+  }, data.map((entry, i) => {
+    var {
+        value,
+        background: backgroundFromDataEntry,
+        tooltipPosition
+      } = entry,
+      rest = _objectWithoutProperties(entry, _excluded2);
+    if (!backgroundFromDataEntry) {
+      return null;
+    }
+
+    // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
+    var onMouseEnter = onMouseEnterFromContext(entry, i);
+    // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
+    var onMouseLeave = onMouseLeaveFromContext(entry, i);
+    // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
+    var onClick = onClickFromContext(entry, i);
+    var barRectangleProps = _objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread({
+      option: backgroundFromProps,
+      isActive: String(i) === activeIndex
+    }, rest), {}, {
+      // @ts-expect-error backgroundProps is contributing unknown props
+      fill: '#eee'
+    }, backgroundFromDataEntry), backgroundProps), (0, _types.adaptEventsOfChild)(restOfAllOtherProps, entry, i)), {}, {
+      onMouseEnter,
+      onMouseLeave,
+      onClick,
+      dataKey,
+      index: i,
+      className: 'recharts-bar-background-rectangle'
+    });
+    return /*#__PURE__*/React.createElement(_BarUtils.BarRectangle, _extends({
+      key: "background-bar-".concat(i)
+    }, barRectangleProps));
+  }));
+}
+function BarLabelListProvider(_ref2) {
+  var {
+    showLabels,
+    children,
+    rects
+  } = _ref2;
+  var labelListEntries = rects === null || rects === void 0 ? void 0 : rects.map(entry => {
+    var viewBox = {
+      x: entry.x,
+      y: entry.y,
+      width: entry.width,
+      lowerWidth: entry.width,
+      upperWidth: entry.width,
+      height: entry.height
+    };
+    return _objectSpread(_objectSpread({}, viewBox), {}, {
+      value: entry.value,
+      payload: entry.payload,
+      parentViewBox: entry.parentViewBox,
+      viewBox,
+      fill: entry.fill
+    });
+  });
+  return /*#__PURE__*/React.createElement(_LabelList.CartesianLabelListContextProvider, {
+    value: showLabels ? labelListEntries : undefined
+  }, children);
+}
+function BarRectangleWithActiveState(props) {
+  var {
+    shape,
+    activeBar,
+    baseProps,
+    entry,
+    index,
+    dataKey
+  } = props;
+  var activeIndex = (0, _hooks.useAppSelector)(_tooltipSelectors.selectActiveTooltipIndex);
+  var activeDataKey = (0, _hooks.useAppSelector)(_tooltipSelectors.selectActiveTooltipDataKey);
+  /*
+   * Bars support stacking, meaning that there can be multiple bars at the same x value.
+   * With Tooltip shared=false we only want to highlight the currently active Bar, not all.
+   *
+   * Also, if the tooltip is shared, we want to highlight all bars at the same x value
+   * regardless of the dataKey.
+   *
+   * With shared Tooltip, the activeDataKey is undefined.
+   */
+  var isActive = activeBar && String(index) === activeIndex && (activeDataKey == null || dataKey === activeDataKey);
+  var option = isActive ? activeBar : shape;
+  if (isActive) {
+    return /*#__PURE__*/React.createElement(_ZIndexLayer.ZIndexLayer, {
+      zIndex: _DefaultZIndexes.DefaultZIndexes.activeBar
+    }, /*#__PURE__*/React.createElement(_BarStack.BarStackClipLayer, {
+      index: index
+    }, /*#__PURE__*/React.createElement(_BarUtils.BarRectangle, _extends({}, baseProps, {
+      name: String(baseProps.name)
+    }, entry, {
+      isActive: isActive,
+      option: option,
+      index: index,
+      dataKey: dataKey
+    }))));
+  }
+  return /*#__PURE__*/React.createElement(_BarUtils.BarRectangle, _extends({}, baseProps, {
+    name: String(baseProps.name)
+  }, entry, {
+    isActive: isActive,
+    option: option,
+    index: index,
+    dataKey: dataKey
+  }));
+}
+function BarRectangleNeverActive(props) {
+  var {
+    shape,
+    baseProps,
+    entry,
+    index,
+    dataKey
+  } = props;
+  return /*#__PURE__*/React.createElement(_BarUtils.BarRectangle, _extends({}, baseProps, {
+    name: String(baseProps.name)
+  }, entry, {
+    isActive: false,
+    option: shape,
+    index: index,
+    dataKey: dataKey
+  }));
+}
+function BarRectangles(_ref3) {
+  var _svgPropertiesNoEvent;
+  var {
+    data,
+    props
+  } = _ref3;
+  var _ref4 = (_svgPropertiesNoEvent = (0, _svgPropertiesNoEvents.svgPropertiesNoEvents)(props)) !== null && _svgPropertiesNoEvent !== void 0 ? _svgPropertiesNoEvent : {},
+    {
+      id
+    } = _ref4,
+    baseProps = _objectWithoutProperties(_ref4, _excluded3);
+  var {
+    shape,
+    dataKey,
+    activeBar
+  } = props;
+  var {
+      onMouseEnter: onMouseEnterFromProps,
+      onClick: onItemClickFromProps,
+      onMouseLeave: onMouseLeaveFromProps
+    } = props,
+    restOfAllOtherProps = _objectWithoutProperties(props, _excluded4);
+
+  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
+  var onMouseEnterFromContext = (0, _tooltipContext.useMouseEnterItemDispatch)(onMouseEnterFromProps, dataKey, id);
+  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
+  var onMouseLeaveFromContext = (0, _tooltipContext.useMouseLeaveItemDispatch)(onMouseLeaveFromProps);
+  // @ts-expect-error bar mouse events are not compatible with recharts mouse events
+  var onClickFromContext = (0, _tooltipContext.useMouseClickItemDispatch)(onItemClickFromProps, dataKey, id);
+  if (!data) {
+    return null;
+  }
+  return /*#__PURE__*/React.createElement(React.Fragment, null, data.map((entry, i) => {
+    return /*#__PURE__*/React.createElement(_BarStack.BarStackClipLayer, _extends({
+      index: i
+      // https://github.com/recharts/recharts/issues/5415
+      ,
+      key: "rectangle-".concat(entry === null || entry === void 0 ? void 0 : entry.x, "-").concat(entry === null || entry === void 0 ? void 0 : entry.y, "-").concat(entry === null || entry === void 0 ? void 0 : entry.value, "-").concat(i),
+      className: "recharts-bar-rectangle"
+    }, (0, _types.adaptEventsOfChild)(restOfAllOtherProps, entry, i), {
+      // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
+      onMouseEnter: onMouseEnterFromContext(entry, i)
+      // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
+      ,
+      onMouseLeave: onMouseLeaveFromContext(entry, i)
+      // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
+      ,
+      onClick: onClickFromContext(entry, i)
+    }), activeBar ? /*#__PURE__*/React.createElement(BarRectangleWithActiveState, {
+      shape: shape,
+      activeBar: activeBar,
+      baseProps: baseProps,
+      entry: entry,
+      index: i,
+      dataKey: dataKey
+    }) :
+    /*#__PURE__*/
+    /*
+     * If the `activeBar` prop is falsy, then let's call the variant without hooks.
+     * Using the `selectActiveTooltipIndex` selector is usually fast
+     * but in charts with large-ish amount of data even the few nanoseconds add up to a noticeable jank.
+     * If the activeBar is false then we don't need to know which index is active - because we won't use it anyway.
+     * So let's just skip the hooks altogether. That way, React can skip rendering the component,
+     * and can skip the tree reconciliation for its children too.
+     * Because we can't call hooks conditionally, we need to have a separate component for that.
+     */
+    React.createElement(BarRectangleNeverActive, {
+      shape: shape,
+      baseProps: baseProps,
+      entry: entry,
+      index: i,
+      dataKey: dataKey
+    }));
+  }));
+}
+function RectanglesWithAnimation(_ref5) {
+  var {
+    props,
+    previousRectanglesRef
+  } = _ref5;
+  var {
+    data,
+    layout,
+    isAnimationActive,
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    onAnimationEnd,
+    onAnimationStart
+  } = props;
+  var prevData = previousRectanglesRef.current;
+  var animationId = (0, _useAnimationId.useAnimationId)(props, 'recharts-bar-');
+  var [isAnimating, setIsAnimating] = (0, _react.useState)(false);
+  var showLabels = !isAnimating;
+  var handleAnimationEnd = (0, _react.useCallback)(() => {
+    if (typeof onAnimationEnd === 'function') {
+      onAnimationEnd();
+    }
+    setIsAnimating(false);
+  }, [onAnimationEnd]);
+  var handleAnimationStart = (0, _react.useCallback)(() => {
+    if (typeof onAnimationStart === 'function') {
+      onAnimationStart();
+    }
+    setIsAnimating(true);
+  }, [onAnimationStart]);
+  return /*#__PURE__*/React.createElement(BarLabelListProvider, {
+    showLabels: showLabels,
+    rects: data
+  }, /*#__PURE__*/React.createElement(_JavascriptAnimate.JavascriptAnimate, {
+    animationId: animationId,
+    begin: animationBegin,
+    duration: animationDuration,
+    isActive: isAnimationActive,
+    easing: animationEasing,
+    onAnimationEnd: handleAnimationEnd,
+    onAnimationStart: handleAnimationStart,
+    key: animationId
+  }, t => {
+    var stepData = t === 1 ? data : data === null || data === void 0 ? void 0 : data.map((entry, index) => {
+      var prev = prevData && prevData[index];
+      if (prev) {
+        return _objectSpread(_objectSpread({}, entry), {}, {
+          x: (0, _DataUtils.interpolate)(prev.x, entry.x, t),
+          y: (0, _DataUtils.interpolate)(prev.y, entry.y, t),
+          width: (0, _DataUtils.interpolate)(prev.width, entry.width, t),
+          height: (0, _DataUtils.interpolate)(prev.height, entry.height, t)
+        });
+      }
+      if (layout === 'horizontal') {
+        var height = (0, _DataUtils.interpolate)(0, entry.height, t);
+        var y = (0, _DataUtils.interpolate)(entry.stackedBarStart, entry.y, t);
+        return _objectSpread(_objectSpread({}, entry), {}, {
+          y,
+          height
+        });
+      }
+      var w = (0, _DataUtils.interpolate)(0, entry.width, t);
+      var x = (0, _DataUtils.interpolate)(entry.stackedBarStart, entry.x, t);
+      return _objectSpread(_objectSpread({}, entry), {}, {
+        width: w,
+        x
+      });
+    });
+    if (t > 0) {
+      // eslint-disable-next-line no-param-reassign
+      previousRectanglesRef.current = stepData !== null && stepData !== void 0 ? stepData : null;
+    }
+    if (stepData == null) {
+      return null;
+    }
+    return /*#__PURE__*/React.createElement(_Layer.Layer, null, /*#__PURE__*/React.createElement(BarRectangles, {
+      props: props,
+      data: stepData
+    }));
+  }), /*#__PURE__*/React.createElement(_LabelList.LabelListFromLabelProp, {
+    label: props.label
+  }), props.children);
+}
+function RenderRectangles(props) {
+  var previousRectanglesRef = (0, _react.useRef)(null);
+  return /*#__PURE__*/React.createElement(RectanglesWithAnimation, {
+    previousRectanglesRef: previousRectanglesRef,
+    props: props
+  });
+}
+var defaultMinPointSize = 0;
+var errorBarDataPointFormatter = (dataPoint, dataKey) => {
+  /**
+   * if the value coming from `selectBarRectangles` is an array then this is a stacked bar chart.
+   * arr[1] represents end value of the bar since the data is in the form of [startValue, endValue].
+   * */
+  var value = Array.isArray(dataPoint.value) ? dataPoint.value[1] : dataPoint.value;
+  return {
+    x: dataPoint.x,
+    y: dataPoint.y,
+    value,
+    // @ts-expect-error getValueByDataKey does not validate the output type
+    errorVal: (0, _ChartUtils.getValueByDataKey)(dataPoint, dataKey)
+  };
+};
+class BarWithState extends _react.PureComponent {
+  render() {
+    var {
+      hide,
+      data,
+      dataKey,
+      className,
+      xAxisId,
+      yAxisId,
+      needClip,
+      background,
+      id
+    } = this.props;
+    if (hide || data == null) {
+      return null;
+    }
+    var layerClass = (0, _clsx.clsx)('recharts-bar', className);
+    var clipPathId = id;
+    return /*#__PURE__*/React.createElement(_Layer.Layer, {
+      className: layerClass,
+      id: id
+    }, needClip && /*#__PURE__*/React.createElement("defs", null, /*#__PURE__*/React.createElement(_GraphicalItemClipPath.GraphicalItemClipPath, {
+      clipPathId: clipPathId,
+      xAxisId: xAxisId,
+      yAxisId: yAxisId
+    })), /*#__PURE__*/React.createElement(_Layer.Layer, {
+      className: "recharts-bar-rectangles",
+      clipPath: needClip ? "url(#clipPath-".concat(clipPathId, ")") : undefined
+    }, /*#__PURE__*/React.createElement(BarBackground, {
+      data: data,
+      dataKey: dataKey,
+      background: background,
+      allOtherBarProps: this.props
+    }), /*#__PURE__*/React.createElement(RenderRectangles, this.props)));
+  }
+}
+var defaultBarProps = exports.defaultBarProps = {
+  activeBar: false,
+  animationBegin: 0,
+  animationDuration: 400,
+  animationEasing: 'ease',
+  background: false,
+  hide: false,
+  isAnimationActive: 'auto',
+  label: false,
+  legendType: 'rect',
+  minPointSize: defaultMinPointSize,
+  xAxisId: 0,
+  yAxisId: 0,
+  zIndex: _DefaultZIndexes.DefaultZIndexes.bar
+};
+function BarImpl(props) {
+  var {
+    xAxisId,
+    yAxisId,
+    hide,
+    legendType,
+    minPointSize,
+    activeBar,
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    isAnimationActive
+  } = props;
+  var {
+    needClip
+  } = (0, _GraphicalItemClipPath.useNeedsClip)(xAxisId, yAxisId);
+  var layout = (0, _chartLayoutContext.useChartLayout)();
+  var isPanorama = (0, _PanoramaContext.useIsPanorama)();
+  var cells = (0, _ReactUtils.findAllByType)(props.children, _Cell.Cell);
+  var rects = (0, _hooks.useAppSelector)(state => (0, _barSelectors.selectBarRectangles)(state, props.id, isPanorama, cells));
+  if (layout !== 'vertical' && layout !== 'horizontal') {
+    return null;
+  }
+  var errorBarOffset;
+  var firstDataPoint = rects === null || rects === void 0 ? void 0 : rects[0];
+  if (firstDataPoint == null || firstDataPoint.height == null || firstDataPoint.width == null) {
+    errorBarOffset = 0;
+  } else {
+    errorBarOffset = layout === 'vertical' ? firstDataPoint.height / 2 : firstDataPoint.width / 2;
+  }
+  return /*#__PURE__*/React.createElement(_ErrorBarContext.SetErrorBarContext, {
+    xAxisId: xAxisId,
+    yAxisId: yAxisId,
+    data: rects,
+    dataPointFormatter: errorBarDataPointFormatter,
+    errorBarOffset: errorBarOffset
+  }, /*#__PURE__*/React.createElement(BarWithState, _extends({}, props, {
+    layout: layout,
+    needClip: needClip,
+    data: rects,
+    xAxisId: xAxisId,
+    yAxisId: yAxisId,
+    hide: hide,
+    legendType: legendType,
+    minPointSize: minPointSize,
+    activeBar: activeBar,
+    animationBegin: animationBegin,
+    animationDuration: animationDuration,
+    animationEasing: animationEasing,
+    isAnimationActive: isAnimationActive
+  })));
+}
+function computeBarRectangles(_ref6) {
+  var {
+    layout,
+    barSettings: {
+      dataKey,
+      minPointSize: minPointSizeProp
+    },
+    pos,
+    bandSize,
+    xAxis,
+    yAxis,
+    xAxisTicks,
+    yAxisTicks,
+    stackedData,
+    displayedData,
+    offset,
+    cells,
+    parentViewBox,
+    dataStartIndex
+  } = _ref6;
+  var numericAxis = layout === 'horizontal' ? yAxis : xAxis;
+  // @ts-expect-error this assumes that the domain is always numeric, but doesn't check for it
+  var stackedDomain = stackedData ? numericAxis.scale.domain() : null;
+  var baseValue = (0, _ChartUtils.getBaseValueOfBar)({
+    numericAxis
+  });
+  var stackedBarStart = numericAxis.scale.map(baseValue);
+  return displayedData.map((entry, index) => {
+    var value, x, y, width, height, background;
+    if (stackedData) {
+      // Use dataStartIndex to access the correct element in the full stackedData array
+      var untruncatedValue = stackedData[index + dataStartIndex];
+      if (untruncatedValue == null) {
+        return null;
+      }
+      value = (0, _ChartUtils.truncateByDomain)(untruncatedValue, stackedDomain);
+    } else {
+      value = (0, _ChartUtils.getValueByDataKey)(entry, dataKey);
+      if (!Array.isArray(value)) {
+        value = [baseValue, value];
+      }
+    }
+    var minPointSize = (0, _BarUtils.minPointSizeCallback)(minPointSizeProp, defaultMinPointSize)(value[1], index);
+    if (layout === 'horizontal') {
+      var _ref7;
+      var baseValueScale = yAxis.scale.map(value[0]);
+      var currentValueScale = yAxis.scale.map(value[1]);
+      if (baseValueScale == null || currentValueScale == null) {
+        return null;
+      }
+      x = (0, _ChartUtils.getCateCoordinateOfBar)({
+        axis: xAxis,
+        ticks: xAxisTicks,
+        bandSize,
+        offset: pos.offset,
+        entry,
+        index
+      });
+      y = (_ref7 = currentValueScale !== null && currentValueScale !== void 0 ? currentValueScale : baseValueScale) !== null && _ref7 !== void 0 ? _ref7 : undefined;
+      width = pos.size;
+      var computedHeight = baseValueScale - currentValueScale;
+      height = (0, _DataUtils.isNan)(computedHeight) ? 0 : computedHeight;
+      background = {
+        x,
+        y: offset.top,
+        width,
+        height: offset.height
+      };
+      if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
+        var delta = (0, _DataUtils.mathSign)(height || minPointSize) * (Math.abs(minPointSize) - Math.abs(height));
+        y -= delta;
+        height += delta;
+      }
+    } else {
+      var _baseValueScale = xAxis.scale.map(value[0]);
+      var _currentValueScale = xAxis.scale.map(value[1]);
+      if (_baseValueScale == null || _currentValueScale == null) {
+        return null;
+      }
+      x = _baseValueScale;
+      y = (0, _ChartUtils.getCateCoordinateOfBar)({
+        axis: yAxis,
+        ticks: yAxisTicks,
+        bandSize,
+        offset: pos.offset,
+        entry,
+        index
+      });
+      width = _currentValueScale - _baseValueScale;
+      height = pos.size;
+      background = {
+        x: offset.left,
+        y,
+        width: offset.width,
+        height
+      };
+      if (Math.abs(minPointSize) > 0 && Math.abs(width) < Math.abs(minPointSize)) {
+        var _delta = (0, _DataUtils.mathSign)(width || minPointSize) * (Math.abs(minPointSize) - Math.abs(width));
+        width += _delta;
+      }
+    }
+    if (x == null || y == null || width == null || height == null) {
+      return null;
+    }
+    var barRectangleItem = _objectSpread(_objectSpread({}, entry), {}, {
+      stackedBarStart,
+      x,
+      y,
+      width,
+      height,
+      value: stackedData ? value : value[1],
+      payload: entry,
+      background,
+      tooltipPosition: {
+        x: x + width / 2,
+        y: y + height / 2
+      },
+      parentViewBox
+    }, cells && cells[index] && cells[index].props);
+    return barRectangleItem;
+  }).filter(Boolean);
+}
+function BarFn(outsideProps) {
+  var props = (0, _resolveDefaultProps.resolveDefaultProps)(outsideProps, defaultBarProps);
+  // stackId may arrive from props or from BarStack context
+  var stackId = (0, _BarStack.useStackId)(props.stackId);
+  var isPanorama = (0, _PanoramaContext.useIsPanorama)();
+  // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
+  return /*#__PURE__*/React.createElement(_RegisterGraphicalItemId.RegisterGraphicalItemId, {
+    id: props.id,
+    type: "bar"
+  }, id => /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(_SetLegendPayload.SetLegendPayload, {
+    legendPayload: computeLegendPayloadFromBarData(props)
+  }), /*#__PURE__*/React.createElement(SetBarTooltipEntrySettings, {
+    dataKey: props.dataKey,
+    stroke: props.stroke,
+    strokeWidth: props.strokeWidth,
+    fill: props.fill,
+    name: props.name,
+    hide: props.hide,
+    unit: props.unit,
+    tooltipType: props.tooltipType,
+    id: id
+  }), /*#__PURE__*/React.createElement(_SetGraphicalItem.SetCartesianGraphicalItem, {
+    type: "bar",
+    id: id
+    // Bar does not allow setting data directly on the graphical item (why?)
+    ,
+    data: undefined,
+    xAxisId: props.xAxisId,
+    yAxisId: props.yAxisId,
+    zAxisId: 0,
+    dataKey: props.dataKey,
+    stackId: stackId,
+    hide: props.hide,
+    barSize: props.barSize,
+    minPointSize: props.minPointSize,
+    maxBarSize: props.maxBarSize,
+    isPanorama: isPanorama
+  }), /*#__PURE__*/React.createElement(_ZIndexLayer.ZIndexLayer, {
+    zIndex: props.zIndex
+  }, /*#__PURE__*/React.createElement(BarImpl, _extends({}, props, {
+    id: id
+  })))));
+}
+
+/**
+ * @provides ErrorBarContext
+ * @provides LabelListContext
+ * @provides CellReader
+ * @consumes CartesianChartContext
+ * @consumes BarStackContext
+ */
+var Bar = exports.Bar = /*#__PURE__*/React.memo(BarFn, _propsAreEqual.propsAreEqual);
+Bar.displayName = 'Bar';

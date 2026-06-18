@@ -1,10 +1,53 @@
 .vscode
+.idea/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+*.log
+.cur*
+*~
+
+# OMC sessions
+.omc/sessions/
+.omc/notepad.md
+.omc/project-memory.json
+.omc/state/
+
+# Build artifacts
 astra-sim-alibabacloud/build/simai_analytical/build/
 astra-sim-alibabacloud/build/astra_ns3/build/
+astra-sim-alibabacloud/build/simai_oxc/build/
 astra-sim-alibabacloud/extern/
 bin/
 results/
 test/log/
-*.log
-.cur*
-.DS_Store
+
+# Multi-user server runtime data
+server/workspaces/
+server/auth_config.yaml
+deploy/.simai_pids
+
+# Dashboard build artifacts
+dashboard/dist/
+dashboard/node_modules/
+dashboard/.nuxt/
+dashboard/.output/
+dashboard/playwright-report/
+dashboard/test-results/
+dashboard/build/
+
+# OXC build artifacts
+astra-sim-alibabacloud/build/simai_oxc/build/
+
+# Multi-user server runtime data
+server/workspaces/
+server/auth_config.yaml
+deploy/.simai_pids
+
+# LRA protocol files
+init.sh
+feature_list.json
+progress.md
+scripts/lra-gate.py
+scripts/lra-stop.py

@@ -1,0 +1,14 @@
+/docset/
+/html/
+/html-warn/
+/ns-3.docset
+latex/
+ns3-object.txt
+introspected-doxygen.h
+introspected-command-line.h
+doxygen.docset.conf
+doxygen.log
+doxygen.warnings.log
+*/build/
+*/source-temp/
+ns3_html_theme/static/ns3_version.js

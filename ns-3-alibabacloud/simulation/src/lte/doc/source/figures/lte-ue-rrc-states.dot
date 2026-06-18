@@ -1,0 +1,47 @@
+digraph LteUeRrcStates {
+
+
+IDLE_START [shape="box",width=3]
+IDLE_CELL_SEARCH [shape="box",width=3]
+IDLE_WAIT_MIB_SIB1 [shape="box",width=3]
+IDLE_WAIT_MIB [shape="box",width=3]
+IDLE_WAIT_SIB1 [shape="box",width=3]
+IDLE_CAMPED_NORMALLY [shape="box",width=3]
+IDLE_WAIT_SIB2 [shape="box",width=3]
+IDLE_RANDOM_ACCESS [shape="box",width=3]
+IDLE_CONNECTING [shape="box",width=3]
+CONNECTED_NORMALLY [shape="box",width=3]
+CONNECTED_HANDOVER [shape="box",width=3]
+CONNECTED_PHY_PROBLEM [shape="box",width=3]
+
+
+// Network attachment
+IDLE_START -> IDLE_WAIT_MIB [label="manual\nattachment"]
+IDLE_START -> IDLE_CELL_SEARCH [label="automatic attachment\nby cell selection"]
+IDLE_CELL_SEARCH -> IDLE_WAIT_MIB_SIB1 [label="synchronized to a cell"]
+IDLE_WAIT_MIB_SIB1 -> IDLE_WAIT_SIB1 [label="rx MIB"]
+IDLE_WAIT_SIB1 -> IDLE_CAMPED_NORMALLY [label="rx SIB1 and\ncell selection successful"]
+IDLE_WAIT_SIB1 -> IDLE_CELL_SEARCH [label="rx SIB1 and\ncell selection failed"]
+IDLE_WAIT_MIB -> IDLE_CAMPED_NORMALLY [label="rx MIB"]
+IDLE_CAMPED_NORMALLY -> IDLE_WAIT_SIB2 [label="connection request\nby upper layer"]
+
+// Connection establishment
+IDLE_WAIT_SIB2 -> IDLE_RANDOM_ACCESS [label="rx SIB2"]
+IDLE_RANDOM_ACCESS -> IDLE_CONNECTING [label="random access\nsuccessful"]
+IDLE_RANDOM_ACCESS -> IDLE_CAMPED_NORMALLY [label="random access\nfailure"]
+IDLE_CONNECTING -> CONNECTED_NORMALLY [label="rx RRC CONN SETUP"]
+IDLE_CONNECTING -> IDLE_CAMPED_NORMALLY [label="T300 expiry or\nrx RRC CONN\nREJECT"]
+
+// Handover
+CONNECTED_NORMALLY -> CONNECTED_HANDOVER [label="rx RRC CONN RECONF\nwith MobilityCtrlInfo"]
+CONNECTED_HANDOVER -> CONNECTED_NORMALLY [label="random access\nsuccessful"]
+
+// RLF
+CONNECTED_NORMALLY -> CONNECTED_NORMALLY [label="N311 in-synch\nreceived"]
+CONNECTED_NORMALLY -> CONNECTED_PHY_PROBLEM [label="T310 expired"]
+CONNECTED_PHY_PROBLEM -> IDLE_START [label="NAS call to Disconnect"]
+
+//T300 expiration counter limit reached
+IDLE_CONNECTING -> CONNECTED_PHY_PROBLEM [label="T300 expiration\ncounter limit\nreached"]
+
+}

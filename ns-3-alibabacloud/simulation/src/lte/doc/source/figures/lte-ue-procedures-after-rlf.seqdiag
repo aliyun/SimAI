@@ -1,0 +1,25 @@
+
+diagram {
+
+         EpcUeNas; LteUeRrc; "LteUeMac (all MACs)"; "LteUePhy (All Phys)"; LteUeComponentCarrierManager; LteEnbRrc;
+
+         LteUeRrc ->> LteUeRrc [label="SwitchToState (CONNECTED_PHY_PROBLEM)"];
+         EpcUeNas <<- LteUeRrc [label="NotifyConnectionReleased ()"];
+         LteUeRrc ->> LteEnbRrc [label="SendIdealUeContext\nRemoveRequest(rnti)"];
+         EpcUeNas ->> EpcUeNas [label="Disconnect ()"];
+         EpcUeNas ->> EpcUeNas [label="SwitchToState (OFF)"];
+         EpcUeNas ->> LteUeRrc [label="Disconnect ()"];
+         LteUeRrc ->> LteUeRrc [label="LeaveConnectedMode ()"];
+         LteUeRrc ->> LteUeRrc [label="VarMeasReportListClear (measId)"];
+         LteUeRrc ->> LteUeRrc [label="CancelEnteringTrigger (measId, cellId)"];
+         LteUeRrc ->> LteUeComponentCarrierManager [label="Reset ()"];
+         LteUeRrc ->> "LteUeMac (all MACs)" [label="Reset ()"];
+         LteUeRrc ->> "LteUePhy (All Phys)" [label="Reset ()"];
+         LteUeRrc ->> LteUeRrc [label="SwitchToState (IDLE_START)"];
+         LteUeRrc ->> LteUeRrc [label="DoStartCellSelection (dlEarfcn)"];
+         LteUeRrc ->> "LteUePhy (All Phys)" [label="Only primary carrier PHY\nStartCellSearch (dlEarfcn)"];
+         LteUeRrc ->> LteUeRrc [label="SwitchToState (IDLE_CELL_SEARCH)"];
+         LteUeRrc ->> LteUeRrc [label="StorePrevious\nCellId (cellId)"];
+         LteUeRrc ->> LteUeRrc [label="DoSetTemporaryCellRnti (0)"];
+}
+

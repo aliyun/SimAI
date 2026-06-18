@@ -1,0 +1,36 @@
+{
+  "crosses": [
+    [
+      "10.118.241.1",
+      "1",
+      "2"
+    ],
+    [
+      "10.118.241.2",
+      "1",
+      "2"
+    ]
+  ],
+  "raw_response": {
+    "request_id": 0,
+    "message_type": "IMPORT_FULL_TOPO",
+    "result": "OUTPUT_OXCCROSS",
+    "oxc_oper_orders": {
+      "del_oper_info_list": [],
+      "add_oper_info_list": [
+        {
+          "node_ip": "10.118.241.1",
+          "a_port_id": "2",
+          "b_port_id": "1"
+        },
+        {
+          "node_ip": "10.118.241.2",
+          "a_port_id": "2",
+          "b_port_id": "1"
+        }
+      ]
+    },
+    "_fallback": true,
+    "_warning": "EDG 服务不可达，已降级为 mock 模式 (ConnectionError)"
+  }
+}

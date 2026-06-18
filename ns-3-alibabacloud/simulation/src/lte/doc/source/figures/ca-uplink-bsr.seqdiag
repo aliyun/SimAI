@@ -1,0 +1,28 @@
+
+diagram {
+
+        "LteRlc at UE";LteUeComponentCarrierManager;LteUeMac0;LteUeMac1;LteEnbMac0;LteEnbMac1;LteEnbComponentCarrierManager
+
+        "LteRlc at UE" -> LteUeComponentCarrierManager [label="ReportBufferStatus ()"];
+        LteUeComponentCarrierManager -> LteUeMac0 [label="ReportBufferStatus ()"];        
+        LteUeMac0 -> LteEnbMac0 [label="ReceiveBsrMessage ()"];
+        LteEnbMac0 -> LteEnbComponentCarrierManager [label="UlReceiveMacCe ()"];
+        LteEnbComponentCarrierManager -> LteEnbMac0 [label="ReportMacCeToScheduler (CC_0)"];  
+        LteEnbComponentCarrierManager -> LteEnbMac1 [label="ReportMacCeToScheduler (CC_1)"];
+
+        LteEnbMac1 -> LteUeMac1 [label="NotifyTxOpportunity (CC_0)"];
+        LteEnbMac0 -> LteUeMac0 [label="NotifyTxOpportunity (CC_1)"];
+        
+        LteUeMac0 -> LteUeComponentCarrierManager [label="NotifyTxOpportunity (CC_0)"];
+        LteUeMac1 -> LteUeComponentCarrierManager [label="NotifyTxOpportunity (CC_1)"];
+
+        LteUeComponentCarrierManager -> "LteRlc at UE" [label="NotifyTxOpportunity (CC_0)"];
+        "LteRlc at UE" -> LteUeComponentCarrierManager [label="TransmitPdu (CC_0)"];
+        LteUeComponentCarrierManager -> LteUeMac0 [label="TransmitPdu (CC_0)"];
+
+        LteUeComponentCarrierManager -> "LteRlc at UE" [label="NotifyTxOpportunity (CC_1)"];
+        "LteRlc at UE" -> LteUeComponentCarrierManager [label="TransmitPdu (CC_1)"];
+        LteUeComponentCarrierManager -> LteUeMac1 [label="TransmitPdu (CC_1)"];
+
+  }
+

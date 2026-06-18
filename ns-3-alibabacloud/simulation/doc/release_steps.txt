@@ -1,0 +1,213 @@
+Steps in doing an ns-3 release
+
+We typically post release candidates for testing at the following URL:
+https://www.nsnam.org/release/ns-allinone-3.X.rcX.tar.bz2
+
+This overview covers the following release stages:
+1) new feature additions and bug fixing
+2) preparing release candidates for testing
+3) making the actual release
+4) maintaining the release
+
+1) new feature additions and bug fixing
+---------------------------------------
+
+During the software development phase, it is important for the release
+manager to try to maintain the following files with updated information:
+- AUTHORS
+- RELEASE_NOTES.md
+- CHANGES.html
+
+otherwise, this becomes painful to edit (and things are forgotten)
+when the release is imminent.
+
+
+2) preparing release candidates for testing
+-------------------------------------------
+
+This step presumes that you have a reasonably solid ns-3-dev that you
+and/or the buildbots have been testing
+   - building static, optimized, and debug versions
+   - try Python visualizer (not tested by buildbots)
+      -- ./ns3 run src/flow-monitor/examples/wifi-olsr-flowmon.py --vis
+   - ensure that tests pass (./test.py -g) and make sure that the buildbots
+     are reporting 'pass' state, based on the tip of the repository
+   - revise and check in AUTHORS, RELEASE_NOTES.md, and CHANGES.html
+   - required versions for related libraries (netanim, pybindgen)
+     are correct
+   - confirm that Doxygen builds cleanly (./ns3 doxygen),
+   - confirm that the new bake configurations for the release work correctly
+   - confirm all documents build:  './ns3 docs' and check outputs
+
+2.1)  Update the tutorial "Getting Started" and "Quick Start" pages to use the new release number.
+
+An example commit (July 14, 2021) to review is 9df8ef4b2.
+
+2.2) Prepare some bakeconf.xml updates for the new release.  Note that the
+new release 'ns-3.x' will not be yet available as a tagged release, so
+the 'ns-3.x' module may need some indirection to fetch ns-3-dev in its place.
+
+2.3) Check out a clean ns-3-dev somewhere using ns-3-allinone 
+   - git clone https://gitlab.com/nsnam/ns-3-allinone.git
+   - cd ns-3-allinone
+   - ./download.py
+   - cd ns-3-dev
+   - edit VERSION such as "ns-3.31.rc1" (DO NOT commit this change to ns-3-dev)
+   - cd ../bake
+   - copy over the modified bakeconf.xml that is being tested
+   - cd ..
+   - ./dist.py
+
+This should yield a compressed tarfile, such as:  ns-allinone-3.31.rc1.tar.bz2 
+Test this, and when satisfied, upload it to
+www.nsnam.org:/var/www/html/releases/ (with apache:apache file ownership)
+
+Release candidates from previous releases can be deleted at this point.
+
+Announce the release candidate to ns-developers as:
+https://www.nsnam.org/release/ns-allinone-3.31.rc1.tar.bz2
+
+Iterate the above as needed during the release testing phase.
+
+Do not add a git tag for a release candidate.
+
+3) making the release
+---------------------
+
+Follow similar steps for creating the release candidate tarballs, except
+we will work off of a release branch.
+
+At this point, you are ready for final packaging and repository/site work
+
+We'll refer to the release number as "X" or "x" below.  
+
+creating the distribution tarball
+---------------------------------
+
+1. Create a tagged release on gitlab.com:nsnam/ns-3-dev
+
+For this step, consult the ns-3 manual:
+https://www.nsnam.org/docs/manual/html/working-with-git.html#making-a-release
+
+The desired outcome is to have a git commit history looking like this:
+
+$ git log --graph --decorate --oneline --all
+* 4b27025 (master) Update release files to start next release
+*   fd075f6 Merge ns-3.34-release branch
+|\
+| * 3fab3cf (HEAD, tag: ns-3.34) Update availability in RELEASE_NOTES
+| * c50aaf7 Update VERSION and documentation tags for ns-3.34 release
+|/
+* 9df8ef4 doc: Update ns-3 version in tutorial examples
+* 9319cdd (origin/master, origin/HEAD) Update CHANGES.html and RELEASE_NOTES
+
+2.  Create a final bakeconf.xml and commit it.
+
+Now that the ns-3.34 tagged release is available, a final bakeconf.xml with
+final release components can be committed.  For a sample commit, view
+bake commit ba47854c (July 14, 2021).
+
+3.  Create a final distribution tarball
+   - git clone https://gitlab.com/nsnam/ns-3-allinone.git
+   - cd ns-3-allinone
+   - ./download.py
+   - cd ns-3-dev
+   - git checkout -b 'ns-3.x-release' ns-3.x
+   - cd ../
+   - ./dist.py (notice we did not build here)
+   - this will create an ns-allinone-3.x.tar.bz2 tarball
+
+4.  Test this tarball on at least one system
+   - check that ns-3-allinone build.py works
+   - check that bake ns-3.x and ns-allinone-3.x targets work
+
+5. upload "ns-allinone-3.x.tar.bz2" to the /var/www/html/releases/ directory on 
+   the www.nsnam.org server
+   - scp ns-allinone-3.x.tar.bz2 www.nsnam.org:~
+   - ssh www.nsnam.org
+   - sudo cp ns-allinone-3.x.tar.bz2 /var/www/html/releases
+   - cd !$
+
+6. give it 644 file permissions, and user/group = apache if it is not already
+   - sudo chown apache:apache ns-allinone-3.x.tar.bz2
+   - sudo chmod 644 ns-allinone-3.x.tar.bz2
+
+7. Create a patch file for the releases/patches directory, and upload it
+   to the server.  The main idea is to extract the previous release's
+   ns-3.(x-1) directory and the new ns-3.x directory, and run a diff over it.
+   - mkdir patchdir && cd patchdir
+   - wget https://www.nsnam.org/releases/ns-allinone-3.(x-1).tar.bz2
+   - tar xjf ns-allinone-3.(x-1).tar.bz2
+   - mv ns-allinone-3.(x-1)/ns-3.(x-1) .
+   - wget https://www.nsnam.org/releases/ns-allinone-3.x.tar.bz2
+   - tar xjf ns-allinone-3.x.tar.bz2
+   - mv ns-allinone-3.x/ns-3.x .
+   - diff -Naur -x '*.dia' -x '*.pcap' -x '*.png' ns-3.(x-1) ns-3.x > ns-3.(x-1)-to-ns-3.x.patch
+
+preparing the documentation
+----------------------------
+
+1. If final release, build release documentation
+   - sudo bash; su nsnam; cd /home/nsnam/bin 
+   - ./update-docs -c -R -r ns-3.x 
+
+2. Check if these new files are available on the website; check that the
+   headers all say 'ns-3.x release' in the version, and that all links work
+
+preparing the Jekyll-based main website
+---------------------------------------
+
+1. create a new ns-3.x page which should be visible from
+https://www.nsnam.org/releases/ns-3-x.
+
+2. Repoint http://www.nsnam.org/releases/latest to the new page
+   Repoint http://www.nsnam.org/documentation/latest to the new page
+   Update documentation.md release links in the top-level directory
+   Review/update the .htaccess
+
+3. Update the Older Releases page to create an entry for the previous
+release (there are two such pages, one under Releases and one under
+Documentation)
+
+4. Create a blog entry to announce release 
+
+ns-3 wiki edits
+---------------
+
+1. Create ns-3.(X+1) wiki page if not done already.
+
+2. edit front page and Roadmap
+
+Announcing
+----------
+
+1. Final checks
+   - check manual, tutorial, model, and doxygen documentation links
+   - download tarball from web, build and run tests for as many
+     targets as you can
+   - download release from GitLab.com and build and run tests for as
+     many targets as you can
+   - test and verify until you're confident the release is solid.
+
+2. announce to ns-developers and ns-3-users, with summary of release notes
+
+4) maintaining the release
+--------------------------
+
+First, create skeletal sections in CHANGES.html and RELEASE_NOTES.md to
+start collecting inputs for the ns-3.(x+1) release.
+
+The project may decide to make incremental, bug-fix releases from
+time to time, with a minor version number (e.g. ns-3.7.1).  To do
+this, changesets may be cherry-picked from ns-3-dev and added to
+ns-3.x branch.  Do not move over changesets that pertain to 
+adding new features, but documentation fixes and bug fixes are good 
+changesets to make available in a minor release.  The same steps
+above for making a release are generally followed, although one
+does not need to create a separate branch, but instead just reopens
+the previous release branch, makes the changes, adds a minor version
+number as a tag, and merges the branch back with the master branch.
+
+Also, on the main website, make sure that "latest release" points to
+the right page.  See how it was handled for ns-3.12 (which made
+a minor release): https://www.nsnam.org/ns-3.12/

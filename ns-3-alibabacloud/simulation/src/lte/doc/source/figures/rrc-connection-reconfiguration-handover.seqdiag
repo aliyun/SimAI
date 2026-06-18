@@ -1,0 +1,38 @@
+
+
+diagram {
+   sourceEnbRrc; UeRrc; UeMac; UePhy; EnbPhy; EnbMac; FfSched; EnbRrc; 
+   
+   sourceEnbRrc ->> EnbRrc [label="X2: HO req"]
+   EnbMac <<- EnbRrc [label="HandoverRequest (newly allocated C-RNTI + LC list)"] 
+   EnbMac ->> FfSched  [label="CSCHED_UE_CONFIG_REQ"]
+   EnbMac <<- FfSched  [label="CSCHED_UE_CONFIG_CNF"]
+   EnbMac ->> FfSched  [label="CSCHED_LC_CONFIG_REQ (all active DRBs)"]
+   EnbMac <<- FfSched  [label="CSCHED_LC_CONFIG_CNF"]
+   EnbMac ->> EnbRrc [label="HandoverConfirm (PRACH ID in 63-Ncf,..., 63 + PRACH mask"] 
+   sourceEnbRrc <<- EnbRrc [label="X2: HO ack incl. MobilityControlInfo"]
+   sourceEnbRrc ->> UeRrc [label="RrcConnectionReconfiguration with MobilityControlInfo (incl. RACH-ConfigDedicated over SRB1"] 
+   UeRrc ->> UeMac  [label="Handover (new C-RNTI, PRACH ID+Mask)"]
+   UeRrc ->> UeMac [label="SendOverCcch (RrcConnectionReconfigurationRequest)"] 
+   === start non-contention based MAC Random Access Procedure ===
+   UeMac ->> UePhy [label="SendRachPreamble (PRACH ID)"] 
+   UePhy ->> EnbPhy [label="RachPreamble over RACH"]	
+   EnbPhy ->> EnbMac [label="NotifyRxRachPreamble (PRACH ID)"]
+   EnbMac ->> FfSched [label="SCHED_DL_RACH_INFO_REQ (RNTI list)"]	
+   EnbPhy ->> EnbMac [label="SubframeIndication"]	
+   EnbMac ->> FfSched [label="SCHED_DL_TRIGGER_REQ"]	
+   EnbMac <<- FfSched  [label="SCHED_DL_CONFIG_IND (RAR list with UL grant per RNTI))"]
+   EnbMac ->> EnbMac [label="determine RA-RNTI from PRACH ID"] 
+   EnbPhy <<- EnbMac [label="Send RAR with RA-RNTI identifying preambleId"]
+   UePhy <<- EnbPhy [label="RAR over PDSCH"]
+   UeMac <<- UePhy [label="Rx RAR"] 
+   UeRrc <<- UeMac [label="NotifyRandomAccessProcedureEndOk"] 
+   === end non-contention based MAC Random Access Procedure ===
+   UeMac ->> UePhy [label="SendOverUlsch (RrcConnectionReconfigurationCompleted)"] 
+   UePhy ->> EnbPhy [label="TX over PUSCH"]
+   EnbPhy ->> EnbMac [label="RxOverUlsch (RrcConnectionReconfigurationCompleted)"]
+   EnbMac ->> EnbRrc [label="RxOverCcch (RrcConnectionReconfigurationCompleted)"]
+
+}
+
+

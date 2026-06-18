@@ -7,8 +7,68 @@ LICENSE file in the root directory of this source tree.
 #include "CSVWriter.hh"
 #include "Layer.hh"
 #include "astra-sim/system/MockNcclLog.h"
+#include <sstream>
 
 namespace AstraSim {
+
+static const char* MockGroupTypeToString(MockNccl::GroupType t) {
+  switch (t) {
+    case MockNccl::GroupType::TP: return "TP";
+    case MockNccl::GroupType::DP: return "DP";
+    case MockNccl::GroupType::PP: return "PP";
+    case MockNccl::GroupType::EP: return "EP";
+    case MockNccl::GroupType::DP_EP: return "DP_EP";
+    default: return "NONE";
+  }
+}
+
+// Format a rank list: show all if <=16, otherwise first 8 + ... + last 4
+static std::string formatRanks(const std::vector<int>& ranks) {
+  std::ostringstream oss;
+  oss << "[";
+  if (ranks.size() <= 16) {
+    for (size_t i = 0; i < ranks.size(); i++) {
+      if (i > 0) oss << ", ";
+      oss << ranks[i];
+    }
+  } else {
+    for (int i = 0; i < 8; i++) {
+      if (i > 0) oss << ", ";
+      oss << ranks[i];
+    }
+    oss << ", ...";
+    for (size_t i = ranks.size() - 4; i < ranks.size(); i++) {
+      oss << ", " << ranks[i];
+    }
+  }
+  oss << "]";
+  return oss.str();
+}
+
+// Print groups: show first few, some representative examples, and last
+static void printGroupList(
+    const std::vector<std::vector<int>>& groups,
+    const std::string& formula) {
+  int total = (int)groups.size();
+  if (total <= 10) {
+    for (int i = 0; i < total; i++) {
+      std::cout << "  Group[" << i << "]: ranks " << formatRanks(groups[i]) << std::endl;
+    }
+  } else {
+    // Show first 3
+    for (int i = 0; i < 3; i++) {
+      std::cout << "  Group[" << i << "]: ranks " << formatRanks(groups[i]) << std::endl;
+    }
+    std::cout << "  ..." << std::endl;
+    // Show a middle example
+    int mid = total / 2;
+    std::cout << "  Group[" << mid << "]: ranks " << formatRanks(groups[mid]) << std::endl;
+    std::cout << "  ..." << std::endl;
+    // Show last
+    std::cout << "  Group[" << total - 1 << "]: ranks " << formatRanks(groups[total - 1]) << std::endl;
+  }
+  std::cout << "  Formula: " << formula << std::endl;
+}
 Workload::~Workload() {
   if (end_to_end != nullptr) {
     delete end_to_end;
@@ -1488,8 +1548,27 @@ bool Workload::initialize_workload(std::string name) {
       }
     }
     if (generator->id == 0) {
-      std::cout << "id: " << id << " , depen: " << depen
-                << " , wg_comp_time: " << wg_compute_time << std::endl;
+      // Compute group sizes for display
+      int TP_sz = model_parallel_npu_group > 0 ? model_parallel_npu_group : 1;
+      int DP_sz = all_gpus > 0 ? all_gpus / TP_sz : 1;
+      int EP_sz = expert_parallel_npu_group > 0 ? expert_parallel_npu_group : 1;
+      int DP_EP_sz = DP_sz > 0 ? DP_sz / EP_sz : 1;
+
+      auto groupSize = [&](MockNccl::GroupType gt) -> int {
+        switch (gt) {
+          case MockNccl::GroupType::TP: return TP_sz;
+          case MockNccl::GroupType::DP: return DP_sz;
+          case MockNccl::GroupType::EP: return EP_sz;
+          case MockNccl::GroupType::DP_EP: return DP_EP_sz;
+          default: return 0;
+        }
+      };
+
+      std::cout << "[Layer " << i << "] " << id
+                << " | fwd: " << fp_comm_type_s << "(" << MockGroupTypeToString(fp_group_type) << ", " << groupSize(fp_group_type) << " ranks)"
+                << " | ig: " << ig_comm_type_s << "(" << MockGroupTypeToString(ig_group_type) << ", " << groupSize(ig_group_type) << " ranks)"
+                << " | wg: " << wg_comm_type_s << "(" << MockGroupTypeToString(wg_group_type) << ", " << groupSize(wg_group_type) << " ranks)"
+                << std::endl;
     }
     if (parallelismPolicy == ParallelismPolicy::HybridCustomized) {
       std::string specific_parallelsim;
@@ -1543,6 +1622,101 @@ bool Workload::initialize_workload(std::string name) {
               << " ,lines: " << lines
               << " compute scale: " << generator->compute_scale
               << " ,comm scale: " << generator->comm_scale << std::endl;
+
+    // === Communication Group Distribution (全局 rank 分布) ===
+    int TP_sz = model_parallel_npu_group > 0 ? model_parallel_npu_group : 1;
+    int DP_sz = all_gpus > 0 ? all_gpus / TP_sz : 1;
+    int EP_sz = expert_parallel_npu_group > 0 ? expert_parallel_npu_group : 1;
+    int DP_EP_sz = DP_sz > 0 ? DP_sz / EP_sz : 1;
+    int TP_nums = all_gpus / TP_sz;
+    int DP_nums = all_gpus / DP_sz;
+
+    std::cout << "\n========== Communication Group Distribution ==========" << std::endl;
+    std::cout << "Config: all_gpus=" << all_gpus
+              << ", TP=" << TP_sz << ", DP=" << DP_sz
+              << ", PP=" << pipeline_model_parallelism
+              << ", EP=" << EP_sz << ", DP_EP=" << DP_EP_sz << std::endl;
+    std::cout << "(Note: PP_size=1 in MockNcclGroup, PP from workload header is for AICB only)" << std::endl;
+
+    // --- TP groups ---
+    if (TP_sz > 1) {
+      std::vector<std::vector<int>> tp_groups;
+      tp_groups.reserve(TP_nums);
+      for (int i = 0; i < TP_nums; i++) {
+        std::vector<int> g;
+        for (int j = 0; j < TP_sz; j++) {
+          g.push_back(i * TP_sz + j);
+        }
+        tp_groups.push_back(g);
+      }
+      std::cout << "\n--- TP groups (size=" << TP_sz << ", count=" << TP_nums << ") ---" << std::endl;
+      printGroupList(tp_groups, "group[i] = [i*" + std::to_string(TP_sz) + " .. i*" + std::to_string(TP_sz) + "+" + std::to_string(TP_sz - 1) + "]");
+    }
+
+    // --- DP groups ---
+    if (DP_sz > 1) {
+      std::vector<std::vector<int>> dp_groups;
+      dp_groups.reserve(DP_nums);
+      for (int i = 0; i < DP_nums; i++) {
+        std::vector<int> g;
+        for (int j = 0; j < DP_sz; j++) {
+          g.push_back(i + j * DP_nums);
+        }
+        dp_groups.push_back(g);
+      }
+      std::cout << "\n--- DP groups (size=" << DP_sz << ", count=" << DP_nums << ") ---" << std::endl;
+      printGroupList(dp_groups, "group[i] = [i, i+" + std::to_string(DP_nums) + ", i+" + std::to_string(DP_nums * 2) + ", ...], stride=" + std::to_string(DP_nums));
+    }
+
+    // --- EP groups ---
+    // EP groups are formed by taking position k from EP_sz consecutive TP groups
+    if (EP_sz > 1) {
+      std::vector<std::vector<int>> ep_groups;
+      // Build TP group rank lists for reference
+      std::vector<std::vector<int>> tp_rank_lists(TP_nums);
+      for (int i = 0; i < TP_nums; i++) {
+        for (int j = 0; j < TP_sz; j++) {
+          tp_rank_lists[i].push_back(i * TP_sz + j);
+        }
+      }
+      for (int i = 0; i < TP_nums / EP_sz; i++) {
+        int tp_base = i * EP_sz;
+        for (int k = 0; k < TP_sz; k++) {
+          std::vector<int> g;
+          for (int l = tp_base; l < tp_base + EP_sz; l++) {
+            g.push_back(tp_rank_lists[l][k]);
+          }
+          ep_groups.push_back(g);
+        }
+      }
+      std::cout << "\n--- EP groups (size=" << EP_sz << ", count=" << ep_groups.size() << ") ---" << std::endl;
+      printGroupList(ep_groups, "For each " + std::to_string(EP_sz) + " consecutive TP groups, take position k from each");
+    }
+
+    // --- DP_EP groups ---
+    if (DP_EP_sz > 1) {
+      std::vector<std::vector<int>> dp_ep_groups;
+      std::vector<std::vector<int>> tp_rank_lists2(TP_nums);
+      for (int i = 0; i < TP_nums; i++) {
+        for (int j = 0; j < TP_sz; j++) {
+          tp_rank_lists2[i].push_back(i * TP_sz + j);
+        }
+      }
+      for (int i = 0; i < TP_nums / DP_EP_sz; i++) {
+        int tp_base = i;
+        for (int k = 0; k < TP_sz; k++) {
+          std::vector<int> g;
+          for (int l = tp_base; l < tp_base + DP_EP_sz * EP_sz; l += EP_sz) {
+            g.push_back(tp_rank_lists2[l][k]);
+          }
+          dp_ep_groups.push_back(g);
+        }
+      }
+      std::cout << "\n--- DP_EP groups (size=" << DP_EP_sz << ", count=" << dp_ep_groups.size() << ") ---" << std::endl;
+      printGroupList(dp_ep_groups, "Stride=" + std::to_string(EP_sz) + " TP groups apart, take " + std::to_string(DP_EP_sz) + " positions");
+    }
+
+    std::cout << "======================================================\n" << std::endl;
   }
   inFile.close();
   return true;

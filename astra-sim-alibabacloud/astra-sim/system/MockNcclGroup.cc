@@ -1,4 +1,4 @@
-/* 
+/*
 *Copyright (c) 2024, Alibaba Group;
 *Licensed under the Apache License, Version 2.0 (the "License");
 *you may not use this file except in compliance with the License.
@@ -14,21 +14,49 @@
 */
 #include "MockNcclGroup.h"
 #include "MockNcclChannel.h"
+#include "astra-sim/system/Sys.hh"
+#include <fstream>
+#include<set>
+#include <sstream>
 #include<vector>
 #include<map>
-#include<set>
 #include <queue>
 #include <cmath>
 #include <algorithm>
 #include "astra-sim/system/MockNcclLog.h"
+#ifdef USE_OXC_INTEGRATION
+#include "astra-sim/system/OxcIntegration.h"
+#endif
 using namespace std;
 namespace MockNccl {
+
+// Decoupled flow output helper — writes one SingleFlow to file in ImportFlows format
+static void _writeFlowRecord(std::ofstream &f, const SingleFlow &sf,
+                             uint32_t maxPkts, uint32_t port, uint32_t dport,
+                             double start_ns, int layer_num,
+                             int group_type, int op, int loopstate,
+                             uint64_t relative_delay_ns) {
+  f << sf.flow_id << " " << sf.src << " " << sf.dest << " "
+    << sf.flow_size << " " << sf.channel_id << " " << sf.chunk_id << " "
+    << sf.chunk_count << " " << sf.conn_type << " "
+    << start_ns << " 3 " << maxPkts << " " << port << " " << dport
+    << " " << sf.prev.size();
+  for (int pid : sf.prev) f << " " << pid;
+  f << " " << sf.parent_flow_id.size();
+  for (int pid : sf.parent_flow_id) f << " " << pid;
+  f << " " << sf.child_flow_id.size();
+  for (int cid : sf.child_flow_id) f << " " << cid;
+  f << " " << layer_num << " " << group_type << " " << op << " " << loopstate
+    << " " << relative_delay_ns << "\n";
+  f.flush();
+}
+
   MockNcclGroup::MockNcclGroup(int _ngpus,int _gpus_per_nodes,int _TP_size,int _DP_size,int _PP_size,int _EP_size,int _DP_EP_size,std::vector<int>_NVSwitch,GPUType _gpu_type):g_flow_id(0),gpu_type(_gpu_type){
     /*init groups
     */
     MockNcclLog *NcclLog = MockNcclLog::getInstance();
     if (_ngpus % _gpus_per_nodes != 0 || _ngpus / _gpus_per_nodes <= 0){
-      NcclLog->writeLog(NcclLogLevel::ERROR,"The number of GPUs used is not a multiple of the number of GPUs per node.");
+      NcclLog->writeLog(NcclLogLevel::ERROR,"The number of NPUs used is not a multiple of the number of NPUs per node.");
       return;
     }
     int all_group_idx = 0;
@@ -60,9 +88,11 @@ namespace MockNccl {
           TPnodes.insert(node_idx);
         }
         NVSwitchs.clear();
-        for(int idx:TPnodes){
-          NVSwitchs.push_back(_NVSwitch[idx]);
-          GroupIndex[std::make_pair(_NVSwitch[idx],TP)] = all_group_idx;
+        if(!_NVSwitch.empty()){
+          for(int idx:TPnodes){
+            NVSwitchs.push_back(_NVSwitch[idx]);
+            GroupIndex[std::make_pair(_NVSwitch[idx],TP)] = all_group_idx;
+          }
         }
         AllGroups[all_group_idx]=GroupInfo(all_group_idx,TP,nNodesPerTPGroup,_TP_size,ranks,NVSwitchs);
         all_group_idx ++;
@@ -82,9 +112,11 @@ namespace MockNccl {
           DPnodes.insert(node_idx);
         }
         NVSwitchs.clear();
-        for(int idx:DPnodes){
-          NVSwitchs.push_back(_NVSwitch[idx]);
-          GroupIndex[std::make_pair(_NVSwitch[idx],DP)] = all_group_idx;
+        if(!_NVSwitch.empty()){
+          for(int idx:DPnodes){
+            NVSwitchs.push_back(_NVSwitch[idx]);
+            GroupIndex[std::make_pair(_NVSwitch[idx],DP)] = all_group_idx;
+          }
         }
         AllGroups[all_group_idx]=GroupInfo(all_group_idx,DP,DPnodes.size(),_DP_size,ranks,NVSwitchs);
         all_group_idx ++;
@@ -118,9 +150,11 @@ namespace MockNccl {
               EPnodes.insert(node_idx);
             }
             NVSwitchs.clear();
-            for(int idx:EPnodes){
-              NVSwitchs.push_back(_NVSwitch[idx]);
-              GroupIndex[std::make_pair(_NVSwitch[idx],EP)] = all_group_idx;
+            if(!_NVSwitch.empty()){
+              for(int idx:EPnodes){
+                NVSwitchs.push_back(_NVSwitch[idx]);
+                GroupIndex[std::make_pair(_NVSwitch[idx],EP)] = all_group_idx;
+              }
             }
             AllGroups[all_group_idx] = GroupInfo(all_group_idx,EP,EPnodes.size(),_EP_size,ranks,NVSwitchs);
             all_group_idx++;
@@ -146,9 +180,11 @@ namespace MockNccl {
               DP_EP_nodes.insert(node_idx);
             }
             NVSwitchs.clear();
-            for (int idx : DP_EP_nodes){
-              NVSwitchs.push_back(_NVSwitch[idx]);
-              GroupIndex[std::make_pair(_NVSwitch[idx], DP_EP)] = all_group_idx;
+            if(!_NVSwitch.empty()){
+              for (int idx : DP_EP_nodes){
+                NVSwitchs.push_back(_NVSwitch[idx]);
+                GroupIndex[std::make_pair(_NVSwitch[idx], DP_EP)] = all_group_idx;
+              }
             }
             AllGroups[all_group_idx] = GroupInfo(all_group_idx, DP_EP, DP_EP_nodes.size(), _DP_EP_size, ranks, NVSwitchs);
             all_group_idx++;
@@ -156,6 +192,7 @@ namespace MockNccl {
         }
       }
     }
+    autoEnableFlowOutput();
     return;
   }
   
@@ -307,6 +344,16 @@ namespace MockNccl {
         break;
     }
     flow_model_name = flow_model_name + "_" + std::to_string(gp_idx) + "_" + std::to_string(layer_num) + "_" + std::to_string(static_cast<int>(loopstate)) + "_" + std::to_string(static_cast<int>(op)) + "_" + std::to_string(data_size);
+    // Check replay cache (populated by loadFlowsFromFile)
+    char replay_key[64];
+    snprintf(replay_key, sizeof(replay_key), "%d_%d_%d_%d",
+             (int)type, layer_num, (int)loopstate, (int)op);
+    if(flow_models.count(replay_key)){
+      FlowName2nums[flow_model_name]++;
+      auto& fm = flow_models[replay_key];
+      if(fm.count(rank)) return fm[rank];
+      return nullptr;
+    }
     if(flow_models.count(flow_model_name)){
       FlowName2nums[flow_model_name] ++;
       std::shared_ptr<void> presult;
@@ -318,6 +365,26 @@ namespace MockNccl {
       return presult;
     } else {
       flow_models[flow_model_name] = genFlowModels(type,rank,op,data_size);
+      if (_flow_file.is_open()) {
+        auto& rank2fm = flow_models[flow_model_name];
+        std::set<int> written;
+        for (auto& rkv : rank2fm)
+          for (auto& fkv : *rkv.second)
+            if (written.insert(fkv.first.second).second) {
+              const SingleFlow& sf = fkv.second;
+              _flow_buffer.push_back({
+                  sf,
+                  (uint32_t)((sf.flow_size + 4095) / 4096),
+                  (uint32_t)(sf.src * 100 + sf.dest),
+                  100,
+                  layer_num,
+                  (int)type,
+                  (int)op,
+                  (int)loopstate,
+                  0
+              });
+            }
+      }
       FlowName2nums[flow_model_name]= 1;
       return flow_models[flow_model_name][rank];
     }
@@ -660,6 +727,56 @@ namespace MockNccl {
   }
 
   std::map<int,std::shared_ptr<FlowModels>> MockNcclGroup::genAllReduceFlowModels(GroupType type , int rank,uint64_t data_size){
+    MockNcclLog* NcclLog = MockNcclLog::getInstance();
+
+#ifdef USE_OXC_INTEGRATION
+    // 检查是否应该使用 OXC
+    OxcIntegration::OxcAdapter& oxc_adapter = OxcIntegration::getGlobalOxcAdapter();
+
+    if (oxc_adapter.isEnabled() && oxc_adapter.isInitialized()) {
+        // 获取通信组的 rank 列表
+        int gp_idx = GroupIndex[std::make_pair(rank, type)];
+        GroupInfo gp_info = AllGroups[gp_idx];
+        std::vector<int> group_ranks = gp_info.Ranks;
+
+        // 转换 ComType
+        MockNccl::ComType mock_comm_type = MockNccl::ComType::All_Reduce;
+
+        if (oxc_adapter.shouldUseOxc(group_ranks, mock_comm_type)) {
+            NcclLog->writeLog(NcclLogLevel::DEBUG, "[OXC] Using OXC for AllReduce, group size: %d", group_ranks.size());
+
+            // 通过 OXC 生成流
+            std::map<std::pair<int,int>, SingleFlow> oxc_flows =
+                oxc_adapter.generateAllReduceFlows(group_ranks, data_size, g_flow_id, 0);
+
+            if (!oxc_flows.empty()) {
+                // 更新全局 flow_id
+                g_flow_id += static_cast<int>(oxc_flows.size());
+
+                // 按 src/dst 分配 flows 到各 rank（与 ring 生成一致）
+                std::map<int, FlowModels> rank2flowmodels;
+                for (auto& kv : oxc_flows) {
+                    int src = kv.second.src;
+                    int dst = kv.second.dest;
+                    rank2flowmodels[src][kv.first] = kv.second;
+                    rank2flowmodels[dst][kv.first] = kv.second;
+                }
+
+                std::map<int, std::shared_ptr<FlowModels>> rank2pflowmodels;
+                for (auto& kv : rank2flowmodels) {
+                    rank2pflowmodels[kv.first] = std::make_shared<FlowModels>(kv.second);
+                }
+
+                NcclLog->writeLog(NcclLogLevel::DEBUG, "[OXC] Generated %d flows via OXC", oxc_flows.size());
+                return rank2pflowmodels;
+            } else {
+                NcclLog->writeLog(NcclLogLevel::WARNING, "[OXC] Failed to generate flows via OXC, falling back to native");
+            }
+        }
+    }
+#endif
+
+    // 原有逻辑
     ncclInfo* ncc_info = get_algo_proto_info(type,rank,AstraSim::ComType::All_Reduce,data_size);
     switch (ncc_info->algorithm) {
       case NCCL_ALGO_TREE:
@@ -670,8 +787,12 @@ namespace MockNccl {
       case NCCL_ALGO_NVLS_TREE:
         return {};
       default:
-        break;
+        // 默认使用 Ring 算法
+        NcclLog->writeLog(NcclLogLevel::WARNING, "[MockNcclGroup] Unknown algorithm %d, falling back to Ring", ncc_info->algorithm);
+        return genAllReduceRingFlowModels(type, rank, data_size);
     }
+    // 不应该到达这里，但为了编译器警告添加返回
+    return genAllReduceRingFlowModels(type, rank, data_size);
   }
 
   std::shared_ptr<FlowModels> MockNcclGroup::genallReduceNVLSTreeFlowModels(
@@ -1446,7 +1567,7 @@ namespace MockNccl {
     data_size = data_size / nranks / ringchannels.size();
     bool PXN_ENABLE = false;
     const char* PXN_ENV = std::getenv("AS_PXN_ENABLE");
-    if (PXN_ENV == "1") {
+    if (PXN_ENV != nullptr && std::string(PXN_ENV) == "1") {
       PXN_ENABLE = true;
     } else {
       PXN_ENABLE = false;
@@ -1598,7 +1719,7 @@ namespace MockNccl {
               result[std::make_pair(ring_id, g_flow_id)] = tmp_result;
               g_flow_id++;
               prevranks.clear();
-              if(rank_it->first){
+              if(rank_it->first != -1){
                 prevranks = {rank_it->first};
               }
               tmp_result = SingleFlow(
@@ -1706,7 +1827,7 @@ namespace MockNccl {
     }
     gp_idx = GroupIndex[std::make_pair(rank,type)];
     gp_info = AllGroups[gp_idx];
-    if (gp_info.nNodes > 1) {
+    if (gp_info.nNodes > 1 || gp_info.NVSwitchs.empty()) {
       NcclLog->writeLog(NcclLogLevel::DEBUG," %d","error NVLS ALGO dont");
       return {};
     } else {
@@ -1738,6 +1859,10 @@ namespace MockNccl {
     }
     gp_idx = GroupIndex[std::make_pair(rank,type)];
     gp_info = AllGroups[gp_idx];
+    if(gp_info.NVSwitchs.empty()){
+      NcclLog->writeLog(NcclLogLevel::DEBUG,"NVSwitchs empty, skip NVLS tree");
+      return {};
+    }
     if(AllNVLStreechannels.count(gp_idx)){
       return AllNVLStreechannels[gp_idx];
     }
@@ -1848,6 +1973,7 @@ namespace MockNccl {
         right->up = cur;
         gen_nvls_tree_inter_channels(root->right,nodencclchannlenodes,nvlstreechannel);
       }
+      return nullptr;
     }
   }
 
@@ -2100,4 +2226,183 @@ namespace MockNccl {
     return info;
     }
   }
+
+// ── Decoupled mode: write flows to file for NS3 offline replay
+void MockNcclGroup::enableFlowFileOutput(const std::string &path) {
+  _flow_file.open(path, std::ios::out | std::ios::trunc);
+  // Write placeholder for total count — will be rewritten on finalize
+  _flow_file << "0\n";
+}
+
+void MockNcclGroup::autoEnableFlowOutput() {
+  const char *p = std::getenv("AS_DECOUPLED_OUTPUT");
+  if (p && p[0]) enableFlowFileOutput(p);
+}
+
+void MockNcclGroup::recordFlowSendTime(uint32_t flow_id) {
+    _flow_send_times[flow_id] = Sys::boostedTick();
+}
+
+void MockNcclGroup::recordFlowCompletionTime(uint32_t flow_id) {
+    _flow_completion_times[flow_id] = Sys::boostedTick();
+}
+
+void MockNcclGroup::finalizeFlowFile() {
+    if (!_flow_file.is_open() || _flow_buffer.empty()) {
+        if (_flow_file.is_open()) {
+            _flow_file << "0\n";
+            _flow_file.close();
+        }
+        return;
+    }
+
+    // Build per-rank map: rank → sorted list of (flow_id, completion_time)
+    // Needed because sf.prev[] contains rank IDs, not flow IDs.
+    std::unordered_map<uint32_t, std::vector<std::pair<uint32_t, uint64_t>>> rank_completions;
+    for (auto& entry : _flow_buffer) {
+        uint32_t fid = entry.sf.flow_id;
+        if (_flow_completion_times.count(fid)) {
+            rank_completions[entry.sf.src].push_back({fid, _flow_completion_times[fid]});
+            rank_completions[entry.sf.dest].push_back({fid, _flow_completion_times[fid]});
+        }
+    }
+    for (auto& kv : rank_completions) {
+        std::sort(kv.second.begin(), kv.second.end());
+    }
+
+    // Compute relative_delay_ns for each flow using completion times
+    // relative_delay_ns = send_time - max(prev completion times), clamped to 0
+    // prev[] contains rank IDs → resolve to most recent predecessor flow per rank
+    int zero_send_count = 0;
+    for (auto& entry : _flow_buffer) {
+        const auto& sf = entry.sf;
+        uint64_t my_send_time = 0;
+
+        if (_flow_send_times.count(sf.flow_id)) {
+            my_send_time = _flow_send_times[sf.flow_id];
+        } else {
+            zero_send_count++;
+        }
+
+        if (sf.prev.empty()) {
+            entry.relative_delay_ns = my_send_time;
+        } else {
+            uint64_t max_prev_completion = 0;
+            bool any_completion_recorded = false;
+            for (int prev_rank : sf.prev) {
+                auto rit = rank_completions.find((uint32_t)prev_rank);
+                if (rit == rank_completions.end()) continue;
+                const auto& pairs = rit->second;
+                // Find the most recent flow from this rank that is < sf.flow_id
+                auto lb = std::lower_bound(pairs.begin(), pairs.end(),
+                    std::make_pair(sf.flow_id, (uint64_t)0));
+                if (lb != pairs.begin()) {
+                    --lb;
+                    max_prev_completion = std::max(max_prev_completion, lb->second);
+                    any_completion_recorded = true;
+                }
+            }
+            if (!any_completion_recorded) {
+                // No predecessor completion data; use send_time as-is
+                // (first collective or no QP ever finished before this send)
+                entry.relative_delay_ns = my_send_time;
+            } else {
+                entry.relative_delay_ns = (my_send_time > max_prev_completion)
+                    ? (my_send_time - max_prev_completion) : 0;
+            }
+        }
+    }
+
+    if (zero_send_count > 0) {
+        std::cerr << "[Decoupled] WARNING: " << zero_send_count
+                  << " flows have send_time=0 (never recorded via sim_send())" << std::endl;
+    }
+
+    // Step 3: Write all flows to file
+    _flow_file.seekp(0);
+    _flow_file << _flow_buffer.size() << "\n";
+
+    for (auto& entry : _flow_buffer) {
+        _writeFlowRecord(_flow_file, entry.sf,
+            entry.max_pkts, entry.port, entry.dport,
+            0.0,
+            entry.layer_num, entry.group_type, entry.op, entry.loopstate,
+            entry.relative_delay_ns);
+    }
+
+    _flow_file.close();
+    std::cout << "[Decoupled] Flow file written: " << _flow_buffer.size()
+              << " flows" << std::endl;
+}
+
+// ── Replay mode: pre-load flows from file into flow_models cache ──
+void MockNcclGroup::loadFlowsFromFile() {
+  const char *p = std::getenv("AS_REPLAY_MODE");
+  if (!p || p[0] != '1') return;
+  p = std::getenv("AS_FLOW_FILE");
+  if (!p || !p[0]) return;
+  std::ifstream ff(p);
+  if (!ff.is_open()) return;
+
+  std::string dummy;
+  std::getline(ff, dummy); // skip header
+  // Pre-load: parse flows, group by cache key
+  struct ParsedFlow { SingleFlow sf; int layer_num, group_type, op, loopstate; };
+  std::map<std::string, std::vector<ParsedFlow>> groups;
+  while (std::getline(ff, dummy)) {
+    if (dummy.empty()) continue;
+    std::istringstream is(dummy);
+    ParsedFlow pf;
+    uint32_t np;
+    is >> pf.sf.flow_id >> pf.sf.src >> pf.sf.dest >> pf.sf.flow_size
+       >> pf.sf.channel_id >> pf.sf.chunk_id >> pf.sf.chunk_count
+       >> pf.sf.conn_type;
+    { double st; uint32_t pg, mpc, port, dport;
+      is >> st >> pg >> mpc >> port >> dport >> np;
+      for (uint32_t j=0; j<np; j++) { uint32_t pid; is >> pid; pf.sf.prev.push_back(pid); }
+    }
+      { uint32_t npar, nchi;
+        is >> npar;
+        for (uint32_t j=0; j<npar; j++) { int pid; is >> pid; pf.sf.parent_flow_id.push_back(pid); }
+        is >> nchi;
+        for (uint32_t j=0; j<nchi; j++) { int cid; is >> cid; pf.sf.child_flow_id.push_back(cid); }
+      }
+    is >> pf.layer_num >> pf.group_type >> pf.op >> pf.loopstate;
+    { uint64_t dummy_rdn; if (!(is >> dummy_rdn)) { /* legacy format, no relative_delay_ns */ } }
+    // Build cache key: group_type_layerNum_loopstate_op (no rank)
+    char key[128];
+    snprintf(key, sizeof(key), "%d_%d_%d_%d",
+             pf.group_type, pf.layer_num, pf.loopstate, pf.op);
+    groups[key].push_back(pf);
+  }
+  // Populate flow_models cache for each (src_rank, key)
+  for (auto& gkv : groups) {
+    for (auto& pf : gkv.second) {
+      int rank = pf.sf.src;
+      auto& fm = flow_models[gkv.first];
+      if (fm.find(rank) == fm.end())
+        fm[rank] = std::make_shared<FlowModels>();
+      (*fm[rank])[std::make_pair(pf.sf.channel_id, pf.sf.flow_id)] = pf.sf;
+      // Also add for dst rank
+      rank = pf.sf.dest;
+      if (fm.find(rank) == fm.end())
+        fm[rank] = std::make_shared<FlowModels>();
+      (*fm[rank])[std::make_pair(pf.sf.channel_id, pf.sf.flow_id)] = pf.sf;
+    }
+  }
+  MockNcclLog* NcclLog = MockNcclLog::getInstance();
+  NcclLog->writeLog(NcclLogLevel::INFO, "[Replay] pre-loaded %d flow groups from %s", groups.size(), p);
+}
+
+MockNcclGroup::~MockNcclGroup() {
+    if (_flow_file.is_open() && !_flow_buffer.empty()) {
+        std::cerr << "[Decoupled] WARNING: finalizeFlowFile() was not called explicitly; calling from destructor" << std::endl;
+        finalizeFlowFile();
+    }
+    if (_flow_file.is_open()) {
+        _flow_file.seekp(0);
+        _flow_file << _flow_buffer.size() << std::endl;
+        _flow_file.close();
+    }
+}
 }

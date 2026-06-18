@@ -1,0 +1,675 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1780986298752,
+  "projectRoot": "/Users/anthony/PycharmProjects/SimAI",
+  "techStack": {
+    "languages": [
+      {
+        "name": "Python",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "pyproject.toml"
+        ]
+      }
+    ],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": "python3 -m pytest edg/tests/ -v -k \"not binary and not launch and not participating_server_ips and not crosses\" 2>&1 | tail -10",
+    "lintCommand": "ruff check",
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "bin",
+      "docs",
+      "scripts",
+      "tests"
+    ],
+    "gitBranches": {
+      "defaultBranch": "master",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [
+    {
+      "timestamp": 1781760731322,
+      "source": "manual",
+      "category": "debugging",
+      "content": "Decoupled Replay Troubleshooting: (1) Empty flow file (count=0): Copy workspace workload to SimAI root dir, reference with relative path -w ./workload.txt. Source: paths in workspace-generated workloads don't resolve during simulation. (2) All-zero relative_delay_ns: NS3 backend must be active; analytical mode doesn't call sim_send() → no send times recorded. Verify with AS_DECOUPLED_OUTPUT set before run. (3) flow_reader.h backward compat: legacy files without relative_delay_ns column default to 0."
+    }
+  ],
+  "directoryMap": {
+    "DataCollector": {
+      "path": "DataCollector",
+      "purpose": null,
+      "fileCount": 3,
+      "lastAccessed": 1780986298736,
+      "keyFiles": [
+        "__init__.py",
+        "app.py",
+        "config.py"
+      ]
+    },
+    "SimCCL": {
+      "path": "SimCCL",
+      "purpose": null,
+      "fileCount": 3,
+      "lastAccessed": 1780986298736,
+      "keyFiles": [
+        "LICENSE",
+        "README.md"
+      ]
+    },
+    "aicb": {
+      "path": "aicb",
+      "purpose": null,
+      "fileCount": 8,
+      "lastAccessed": 1780986298736,
+      "keyFiles": [
+        "Dockerfile",
+        "License",
+        "README.md",
+        "aicb.py",
+        "requirements.txt"
+      ]
+    },
+    "astra-sim-alibabacloud": {
+      "path": "astra-sim-alibabacloud",
+      "purpose": null,
+      "fileCount": 3,
+      "lastAccessed": 1780986298736,
+      "keyFiles": [
+        "CMakeLists.txt",
+        "LICENSE",
+        "build.sh"
+      ]
+    },
+    "bin": {
+      "path": "bin",
+      "purpose": "Executable scripts",
+      "fileCount": 1,
+      "lastAccessed": 1780986298737,
+      "keyFiles": [
+        "SimAI_oxc"
+      ]
+    },
+    "dashboard": {
+      "path": "dashboard",
+      "purpose": null,
+      "fileCount": 16,
+      "lastAccessed": 1780986298737,
+      "keyFiles": [
+        "E2E_TEST_INVENTORY.md",
+        "README.md",
+        "eslint.config.js",
+        "index.html",
+        "package-lock.json"
+      ]
+    },
+    "docs": {
+      "path": "docs",
+      "purpose": "Documentation",
+      "fileCount": 10,
+      "lastAccessed": 1780986298737,
+      "keyFiles": [
+        "OEC-Sim-Platform-Software-Design.md",
+        "SimAI-BlueZone-AI-Development-Report.md",
+        "SimAI-OXC-Design.md",
+        "SimAI-OXC-Design.pdf",
+        "SimAI-OXC-Integration.md"
+      ]
+    },
+    "edg_data": {
+      "path": "edg_data",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1780986298737,
+      "keyFiles": []
+    },
+    "example": {
+      "path": "example",
+      "purpose": null,
+      "fileCount": 14,
+      "lastAccessed": 1780986298737,
+      "keyFiles": [
+        "busbw.yaml",
+        "microAllReduce.txt",
+        "microAllReduce_128g.txt",
+        "microAllReduce_16g.txt",
+        "microAllReduce_32g.txt"
+      ]
+    },
+    "harness-lra-workflow": {
+      "path": "harness-lra-workflow",
+      "purpose": null,
+      "fileCount": 3,
+      "lastAccessed": 1780986298738,
+      "keyFiles": [
+        "CHANGELOG.md",
+        "SKILL.md"
+      ]
+    },
+    "ns-3-alibabacloud": {
+      "path": "ns-3-alibabacloud",
+      "purpose": null,
+      "fileCount": 3,
+      "lastAccessed": 1780986298738,
+      "keyFiles": [
+        "LICENSE",
+        "README.md"
+      ]
+    },
+    "results": {
+      "path": "results",
+      "purpose": null,
+      "fileCount": 8,
+      "lastAccessed": 1780986298738,
+      "keyFiles": [
+        "DeepSeek-16B-tp4-pp1-dp2-ep4-g32-mov9cb0y-EndToEnd.csv",
+        "GPT-7B-tp8-pp1-dp1-ep1-g8-mp105f48-EndToEnd.csv",
+        "LLaMA-7B-tp8-pp1-dp1-ep1-g8-mojt1c5y-EndToEnd.csv",
+        "ncclFlowModel_EndToEnd.csv",
+        "npu_smoke_EndToEnd.csv"
+      ]
+    },
+    "scripts": {
+      "path": "scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 12,
+      "lastAccessed": 1780986298738,
+      "keyFiles": [
+        "benchmark_oxc.sh",
+        "build.sh",
+        "lld_to_topology.py",
+        "lra-context-save.sh",
+        "lra-gate.py"
+      ]
+    },
+    "server": {
+      "path": "server",
+      "purpose": null,
+      "fileCount": 6,
+      "lastAccessed": 1780986298738,
+      "keyFiles": [
+        "__init__.py",
+        "app.py",
+        "config.py",
+        "processes.db",
+        "sessions.db"
+      ]
+    },
+    "test-results": {
+      "path": "test-results",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1780986298738,
+      "keyFiles": [
+        "ns3-fullmesh-after-launch.png"
+      ]
+    },
+    "tests": {
+      "path": "tests",
+      "purpose": "Test files",
+      "fileCount": 3,
+      "lastAccessed": 1780986298739,
+      "keyFiles": [
+        "__init__.py",
+        "conftest.py",
+        "run-e2e.sh"
+      ]
+    },
+    "topology": {
+      "path": "topology",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1780986298739,
+      "keyFiles": []
+    },
+    "vidur-alibabacloud": {
+      "path": "vidur-alibabacloud",
+      "purpose": null,
+      "fileCount": 13,
+      "lastAccessed": 1780986298739,
+      "keyFiles": [
+        "CODE_OF_CONDUCT.md",
+        "LICENSE",
+        "Makefile",
+        "README-vidur.md",
+        "README.md"
+      ]
+    },
+    "SimCCL/docs": {
+      "path": "SimCCL/docs",
+      "purpose": "Documentation",
+      "fileCount": 0,
+      "lastAccessed": 1780986298739,
+      "keyFiles": []
+    },
+    "astra-sim-alibabacloud/build": {
+      "path": "astra-sim-alibabacloud/build",
+      "purpose": "Build output",
+      "fileCount": 0,
+      "lastAccessed": 1780986298740,
+      "keyFiles": []
+    },
+    "dashboard/dist": {
+      "path": "dashboard/dist",
+      "purpose": "Distribution/build output",
+      "fileCount": 3,
+      "lastAccessed": 1780986298741,
+      "keyFiles": [
+        "index.html",
+        "logo.png",
+        "mockServiceWorker.js"
+      ]
+    },
+    "dashboard/node_modules": {
+      "path": "dashboard/node_modules",
+      "purpose": "Dependencies",
+      "fileCount": 1,
+      "lastAccessed": 1780986298742,
+      "keyFiles": []
+    },
+    "docs/assets": {
+      "path": "docs/assets",
+      "purpose": "Static assets",
+      "fileCount": 7,
+      "lastAccessed": 1780986298742,
+      "keyFiles": [
+        "17693936612738.jpg",
+        "17693936986507.jpg",
+        "17693939045464.jpg"
+      ]
+    },
+    "harness-lra-workflow/scripts": {
+      "path": "harness-lra-workflow/scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 3,
+      "lastAccessed": 1780986298742,
+      "keyFiles": [
+        "install.sh",
+        "lra-gate.py",
+        "quick_status.py"
+      ]
+    },
+    "ns-3-alibabacloud/docs": {
+      "path": "ns-3-alibabacloud/docs",
+      "purpose": "Documentation",
+      "fileCount": 0,
+      "lastAccessed": 1780986298743,
+      "keyFiles": []
+    },
+    "server/bin": {
+      "path": "server/bin",
+      "purpose": "Executable scripts",
+      "fileCount": 1,
+      "lastAccessed": 1780986298744,
+      "keyFiles": [
+        "SimAI_oxc"
+      ]
+    },
+    "tests/api": {
+      "path": "tests/api",
+      "purpose": "API routes",
+      "fileCount": 2,
+      "lastAccessed": 1780986298746,
+      "keyFiles": [
+        "__init__.py",
+        "conftest.py"
+      ]
+    },
+    "tests/fixtures": {
+      "path": "tests/fixtures",
+      "purpose": "Test fixtures",
+      "fileCount": 0,
+      "lastAccessed": 1780986298746,
+      "keyFiles": []
+    },
+    "vidur-alibabacloud/assets": {
+      "path": "vidur-alibabacloud/assets",
+      "purpose": "Static assets",
+      "fileCount": 6,
+      "lastAccessed": 1780986298746,
+      "keyFiles": [
+        "batch_size.png",
+        "chrome_trace.png",
+        "decode_time_execution_plus_preemption_normalized.png"
+      ]
+    },
+    "vidur-alibabacloud/docs": {
+      "path": "vidur-alibabacloud/docs",
+      "purpose": "Documentation",
+      "fileCount": 2,
+      "lastAccessed": 1780986298746,
+      "keyFiles": [
+        "metrics.md",
+        "profiling.md"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "progress.md",
+      "accessCount": 80,
+      "lastAccessed": 1780974546308,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/astra-sim/system/MockNcclGroup.cc",
+      "accessCount": 80,
+      "lastAccessed": 1781759684601,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/astra-sim/network_frontend/ns3/entry.h",
+      "accessCount": 44,
+      "lastAccessed": 1780883824445,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/astra-sim/network_frontend/ns3/AstraSimNetwork.cc",
+      "accessCount": 43,
+      "lastAccessed": 1780883824523,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/astra-sim/system/Sys.cc",
+      "accessCount": 18,
+      "lastAccessed": 1780390621233,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/astra-sim/system/MockNcclGroup.h",
+      "accessCount": 15,
+      "lastAccessed": 1780390643434,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/astra-sim/system/Sys.hh",
+      "accessCount": 7,
+      "lastAccessed": 1780390628290,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/scratch/entry.h",
+      "accessCount": 5,
+      "lastAccessed": 1780131763553,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/astra-sim/system/AstraNetworkAPI.hh",
+      "accessCount": 4,
+      "lastAccessed": 1780305071589,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/astra-sim/workload/Workload.hh",
+      "accessCount": 4,
+      "lastAccessed": 1780390640194,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/applications/CMakeLists.txt",
+      "accessCount": 4,
+      "lastAccessed": 1781760530881,
+      "type": "file"
+    },
+    {
+      "path": "ncclFlowModel_EndToEnd.csv",
+      "accessCount": 3,
+      "lastAccessed": 1780565276396,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/point-to-point/model/rdma-hw.h",
+      "accessCount": 2,
+      "lastAccessed": 1780131667688,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/core/model/ptr.h",
+      "accessCount": 2,
+      "lastAccessed": 1780131756747,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/astra-sim/system/RecvPacketEventHadndlerData.hh",
+      "accessCount": 2,
+      "lastAccessed": 1780132673816,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/astra-sim/system/StreamBaseline.cc",
+      "accessCount": 2,
+      "lastAccessed": 1780305061941,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/astra-sim/network_frontend/phynet/SimAiEntry.cc",
+      "accessCount": 2,
+      "lastAccessed": 1780305124858,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/scratch/common.h",
+      "accessCount": 2,
+      "lastAccessed": 1780545389472,
+      "type": "file"
+    },
+    {
+      "path": "fullmesh_8g_cmp.txt",
+      "accessCount": 1,
+      "lastAccessed": 1780122066500,
+      "type": "file"
+    },
+    {
+      "path": "results/ncclFlowModel_EndToEnd.csv",
+      "accessCount": 1,
+      "lastAccessed": 1780122502557,
+      "type": "file"
+    },
+    {
+      "path": "server/tests/test_smoke.py",
+      "accessCount": 1,
+      "lastAccessed": 1780122521545,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/applications/model/rdma-client.cc",
+      "accessCount": 1,
+      "lastAccessed": 1780131544415,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/network/model/application.cc",
+      "accessCount": 1,
+      "lastAccessed": 1780131544468,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/applications/helper/rdma-client-helper.cc",
+      "accessCount": 1,
+      "lastAccessed": 1780131544520,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/applications/model/rdma-client.h",
+      "accessCount": 1,
+      "lastAccessed": 1780131544561,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/applications/helper/rdma-client-helper.h",
+      "accessCount": 1,
+      "lastAccessed": 1780131544578,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/network/model/application.h",
+      "accessCount": 1,
+      "lastAccessed": 1780131544613,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/core/model/simulator.h",
+      "accessCount": 1,
+      "lastAccessed": 1780131552121,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/core/model/simulator.cc",
+      "accessCount": 1,
+      "lastAccessed": 1780131552163,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/network/model/node.cc",
+      "accessCount": 1,
+      "lastAccessed": 1780131552177,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/core/model/object.cc",
+      "accessCount": 1,
+      "lastAccessed": 1780131552212,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/core/model/object.h",
+      "accessCount": 1,
+      "lastAccessed": 1780131552267,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/scratch/AstraSimNetwork.cc",
+      "accessCount": 1,
+      "lastAccessed": 1780131555487,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/core/model/default-simulator-impl.cc",
+      "accessCount": 1,
+      "lastAccessed": 1780131557119,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/core/model/map-scheduler.cc",
+      "accessCount": 1,
+      "lastAccessed": 1780131656048,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/network/helper/application-container.cc",
+      "accessCount": 1,
+      "lastAccessed": 1780131656097,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/point-to-point/model/rdma-driver.cc",
+      "accessCount": 1,
+      "lastAccessed": 1780131656111,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/point-to-point/model/rdma-driver.h",
+      "accessCount": 1,
+      "lastAccessed": 1780131656155,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/core/model/scheduler.h",
+      "accessCount": 1,
+      "lastAccessed": 1780131662558,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/point-to-point/model/rdma-hw.cc",
+      "accessCount": 1,
+      "lastAccessed": 1780131669797,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/extern/network_backend/ns3-interface/simulation/src/core/model/default-simulator-impl.h",
+      "accessCount": 1,
+      "lastAccessed": 1780131750711,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/astra-sim/system/BaseStream.hh",
+      "accessCount": 1,
+      "lastAccessed": 1780132673867,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/astra-sim/system/BasicEventHandlerData.hh",
+      "accessCount": 1,
+      "lastAccessed": 1780132673882,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/astra-sim/system/BaseStream.cc",
+      "accessCount": 1,
+      "lastAccessed": 1780132690632,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/astra-sim/system/CollectivePhase.hh",
+      "accessCount": 1,
+      "lastAccessed": 1780132690686,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/astra-sim/system/RecvPacketEventHadndlerData.cc",
+      "accessCount": 1,
+      "lastAccessed": 1780132690745,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/astra-sim/system/CollectivePhase.cc",
+      "accessCount": 1,
+      "lastAccessed": 1780132695702,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/astra-sim/system/BasicEventHandlerData.cc",
+      "accessCount": 1,
+      "lastAccessed": 1780132695754,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/astra-sim/system/CallData.hh",
+      "accessCount": 1,
+      "lastAccessed": 1780132695810,
+      "type": "file"
+    },
+    {
+      "path": "astra-sim-alibabacloud/astra-sim/system/StreamBaseline.hh",
+      "accessCount": 1,
+      "lastAccessed": 1780132698382,
+      "type": "file"
+    }
+  ],
+  "userDirectives": [
+    {
+      "timestamp": 1778135550230,
+      "directive": "禁止修改 feature_list.json 和 progress.md 的格式/结构，只能增删查条目。这两个文件的 schema 是固定的，hooks 和 init.sh 必须适配现有格式，不能反过来改数据文件去适配脚本。",
+      "context": "",
+      "source": "explicit",
+      "priority": "normal"
+    }
+  ]
+}

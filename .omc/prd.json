@@ -1,0 +1,27 @@
+{
+  "title": "OXC拓扑 2层workload 端到端计算通信占比修复",
+  "stories": [
+    {
+      "id": "S01",
+      "title": "GPU-Leaf带宽对齐NVLink + rate map补齐",
+      "acceptanceCriteria": [
+        "ns3_emitter GPU-Leaf使用server_intra_bw而非bandwidth",
+        "SimAI.conf KMAX/KMIN/PMAX_MAP含2400Gbps条目",
+        "2层workload手动跑OXC binary结果TP=551(33.15%) Total=1663",
+        "与官方Spectrum-X一致"
+      ],
+      "passes": false,
+      "blocked": "NS3 small-topology fixed overhead ~164ms/op; not fixable via config or emitter"
+    },
+    {
+      "id": "S02",
+      "title": "Playwright端到端验证dashboard",
+      "acceptanceCriteria": [
+        "通过API启动仿真，Playwright确认结果页TP≈33% compute≈67%"
+      ],
+      "passes": false,
+      "blocked": "NS3 small-topology fixed overhead ~164ms/op; not fixable via config or emitter"
+    }
+  ],
+  "resolution": "2层微测试不适合OXC拓扑验证; NS3事件开销在小规模拓扑上主导; 全量workload已正确(TP=2.72%); 建议用全量workload做Playwright验证"
+}

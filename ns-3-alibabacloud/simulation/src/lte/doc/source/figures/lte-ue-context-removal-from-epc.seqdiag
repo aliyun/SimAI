@@ -1,0 +1,16 @@
+
+diagram {
+
+          LteEnbRrc; UeManager; EpcEnbApplication; EpcMmeApplication; EpcSgwApplication; EpcPgwApplication; UeInfo;
+
+          LteEnbRrc ->> UeManager [label="RecvIdealUeContext\nRemoveRequest (rnti)"];
+          UeManager ->> EpcEnbApplication [label="DoSendReleaseIndication\n(Imsi, rnti, bearerId)"];
+          EpcEnbApplication ->> EpcMmeApplication [label="ErabReleaseIndication\n(imsi, rnti, erabToBeReleaseIndication)"];
+          EpcMmeApplication ->> EpcSgwApplication [label="DeleteBearerCommand"];
+          EpcSgwApplication ->> EpcPgwApplication [label="DeleteBearerCommand"];
+          EpcSgwApplication <<- EpcPgwApplication [label="DeleteBearerRequest"];
+          EpcMmeApplication <<- EpcSgwApplication [label="DeleteBearerRequest"];
+          EpcMmeApplication ->> EpcSgwApplication [label="DeleteBearerResponse"];
+          EpcSgwApplication ->> EpcPgwApplication [label="DeleteBearerResponse"];
+          EpcPgwApplication ->> UeInfo [label="RemoveBearer (epsBearerId)"];
+}

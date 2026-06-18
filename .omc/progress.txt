@@ -1,0 +1,33 @@
+# Dashboard 文件传递系统重构 — Progress
+
+## Session: 2026-04-17
+
+### US-001: workload_path 传递链路 — DONE
+- results_routes.py: _extract_workload_path, api_list_tasks 返回 workload_path
+- simulation-api.ts: CompletedTask.workload_path, loadResultByFilepath(filepath, workloadPath)
+- ResultsPage.tsx: handleLoadTask 传递 task.workload_path
+
+### US-002: 通信域 group 按 index 匹配 — DONE
+- visualizer.py: _build_layer_comm_groups 返回 list, parse_endtoend_csv 用 layer_idx
+- 验证: ep_test 正确识别 EP(8) DP_EP(2)
+
+### US-003: 独立结果 workload 自动匹配 — DONE
+- _find_workload_for_result 按 layer 数量匹配, 搜索 workspaces/ + example/
+
+### US-004: LayerTimingChart 坐标归一化 — DONE
+- scale = contentW / totalTime, 所有坐标统一使用
+
+### US-005: LayerTimingChart 拖拽修复 — DONE
+- handlePointerMove 加 isDragging 检查, 移除 console.log
+
+### US-006: visualize_workload.py EndToEnd.csv 支持 — DONE
+- parse_endtoend_csv(), build_timeline(endtoend_layers=), --result, ZeroDivisionError fix
+
+### Files Changed
+- server/simulation/visualizer.py
+- server/simulation/results_routes.py
+- dashboard/src/components/charts/LayerTimingChart.tsx
+- dashboard/src/api/simulation-api.ts
+- dashboard/src/pages/ResultsPage.tsx
+- scripts/visualize_workload.py
+- example/workload_ep_test.txt (new)

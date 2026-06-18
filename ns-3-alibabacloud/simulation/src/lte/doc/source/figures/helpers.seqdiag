@@ -1,0 +1,34 @@
+diagram {
+
+SimProgram; LteHelper; EpcHelper; 
+
+SimProgram => LteHelper [label="create"]
+SimProgram => EpcHelper [label="create"] {
+  EpcHelper -> EpcHelper [label="create MME, SGW and PGW"]
+}
+
+SimProgram => LteHelper [label="InstallEnbDevice"] {
+  LteHelper -> LteHelper [label="install protocol stack on eNB"]
+  LteHelper => EpcHelper [label="AddEnb"] {
+    EpcHelper -> EpcHelper [label="setup S1-U, S1-AP, S5 and S11"]
+  }
+}
+
+SimProgram => LteHelper [label="InstallUeDevice"] {
+  LteHelper -> LteHelper [label="install protocol stack on UE"]
+}
+
+SimProgram => LteHelper [label="Attach (UE, eNB)"] {
+  LteHelper -> LteHelper [label="tell UE NAS to start connection"]
+  LteHelper => EpcHelper [label="ActivateEpsBearer (default)"] {
+    EpcHelper -> EpcHelper [label="tell MME to activate bearer when UE connects"]
+  }
+}
+
+SimProgram => LteHelper [label="ActivateDedicatedEpsBearer"] {
+  LteHelper => EpcHelper [label="ActivateEpsBearer"] {
+    EpcHelper -> EpcHelper [label="tell MME to activate bearer when UE connects"]
+  }
+}
+
+}

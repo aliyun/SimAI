@@ -1,0 +1,4 @@
+ExampleFunction received event at 10s
+RandomFunction received event at 18.1653s
+Member method received event at 20s started at 10s
+Code within a lambda expression at time +25s

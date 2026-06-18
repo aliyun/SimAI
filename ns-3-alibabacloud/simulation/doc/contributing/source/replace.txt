@@ -1,0 +1,5 @@
+.. |ns3| replace:: *ns-3*
+
+.. |ns2| replace:: *ns-2*
+
+.. |check| replace:: :math:`\checkmark`

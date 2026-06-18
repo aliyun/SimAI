@@ -1,0 +1,22 @@
+/**
+ * @file
+ * @ingroup utils
+ * @brief Definition of support modules Constants, Utils, Example programs and
+ * Test suites.
+ */
+/**
+ * @anchor modules_anchor
+ *
+ * @defgroup constants Constants
+ * @brief Constants you can change
+ *
+ * @defgroup utils Utils
+ * @brief The utils directory is for various programs and scripts related 
+ * to code coverage, test suites, style checking, and benchmarking.
+ *
+ * @defgroup examples Example programs
+ * @brief All example programs
+ *
+ * @defgroup tests Test suites
+ * @brief All test suites
+ */

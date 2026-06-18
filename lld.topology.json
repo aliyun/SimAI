@@ -1,0 +1,370 @@
+{
+  "podId": "POD#1",
+  "paraPlaneId": "1",
+  "nodes": [
+    {
+      "id": "OXC_24150",
+      "type": "OXC",
+      "label": "OXC\n10.118.241.50",
+      "position": {
+        "x": 500,
+        "y": 50
+      },
+      "metadata": {
+        "nodeIp": "10.118.241.50",
+        "paraPlaneId": "NULL"
+      }
+    },
+    {
+      "id": "LEAF_24125",
+      "type": "LEAF",
+      "label": "LEAF\n10.118.241.25",
+      "position": {
+        "x": 125,
+        "y": 350
+      },
+      "metadata": {
+        "nodeIp": "10.118.241.25",
+        "paraPlaneId": "1"
+      }
+    },
+    {
+      "id": "LEAF_24126",
+      "type": "LEAF",
+      "label": "LEAF\n10.118.241.26",
+      "position": {
+        "x": 375,
+        "y": 350
+      },
+      "metadata": {
+        "nodeIp": "10.118.241.26",
+        "paraPlaneId": "2"
+      }
+    },
+    {
+      "id": "LEAF_24127",
+      "type": "LEAF",
+      "label": "LEAF\n10.118.241.27",
+      "position": {
+        "x": 625,
+        "y": 350
+      },
+      "metadata": {
+        "nodeIp": "10.118.241.27",
+        "paraPlaneId": "3"
+      }
+    },
+    {
+      "id": "LEAF_24128",
+      "type": "LEAF",
+      "label": "LEAF\n10.118.241.28",
+      "position": {
+        "x": 875,
+        "y": 350
+      },
+      "metadata": {
+        "nodeIp": "10.118.241.28",
+        "paraPlaneId": "4"
+      }
+    },
+    {
+      "id": "SERVER_2411",
+      "type": "SERVER",
+      "label": "A2\n10.118.241.1",
+      "position": {
+        "x": 125,
+        "y": 550
+      },
+      "metadata": {
+        "nodeIp": "10.118.241.1",
+        "serverType": "A2",
+        "paraPlaneId": "1"
+      }
+    },
+    {
+      "id": "SERVER_2417",
+      "type": "SERVER",
+      "label": "A2\n10.118.241.7",
+      "position": {
+        "x": 375,
+        "y": 550
+      },
+      "metadata": {
+        "nodeIp": "10.118.241.7",
+        "serverType": "A2",
+        "paraPlaneId": "2"
+      }
+    },
+    {
+      "id": "SERVER_24112",
+      "type": "SERVER",
+      "label": "A2\n10.118.241.12",
+      "position": {
+        "x": 625,
+        "y": 550
+      },
+      "metadata": {
+        "nodeIp": "10.118.241.12",
+        "serverType": "A2",
+        "paraPlaneId": "3"
+      }
+    },
+    {
+      "id": "SERVER_24115",
+      "type": "SERVER",
+      "label": "A2\n10.118.241.15",
+      "position": {
+        "x": 875,
+        "y": 550
+      },
+      "metadata": {
+        "nodeIp": "10.118.241.15",
+        "serverType": "A2",
+        "paraPlaneId": "4"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "LEAF_24125-OXC_24150",
+      "source": "LEAF_24125",
+      "target": "OXC_24150",
+      "portMapping": {
+        "sourcePorts": [
+          "17",
+          "18",
+          "19",
+          "20"
+        ],
+        "targetPorts": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ]
+      },
+      "metrics": {
+        "utilization": 0.0,
+        "linkCount": 4,
+        "errorRate": 0.0,
+        "bandwidthGbps": 400,
+        "latencyUs": 3.0
+      }
+    },
+    {
+      "id": "LEAF_24126-OXC_24150",
+      "source": "LEAF_24126",
+      "target": "OXC_24150",
+      "portMapping": {
+        "sourcePorts": [
+          "17",
+          "18",
+          "19",
+          "20"
+        ],
+        "targetPorts": [
+          "5",
+          "6",
+          "7",
+          "8"
+        ]
+      },
+      "metrics": {
+        "utilization": 0.0,
+        "linkCount": 4,
+        "errorRate": 0.0,
+        "bandwidthGbps": 400,
+        "latencyUs": 3.0
+      }
+    },
+    {
+      "id": "LEAF_24127-OXC_24150",
+      "source": "LEAF_24127",
+      "target": "OXC_24150",
+      "portMapping": {
+        "sourcePorts": [
+          "17",
+          "18",
+          "19",
+          "20"
+        ],
+        "targetPorts": [
+          "9",
+          "10",
+          "11",
+          "12"
+        ]
+      },
+      "metrics": {
+        "utilization": 0.0,
+        "linkCount": 4,
+        "errorRate": 0.0,
+        "bandwidthGbps": 400,
+        "latencyUs": 3.0
+      }
+    },
+    {
+      "id": "LEAF_24128-OXC_24150",
+      "source": "LEAF_24128",
+      "target": "OXC_24150",
+      "portMapping": {
+        "sourcePorts": [
+          "17",
+          "18",
+          "19",
+          "20"
+        ],
+        "targetPorts": [
+          "13",
+          "14",
+          "15",
+          "16"
+        ]
+      },
+      "metrics": {
+        "utilization": 0.0,
+        "linkCount": 4,
+        "errorRate": 0.0,
+        "bandwidthGbps": 400,
+        "latencyUs": 3.0
+      }
+    },
+    {
+      "id": "SERVER_2411-LEAF_24125",
+      "source": "SERVER_2411",
+      "target": "LEAF_24125",
+      "portMapping": {
+        "sourcePorts": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8"
+        ],
+        "targetPorts": [
+          "1-1",
+          "1-2",
+          "2-1",
+          "2-2",
+          "3-1",
+          "3-2",
+          "4-1",
+          "4-2"
+        ]
+      },
+      "metrics": {
+        "utilization": 0.0,
+        "linkCount": 8,
+        "errorRate": 0.0,
+        "bandwidthGbps": 400,
+        "latencyUs": 3.0
+      }
+    },
+    {
+      "id": "LEAF_24126-SERVER_2417",
+      "source": "LEAF_24126",
+      "target": "SERVER_2417",
+      "portMapping": {
+        "sourcePorts": [
+          "9-1",
+          "9-2",
+          "10-1",
+          "10-2",
+          "11-1",
+          "11-2",
+          "12-1",
+          "12-2"
+        ],
+        "targetPorts": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8"
+        ]
+      },
+      "metrics": {
+        "utilization": 0.0,
+        "linkCount": 8,
+        "errorRate": 0.0,
+        "bandwidthGbps": 400,
+        "latencyUs": 3.0
+      }
+    },
+    {
+      "id": "SERVER_24112-LEAF_24127",
+      "source": "SERVER_24112",
+      "target": "LEAF_24127",
+      "portMapping": {
+        "sourcePorts": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8"
+        ],
+        "targetPorts": [
+          "13-1",
+          "13-2",
+          "14-1",
+          "14-2",
+          "15-1",
+          "15-2",
+          "16-1",
+          "16-2"
+        ]
+      },
+      "metrics": {
+        "utilization": 0.0,
+        "linkCount": 8,
+        "errorRate": 0.0,
+        "bandwidthGbps": 400,
+        "latencyUs": 3.0
+      }
+    },
+    {
+      "id": "SERVER_24115-LEAF_24128",
+      "source": "SERVER_24115",
+      "target": "LEAF_24128",
+      "portMapping": {
+        "sourcePorts": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8"
+        ],
+        "targetPorts": [
+          "9-1",
+          "9-2",
+          "10-1",
+          "10-2",
+          "11-1",
+          "11-2",
+          "12-1",
+          "12-2"
+        ]
+      },
+      "metrics": {
+        "utilization": 0.0,
+        "linkCount": 8,
+        "errorRate": 0.0,
+        "bandwidthGbps": 400,
+        "latencyUs": 3.0
+      }
+    }
+  ],
+  "superNodes": []
+}

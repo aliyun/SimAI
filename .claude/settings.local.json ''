@@ -1,0 +1,194 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod:*)",
+      "Bash(export PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\")",
+      "Bash(cmake --version:*)",
+      "Bash(brew install:*)",
+      "Bash(mpicc:*)",
+      "Bash(make:*)",
+      "Bash(ln:*)",
+      "Bash(./bin/SimAI_oxc:*)",
+      "Bash(python scripts/generate_dp_allreduce_workload.py:*)",
+      "Bash(python3:*)",
+      "Bash(git remote add:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(git push:*)",
+      "Bash(./build.sh:*)",
+      "Bash(./astra-sim-alibabacloud/build/simai_oxc/build/simai_oxc/SimAI_oxc:*)",
+      "Bash(git add:*)",
+      "Bash(ssh-keyscan:*)",
+      "Bash(~/.ssh/known_hosts)",
+      "Bash(ssh:*)",
+      "Bash(git branch:*)",
+      "Bash(pip3 install:*)",
+      "Bash(streamlit:*)",
+      "Bash(xattr:*)",
+      "Bash(/Users/anthony/PycharmProjects/SimAI/astra-sim-alibabacloud/build/simai_oxc/build/SimAI_oxc:*)",
+      "Bash(/Users/anthony/PycharmProjects/SimAI/astra-sim-alibabacloud/build/simai_oxc/build/SimAI_oxc/SimAI_oxc:*)",
+      "Bash(ls:*)",
+      "Bash(./astra-sim-alibabacloud/build/simai_oxc/build/SimAI_oxc/SimAI_oxc:*)",
+      "Bash(python:*)",
+      "Bash(cmake:*)",
+      "Bash(./bin/SimAI_analytical:*)",
+      "Bash(1)",
+      "Bash(pip install:*)",
+      "Bash(curl:*)",
+      "Bash(/Users/anthony/PycharmProjects/SimAI/bin/SimAI_analytical_oxc:*)",
+      "WebFetch(domain:localhost)",
+      "Bash(claude mcp --help 2>/dev/null || echo \"claude mcp help not available\")",
+      "WebFetch(domain:www.anthropic.com)",
+      "Bash(./init.sh)",
+      "Bash(grep -n \"TODO\\\\|FIXME\\\\|HACK\\\\|XXX\" /Users/anthony/PycharmProjects/SimAI/astra-sim-alibabacloud/astra-sim/network_frontend/oxc/*.cc /Users/anthony/PycharmProjects/SimAI/astra-sim-alibabacloud/astra-sim/network_frontend/oxc/*.h)",
+      "Bash(grep -n \"TODO\\\\|FIXME\\\\|HACK\\\\|XXX\" /Users/anthony/PycharmProjects/SimAI/astra-sim-alibabacloud/astra-sim/system/OxcIntegration.*)",
+      "Bash(./ns3 build)",
+      "Bash(./ns3 configure -d debug --enable-mtp -- -DUSE_OXC_INTEGRATION=TRUE)",
+      "Bash(/Users/anthony/PycharmProjects/SimAI/bin/SimAI_analytical --help)",
+      "Bash(/Users/anthony/PycharmProjects/SimAI/bin/SimAI_oxc --help)",
+      "Bash(wc -l /Users/anthony/PycharmProjects/SimAI/astra-sim-alibabacloud/astra-sim/network_frontend/oxc/gui/*.py /Users/anthony/PycharmProjects/SimAI/astra-sim-alibabacloud/astra-sim/network_frontend/oxc/gui/pages/*.py /Users/anthony/PycharmProjects/SimAI/astra-sim-alibabacloud/astra-sim/network_frontend/oxc/gui/utils/*.py 2>/dev/null | tail -20)",
+      "Bash(grep -r \"OxcIntegration\\\\|OxcFlowGenerator\" /Users/anthony/PycharmProjects/SimAI/astra-sim-alibabacloud/astra-sim/system/collective/*.hh 2>/dev/null | head -10)",
+      "Bash(grep -n \"strlen\\\\|strcmp\\\\|strcpy\" /Users/anthony/PycharmProjects/SimAI/astra-sim-alibabacloud/astra-sim/network_frontend/oxc/*.cc | head -10)",
+      "Bash(grep -r \"error\\\\|Error\\\\|ERROR\" /Users/anthony/PycharmProjects/SimAI/astra-sim-alibabacloud/astra-sim/network_frontend/oxc/*.cc | wc -l)",
+      "Bash(wc -l /Users/anthony/PycharmProjects/SimAI/astra-sim-alibabacloud/astra-sim/network_frontend/oxc/gui/utils/*.py)",
+      "Bash(grep -r \"import pytest\" /Users/anthony/PycharmProjects/SimAI --include=\"*.py\" 2>/dev/null | head -5)",
+      "Bash(which python3 && python3 --version && pip3 list 2>/dev/null | grep -i pytest || echo \"pytest not installed\")",
+      "Bash(\\\\\nAS_OXC_ENABLE=1 \\\\\nAS_OXC_ALGO=ALGO_OXC_RING \\\\\nAS_OXC_URL=http://localhost:8080 \\\\\nAS_OXC_RANKTABLE=./astra-sim-alibabacloud/inputs/oxc/ranktable_example.json \\\\\nAS_OXC_GPUS_PER_SERVER=8 \\\\\nAS_SEND_LAT=3 \\\\\nAS_NVLS_ENABLE=1 \\\\\ntimeout 30 ./bin/SimAI_simulator_oxc -t 4 \\\\\n  -w ./example/microAllReduce.txt \\\\\n  -n ./Spectrum-X_16g_8gps_400Gbps_H100 \\\\\n  -c ./astra-sim-alibabacloud/inputs/config/SimAI.conf 2>&1 | head -80)",
+      "Bash(\\\\\nAS_OXC_ENABLE=1 \\\\\nAS_OXC_ALGO=ALGO_OXC_RING \\\\\nAS_OXC_URL=http://localhost:8080 \\\\\nAS_OXC_RANKTABLE=./astra-sim-alibabacloud/inputs/oxc/ranktable_example.json \\\\\nAS_OXC_GPUS_PER_SERVER=8 \\\\\nAS_SEND_LAT=3 \\\\\nAS_NVLS_ENABLE=1 \\\\\n./bin/SimAI_simulator_oxc -t 4 \\\\\n  -w ./example/microAllReduce.txt \\\\\n  -n ./Spectrum-X_16g_8gps_400Gbps_H100 \\\\\n  -c ./astra-sim-alibabacloud/inputs/config/SimAI.conf 2>&1 | head -100)",
+      "Bash(which node && node --version && which npm && npm --version)",
+      "Bash(npm create vite@latest dashboard -- --template react-ts 2>&1)",
+      "Bash(npm install @xyflow/react zustand axios react-router-dom recharts 2>&1)",
+      "Bash(npm install -D tailwindcss @tailwindcss/vite 2>&1)",
+      "Bash(npx tsc --noEmit 2>&1)",
+      "Bash(npm run build 2>&1)",
+      "Bash(lsof -ti:8502 | xargs kill -9 2>/dev/null; lsof -ti:3001 | xargs kill -9 2>/dev/null; sleep 1; echo \"ports cleared\")",
+      "Bash(npx tsc --noEmit)",
+      "Bash(npx vite build)",
+      "Bash(open /Users/anthony/PycharmProjects/SimAI/example/workload_analytical_timeline.html)",
+      "Bash(open /Users/anthony/PycharmProjects/SimAI/example/workload_analytical_groups.html)",
+      "Bash(git stash && ./scripts/build.sh -c analytical 2>&1 | tail -20)",
+      "Bash(git stash pop)",
+      "Bash(done)",
+      "Bash(ITERATIONS=60 python3 -c \":*)",
+      "Bash(ITERATIONS=3 python3 scripts/test_live_update.py)",
+      "Bash(ITERATIONS=60 python3 scripts/test_live_update.py)",
+      "Bash(AS_SEND_LAT=3 AS_NVLS_ENABLE=1 ./bin/SimAI_simulator -t 16 -w ./example/microAllReduce.txt -n ./Spectrum-X_128g_8gps_100Gbps_A100 -c astra-sim-alibabacloud/inputs/config/SimAI.conf)",
+      "Bash(echo \"EXIT_CODE: $?\")",
+      "Bash(uname -m && sw_vers 2>/dev/null | head -3 && gcc --version 2>/dev/null | head -1 || cc --version 2>/dev/null | head -1)",
+      "Bash(grep -n \"all_gpus\\\\|checkpoints\\\\|epoch_number\" /Users/anthony/PycharmProjects/SimAI/aicb/workload_generator/*.py | head -30)",
+      "Bash(python3 -m venv /Users/anthony/PycharmProjects/SimAI/.venv 2>&1 && /Users/anthony/PycharmProjects/SimAI/.venv/bin/pip install pandas 2>&1 | tail -5)",
+      "Bash(cd /Users/anthony/PycharmProjects/SimAI/aicb && /Users/anthony/PycharmProjects/SimAI/.venv/bin/python3 -m workload_generator.SimAI_training_workload_generator --frame=Megatron --world_size=128 --tensor_model_parallel_size=8 --pipeline_model_parallel=1 --global_batch=1024 --micro_batch=1 --num_layers=40 --seq_length=4096 --hidden_size=5120 --epoch_num=1 --num_attention_heads=40 --model_name=gpt_13B --use-distributed-optimizer 2>&1)",
+      "Bash(cd /Users/anthony/PycharmProjects/SimAI && mkdir -p results && ./bin/SimAI_analytical \\\\\n  -w ./aicb/results/workload/None-gpt_13B-world_size128-tp8-pp1-ep1-gbs1024-mbs1-seq4096-MOE-False-GEMM-False-flash_attn-False.txt \\\\\n  -g 128 \\\\\n  -g_p_s 8 \\\\\n  -r results/gpt13b_128gpu_ \\\\\n  -busbw example/busbw.yaml \\\\\n  -v 2>&1)",
+      "Bash(cd /Users/anthony/PycharmProjects/SimAI && AS_SEND_LAT=3 AS_NVLS_ENABLE=1 ./bin/SimAI_simulator -t 8 -w ./example/microAllReduce_128g.txt -n ./Spectrum-X_128g_8gps_100Gbps_A100 -c astra-sim-alibabacloud/inputs/config/SimAI.conf 2>&1 | head -100)",
+      "Bash(AS_LOG_LEVEL=DEBUG AS_SEND_LAT=3 AS_NVLS_ENABLE=1 ./bin/SimAI_simulator -t 8 -w ./example/microAllReduce_128g.txt -n ./Spectrum-X_128g_8gps_100Gbps_A100 -c astra-sim-alibabacloud/inputs/config/SimAI.conf 2>&1 | head -200)",
+      "Bash(AS_LOG_LEVEL=DEBUG AS_SEND_LAT=3 AS_NVLS_ENABLE=1 ./bin/SimAI_simulator -t 8 -w ./example/microAllReduce_128g.txt -n ./Spectrum-X_128g_8gps_100Gbps_A100 -c astra-sim-alibabacloud/inputs/config/SimAI.conf; echo \"EXIT CODE: $?\")",
+      "Bash(./bin/SimAI_simulator --help 2>&1 || echo \"EXIT CODE: $?\")",
+      "Bash(AS_SEND_LAT=3 AS_NVLS_ENABLE=1 ./bin/SimAI_simulator -t 4 -w ./example/microAllReduce_16g.txt -n ./Spectrum-X_16g_8gps_400Gbps_H100 -c astra-sim-alibabacloud/inputs/config/SimAI.conf 2>&1; echo \"EXIT: $?\")",
+      "Bash(mkdir -p /Users/anthony/PycharmProjects/SimAI/results && ./bin/SimAI_analytical -w ./aicb/results/workload/None-gpt_13B-world_size128-tp8-pp1-ep1-gbs1024-mbs1-seq4096-MOE-False-GEMM-False-flash_attn-False.txt -g 128 -g_p_s 8 -nv 360 -nic 48.5 -n_p_s 8 -r ./results/gpt13b_128gpu_ -v 2>&1 | tail -20; echo \"EXIT: $?\")",
+      "Bash(./bin/SimAI_analytical -w ./aicb/results/workload/None-gpt_13B-world_size128-tp8-pp1-ep1-gbs1024-mbs1-seq4096-MOE-False-GEMM-False-flash_attn-False.txt -g 128 -g_p_s 8 -nv 360 -nic 48.5 -n_p_s 8 -r gpt13b_128gpu_ -v 2>&1 | tail -10; echo \"EXIT: $?\")",
+      "Bash(find /Users/anthony/PycharmProjects/SimAI/astra-sim-alibabacloud/build/simai_analytical -name \"CMakeLists.txt\" | head -1 | xargs cat | head -80)",
+      "Bash(cd /Users/anthony/PycharmProjects/SimAI/aicb && /Users/anthony/PycharmProjects/SimAI/.venv/bin/python3 -m workload_generator.SimAI_training_workload_generator --frame=Megatron --world_size=128 --tensor_model_parallel_size=8 --pipeline_model_parallel=4 --global_batch=1024 --micro_batch=1 --num_layers=40 --seq_length=4096 --hidden_size=5120 --epoch_num=1 --num_attention_heads=40 --model_name=gpt_13B --use-distributed-optimizer 2>&1)",
+      "Bash(grep -r \"struct.*param\\\\|class.*param\" /Users/anthony/PycharmProjects/SimAI/astra-sim-alibabacloud/astra-sim/system/*.h)",
+      "Bash(grep -n \"class.*FlowModel\\\\|struct.*Flow\" /Users/anthony/PycharmProjects/SimAI/astra-sim-alibabacloud/astra-sim/system/collective/*.hh | head -30)",
+      "Bash(cd /Users/anthony/PycharmProjects/SimAI && SIMAI_SERVER_PORT=5001 python3 -m server.app)",
+      "Bash(npx playwright install chromium 2>&1 | tail -5)",
+      "Bash(npx playwright install chromium 2>&1 | tail -10)",
+      "Bash(npx playwright install chromium 2>&1)",
+      "Bash(node -e \"\nconst { chromium } = require\\('@playwright/test'\\);\n\\(async \\(\\) => {\n  const browser = await chromium.launch\\(\\);\n  const page = await browser.newPage\\({ viewport: { width: 1400, height: 900 } }\\);\n  await page.goto\\('http://localhost:4173'\\);\n  await page.waitForTimeout\\(3000\\);\n  \n  // Check page content\n  const html = await page.content\\(\\);\n  console.log\\('Body length:', html.length\\);\n  \n  // Check console errors\n  const errors = [];\n  page.on\\('console', msg => { if \\(msg.type\\(\\) === 'error'\\) errors.push\\(msg.text\\(\\)\\); }\\);\n  \n  // Get visible text\n  const text = await page.locator\\('body'\\).innerText\\(\\);\n  console.log\\('Visible text:', text.substring\\(0, 500\\)\\);\n  \n  // Check for React root\n  const rootHtml = await page.locator\\('#root'\\).innerHTML\\(\\);\n  console.log\\('Root innerHTML length:', rootHtml.length\\);\n  console.log\\('Root innerHTML preview:', rootHtml.substring\\(0, 300\\)\\);\n  \n  await browser.close\\(\\);\n}\\)\\(\\);\n\" 2>&1)",
+      "Bash(npx vite --port 4173)",
+      "Bash(node -e \"\nconst { chromium } = require\\('@playwright/test'\\);\n\\(async \\(\\) => {\n  const browser = await chromium.launch\\(\\);\n  const page = await browser.newPage\\({ viewport: { width: 1400, height: 900 } }\\);\n  \n  // Collect console messages\n  const logs = [];\n  page.on\\('console', msg => logs.push\\(msg.type\\(\\) + ': ' + msg.text\\(\\)\\)\\);\n  \n  await page.goto\\('http://localhost:4173', { waitUntil: 'networkidle' }\\);\n  await page.waitForTimeout\\(3000\\);\n  \n  const text = await page.locator\\('body'\\).innerText\\(\\);\n  console.log\\('Visible text:', text.substring\\(0, 500\\)\\);\n  console.log\\('Console logs:', logs.slice\\(0, 10\\).join\\('\\\\n'\\)\\);\n  \n  await page.screenshot\\({ path: '/tmp/dashboard_overview.png', fullPage: false }\\);\n  console.log\\('Overview screenshot saved'\\);\n  \n  // Navigate to POD detail\n  await page.goto\\('http://localhost:4173/pod/POD%231', { waitUntil: 'networkidle' }\\);\n  await page.waitForTimeout\\(3000\\);\n  \n  const detailText = await page.locator\\('body'\\).innerText\\(\\);\n  console.log\\('Detail text:', detailText.substring\\(0, 500\\)\\);\n  \n  await page.screenshot\\({ path: '/tmp/dashboard_pod_detail.png', fullPage: false }\\);\n  console.log\\('Pod detail screenshot saved'\\);\n  \n  await browser.close\\(\\);\n}\\)\\(\\);\n\" 2>&1)",
+      "Bash(node -e \"\nconst { chromium } = require\\('@playwright/test'\\);\n\\(async \\(\\) => {\n  const browser = await chromium.launch\\(\\);\n  const page = await browser.newPage\\({ viewport: { width: 1400, height: 900 } }\\);\n  \n  // Overview\n  await page.goto\\('http://localhost:4173', { waitUntil: 'networkidle' }\\);\n  await page.waitForTimeout\\(3000\\);\n  const overviewText = await page.locator\\('body'\\).innerText\\(\\);\n  console.log\\('=== OVERVIEW ==='\\);\n  console.log\\(overviewText.substring\\(0, 400\\)\\);\n  await page.screenshot\\({ path: '/tmp/dashboard_overview2.png', fullPage: false }\\);\n  \n  // Pod Detail\n  await page.goto\\('http://localhost:4173/pod/POD%231', { waitUntil: 'networkidle' }\\);\n  await page.waitForTimeout\\(3000\\);\n  const detailText = await page.locator\\('body'\\).innerText\\(\\);\n  console.log\\('=== POD DETAIL ==='\\);\n  console.log\\(detailText.substring\\(0, 500\\)\\);\n  await page.screenshot\\({ path: '/tmp/dashboard_pod_detail2.png', fullPage: false }\\);\n  \n  await browser.close\\(\\);\n}\\)\\(\\);\n\" 2>&1)",
+      "Bash(node -e \"\nconst { chromium } = require\\('@playwright/test'\\);\n\\(async \\(\\) => {\n  const browser = await chromium.launch\\(\\);\n  const page = await browser.newPage\\({ viewport: { width: 1400, height: 900 } }\\);\n  \n  await page.goto\\('http://localhost:4173/pod/POD%231', { waitUntil: 'networkidle' }\\);\n  await page.waitForTimeout\\(3000\\);\n  \n  // Take a larger screenshot to see the full layout\n  await page.screenshot\\({ path: '/tmp/pod_detail_full.png', fullPage: true }\\);\n  \n  // Get bounding boxes of all nodes to understand spacing\n  const nodes = await page.locator\\('.react-flow__node'\\).all\\(\\);\n  for \\(const node of nodes\\) {\n    const box = await node.boundingBox\\(\\);\n    const text = \\(await node.innerText\\(\\)\\).replace\\(/\\\\n/g, ' | '\\);\n    console.log\\('Node:', text, 'Box:', JSON.stringify\\(box\\)\\);\n  }\n  \n  // Get edge labels\n  const labels = await page.locator\\('.react-flow__edgelabel-renderer > div'\\).all\\(\\);\n  for \\(const label of labels\\) {\n    const box = await label.boundingBox\\(\\);\n    const text = \\(await label.innerText\\(\\)\\).replace\\(/\\\\n/g, ' '\\);\n    console.log\\('Label:', text, 'Box:', JSON.stringify\\(box\\)\\);\n  }\n  \n  await browser.close\\(\\);\n}\\)\\(\\);\n\" 2>&1)",
+      "Bash(node -e \"\nconst { chromium } = require\\('@playwright/test'\\);\n\\(async \\(\\) => {\n  const browser = await chromium.launch\\(\\);\n  const page = await browser.newPage\\({ viewport: { width: 1400, height: 900 } }\\);\n  \n  await page.goto\\('http://localhost:4173/pod/POD%231', { waitUntil: 'networkidle' }\\);\n  await page.waitForTimeout\\(3000\\);\n  await page.screenshot\\({ path: '/tmp/pod_detail3.png', fullPage: false }\\);\n  \n  // Check node positions\n  const nodes = await page.locator\\('.react-flow__node'\\).all\\(\\);\n  for \\(const node of nodes\\) {\n    const box = await node.boundingBox\\(\\);\n    const text = \\(await node.innerText\\(\\)\\).replace\\(/\\\\n/g, ' | '\\);\n    console.log\\('Node:', text, 'x:', Math.round\\(box.x\\), 'y:', Math.round\\(box.y\\), 'w:', Math.round\\(box.width\\)\\);\n  }\n  \n  console.log\\('---'\\);\n  const labels = await page.locator\\('.react-flow__edgelabel-renderer > div'\\).all\\(\\);\n  for \\(const label of labels\\) {\n    const box = await label.boundingBox\\(\\);\n    const text = \\(await label.innerText\\(\\)\\).replace\\(/\\\\n/g, ' '\\);\n    console.log\\('Label:', text, 'x:', Math.round\\(box.x\\), 'y:', Math.round\\(box.y\\)\\);\n  }\n  \n  await browser.close\\(\\);\n}\\)\\(\\);\n\" 2>&1)",
+      "Bash(node -e \"\nconst { chromium } = require\\('@playwright/test'\\);\n\\(async \\(\\) => {\n  const browser = await chromium.launch\\(\\);\n  const page = await browser.newPage\\({ viewport: { width: 1400, height: 1000 } }\\);\n  \n  await page.goto\\('http://localhost:4173/pod/POD%231', { waitUntil: 'networkidle' }\\);\n  await page.waitForTimeout\\(3000\\);\n  await page.screenshot\\({ path: '/tmp/pod_detail4.png', fullPage: false }\\);\n  \n  const nodes = await page.locator\\('.react-flow__node'\\).all\\(\\);\n  for \\(const node of nodes\\) {\n    const box = await node.boundingBox\\(\\);\n    const text = \\(await node.innerText\\(\\)\\).replace\\(/\\\\n/g, ' | '\\);\n    console.log\\('Node:', text, 'x:', Math.round\\(box.x\\), 'y:', Math.round\\(box.y\\), 'w:', Math.round\\(box.width\\)\\);\n  }\n  console.log\\('---'\\);\n  const labels = await page.locator\\('.react-flow__edgelabel-renderer > div'\\).all\\(\\);\n  for \\(const label of labels\\) {\n    const box = await label.boundingBox\\(\\);\n    const text = \\(await label.innerText\\(\\)\\).replace\\(/\\\\n/g, ' '\\);\n    console.log\\('Label:', text, 'x:', Math.round\\(box.x\\), 'y:', Math.round\\(box.y\\)\\);\n  }\n  \n  await browser.close\\(\\);\n}\\)\\(\\);\n\" 2>&1)",
+      "Bash(node -e \"\nconst { chromium } = require\\('@playwright/test'\\);\n\\(async \\(\\) => {\n  const browser = await chromium.launch\\(\\);\n  const page = await browser.newPage\\({ viewport: { width: 1400, height: 1000 } }\\);\n  \n  await page.goto\\('http://localhost:4173/pod/POD%231', { waitUntil: 'networkidle' }\\);\n  await page.waitForTimeout\\(3000\\);\n  await page.screenshot\\({ path: '/tmp/pod_detail5.png', fullPage: false }\\);\n  \n  const nodes = await page.locator\\('.react-flow__node'\\).all\\(\\);\n  for \\(const node of nodes\\) {\n    const box = await node.boundingBox\\(\\);\n    const text = \\(await node.innerText\\(\\)\\).replace\\(/\\\\n/g, ' | '\\);\n    console.log\\('Node:', text, 'x:', Math.round\\(box.x\\), 'y:', Math.round\\(box.y\\), 'w:', Math.round\\(box.width\\), 'h:', Math.round\\(box.height\\)\\);\n  }\n  console.log\\('---'\\);\n  const labels = await page.locator\\('.react-flow__edgelabel-renderer > div'\\).all\\(\\);\n  for \\(const label of labels\\) {\n    const box = await label.boundingBox\\(\\);\n    const text = \\(await label.innerText\\(\\)\\).replace\\(/\\\\n/g, ' '\\);\n    console.log\\('Label:', text, 'x:', Math.round\\(box.x\\), 'y:', Math.round\\(box.y\\), 'h:', Math.round\\(box.height\\)\\);\n  }\n  \n  await browser.close\\(\\);\n}\\)\\(\\);\n\" 2>&1)",
+      "Bash(node -e \"\nconst { chromium } = require\\('@playwright/test'\\);\n\\(async \\(\\) => {\n  const browser = await chromium.launch\\(\\);\n  const page = await browser.newPage\\({ viewport: { width: 1400, height: 1000 } }\\);\n  \n  await page.goto\\('http://localhost:4173/pod/POD%231', { waitUntil: 'networkidle' }\\);\n  await page.waitForTimeout\\(3000\\);\n  await page.screenshot\\({ path: '/tmp/pod_detail6.png', fullPage: false }\\);\n  \n  const nodes = await page.locator\\('.react-flow__node'\\).all\\(\\);\n  for \\(const node of nodes\\) {\n    const box = await node.boundingBox\\(\\);\n    const text = \\(await node.innerText\\(\\)\\).replace\\(/\\\\n/g, ' '\\);\n    console.log\\('Node:', text.substring\\(0,30\\), 'y:', Math.round\\(box.y\\), 'h:', Math.round\\(box.height\\), 'bottom:', Math.round\\(box.y + box.height\\)\\);\n  }\n  console.log\\('---'\\);\n  const labels = await page.locator\\('.react-flow__edgelabel-renderer > div'\\).all\\(\\);\n  for \\(const label of labels\\) {\n    const box = await label.boundingBox\\(\\);\n    const text = \\(await label.innerText\\(\\)\\).replace\\(/\\\\n/g, ' '\\);\n    console.log\\('Label:', text, 'x:', Math.round\\(box.x\\), 'y:', Math.round\\(box.y\\)\\);\n  }\n  \n  await browser.close\\(\\);\n}\\)\\(\\);\n\" 2>&1)",
+      "Bash(node -e \"\nconst { chromium } = require\\('@playwright/test'\\);\n\\(async \\(\\) => {\n  const browser = await chromium.launch\\(\\);\n  const page = await browser.newPage\\({ viewport: { width: 1400, height: 900 } }\\);\n  \n  // Overview\n  await page.goto\\('http://localhost:4173', { waitUntil: 'networkidle' }\\);\n  await page.waitForTimeout\\(3000\\);\n  await page.screenshot\\({ path: '/tmp/overview_final.png', fullPage: false }\\);\n  \n  const nodes = await page.locator\\('.react-flow__node'\\).all\\(\\);\n  for \\(const node of nodes\\) {\n    const box = await node.boundingBox\\(\\);\n    const text = \\(await node.innerText\\(\\)\\).replace\\(/\\\\n/g, ' '\\);\n    console.log\\('Node:', text, 'x:', Math.round\\(box.x\\), 'y:', Math.round\\(box.y\\)\\);\n  }\n  const labels = await page.locator\\('.react-flow__edgelabel-renderer > div'\\).all\\(\\);\n  for \\(const label of labels\\) {\n    const box = await label.boundingBox\\(\\);\n    const text = \\(await label.innerText\\(\\)\\).replace\\(/\\\\n/g, ' '\\);\n    console.log\\('Label:', text, 'x:', Math.round\\(box.x\\), 'y:', Math.round\\(box.y\\)\\);\n  }\n  \n  // Pod detail\n  await page.goto\\('http://localhost:4173/pod/POD%231', { waitUntil: 'networkidle' }\\);\n  await page.waitForTimeout\\(3000\\);\n  await page.screenshot\\({ path: '/tmp/pod_detail_final.png', fullPage: false }\\);\n  \n  await browser.close\\(\\);\n  console.log\\('Done'\\);\n}\\)\\(\\);\n\" 2>&1)",
+      "Bash(VITE_API_BASE_URL=http://localhost:5001 VITE_USE_MOCK=false npx vite --port 4173)",
+      "Bash(sleep 3 && node -e \"\nconst { chromium } = require\\('@playwright/test'\\);\n\\(async \\(\\) => {\n  const browser = await chromium.launch\\(\\);\n  const page = await browser.newPage\\({ viewport: { width: 1400, height: 1000 } }\\);\n  \n  const errors = [];\n  page.on\\('console', msg => { if \\(msg.type\\(\\) === 'error'\\) errors.push\\(msg.text\\(\\)\\); }\\);\n  \n  // Overview\n  await page.goto\\('http://localhost:4173', { waitUntil: 'networkidle' }\\);\n  await page.waitForTimeout\\(4000\\);\n  const overviewText = await page.locator\\('body'\\).innerText\\(\\);\n  console.log\\('=== OVERVIEW ==='\\);\n  console.log\\(overviewText.substring\\(0, 300\\)\\);\n  await page.screenshot\\({ path: '/tmp/e2e_overview.png', fullPage: false }\\);\n  \n  // Pod Detail\n  await page.goto\\('http://localhost:4173/pod/POD%231', { waitUntil: 'networkidle' }\\);\n  await page.waitForTimeout\\(4000\\);\n  const detailText = await page.locator\\('body'\\).innerText\\(\\);\n  console.log\\('\\\\\\\\n=== POD DETAIL ==='\\);\n  console.log\\(detailText.substring\\(0, 500\\)\\);\n  await page.screenshot\\({ path: '/tmp/e2e_pod_detail.png', fullPage: false }\\);\n  \n  if \\(errors.length\\) {\n    console.log\\('\\\\\\\\n=== CONSOLE ERRORS ==='\\);\n    errors.forEach\\(e => console.log\\(e\\)\\);\n  }\n  \n  await browser.close\\(\\);\n}\\)\\(\\);\n\" 2>&1)",
+      "Bash(lsof -ti:5001 | xargs kill 2>/dev/null; sleep 1)",
+      "Bash(lsof -ti:4173 | xargs kill 2>/dev/null; sleep 1; echo \"killed\")",
+      "Bash(VITE_USE_MOCK=false VITE_API_BASE_URL=http://localhost:5001 npm run build 2>&1 | tail -10)",
+      "Bash(find /Users/anthony/PycharmProjects/SimAI/dashboard -type f \\\\\\(-name *.py -o -name *.js -o -name *.tsx \\\\\\))",
+      "Bash(find /Users/anthony/PycharmProjects/SimAI/dashboard/src -type f \\\\\\(-name *.tsx -o -name *.ts -o -name *.jsx -o -name *.js \\\\\\))",
+      "Bash(npx vite preview --port 4173 2>&1)",
+      "Bash(cd /Users/anthony/PycharmProjects/SimAI/dashboard && VITE_USE_MOCK=false VITE_API_BASE_URL=http://localhost:5001 npm run build 2>&1 | tail -5)",
+      "Bash(lsof -ti:5001 | xargs kill 2>/dev/null; lsof -ti:4173 | xargs kill 2>/dev/null; sleep 1; echo \"killed\")",
+      "Bash(lsof -ti:5001 | xargs kill 2>/dev/null)",
+      "Bash(VITE_USE_MOCK=false VITE_API_BASE_URL=http://localhost:5001 npm run build 2>&1 | tail -5)",
+      "Bash(lsof -ti:4173 | xargs kill 2>/dev/null; sleep 1)",
+      "Bash(VITE_USE_MOCK=false VITE_API_BASE_URL=http://localhost:5001 npm run build 2>&1 | tail -3 && lsof -ti:4173 | xargs kill 2>/dev/null && sleep 1)",
+      "Bash(VITE_USE_MOCK=false VITE_API_BASE_URL=http://localhost:5001 npm run build 2>&1 | tail -2)",
+      "Bash(node -e \"\nconst { chromium } = require\\('@playwright/test'\\);\n\\(async \\(\\) => {\n  const browser = await chromium.launch\\(\\);\n  const context = await browser.newContext\\({ viewport: { width: 1920, height: 1080 } }\\);\n  const page = await context.newPage\\(\\);\n\n  // Check POD detail page\n  await page.goto\\('http://localhost:4173/pod/POD%231', { waitUntil: 'networkidle' }\\);\n  await page.waitForTimeout\\(2000\\);\n\n  // Check if page loaded at all\n  const title = await page.title\\(\\);\n  console.log\\('Page title:', title\\);\n\n  // Check for error messages\n  const errors = await page.locator\\('text=error'\\).count\\(\\);\n  console.log\\('Error elements:', errors\\);\n\n  // Check for ReactFlow canvas\n  const canvas = await page.locator\\('.react-flow'\\).count\\(\\);\n  console.log\\('ReactFlow canvas:', canvas\\);\n\n  // Check for nodes\n  const nodes = await page.locator\\('.react-flow__node'\\).count\\(\\);\n  console.log\\('Nodes:', nodes\\);\n\n  // Check for edges\n  const edges = await page.locator\\('.react-flow__edge'\\).count\\(\\);\n  console.log\\('Edges:', edges\\);\n\n  // Check for edge labels \\(the dual-label divs\\)\n  const edgeLabels = await page.locator\\('.react-flow__edgelabel-renderer > div'\\).count\\(\\);\n  console.log\\('Edge label containers:', edgeLabels\\);\n\n  // Get all label texts\n  const labelTexts = await page.locator\\('.react-flow__edgelabel-renderer .tabular-nums'\\).allTextContents\\(\\);\n  console.log\\('Label texts:', JSON.stringify\\(labelTexts\\)\\);\n\n  // Check label Y positions to verify up/down ordering\n  const labels = await page.locator\\('.react-flow__edgelabel-renderer > div > div'\\).all\\(\\);\n  for \\(let i = 0; i < Math.min\\(labels.length, 10\\); i++\\) {\n    const box = await labels[i].boundingBox\\(\\);\n    const text = await labels[i].textContent\\(\\);\n    if \\(box\\) {\n      console.log\\('Label', i, ':', text?.trim\\(\\), 'y=' + box.y.toFixed\\(0\\)\\);\n    }\n  }\n\n  await browser.close\\(\\);\n}\\)\\(\\);\n\" 2>&1)",
+      "Bash(node -e \"\nconst { chromium } = require\\('@playwright/test'\\);\n\\(async \\(\\) => {\n  const browser = await chromium.launch\\(\\);\n  const context = await browser.newContext\\({ viewport: { width: 1920, height: 1080 } }\\);\n  const page = await context.newPage\\(\\);\n\n  page.on\\('response', res => {\n    if \\(res.url\\(\\).includes\\('api'\\)\\) console.log\\('RES:', res.url\\(\\), res.status\\(\\)\\);\n  }\\);\n\n  // POD detail page\n  await page.goto\\('http://localhost:4173/pod/POD%231', { waitUntil: 'networkidle' }\\);\n  await page.waitForTimeout\\(3000\\);\n\n  const nodes = await page.locator\\('.react-flow__node'\\).count\\(\\);\n  console.log\\('Nodes:', nodes\\);\n  const edges = await page.locator\\('.react-flow__edge'\\).count\\(\\);\n  console.log\\('Edges:', edges\\);\n\n  // Get label texts and positions\n  const labels = await page.locator\\('.react-flow__edgelabel-renderer .tabular-nums'\\).all\\(\\);\n  console.log\\('Labels found:', labels.length\\);\n  for \\(let i = 0; i < Math.min\\(labels.length, 20\\); i++\\) {\n    const box = await labels[i].boundingBox\\(\\);\n    const text = await labels[i].textContent\\(\\);\n    if \\(box\\) console.log\\('Label', i, ':', text?.trim\\(\\), 'y=' + box.y.toFixed\\(0\\)\\);\n  }\n\n  await page.screenshot\\({ path: '/tmp/live_pod_detail.png', fullPage: true }\\);\n  console.log\\('Screenshot saved'\\);\n\n  // Overview\n  await page.goto\\('http://localhost:4173/', { waitUntil: 'networkidle' }\\);\n  await page.waitForTimeout\\(3000\\);\n  await page.screenshot\\({ path: '/tmp/live_overview.png', fullPage: true }\\);\n  console.log\\('Overview screenshot saved'\\);\n\n  await browser.close\\(\\);\n}\\)\\(\\);\n\" 2>&1)",
+      "Bash(node -e \"\nconst { chromium } = require\\('@playwright/test'\\);\n\\(async \\(\\) => {\n  const browser = await chromium.launch\\(\\);\n  const context = await browser.newContext\\({ viewport: { width: 1920, height: 1080 } }\\);\n  const page = await context.newPage\\(\\);\n\n  page.on\\('response', async res => {\n    if \\(res.url\\(\\).includes\\('api/topology/overview'\\)\\) {\n      const body = await res.json\\(\\);\n      console.log\\('API response:', JSON.stringify\\(body.data.edges[0], null, 2\\)\\);\n    }\n  }\\);\n\n  await page.goto\\('http://localhost:4173/', { waitUntil: 'networkidle' }\\);\n  await page.waitForTimeout\\(3000\\);\n\n  // Check edges\n  const edges = await page.locator\\('.react-flow__edge'\\).count\\(\\);\n  console.log\\('Edges:', edges\\);\n\n  // Check all edge label renderer content\n  const elr = await page.locator\\('.react-flow__edgelabel-renderer'\\).innerHTML\\(\\);\n  console.log\\('EdgeLabelRenderer HTML:', elr.substring\\(0, 500\\)\\);\n\n  // Check nodes\n  const nodes = await page.locator\\('.react-flow__node'\\).count\\(\\);\n  console.log\\('Nodes:', nodes\\);\n\n  await browser.close\\(\\);\n}\\)\\(\\);\n\" 2>&1)",
+      "Bash(cd /Users/anthony/PycharmProjects/SimAI/dashboard && node -e \"\nconst { chromium } = require\\('@playwright/test'\\);\n\\(async \\(\\) => {\n  const browser = await chromium.launch\\(\\);\n  const ctx = await browser.newContext\\({ viewport: { width: 1920, height: 1080 } }\\);\n  const page = await ctx.newPage\\(\\);\n\n  // Overview\n  await page.goto\\('http://localhost:4173/', { waitUntil: 'networkidle' }\\);\n  await page.waitForTimeout\\(3000\\);\n  const oNodes = await page.locator\\('.react-flow__node'\\).count\\(\\);\n  const oEdges = await page.locator\\('.react-flow__edge'\\).count\\(\\);\n  const oLabels = await page.locator\\('.react-flow__edgelabel-renderer .text-center'\\).all\\(\\);\n  console.log\\('Overview:', oNodes, 'nodes,', oEdges, 'edges,', oLabels.length, 'labels'\\);\n  for \\(let i = 0; i < oLabels.length; i++\\) {\n    const text = await oLabels[i].textContent\\(\\);\n    console.log\\('  Label', i, ':', text?.replace\\(/\\\\\\\\s+/g, ' '\\).trim\\(\\)\\);\n  }\n  await page.screenshot\\({ path: '/tmp/live_overview_final.png', fullPage: true }\\);\n\n  // POD#1\n  await page.goto\\('http://localhost:4173/pod/POD%231', { waitUntil: 'networkidle' }\\);\n  await page.waitForTimeout\\(3000\\);\n  const pNodes = await page.locator\\('.react-flow__node'\\).count\\(\\);\n  const pEdges = await page.locator\\('.react-flow__edge'\\).count\\(\\);\n  const pLabels = await page.locator\\('.react-flow__edgelabel-renderer .tabular-nums'\\).all\\(\\);\n  console.log\\('\\\\\\\\nPOD#1:', pNodes, 'nodes,', pEdges, 'edges,', pLabels.length, 'labels'\\);\n\n  // Check overlaps\n  const data = [];\n  for \\(let i = 0; i < pLabels.length; i++\\) {\n    const text = await pLabels[i].textContent\\(\\);\n    const box = await pLabels[i].boundingBox\\(\\);\n    if \\(box\\) data.push\\({ i, text: text?.trim\\(\\), ...box }\\);\n  }\n  let overlaps = 0;\n  for \\(let i = 0; i < data.length; i++\\) {\n    for \\(let j = i + 1; j < data.length; j++\\) {\n      const a = data[i], b = data[j];\n      const ox = a.x < b.x + b.width && a.x + a.width > b.x;\n      const oy = a.y < b.y + b.height && a.y + a.height > b.y;\n      if \\(ox && oy\\) { overlaps++; console.log\\('  OVERLAP:', a.text, 'vs', b.text\\); }\n    }\n  }\n  console.log\\('  Overlaps:', overlaps\\);\n  await page.screenshot\\({ path: '/tmp/live_pod1_final.png', fullPage: true }\\);\n\n  await browser.close\\(\\);\n}\\)\\(\\);\n\" 2>&1)",
+      "Bash(./dashboard/start.sh 2>&1; echo \"EXIT: $?\")",
+      "Bash(timeout 45 ./dashboard/start.sh --data-dir topology 2>&1 || true)",
+      "Bash(./dashboard/stop.sh)",
+      "Bash(git -C /Users/anthony/PycharmProjects/SimAI log --oneline -20)",
+      "Bash(git -C /Users/anthony/PycharmProjects/SimAI diff --stat HEAD~5..HEAD 2>/dev/null || git -C /Users/anthony/PycharmProjects/SimAI diff --stat HEAD~3..HEAD 2>/dev/null)",
+      "Bash(gh pr list --state all --limit 20 2>/dev/null || echo \"No gh auth or no repos\")",
+      "Bash(git -C /Users/anthony/PycharmProjects/SimAI branch -a 2>/dev/null | head -30)",
+      "Bash(git -C /Users/anthony/PycharmProjects/SimAI stash list 2>/dev/null)",
+      "Bash(bash init.sh 2>&1)",
+      "Bash(lsof -i :5001 | head -5)",
+      "Bash(lsof -i :5001 -i :3000 2>/dev/null | head -10)",
+      "Bash(open example/workload_analytical_timeline.html)",
+      "Bash(lsof -i :8501 2>/dev/null | head -5)",
+      "Bash(cd /Users/anthony/PycharmProjects/OCS-dashboard/dashboard && npm install 2>&1 | tail -5)",
+      "Bash(kill 2522 2>/dev/null; echo \"Server stopped\")",
+      "Bash(cd /Users/anthony/PycharmProjects/OCS-dashboard/dashboard && npx tsc -b 2>&1 | head -20)",
+      "Bash(npx tsc:*)",
+      "mcp__plugin_oh-my-claudecode_t__lsp_diagnostics",
+      "mcp__plugin_oh-my-claudecode_t__state_list_active",
+      "mcp__plugin_oh-my-claudecode_t__state_read",
+      "mcp__plugin_oh-my-claudecode_t__state_clear"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./init.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 scripts/lra-gate.py"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 scripts/lra-stop.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 scripts/lra-mark-dirty.py"
+          }
+        ]
+      }
+    ]
+  }
+}

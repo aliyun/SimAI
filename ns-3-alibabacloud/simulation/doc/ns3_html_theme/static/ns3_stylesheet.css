@@ -1,0 +1,217 @@
+/* ns-3 changes to the default CSS from Doxygen and Sphinx */
+
+body,
+table,
+div,
+p,
+dl    {
+  color: black;
+  font-family: Lucida Grande, Verdana, Geneva, Arial, sans-serif;
+  font-size: 12px;
+}
+
+a {
+  color: #91A501;
+  font-weight: bold;
+}
+
+/* Sphinx headings */
+div.body h1,
+div.body h2,
+div.body h3,
+div.body h4,
+div.body h5,
+div.body h6 {
+  background-image: url('nav_f.png');
+}
+
+/* Sphinx figure captions */
+p.caption {
+  font-weight: bold;
+}
+
+/* Doxygen side bar */
+#nav-tree {
+  font-size: 12px;
+}
+
+#nav-tree a {
+  font-weight: normal;
+}
+
+/* Sphinx nav links bar (relbar) */
+div.related {
+  background-image:url('tab_b.png')
+}
+
+div.related h3 {
+  display: none;
+}
+
+div.related a {
+  color: #91A501;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+div.related li {
+  background-image: url('bc_s.png');
+  background-position: 100% 40%;
+  background-repeat: no-repeat;
+  padding-left: 10px;
+  padding-right: 15px;
+}
+
+div.related li.right {
+  background-image: none;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+/* Sphinx side bar */
+div.sphinxsidebar {
+  font-size: 12px;
+}
+
+div.sphinxsidebar a {
+  font-weight: normal;
+}
+
+
+/* Title bar elements */
+
+#titlearea {
+  background-image:url('bar-top.png');
+  background-repeat:repeat;
+  border-bottom: 1px solid #5B5B5B;
+  color: white;
+  position: relative;
+  /* Doxygen tab bar ("Main Page", "Related Pages"..) is at z: 9999 */
+  z-index:10000;
+}
+
+#projectlogo {
+  color: white;
+  margin: 10px;
+  text-align: center;
+  vertical-align: middle;
+  width: 220px;
+}
+
+#projecttext {
+  align: left;
+  font-color:white;
+  padding-left: 2em;
+  width: 250px;
+}
+
+#projectbrief {
+  color: white;
+  font: 120% Tahoma, Arial,sans-serif;
+  margin: 0px;
+  padding: 0px;
+}
+
+#projectnumber {
+  color: white;
+  font: 100% Tahoma, Arial,sans-serif;
+  margin: 0px;
+  padding: 0px;
+}
+
+#projectsection {
+  color: white;
+  font: 24pt  Aldo, Tahoma, Arial,sans-serif;
+  margin-right: 10px;
+  margin: 10px;
+  text-align: right;
+  vertical-align: middle;
+}
+
+/*
+   ns-3 Main-menu, based on WordPress site
+   
+   Drop down menu based on Simple Javascript Drop-Down Menu v2.0
+   http://javascript-array.com/scripts/simple_drop_down_menu/
+   */
+
+#ns3-menu .menu {
+  background-image: url('menu-bgr-400.png');
+/*   background-origin: padding-box; */
+/*   background-position: -10px 0; */
+  background-repeat: no-repeat;
+  background-size: 100% 39px;
+  display: table-cell;
+  float:left;
+  height: 40px;
+  margin: 0px 0px 0px 0px;
+  padding:0px 0px 0px 0px;
+  vertical-align: middle;
+}
+
+
+#ns3-menu .menu ul {
+/*   float:left; */
+  height: 40;
+  list-style:none;
+  margin:0px 0px 0px -2px;
+/*   overflow:hidden; */
+  padding:0px 0px 0px 0px;
+  z-index: 30;
+}
+
+#ns3-menu .menu ul li {
+  background-image: url('ver.png');
+  background-origin: padding-box;
+  background-position: 0 11px;
+  background-repeat: no-repeat;
+  color:#ffffff;
+  float:left;
+  font-family: Aldo, Tahoma, Arial, sans-serif;
+  font-size: 14px;  
+/*   height:40px; */
+  margin:0px 0px 0px 0px;
+/*   overflow:hidden; */
+  padding:11px 13px 0px 12px;
+  text-transform:uppercase;
+}
+
+#ns3-menu .menu ul li a {
+  color:#ffffff;
+  /* cursor: pointer; */
+  display:block;
+  float:left;
+  font-weight: normal;  /* default anchors are bold */
+  text-decoration:none; /* default anchors are underlined */
+}
+    
+#ns3-menu .menu ul li a:hover {
+  color:#cadc48;
+  text-decoration:none; /* don't add underline on hover */
+}
+
+#ns3-menu .menu div {
+  background: #94A901;
+  background-size: 100%;
+  color:#ffffff;
+  position: absolute;
+  visibility: hidden;
+}
+
+#ns3-menu .menu div a {
+  position: relative;
+  display: block;
+  float: left;
+  font-family: Aldo, Tahoma, Arial, sans-serif;
+  font-size: 14px;
+  margin: 0;
+  padding: 5px 10px;
+  text-align: left;
+  width: auto;
+  white-space: nowrap;
+}
+
+#ns3-menu .menu div a:hover {
+  color:#cadc48;
+  text-decoration:none; /* don't add underline on hover */
+}

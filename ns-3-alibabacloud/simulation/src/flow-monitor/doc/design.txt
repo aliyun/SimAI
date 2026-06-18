@@ -1,0 +1,43 @@
+
+* One FlowMonitor per simulation
+
+* One FlowClassifier per simulation
+  - Assigns integer simulation unique identifiers to each flow
+  - Contains a classification method that maps parameters
+    (e.g. packets or packet headers) to the corresponding flow
+    identifier;
+  - FlowClassifier is abstract, needs a concrete subclass
+     > Ipv4FlowClassifier
+
+* Typically (but not necessarily) one FlowProbe node
+  - Is responsible for acquiring the packet data
+  - Works with FlowClassifier
+  - FlowProbe is abstract, needs a concrete subclass
+    > Ipv4FlowProbe
+      - Ipv4FlowProbe needs a matching classifier, Ipv4FlowClassifier
+
+* One ProbeFlowStats object per simulation flow per FlowProbe
+  - Indexed by the FlowId
+  - Bytes
+  - Packets
+  - Delay from first probe until the packet is received in this probe
+
+* One EndToEndFlowStats object per flow per FlowMonitor
+  - Lost packets
+  - Lost bytes
+  - Bytes
+  - Packets
+  - End-to-end delays
+
+
+
+
+TODO:
+
+  1. Configurable time when to start/stop monitor. ***DONE***
+  2. Possibly, detect packet losses also via "drop" trace sources
+  3. FlowMonitor::FlowStats: add time duration metrics: first flow timestamp, last flow timestamp
+      > to calculate bitrates...  ***DONE***
+  4. Measure delay jitter
+  5. Histogram for delays/jitters/packet sizes
+
