@@ -75,6 +75,10 @@ struct FlowRequest {
     uint64_t reqCount = 0;
 };
 
+// Local GPUType enum (replaces astra-sim/system/Common.hh GPUType)
+// Extracted from: astra-sim-alibabacloud/astra-sim/system/Common.hh:14
+enum class GPUType { A100, A800, H100, H800, NONE, H20 };
+
 // ============================================================================
 // Global configuration variables
 // Extracted from: astra-sim-alibabacloud/astra-sim/network_frontend/ns3/common.h:51-98

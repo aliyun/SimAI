@@ -117,6 +117,7 @@ public:
         _layer_flow_count.clear();
         _layer_completed.clear();
         _requests.clear();
+        _request_by_id.clear();
         _current_unlocked_layer = 0;
         _max_layer = 0;
 
@@ -142,8 +143,10 @@ public:
             _states[rec.flow_id] = st;
         }
 
-        // Allocate FlowRequest objects for each flow (heap-allocated, lives for full sim)
+        // Allocate FlowRequest objects for each flow (heap-allocated, stable pointers
+        // for the simulation lifetime -- SendFlow stores the pointer in sender_src_port_map).
         _requests.resize(_total_flows);
+        _request_by_id.clear();
         for (size_t i = 0; i < flows.size(); i++) {
             _requests[i] = new FlowRequest();
             const auto& rec = flows[i];
@@ -153,6 +156,7 @@ public:
             _requests[i]->srcRank = rec.src;
             _requests[i]->dstRank = rec.dst;
             _requests[i]->reqCount = rec.flow_size;
+            _request_by_id[rec.flow_id] = _requests[i];  // O(1) lookup for DoSendFlow
         }
 
         // Setup expeRecvHash for each flow (receive expectation)
@@ -271,28 +275,22 @@ public:
     }
 
     // ------------------------------------------------------------------
-    // DoSendFlow: internal callback from Simulator::Schedule
+    // DoSendFlow: public callback from Simulator::Schedule (must be public
+    // for ns3's MakeEvent / Simulator::Schedule with member-function pointers).
     // ------------------------------------------------------------------
     void DoSendFlow(uint32_t flow_id) {
         auto it = _states.find(flow_id);
         if (it == _states.end()) return;
 
         FlowState& st = it->second;
-        // Find the corresponding FlowRequest
-        // (requests are stored in the same order as flows were loaded)
-        FlowRequest* req = nullptr;
-        for (size_t i = 0; i < _requests.size(); i++) {
-            if (_requests[i]->flowTag.current_flow_id == flow_id) {
-                req = _requests[i];
-                break;
-            }
-        }
-
-        if (!req) {
+        // O(1) lookup via map populated in Init()
+        auto rit = _request_by_id.find(flow_id);
+        if (rit == _request_by_id.end()) {
             std::cerr << "[DepScheduler] ERROR: no request found for flow "
                       << flow_id << std::endl;
             return;
         }
+        FlowRequest* req = rit->second;
 
         NS_LOG_DEBUG("[DepScheduler] Sending flow " << flow_id
                      << " src=" << st.record.src << " dst=" << st.record.dst
@@ -430,7 +428,9 @@ private:
     std::map<int, int> _layer_completed;     // layer_num -> completed flows
 
     // Heap-allocated FlowRequest objects (lifetime = simulation duration)
+    // _request_by_id provides O(1) lookup for DoSendFlow.
     std::vector<FlowRequest*> _requests;
+    std::unordered_map<uint32_t, FlowRequest*> _request_by_id;
 };
 
 // ============================================================================
