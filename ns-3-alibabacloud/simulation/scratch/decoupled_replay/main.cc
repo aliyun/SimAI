@@ -157,7 +157,7 @@ int main(int argc, char *argv[]) {
     g_scheduler = &scheduler;
 
     if (!scheduler.Init(flows)) {
-        std::cerr << "ERROR: DepScheduler::Init failed" << std::endl;
+        std::cerr << "ERROR: DepScheduler::Init failed (invalid prev[] references)" << std::endl;
         return 1;
     }
 
