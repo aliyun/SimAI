@@ -59,7 +59,7 @@
  *
  * === Key invariants ===
  *
- *   - _QPS_PER_CONNECTION_ == 1 (asserted at startup)
+ *   - Single QP per flow (SendFlow inlined, no multi-QP loop)
  *   - Layer 0 is always unlocked; higher layers unlock sequentially
  *   - No flow_id circulation -- prev[] entries are ignored
  *   - relative_delay_ns encodes all causality; no secondary ordering needed
@@ -79,13 +79,6 @@
 #include <algorithm>
 #include <iostream>
 #include <cassert>
-
-// ============================================================================
-// Global callback: called by qp_finish when a flow completes
-// Set by main.cc to DepScheduler::OnFlowCompleted
-// ============================================================================
-
-extern void (*g_on_flow_completed)(uint32_t flow_id);
 
 // ============================================================================
 // DepScheduler
@@ -432,11 +425,5 @@ private:
     std::vector<FlowRequest*> _requests;
     std::unordered_map<uint32_t, FlowRequest*> _request_by_id;
 };
-
-// ============================================================================
-// Global callback pointer definition
-// ============================================================================
-
-void (*g_on_flow_completed)(uint32_t flow_id) = nullptr;
 
 #endif // __DECOUPLED_DEP_SCHEDULER_H__

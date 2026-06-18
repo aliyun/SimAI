@@ -1,5 +1,6 @@
 #!/bin/bash
-# Verify all 3 copies of common.h are byte-identical (modulo whitespace)
+# Verify all 2 canonical copies of common.h are byte-identical
+# (scratch/common.h is a symlink to the ns3 build tree copy)
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

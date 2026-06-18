@@ -2256,12 +2256,24 @@ void MockNcclGroup::finalizeFlowFile() {
         return;
     }
 
+    // Build per-rank map: rank → sorted list of (flow_id, completion_time)
+    // Needed because sf.prev[] contains rank IDs, not flow IDs.
+    std::unordered_map<uint32_t, std::vector<std::pair<uint32_t, uint64_t>>> rank_completions;
+    for (auto& entry : _flow_buffer) {
+        uint32_t fid = entry.sf.flow_id;
+        if (_flow_completion_times.count(fid)) {
+            rank_completions[entry.sf.src].push_back({fid, _flow_completion_times[fid]});
+            rank_completions[entry.sf.dest].push_back({fid, _flow_completion_times[fid]});
+        }
+    }
+    for (auto& kv : rank_completions) {
+        std::sort(kv.second.begin(), kv.second.end());
+    }
+
     // Compute relative_delay_ns for each flow using completion times
     // relative_delay_ns = send_time - max(prev completion times), clamped to 0
-    // When a predecessor completed before we sent → gap = 0 (they overlapped)
-    // When a predecessor was still in-flight → gap = remaining SimAI gap
+    // prev[] contains rank IDs → resolve to most recent predecessor flow per rank
     int zero_send_count = 0;
-    int zero_completion_count = 0;
     for (auto& entry : _flow_buffer) {
         const auto& sf = entry.sf;
         uint64_t my_send_time = 0;
@@ -2277,15 +2289,22 @@ void MockNcclGroup::finalizeFlowFile() {
         } else {
             uint64_t max_prev_completion = 0;
             bool any_completion_recorded = false;
-            for (int pid : sf.prev) {
-                if (_flow_completion_times.count(pid)) {
-                    max_prev_completion = std::max(max_prev_completion,
-                        _flow_completion_times[pid]);
+            for (int prev_rank : sf.prev) {
+                auto rit = rank_completions.find((uint32_t)prev_rank);
+                if (rit == rank_completions.end()) continue;
+                const auto& pairs = rit->second;
+                // Find the most recent flow from this rank that is < sf.flow_id
+                auto lb = std::lower_bound(pairs.begin(), pairs.end(),
+                    std::make_pair(sf.flow_id, (uint64_t)0));
+                if (lb != pairs.begin()) {
+                    --lb;
+                    max_prev_completion = std::max(max_prev_completion, lb->second);
                     any_completion_recorded = true;
                 }
             }
             if (!any_completion_recorded) {
-                zero_completion_count++;
+                // No predecessor completion data; use send_time as-is
+                // (first collective or no QP ever finished before this send)
                 entry.relative_delay_ns = my_send_time;
             } else {
                 entry.relative_delay_ns = (my_send_time > max_prev_completion)
@@ -2297,10 +2316,6 @@ void MockNcclGroup::finalizeFlowFile() {
     if (zero_send_count > 0) {
         std::cerr << "[Decoupled] WARNING: " << zero_send_count
                   << " flows have send_time=0 (never recorded via sim_send())" << std::endl;
-    }
-    if (zero_completion_count > 0) {
-        std::cerr << "[Decoupled] WARNING: " << zero_completion_count
-                  << " flows have no predecessor completion times recorded" << std::endl;
     }
 
     // Step 3: Write all flows to file

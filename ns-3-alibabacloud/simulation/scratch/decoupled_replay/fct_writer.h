@@ -25,8 +25,9 @@
 #include "common_types.h"
 #include "flow_sender.h"
 
-// Forward declaration: global flow-completion callback (defined in dep_scheduler.h)
-extern void (*g_on_flow_completed)(uint32_t flow_id);
+// Global flow-completion callback.  Called by qp_finish when a flow completes.
+// Set by main.cc to a lambda that forwards to DepScheduler::OnFlowCompleted.
+void (*g_on_flow_completed)(uint32_t flow_id) = nullptr;
 
 // ============================================================================
 // qp_finish
