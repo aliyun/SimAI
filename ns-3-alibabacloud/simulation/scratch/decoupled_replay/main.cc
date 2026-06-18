@@ -102,32 +102,23 @@ int main(int argc, char *argv[]) {
     std::string topo_xml = topo_dir + "/POD#1.xml";
 
     // =====================================================================
-    // Step 1: Assert _QPS_PER_CONNECTION_ == 1
-    // =====================================================================
-    if (_QPS_PER_CONNECTION_ != 1) {
-        std::cerr << "ERROR: _QPS_PER_CONNECTION_ must be 1 for decoupled replay. "
-                  << "Got " << _QPS_PER_CONNECTION_ << std::endl;
-        return 1;
-    }
-
-    // =====================================================================
-    // Step 2: Read configuration
+    // Step 1: Read configuration + apply NS3 defaults
     // =====================================================================
     std::cout << "[DecoupledReplay] Reading configuration..." << std::endl;
     if (!ReadConf(topo_xml, config_path)) {
         std::cerr << "ERROR: ReadConf failed" << std::endl;
         return 1;
     }
+    SetConfig();
 
     // =====================================================================
-    // Step 3: Setup NS3 network
+    // Step 2: Setup NS3 network
     // =====================================================================
     std::cout << "[DecoupledReplay] Setting up network..." << std::endl;
-    SetConfig();
     SetupNetwork(qp_finish, send_finish);
 
     // =====================================================================
-    // Step 4: Load flows from file
+    // Step 3: Load flows from file
     // =====================================================================
     std::cout << "[DecoupledReplay] Loading flows from " << flow_file_path << "..." << std::endl;
     std::vector<FlowFileRecord> flows = LoadFlows(flow_file_path);
@@ -151,13 +142,13 @@ int main(int argc, char *argv[]) {
     }
 
     // =====================================================================
-    // Step 5: Init DepScheduler
+    // Step 4: Init DepScheduler
     // =====================================================================
     DepScheduler scheduler;
     g_scheduler = &scheduler;
 
     if (!scheduler.Init(flows)) {
-        std::cerr << "ERROR: DepScheduler::Init failed (invalid prev[] references)" << std::endl;
+        std::cerr << "ERROR: DepScheduler::Init failed" << std::endl;
         return 1;
     }
 
@@ -177,13 +168,13 @@ int main(int argc, char *argv[]) {
     };
 
     // =====================================================================
-    // Step 6: Schedule initial ready flows
+    // Step 5: Schedule initial ready flows
     // =====================================================================
     std::cout << "[DecoupledReplay] Scheduling initial flows..." << std::endl;
     scheduler.ScheduleReadyFlows();
 
     // =====================================================================
-    // Step 7: Run simulation
+    // Step 6: Run simulation
     // =====================================================================
     std::cout << "[DecoupledReplay] Running simulation (stop_time="
               << sim_stop_time << "s)..." << std::endl;
@@ -194,7 +185,7 @@ int main(int argc, char *argv[]) {
     Simulator::Run();
 
     // =====================================================================
-    // Step 8: Verify completion and output stats
+    // Step 7: Verify completion and output stats
     // =====================================================================
     bool all_completed = scheduler.VerifyCompletion();
 
@@ -208,7 +199,7 @@ int main(int argc, char *argv[]) {
     }
 
     // =====================================================================
-    // Step 9: Cleanup
+    // Step 8: Cleanup
     // =====================================================================
     g_on_flow_completed = nullptr;
     g_scheduler = nullptr;

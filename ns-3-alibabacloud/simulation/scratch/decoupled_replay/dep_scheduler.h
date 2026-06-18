@@ -3,21 +3,66 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  *
  * ---
- * DECOUPLED REPLAY: Dependency graph scheduler with layer constraint.
+ * DECOUPLED REPLAY: Layer-constrained flow scheduler.
  * [CORE NEW LOGIC - not extracted from SimAI]
  *
- * Schedules flows based on:
- *   1. parent_flow_id / prev[] (rank-ID) dependencies (all predecessors must complete)
- *   2. layer_num constraint (Layer N+1 locked until ALL Layer N flows complete)
- *   3. relative_delay_ns (delay after dependencies satisfied, before sending)
+ * === Scheduling model ===
  *
- * Dependency resolution:
- *   - Primary: parent_flow_id[] (contains flow_ids from tree/NVLS/PXN models)
- *   - Fallback: prev[] (rank IDs) → binary-search per-rank flow_id lists
+ * Two gates control when a flow is injected into NS3:
  *
- * Key invariants:
- *   - _QPS_PER_CONNECTION_ == 1 (asserted at startup)
+ *   1. Layer constraint (hard gate):
+ *      Layer N+1 is locked until ALL flows in Layer N have completed.
+ *      This replaces the old per-flow dependency graph. Layer 0 is always
+ *      unlocked. The layer-unlock gate fires inside OnFlowCompleted() when
+ *      _layer_completed[layer] >= _layer_flow_count[layer].
+ *
+ *   2. relative_delay_ns (soft gate):
+ *      After a flow's layer unlocks and it becomes eligible, it is scheduled
+ *      via Simulator::Schedule(NanoSeconds(relative_delay_ns), ...).
+ *      relative_delay_ns = send_time - max(prev[] completion times),
+ *      computed by SimAI Phase 1 (MockNcclGroup::finalizeFlowFile).
+ *
+ * === Why no flow-level dependency graph ===
+ *
+ * Double-counting: the old design used both pending_deps (hard gate:
+ * predecessor must complete) AND relative_delay_ns (soft gate: wait N ns
+ * after predecessor becomes eligible). Since relative_delay_ns was computed
+ * from send times, the hard gate added the predecessor's entire wire time
+ * on top of the already-recorded SimAI gap, eliminating flow overlap.
+ *
+ * Single-gate fix: remove the dependency graph entirely. Causality is fully
+ * encoded in relative_delay_ns by using completion times instead of send
+ * times in the Phase 1 computation.
+ *
+ *   relative_delay_ns = send_time - max(prev[] QP completion times)
+ *
+ *   Predecessor completed before we sent → delay = 0  (overlap preserved)
+ *   Predecessor still in-flight when we sent  → delay > 0  (real gap)
+ *
+ * === Why prev[] was never usable as flow dependencies ===
+ *
+ * SingleFlow.prev contains rank IDs (0, 1, 2, ...), not flow IDs (10423,
+ * 10424, ...). Every flow model generator (ring, tree, NVLS, alltoall)
+ * populates prev with ncclTree.rank / ring member indices / group ranks.
+ * The SimAI event chain uses these for receive-side rank-based coordination
+ * (free_packets[channel_id][rank]), not flow-level sequencing.
+ *
+ * Flow-level sequencing lives in parent_flow_id / child_flow_id (tree/NVLS)
+ * and in the implicit linear order of g_flow_id assignment.
+ *
+ * === Known limitation: PXN flows ===
+ *
+ * PXN proxy flows (conn_type="PXN_INIT") have prev = {sender_rank} but
+ * their true inter-flow dependency is parent_flow_id. With the dependency
+ * graph removed this is now harmless -- the proxy flow's relative_delay_ns
+ * computed from its parent's completion time provides correct ordering.
+ *
+ * === Key invariants ===
+ *
+ *   - Single QP per flow (SendFlow inlined, no multi-QP loop)
  *   - Layer 0 is always unlocked; higher layers unlock sequentially
+ *   - No flow_id circulation -- prev[] entries are ignored
+ *   - relative_delay_ns encodes all causality; no secondary ordering needed
  */
 
 #ifndef __DECOUPLED_DEP_SCHEDULER_H__
@@ -36,13 +81,6 @@
 #include <cassert>
 
 // ============================================================================
-// Global callback: called by qp_finish when a flow completes
-// Set by main.cc to DepScheduler::OnFlowCompleted
-// ============================================================================
-
-extern void (*g_on_flow_completed)(uint32_t flow_id);
-
-// ============================================================================
 // DepScheduler
 // ============================================================================
 
@@ -54,8 +92,6 @@ public:
         bool scheduled = false;
         uint64_t scheduled_time_ns = 0;   // when SendFlow was called
         uint64_t completed_time_ns = 0;   // when qp_finish completed the flow
-        int pending_deps = 0;             // count of uncompleted dependency flows
-        std::vector<uint32_t> dependents; // flows that depend on this flow
 
         // For expeRecvHash: buffer allocated for receive expectation
         char* recv_buffer = nullptr;
@@ -74,6 +110,7 @@ public:
         _layer_flow_count.clear();
         _layer_completed.clear();
         _requests.clear();
+        _request_by_id.clear();
         _current_unlocked_layer = 0;
         _max_layer = 0;
 
@@ -83,56 +120,14 @@ public:
             id_to_idx[flows[i].flow_id] = i;
         }
 
-        // Build per-rank sorted flow_id lists (for prev[] fallback lookups)
-        // Key: rank, Value: sorted vector of flow_ids that involve this rank
-        std::unordered_map<uint32_t, std::vector<uint32_t>> rank_to_flow_ids;
-        for (const auto& rec : flows) {
-            rank_to_flow_ids[rec.src].push_back(rec.flow_id);
-            rank_to_flow_ids[rec.dst].push_back(rec.flow_id);
-        }
-        // Sort + dedup each rank's flow_id list for binary search
-        for (auto& kv : rank_to_flow_ids) {
-            std::sort(kv.second.begin(), kv.second.end());
-            auto last = std::unique(kv.second.begin(), kv.second.end());
-            kv.second.erase(last, kv.second.end());
-        }
-
-        // Pass 1: create FlowState for each flow, resolving dependencies
-        // Primary: parent_flow_id (contains flow_ids)
-        // Fallback: prev (contains rank IDs) → find predecessor flow by rank
-        std::unordered_map<uint32_t, std::vector<uint32_t>> resolved_deps; // flow_id → dep flow_ids
+        // Create FlowState for each flow
+        // No flow-level dependency graph — causality is encoded in relative_delay_ns
+        // computed from send times minus predecessor completion times in Phase 1.
+        // Only the layer constraint gates flow scheduling.
         for (const auto& rec : flows) {
             FlowState st;
             st.record = rec;
-            std::vector<uint32_t> deps;
 
-            // Primary: use parent_flow_id entries (they are flow_ids)
-            if (!rec.parent_flow_id.empty()) {
-                for (int pfid : rec.parent_flow_id) {
-                    if (pfid >= 0 && id_to_idx.count((uint32_t)pfid)) {
-                        deps.push_back((uint32_t)pfid);
-                    }
-                }
-            }
-
-            // Fallback: prev[] contains rank IDs; find predecessor flow for each rank
-            if (deps.empty() && !rec.prev.empty()) {
-                for (uint32_t prev_rank : rec.prev) {
-                    auto rit = rank_to_flow_ids.find(prev_rank);
-                    if (rit == rank_to_flow_ids.end()) continue;
-                    const auto& fids = rit->second;
-                    // Find the highest flow_id from this rank that is < rec.flow_id
-                    auto lb = std::lower_bound(fids.begin(), fids.end(), rec.flow_id);
-                    if (lb != fids.begin()) {
-                        deps.push_back(*(lb - 1));
-                    }
-                }
-            }
-
-            st.pending_deps = (int)deps.size();
-            resolved_deps[rec.flow_id] = std::move(deps);
-
-            // Track max layer and per-layer flow count
             _layer_flow_count[rec.layer_num]++;
             if ((int)rec.layer_num > _max_layer) {
                 _max_layer = (int)rec.layer_num;
@@ -141,21 +136,10 @@ public:
             _states[rec.flow_id] = st;
         }
 
-        // Pass 2: build dependents (reverse edges) from resolved dependencies
-        for (auto& kv : _states) {
-            uint32_t fid = kv.first;
-            auto dit = resolved_deps.find(fid);
-            if (dit == resolved_deps.end()) continue;
-            for (uint32_t dep_fid : dit->second) {
-                auto dep_it = _states.find(dep_fid);
-                if (dep_it != _states.end()) {
-                    dep_it->second.dependents.push_back(fid);
-                }
-            }
-        }
-
-        // Allocate FlowRequest objects for each flow (heap-allocated, lives for full sim)
+        // Allocate FlowRequest objects for each flow (heap-allocated, stable pointers
+        // for the simulation lifetime -- SendFlow stores the pointer in sender_src_port_map).
         _requests.resize(_total_flows);
+        _request_by_id.clear();
         for (size_t i = 0; i < flows.size(); i++) {
             _requests[i] = new FlowRequest();
             const auto& rec = flows[i];
@@ -165,6 +149,7 @@ public:
             _requests[i]->srcRank = rec.src;
             _requests[i]->dstRank = rec.dst;
             _requests[i]->reqCount = rec.flow_size;
+            _request_by_id[rec.flow_id] = _requests[i];  // O(1) lookup for DoSendFlow
         }
 
         // Setup expeRecvHash for each flow (receive expectation)
@@ -206,7 +191,6 @@ public:
             FlowState& st = kv.second;
 
             if (st.scheduled || st.completed) continue;
-            if (st.pending_deps > 0) continue;
 
             // Layer constraint (G4): only schedule flows in unlocked layers
             if ((int)st.record.layer_num > _current_unlocked_layer) {
@@ -263,16 +247,6 @@ public:
                      << _total_flows << " total, in-flight: "
                      << _in_flight.size());
 
-        // Decrement pending_deps for all dependent flows
-        for (uint32_t dep_fid : st.dependents) {
-            auto dep_it = _states.find(dep_fid);
-            if (dep_it != _states.end()) {
-                dep_it->second.pending_deps--;
-                NS_LOG_DEBUG("[DepScheduler] Flow " << dep_fid
-                             << " pending_deps now " << dep_it->second.pending_deps);
-            }
-        }
-
         // Layer unlock check (G4):
         // If the current unlocked layer is fully complete, unlock the next layer
         while (_current_unlocked_layer <= _max_layer) {
@@ -294,28 +268,22 @@ public:
     }
 
     // ------------------------------------------------------------------
-    // DoSendFlow: internal callback from Simulator::Schedule
+    // DoSendFlow: public callback from Simulator::Schedule (must be public
+    // for ns3's MakeEvent / Simulator::Schedule with member-function pointers).
     // ------------------------------------------------------------------
     void DoSendFlow(uint32_t flow_id) {
         auto it = _states.find(flow_id);
         if (it == _states.end()) return;
 
         FlowState& st = it->second;
-        // Find the corresponding FlowRequest
-        // (requests are stored in the same order as flows were loaded)
-        FlowRequest* req = nullptr;
-        for (size_t i = 0; i < _requests.size(); i++) {
-            if (_requests[i]->flowTag.current_flow_id == flow_id) {
-                req = _requests[i];
-                break;
-            }
-        }
-
-        if (!req) {
+        // O(1) lookup via map populated in Init()
+        auto rit = _request_by_id.find(flow_id);
+        if (rit == _request_by_id.end()) {
             std::cerr << "[DepScheduler] ERROR: no request found for flow "
                       << flow_id << std::endl;
             return;
         }
+        FlowRequest* req = rit->second;
 
         NS_LOG_DEBUG("[DepScheduler] Sending flow " << flow_id
                      << " src=" << st.record.src << " dst=" << st.record.dst
@@ -362,7 +330,6 @@ public:
                 if (!kv.second.completed) {
                     std::cerr << "  Incomplete: flow " << kv.first
                               << " layer=" << kv.second.record.layer_num
-                              << " pending_deps=" << kv.second.pending_deps
                               << " scheduled=" << kv.second.scheduled
                               << std::endl;
                 }
@@ -421,52 +388,11 @@ public:
     }
 
     // ------------------------------------------------------------------
-    // VerifyDAG: run cycle detection on the dependency graph
+    // VerifyDAG: no-op — no flow-level dependency graph exists.
+    // Causality is encoded in relative_delay_ns (completion-based timing).
     // ------------------------------------------------------------------
     bool VerifyDAG() {
-        // DFS-based cycle detection (3-color: 0=white, 1=gray, 2=black)
-        std::unordered_map<uint32_t, int> color; // 0=unvisited, 1=in_progress, 2=done
-        for (const auto& kv : _states) color[kv.first] = 0;
-
-        std::function<bool(uint32_t, std::vector<uint32_t>&)> dfs =
-            [&](uint32_t fid, std::vector<uint32_t>& path) -> bool {
-            color[fid] = 1; // in progress
-            path.push_back(fid);
-
-            const FlowState& st = _states[fid];
-            for (uint32_t dep_fid : st.dependents) {
-                if (color[dep_fid] == 1) {
-                    // Cycle detected
-                    std::cerr << "[DepScheduler] ERROR: Cycle detected: ";
-                    bool in_cycle = false;
-                    for (uint32_t n : path) {
-                        if (n == dep_fid) in_cycle = true;
-                        if (in_cycle) std::cerr << n << " ";
-                    }
-                    std::cerr << dep_fid << std::endl;
-                    return false;
-                }
-                if (color[dep_fid] == 0) {
-                    if (!dfs(dep_fid, path)) return false;
-                }
-            }
-
-            path.pop_back();
-            color[fid] = 2; // done
-            return true;
-        };
-
-        for (const auto& kv : _states) {
-            if (color[kv.first] == 0) {
-                std::vector<uint32_t> path;
-                if (!dfs(kv.first, path)) {
-                    std::cerr << "[DepScheduler] DAG verification FAILED" << std::endl;
-                    return false;
-                }
-            }
-        }
-
-        std::cout << "[DepScheduler] DAG verification PASSED (no cycles)" << std::endl;
+        std::cout << "[DepScheduler] DAG verification skipped (completion-based timing)." << std::endl;
         return true;
     }
 
@@ -495,13 +421,9 @@ private:
     std::map<int, int> _layer_completed;     // layer_num -> completed flows
 
     // Heap-allocated FlowRequest objects (lifetime = simulation duration)
+    // _request_by_id provides O(1) lookup for DoSendFlow.
     std::vector<FlowRequest*> _requests;
+    std::unordered_map<uint32_t, FlowRequest*> _request_by_id;
 };
-
-// ============================================================================
-// Global callback pointer definition
-// ============================================================================
-
-void (*g_on_flow_completed)(uint32_t flow_id) = nullptr;
 
 #endif // __DECOUPLED_DEP_SCHEDULER_H__

@@ -19,7 +19,7 @@
  *   - MockNcclLog → removed (was debug-only)
  *   - Sys::boostedTick() → Simulator::Now().GetNanoSeconds()
  *   - #ifdef NS3_MTP / MtpInterface blocks removed
- *   - _QPS_PER_CONNECTION_ hardcoded to 1 (asserted in main.cc)
+ *   - Single QP per flow (no multi-QP loop)
  */
 
 #ifndef __DECOUPLED_FLOW_SENDER_H__
@@ -29,13 +29,6 @@
 
 #include <cstdlib>
 #include <algorithm>
-
-// ============================================================================
-// _QPS_PER_CONNECTION_ constant (hardcoded to 1 for decoupled replay)
-// Extracted from: entry.h:21
-// ============================================================================
-
-constexpr int _QPS_PER_CONNECTION_ = 1;
 
 // ============================================================================
 // Tracking maps
@@ -112,62 +105,58 @@ inline bool is_receive_finished(int src, int dst, FlowTag flowTag) {
 // ============================================================================
 
 // Extracted from: entry.h:109-166
+// Simplified: single QP per flow (no multi-QP loop)
 inline void SendFlow(int src, int dst, uint64_t maxPacketCount,
                      void (*msg_handler)(void *fun_arg), void *fun_arg,
                      int tag, FlowRequest *request) {
-    uint64_t PacketCount = ((maxPacketCount + _QPS_PER_CONNECTION_ - 1) / _QPS_PER_CONNECTION_);
-    uint64_t leftPacketCount = maxPacketCount;
-    for (int index = 0; index < _QPS_PER_CONNECTION_; index++) {
-        uint64_t real_PacketCount = std::min(PacketCount, leftPacketCount);
-        leftPacketCount -= real_PacketCount;
-        uint32_t port = portNumber[src][dst]++;
+    uint64_t real_PacketCount = maxPacketCount;
+    uint32_t port = portNumber[src][dst]++;
 
-        sender_src_port_map[std::make_pair(port, std::make_pair(src, dst))] = request->flowTag;
+    sender_src_port_map[std::make_pair(port, std::make_pair(src, dst))] = request->flowTag;
 
-        int flow_id = request->flowTag.current_flow_id;
-        bool nvls_on = request->flowTag.nvls_on;
-        int pg = 3, dport = 100;
-        int send_lat = 6;  // microseconds (multiplied by 1000 to ns below)
-        const char* send_lat_env = std::getenv("AS_SEND_LAT");
-        if (send_lat_env) {
-            try {
-                send_lat = std::stoi(send_lat_env);
-            } catch (const std::invalid_argument& e) {
-                std::cerr << "[SendFlow] ERROR: AS_SEND_LAT invalid value" << std::endl;
-                exit(-1);
-            }
+    int flow_id = request->flowTag.current_flow_id;
+    bool nvls_on = request->flowTag.nvls_on;
+    int pg = 3, dport = 100;
+    int send_lat = 6;  // microseconds (multiplied by 1000 to ns below)
+    const char* send_lat_env = std::getenv("AS_SEND_LAT");
+    if (send_lat_env) {
+        try {
+            send_lat = std::stoi(send_lat_env);
+        } catch (const std::invalid_argument& e) {
+            std::cerr << "[SendFlow] ERROR: AS_SEND_LAT invalid value" << std::endl;
+            exit(-1);
         }
-        send_lat *= 1000;
-        flow_input.idx++;
-        if (real_PacketCount == 0) real_PacketCount = 1;
-
-        NS_LOG_DEBUG(" [Packet sending event] " << src << " SendFlow to " << dst
-                     << " flow_id " << flow_id
-                     << " srcip " << serverAddress[src]
-                     << " dstip " << serverAddress[dst]
-                     << " size: " << maxPacketCount
-                     << " at the tick: " << Simulator::Now().GetNanoSeconds());
-
-        RdmaClientHelper clientHelper(
-            pg, serverAddress[src], serverAddress[dst], port, dport, real_PacketCount,
-            has_win ? (global_t == 1 ? maxBdp : pairBdp[n.Get(src)][n.Get(dst)]) : 0,
-            global_t == 1 ? maxRtt : pairRtt[src][dst], msg_handler, fun_arg, tag,
-            src, dst);
-        if (nvls_on) clientHelper.SetAttribute("NVLS_enable", UintegerValue(1));
-
-        ApplicationContainer appCon = clientHelper.Install(n.Get(src));
-        appCon.Start(Time(send_lat));
-        waiting_to_sent_callback[std::make_pair(request->flowTag.current_flow_id,
-                                                std::make_pair(src, dst))]++;
-        waiting_to_notify_receiver[std::make_pair(request->flowTag.current_flow_id,
-                                                  std::make_pair(src, dst))]++;
-
-        NS_LOG_DEBUG("waiting_to_notify_receiver  current_flow_id "
-                     << request->flowTag.current_flow_id
-                     << " src " << src << " dst " << dst << " count "
-                     << waiting_to_notify_receiver[std::make_pair(
-                            tag, std::make_pair(src, dst))]);
     }
+    send_lat *= 1000;
+    flow_input.idx++;
+    if (real_PacketCount == 0) real_PacketCount = 1;
+
+    NS_LOG_DEBUG(" [Packet sending event] " << src << " SendFlow to " << dst
+                 << " flow_id " << flow_id
+                 << " srcip " << serverAddress[src]
+                 << " dstip " << serverAddress[dst]
+                 << " size: " << maxPacketCount
+                 << " at the tick: " << Simulator::Now().GetNanoSeconds());
+
+    RdmaClientHelper clientHelper(
+        pg, serverAddress[src], serverAddress[dst], port, dport, real_PacketCount,
+        has_win ? (global_t == 1 ? maxBdp : pairBdp[n.Get(src)][n.Get(dst)]) : 0,
+        global_t == 1 ? maxRtt : pairRtt[src][dst], msg_handler, fun_arg, tag,
+        src, dst);
+    if (nvls_on) clientHelper.SetAttribute("NVLS_enable", UintegerValue(1));
+
+    ApplicationContainer appCon = clientHelper.Install(n.Get(src));
+    appCon.Start(Time(send_lat));
+    waiting_to_sent_callback[std::make_pair(request->flowTag.current_flow_id,
+                                            std::make_pair(src, dst))]++;
+    waiting_to_notify_receiver[std::make_pair(request->flowTag.current_flow_id,
+                                              std::make_pair(src, dst))]++;
+
+    NS_LOG_DEBUG("waiting_to_notify_receiver  current_flow_id "
+                 << request->flowTag.current_flow_id
+                 << " src " << src << " dst " << dst << " count "
+                 << waiting_to_notify_receiver[std::make_pair(
+                        tag, std::make_pair(src, dst))]);
 }
 
 // ============================================================================

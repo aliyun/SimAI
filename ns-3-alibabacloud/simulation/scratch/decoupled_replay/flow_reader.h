@@ -54,7 +54,7 @@ struct FlowFileRecord {
     uint32_t group_type = 0;
     uint32_t op = 0;
     uint32_t loopstate = 0;
-    uint64_t relative_delay_ns = 0;   // NEW FIELD: delay after all prev[] complete
+    uint64_t relative_delay_ns = 0;   // completion-based: send_time - max(prev completion times)
 
     // Basic validation
     bool valid() const {

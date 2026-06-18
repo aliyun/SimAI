@@ -66,7 +66,7 @@ inline uint64_t get_nic_rate(NodeContainer &n) {
 
 // Extracted from: common.h:175-179
 inline void get_pfc(FILE *fout, Ptr<QbbNetDevice> dev, uint32_t type) {
-    fprintf(fout, "%lu %u %u %u %u\n", Simulator::Now().GetTimeStep(),
+    fprintf(fout, "%lld %u %u %u %u\n", (long long)Simulator::Now().GetTimeStep(),
             dev->GetNode()->GetId(), dev->GetNode()->GetNodeType(),
             dev->GetIfIndex(), type);
 }
@@ -944,7 +944,7 @@ inline void SetupNetwork(void (*qp_finish)(FILE *, Ptr<RdmaQueuePair>),
                 maxRtt = rtt;
         }
     }
-    printf("maxRtt=%lu maxBdp=%lu\n", maxRtt, maxBdp);
+    printf("maxRtt=%llu maxBdp=%llu\n", (unsigned long long)maxRtt, (unsigned long long)maxBdp);
 
     for (uint32_t i = 0; i < node_num; i++) {
         if (n.Get(i)->GetNodeType() == 1) {

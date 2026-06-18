@@ -25,8 +25,9 @@
 #include "common_types.h"
 #include "flow_sender.h"
 
-// Forward declaration: global flow-completion callback (defined in dep_scheduler.h)
-extern void (*g_on_flow_completed)(uint32_t flow_id);
+// Global flow-completion callback.  Called by qp_finish when a flow completes.
+// Set by main.cc to a lambda that forwards to DepScheduler::OnFlowCompleted.
+void (*g_on_flow_completed)(uint32_t flow_id) = nullptr;
 
 // ============================================================================
 // qp_finish
@@ -44,9 +45,11 @@ inline void qp_finish(FILE *fout, Ptr<RdmaQueuePair> q) {
             (CustomHeader::GetStaticWholeHeaderSize() -
              IntHeader::GetStaticSize());
     uint64_t standalone_fct = base_rtt + total_bytes * 8000000000lu / b;
-    fprintf(fout, "%08x %08x %u %u %lu %lu %lu %lu\n", q->sip.Get(), q->dip.Get(),
-            q->sport, q->dport, q->m_size, q->startTime.GetTimeStep(),
-            (Simulator::Now() - q->startTime).GetTimeStep(), standalone_fct);
+    fprintf(fout, "%08x %08x %u %u %llu %lld %lld %llu\n", q->sip.Get(), q->dip.Get(),
+            q->sport, q->dport, (unsigned long long)q->m_size,
+            (long long)q->startTime.GetTimeStep(),
+            (long long)(Simulator::Now() - q->startTime).GetTimeStep(),
+            (unsigned long long)standalone_fct);
     fflush(fout);
 
     FlowTag flowTag;
