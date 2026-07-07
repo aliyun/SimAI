@@ -11,6 +11,12 @@
 
 ### 近期更新
 
+- [2026/07] **SimAI 1.7 正式发布！** 主要更新：
+  - [SimCCL](https://github.com/aliyun/SimCCL) v2.30 mock：NCCL 风格的集合通信流分解，支持 Ring、PAT、NVLS 算法。
+  - 协议感知选择（基于消息大小自动选择 LL/LL128/Simple）。
+  - SimCCL 独立二进制，无需 GPU 即可进行集合操作分析。
+  - 按 (算法, 协议, 链路类型) 的 send latency 分桶表，提升仿真保真度。
+
 - [2026/04] **SimAI 1.6 正式发布！** 主要更新：
   - 推理仿真 GPU 显存建模（参数计数与 KV Cache 管理）。
   - Decode 耗时线性插值估算（替代最近邻查找）。
@@ -43,6 +49,7 @@
 
 | 日期             | 活动                                                                     | 地点                    | 内容                                                     | 形式          |
 |:----------------:|:------------------------------------------------------------------------ |:----------------------- |:-------------------------------------------------------- |:-------------:|
+| Jul 7, 2026      | SimAI 1.7                                                                | 🌐 线上                 | SimAI 1.7 正式发布                                       | 💻 线上直播   |
 | Apr 23, 2026     | SimAI 1.6                                                                | 🌐 线上                 | SimAI 1.6 正式发布                                       | 💻 线上直播   |
 | Dec 30, 2025     | SimAI 1.5                                                                | 🌐 线上                 | SimAI 1.5 正式发布                                       | 💻 线上直播   |
 | Jun 4, 2025      | SimAI 社区第一届研讨会                                                   | 📍 北京大学             | 三场社区贡献者演讲                                       | 🎓 线下       |
@@ -76,6 +83,7 @@
   - [环境搭建](#环境搭建)
   - [使用 SimAI-Analytical](#使用-simai-analytical)
   - [使用 SimAI-Simulation](#使用-simai-simulation)
+  - [使用 SimCCL](#使用-simccl)
   - [使用多请求推理仿真](#使用多请求推理仿真)
 
 # SimAI 概述
@@ -145,7 +153,7 @@ SimAI 论文已被 NSDI'25 Spring 接收，详情请参阅：
 
 # 快速开始
 
-以下为简单示例。完整教程请参见：[**SimAI@Tutorial**](./docs/Tutorial.md)、[**aicb@Tutorial**](https://github.com/aliyun/aicb/blob/master/training/tutorial.md)、[SimCCL@Tutorial]、[ns-3-alibabacloud@Tutorial]
+以下为简单示例。完整教程请参见：[**SimAI@Tutorial**](./docs/Tutorial.md)、[**aicb@Tutorial**](https://github.com/aliyun/aicb/blob/master/training/tutorial.md)、[**SimCCL@Tutorial**](./SimCCL/README.md)、[**ns-3-alibabacloud@Tutorial**](https://github.com/aliyun/ns-3-alibabacloud)
 
 ## 环境搭建
 
@@ -197,6 +205,28 @@ $ python3 ./astra-sim-alibabacloud/inputs/topo/gen_Topo_Template.py -topo Spectr
 # 运行仿真
 $ AS_SEND_LAT=3 AS_NVLS_ENABLE=1 ./bin/SimAI_simulator -t 16 -w ./example/microAllReduce.txt -n ./Spectrum-X_128g_8gps_100Gbps_A100 -c astra-sim-alibabacloud/inputs/config/SimAI.conf
 ```
+
+## 使用 SimCCL
+
+SimCCL 可独立使用，无需运行完整网络仿真即可分析集合通信流分解：
+
+```bash
+# 编译 SimCCL 独立二进制
+$ cd SimCCL/standalone
+$ bash build.sh v2.30
+
+# 单个集合操作分析
+$ ./build/simccl-standalone --op AllReduce --size 4194304 \
+    --nRanks 8 --nNodes 1 --gpus_per_node 8 --gpu_type H20
+
+# 工作负载文件模式
+$ ./build/simccl-standalone -w ../../example/microAllReduce.txt \
+    --nRanks 16 --nNodes 2 --gpus_per_node 8 --gpu_type H20
+```
+
+输出：`ncclFlowModel_detailed_flows.csv` — 集合操作的点对点流分解。
+
+详细文档请参见 [SimCCL README](./SimCCL/README.md)。
 
 ## 使用多请求推理仿真
 

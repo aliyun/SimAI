@@ -1,5 +1,12 @@
 set(use_rdma ${USE_RDMA})
 set(use_analytical ${USE_ANALYTICAL})
+# SimCCL mock version selection (matches ns3 build default)
+if(DEFINED ENV{SIMAI_NCCL_VERSION})
+	set(MOCK_VERSION $ENV{SIMAI_NCCL_VERSION})
+else()
+	set(MOCK_VERSION "v2.30")
+endif()
+
 file(GLOB astra_SRC 
 	"${PROJECT_SOURCE_DIR}/../../astra-sim/system/collective/*.cc"
 	"${PROJECT_SOURCE_DIR}/../../astra-sim/system/fast-backend/*.cc"
@@ -9,6 +16,7 @@ file(GLOB astra_SRC
 	"${PROJECT_SOURCE_DIR}/../../astra-sim/system/*.cc"
 	"${PROJECT_SOURCE_DIR}/../../astra-sim/system/*.cc"
 	"${PROJECT_SOURCE_DIR}/../../astra-sim/workload/*.cc"
+	"${PROJECT_SOURCE_DIR}/../../../SimCCL/mock/${MOCK_VERSION}/*.cc"
     )
 file(GLOB HEADERS
     "${PROJECT_SOURCE_DIR}/../../astra-sim/system/collective/*.hh"

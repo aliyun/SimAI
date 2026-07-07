@@ -417,7 +417,7 @@ LayerData Layer::report(
   for (auto& ml : net_message_latency) {
     layerData.avg_network_message_dealy.push_back(std::make_pair(i, ml / FREQ));
   }
-  if (seprate_log)
+  if (seprate_log && EndToEnd)
   {
     std::string data;
     std::pair<float, float> total_bw;
@@ -638,9 +638,9 @@ LayerData Layer::report(
     layerData.avg_network_message_dealy.push_back(std::make_pair(i, ml / FREQ));
    }
   #ifdef NS3_MPI
-  if (seprate_log)
+  if (seprate_log && EndToEnd)
   #else
-  if (seprate_log) 
+  if (seprate_log && EndToEnd) 
   #endif
   {
     std::string data;

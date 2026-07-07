@@ -25,7 +25,8 @@ enum class ComType {
   All_Reduce,
   All_to_All,
   All_Reduce_All_to_All,
-  All_Reduce_NVLS
+  All_Reduce_NVLS,
+  Broadcast
 };
 enum class CollectiveOptimization { Baseline, LocalBWAware };
 enum class CollectiveImplementationType {
@@ -41,7 +42,6 @@ enum class CollectiveImplementationType {
   HalvingDoubling,  
   OneHalvingDoubling,
   NcclFlowModel,
-  NcclTreeFlowModel,
 };
 enum class CollectiveBarrier { Blocking, Non_Blocking };
 enum class SchedulingPolicy { LIFO, FIFO, HIGHEST, None };

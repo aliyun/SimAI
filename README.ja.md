@@ -11,6 +11,12 @@
 
 ### 最近のアップデート
 
+- [2026/07] **SimAI 1.7 リリース！** 主な更新：
+  - [SimCCL](https://github.com/aliyun/SimCCL) v2.30 mock：Ring、PAT、NVLS アルゴリズムをサポートする NCCL スタイルの集合通信フロー分解。
+  - プロトコル認識選択（メッセージサイズに基づく LL/LL128/Simple の自動選択）。
+  - SimCCL スタンドアロンバイナリ（GPU不要で集合操作分析が可能）。
+  - (アルゴリズム, プロトコル, リンクタイプ) 別の送信レイテンシテーブルによるシミュレーション精度向上。
+
 - [2026/04] **SimAI 1.6 リリース！** 主な更新：
   - 推論シミュレーション向け GPU メモリモデリング（パラメータカウント＆KV Cache）。
   - Decode 時間推定の線形補間（最近傍探索の代替）。
@@ -44,6 +50,7 @@
 
 | 日付             | イベント                                                                  | 場所                     | 内容                                                      | 形式           |
 |:----------------:|:------------------------------------------------------------------------ |:----------------------- |:-------------------------------------------------------- |:-------------:|
+| 2026年7月7日     | SimAI 1.7                                                                | 🌐 オンライン            | SimAI 1.7 のリリース                                     | 💻 バーチャル  |
 | 2026年4月23日    | SimAI 1.6                                                                | 🌐 オンライン            | SimAI 1.6 のリリース                                     | 💻 バーチャル  |
 | 2025年12月30日   | SimAI 1.5                                                                | 🌐 オンライン            | SimAI 1.5 のリリース                                     | 💻 バーチャル  |
 | 2025年6月4日     | SimAIコミュニティ第1回ワークショップ                                      | 📍 北京大学              | コミュニティ貢献者による3つの講演                          | 🎓 現地        |
@@ -77,6 +84,7 @@
   - [セットアップ](#セットアップ)
   - [SimAI-Analyticalの使い方](#simai-analyticalの使い方)
   - [SimAI-Simulationの使い方](#simai-simulationの使い方)
+  - [SimCCL の使い方](#simccl-の使い方)
   - [マルチリクエスト推論シミュレーションの使い方](#マルチリクエスト推論シミュレーションの使い方)
 
 # SimAI 概要
@@ -146,7 +154,7 @@ SimAIを基盤とした革新的な研究や拡張を奨励します。ディス
 
 # クイックスタート
 
-以下に簡単な例を示します。SimAIの完全なチュートリアルはこちらにあります：[**SimAI@Tutorial**](./docs/Tutorial.md)、[**aicb@Tutorial**](https://github.com/aliyun/aicb/blob/master/training/tutorial.md)、[SimCCL@Tutorial]、[ns-3-alibabacloud@Tutorial]
+以下に簡単な例を示します。SimAIの完全なチュートリアルはこちらにあります：[**SimAI@Tutorial**](./docs/Tutorial.md)、[**aicb@Tutorial**](https://github.com/aliyun/aicb/blob/master/training/tutorial.md)、[**SimCCL@Tutorial**](./SimCCL/README.md)、[**ns-3-alibabacloud@Tutorial**](https://github.com/aliyun/ns-3-alibabacloud)
 
 ## セットアップ
 
@@ -198,6 +206,28 @@ $ python3 ./astra-sim-alibabacloud/inputs/topo/gen_Topo_Template.py -topo Spectr
 # 実行
 $ AS_SEND_LAT=3 AS_NVLS_ENABLE=1 ./bin/SimAI_simulator -t 16 -w ./example/microAllReduce.txt -n ./Spectrum-X_128g_8gps_100Gbps_A100 -c astra-sim-alibabacloud/inputs/config/SimAI.conf
 ```
+
+## SimCCL の使い方
+
+SimCCL は、フルネットワークシミュレーションを実行せずに、集合通信フロー分解を独立して分析できます：
+
+```bash
+# SimCCL スタンドアロンバイナリのビルド
+$ cd SimCCL/standalone
+$ bash build.sh v2.30
+
+# 単一集合操作の分析
+$ ./build/simccl-standalone --op AllReduce --size 4194304 \
+    --nRanks 8 --nNodes 1 --gpus_per_node 8 --gpu_type H20
+
+# ワークロードファイルモード
+$ ./build/simccl-standalone -w ../../example/microAllReduce.txt \
+    --nRanks 16 --nNodes 2 --gpus_per_node 8 --gpu_type H20
+```
+
+出力：`ncclFlowModel_detailed_flows.csv` — 集合操作のポイントツーポイントフロー分解。
+
+詳細なドキュメントについては [SimCCL README](./SimCCL/README.md) を参照してください。
 
 ## マルチリクエスト推論シミュレーションの使い方
 
