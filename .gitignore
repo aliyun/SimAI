@@ -18,6 +18,10 @@ SimCCL/standalone/build/
 SimCCL/standalone/build_*/
 SimCCL/tools/pat_simulator
 
+# Generated topology files (kept local, excluded from PR)
+astra-sim-alibabacloud/inputs/topo/Rail_Opti_SingleToR_*
+/Rail_Opti_SingleToR_*
+
 # Editor temp files
 *.swp
 *.swo
