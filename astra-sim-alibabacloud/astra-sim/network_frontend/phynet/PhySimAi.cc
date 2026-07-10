@@ -15,7 +15,7 @@
 
 #include <unistd.h>
 #include"PhySimAi.h"
-#include"astra-sim/system/MockNcclLog.h"
+#include"SimCCL/mock/MockNcclLog.h"
 using namespace std;
 
 queue<struct CallTask> PhyNetSim::call_list = {};

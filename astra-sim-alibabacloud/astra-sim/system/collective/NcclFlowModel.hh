@@ -35,7 +35,7 @@
 #include "astra-sim/system/MemBus.hh"
 #include "astra-sim/system/MyPacket.hh"
 #include "astra-sim/system/topology/RingTopology.hh"
-#include  "astra-sim/system/MockNcclQps.h"
+#include  "SimCCL/mock/MockNcclQps.h"
 
 namespace AstraSim {
 class NcclFlowModel : public Algorithm {

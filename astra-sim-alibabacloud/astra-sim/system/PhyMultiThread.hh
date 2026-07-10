@@ -20,7 +20,7 @@
 #include<condition_variable>
 #include<atomic>
 
-#include"MockNcclLog.h"
+#include"SimCCL/mock/MockNcclLog.h"
 #include"AstraNetworkAPI.hh"
 #include"SimAiPhyCommon.hh"
 #ifdef PHY_RDMA

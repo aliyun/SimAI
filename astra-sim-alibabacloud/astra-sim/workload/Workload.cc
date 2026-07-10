@@ -6,7 +6,7 @@ LICENSE file in the root directory of this source tree.
 #include "Workload.hh"
 #include "CSVWriter.hh"
 #include "Layer.hh"
-#include "astra-sim/system/MockNcclLog.h"
+#include "SimCCL/mock/MockNcclLog.h"
 #include <cstdlib>
 #include <cstring>
 

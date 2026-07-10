@@ -27,7 +27,7 @@ LICENSE file in the root directory of this source tree.
 #include "astra-sim/system/topology/LocalRingGlobalBinaryTree.hh"
 #include "astra-sim/system/topology/LocalRingNodeA2AGlobalDBT.hh"
 #include "astra-sim/system/topology/Torus3D.hh"
-#include "astra-sim/system/MockNcclLog.h"
+#include "SimCCL/mock/MockNcclLog.h"
 #include "astra-sim/workload/Layer.hh"
 
 #include <algorithm>

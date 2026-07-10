@@ -6,7 +6,7 @@ LICENSE file in the root directory of this source tree.
 #include "DataSet.hh"
 #include "IntData.hh"
 #include "Sys.hh"
-#include "MockNcclLog.h"
+#include "SimCCL/mock/MockNcclLog.h"
 namespace AstraSim {
 int DataSet::id_auto_increment = 0;
 DataSet::DataSet(int total_streams) {

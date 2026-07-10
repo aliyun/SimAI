@@ -55,7 +55,7 @@ function compile {
     # Copy versioned MockNccl translation layer into the ns3 app tree (flat layout).
     # SIMAI_NCCL_VERSION selects which mock version to build (default: v2.30).
     MOCK_VERSION="${SIMAI_NCCL_VERSION:-v2.30}"
-    MOCK_SRC="${SCRIPT_DIR}/../../../SimCCL/mock/${MOCK_VERSION}"
+    MOCK_SRC="${SCRIPT_DIR}/../../../SimCCL/src/mock/${MOCK_VERSION}"
     if [ ! -d "$MOCK_SRC" ]; then
         echo "[ERROR] SimCCL mock version '${MOCK_VERSION}' not found at: ${MOCK_SRC}" >&2
         echo "Supported versions: v2.20, v2.30" >&2
@@ -66,7 +66,7 @@ function compile {
     cp -r "$MOCK_SRC"/* "${NS3_APPLICATION}"/SimCCL/mock/
     cd "${NS3_DIR}/simulation"
     CC='gcc' CXX='g++' 
-    ./ns3 configure -d optimized --enable-mtp -- -DCMAKE_CXX_FLAGS="-g -O2"
+    ./ns3 configure -d debug --enable-mtp
     ./ns3 build
 
     cd "${SCRIPT_DIR:?}"

@@ -45,8 +45,8 @@
 #include "ns3/mtp-interface.h"
 #endif
 #include <map>
-#include"astra-sim/system/MockNcclQps.h"
-#include "astra-sim/system/MockNcclLog.h"
+#include"SimCCL/mock/MockNcclQps.h"
+#include "SimCCL/mock/MockNcclLog.h"
 using namespace ns3;
 using namespace std;
 

@@ -21,7 +21,7 @@ LICENSE file in the root directory of this source tree.
 #include "Workload.hh"
 #include "astra-sim/system/StreamStat.hh"
 #include "astra-sim/system/Sys.hh"
-#include"astra-sim/system/MockNcclGroup.h"
+#include"SimCCL/mock/MockNcclGroup.h"
 
 namespace AstraSim {
 class DataSet;

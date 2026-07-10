@@ -20,10 +20,10 @@
 
 #include"SimAiFlowModelRdma.hh"
 #include"PhyMultiThread.hh"
-#include"MockNcclLog.h"
+#include"SimCCL/mock/MockNcclLog.h"
 #include"BootStrapnet.hh"
 #include"AstraNetworkAPI.hh"
-#include"MockNcclLog.h"
+#include"SimCCL/mock/MockNcclLog.h"
 
 #define IB_PORT 1
 

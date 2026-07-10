@@ -16,7 +16,7 @@ file(GLOB astra_SRC
 	"${PROJECT_SOURCE_DIR}/../../astra-sim/system/*.cc"
 	"${PROJECT_SOURCE_DIR}/../../astra-sim/system/*.cc"
 	"${PROJECT_SOURCE_DIR}/../../astra-sim/workload/*.cc"
-	"${PROJECT_SOURCE_DIR}/../../../SimCCL/mock/${MOCK_VERSION}/*.cc"
+	"${PROJECT_SOURCE_DIR}/../../../SimCCL/src/mock/${MOCK_VERSION}/*.cc"
     )
 file(GLOB HEADERS
     "${PROJECT_SOURCE_DIR}/../../astra-sim/system/collective/*.hh"

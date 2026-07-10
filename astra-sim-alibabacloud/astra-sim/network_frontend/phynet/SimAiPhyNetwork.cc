@@ -13,7 +13,7 @@
 *limitations under the License.
 */
 
-#include"astra-sim/system/MockNcclLog.h"
+#include"SimCCL/mock/MockNcclLog.h"
 #include"astra-sim/system/PhyMultiThread.hh"
 
 #include"SimAiPhyNetwork.h"
