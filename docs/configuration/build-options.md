@@ -45,13 +45,21 @@ Typical usage:
 | `-g` | `--gpus` | Total GPU count | Required |
 | `-g_p_s` | `--gpus-per-server` | GPUs per server (scale-up size) | Required |
 | `-r` | `--result` | Output file path/prefix | `./results/` |
-| `-busbw` | `--bus-bandwidth` | Path to busbw.yaml | Required |
+| `-busbw` | `--bus-bandwidth` | Path to busbw.yaml (user-defined busbw). **Not wired in the current open-source binary** — see note below | n/a |
 | `-v` | `--visual` | Generate visualization files | Off |
-| `-nv` | - | NVLink bandwidth (GB/s) for auto busbw | Optional |
-| `-nic` | - | NIC bandwidth (GB/s) for auto busbw | Optional |
-| `-n_p_s` | - | NICs per server for auto busbw | Optional |
+| `-nv` | - | NVLink bandwidth (GB/s) for auto busbw (default method) | Recommended |
+| `-nic` | - | NIC bandwidth (GB/s) for auto busbw (default method) | Recommended |
+| `-n_p_s` | - | NICs per server for auto busbw (default method) | Recommended |
 
-Typical usage:
+Typical usage (automatic busbw — the default, supported by the current binary):
+```bash
+./bin/SimAI_analytical \
+  -w ./example/workload_analytical.txt \
+  -g 9216 -nv 360 -nic 48.5 -n_p_s 8 -g_p_s 8 \
+  -r example-
+```
+
+> Note: The `-busbw example/busbw.yaml` form below (user-defined busbw) is **not supported** by the current open-source analytical binary — the `-busbw` flag is not parsed, so the command prints usage and exits. It is kept for reference; see earlier SimAI versions for the manual `busbw.yaml` workflow.
 ```bash
 ./bin/SimAI_analytical \
   -w example/workload_analytical.txt \

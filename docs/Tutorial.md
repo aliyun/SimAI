@@ -12,7 +12,7 @@ SimAI is a comprehensive large-scale AI training simulation toolkit that provide
 
     * *Scale-out Bandwidth Selection*: Research cost-effective bandwidth configurations for various GPU performances
 
-> 💡 *Currently supports manual busbw.yaml configuration. Automatic busbw inference based on parallel scenarios will be open-sourced soon. Stay tuned and feel free to contact us for more details. ✨*
+> 💡 *The current open-source binary computes busbw automatically from `-nv`/`-nic`/`-n_p_s` (the default; see the Analytical Simulation section below). The manual `busbw.yaml` path (`-busbw`) is not wired in the current open-source binary — refer to earlier SimAI versions for that workflow. Feel free to contact us for more details. ✨*
 
 2. **SimAI-Simulation(NS-3)** - A high-fidelity, full-stack simulation tool that can theoretically integrate with any pure network simulator. It provides fine-grained reproduction of communication behaviors during LLM training. Currently supports NS-3 as the network backend (we encourage integration of new network simulation tools). Key research areas include:
 
@@ -94,7 +94,13 @@ EP:
 
 ## 🖥️ Analytical Simulation
 
-To run the analytical simulation, use the following command:
+To run the analytical simulation, use the following command (automatic busbw — the default, supported by the current binary):
+
+```bash
+$ ./bin/SimAI_analytical -w ./example/workload_analytical.txt -g 9216 -nv 360 -nic 48.5 -n_p_s 8 -g_p_s 8 -r example-
+```
+
+> Note: The `-busbw example/busbw.yaml` form below (user-defined busbw) is **not supported** by the current open-source analytical binary — the `-busbw` flag is not parsed, so the command prints usage and exits. It is kept for reference; see earlier SimAI versions for the manual `busbw.yaml` workflow.
 
 ```bash
 $ ./bin/SimAI_analytical -w example/workload_analytical.txt -g 9216 -g_p_s 8 -r test- -busbw example/busbw.yaml

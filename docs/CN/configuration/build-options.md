@@ -45,13 +45,21 @@
 | `-g` | `--gpus` | GPU 总数 | 必填 |
 | `-g_p_s` | `--gpus-per-server` | 每台服务器 GPU 数（纵向扩展大小） | 必填 |
 | `-r` | `--result` | 输出文件路径/前缀 | `./results/` |
-| `-busbw` | `--bus-bandwidth` | busbw.yaml 文件路径 | 必填 |
+| `-busbw` | `--bus-bandwidth` | busbw.yaml 文件路径（用户自定义 busbw）。**当前开源二进制未接线** — 见下方说明 | 不适用 |
 | `-v` | `--visual` | 生成可视化文件 | 关闭 |
-| `-nv` | - | NVLink 带宽（GB/s），用于自动 busbw | 可选 |
-| `-nic` | - | NIC 带宽（GB/s），用于自动 busbw | 可选 |
-| `-n_p_s` | - | 每台服务器 NIC 数，用于自动 busbw | 可选 |
+| `-nv` | - | NVLink 带宽（GB/s），用于自动 busbw（默认方法） | 推荐 |
+| `-nic` | - | NIC 带宽（GB/s），用于自动 busbw（默认方法） | 推荐 |
+| `-n_p_s` | - | 每台服务器 NIC 数，用于自动 busbw（默认方法） | 推荐 |
 
-典型用法：
+典型用法（自动 busbw —— 默认方式，当前二进制支持）：
+```bash
+./bin/SimAI_analytical \
+  -w ./example/workload_analytical.txt \
+  -g 9216 -nv 360 -nic 48.5 -n_p_s 8 -g_p_s 8 \
+  -r example-
+```
+
+> 注意：下面的 `-busbw example/busbw.yaml`（用户自定义 busbw）用法在当前开源 analytical 二进制中**不受支持**——`-busbw` 参数不会被解析，命令会打印用法并退出。此处仅作保留参考；手动 `busbw.yaml` 用法请参考早期 SimAI 版本。
 ```bash
 ./bin/SimAI_analytical \
   -w example/workload_analytical.txt \

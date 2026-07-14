@@ -126,7 +126,7 @@ astra-sim-alibabacloudは[astra-sim](https://github.com/astra-sim/astra-sim/tree
 
 SimAIは、さまざまなシミュレーション要件を満たすために、3つの主要な動作モードをサポートしています：
 
-**SimAI-Analytical**は、バス帯域幅（busbw）を使用して集合通信時間を見積もることにより、ネットワーク通信の詳細を抽象化し、高速なシミュレーションを提供します。現在、ユーザー定義のbusbwをサポートしていますが、自動busbw計算機能はまもなく登場予定です。
+**SimAI-Analytical**は、バス帯域幅（busbw）を使用して集合通信時間を見積もることにより、ネットワーク通信の詳細を抽象化し、高速なシミュレーションを提供します。現在のオープンソース版バイナリは `-nv`/`-nic`/`-n_p_s` から busbw を自動計算します（デフォルト、下記参照）。注意：ユーザー定義の `busbw.yaml`（`-busbw`）は現在のオープンソース版 analytical バイナリでは未接続です。この方法は以前の SimAI バージョンを参照してください。
 
 **SimAI-Simulation**は、きめ細かいネットワーク通信モデリングを備えたフルスタックシミュレーションを提供します。NS3や他のネットワークシミュレータ（現在はNS3がオープンソース化されています）を活用して、すべての通信動作を詳細にシミュレーションし、実際のトレーニング環境を高忠実に再現することを目指しています。
 
@@ -187,14 +187,16 @@ $ ./scripts/build.sh -c ns3
 
 ## SimAI-Analyticalの使い方
 
-```bash
-$ ./bin/SimAI_analytical -w example/workload_analytical.txt -g 9216 -g_p_s 8 -r test- -busbw example/busbw.yaml
-```
-
-バス帯域幅を自動で計算するには、次のコマンドを試してください：
+デフォルトでは、SimAI-Analytical はバス帯域幅を自動的に計算します：
 
 ```bash
 $ ./bin/SimAI_analytical -w ./example/workload_analytical.txt -g 9216 -nv 360 -nic 48.5 -n_p_s 8 -g_p_s 8 -r example-
+```
+
+> 注意：以下の `-busbw example/busbw.yaml`（ユーザー定義 busbw）コマンドは、現在のオープンソース版 analytical バイナリでは**サポートされていません**。`-busbw` は解析されず、コマンドは使用法を表示して終了します。参考のために残しています。手動の `busbw.yaml` の使い方は以前の SimAI バージョンを参照してください。
+
+```bash
+$ ./bin/SimAI_analytical -w example/workload_analytical.txt -g 9216 -g_p_s 8 -r test- -busbw example/busbw.yaml
 ```
 
 ## SimAI-Simulationの使い方

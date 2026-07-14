@@ -14,7 +14,7 @@ SimAI 是一个综合性的大规模 AI 训练仿真工具包，提供三种主�
 
     * *Scale-out 带宽选择*：研究不同 GPU 性能下的性价比带宽配置
 
-> 💡 *当前支持手动配置 busbw.yaml。基于并行场景的自动 busbw 推断即将开源。敬请关注，欢迎联系我们了解更多详情。✨*
+> 💡 *当前开源二进制通过 `-nv`/`-nic`/`-n_p_s` 自动计算 busbw（默认方式；见下方 Analytical 仿真部分）。手动 `busbw.yaml` 路径（`-busbw`）在当前开源二进制中尚未接线——该用法请参考早期 SimAI 版本。欢迎联系我们了解更多详情。✨*
 
 2. **SimAI-Simulation(NS-3)** - 一种高保真全栈仿真工具，理论上可与任何纯网络模拟器集成。提供 LLM 训练过程中通信行为的细粒度还原。当前支持 NS-3 作为网络后端（我们鼓励集成新的网络仿真工具）。主要研究方向包括：
 
@@ -96,7 +96,13 @@ EP:
 
 ## 🖥️ Analytical 仿真
 
-使用以下命令运行 analytical 仿真：
+使用以下命令运行 analytical 仿真（自动 busbw —— 默认方式，当前二进制支持）：
+
+```bash
+$ ./bin/SimAI_analytical -w ./example/workload_analytical.txt -g 9216 -nv 360 -nic 48.5 -n_p_s 8 -g_p_s 8 -r example-
+```
+
+> 注意：下面的 `-busbw example/busbw.yaml`（用户自定义 busbw）用法在当前开源 analytical 二进制中**不受支持**——`-busbw` 参数不会被解析，命令会打印用法并退出。此处仅作保留参考；手动 `busbw.yaml` 用法请参考早期 SimAI 版本。
 
 ```bash
 $ ./bin/SimAI_analytical -w example/workload_analytical.txt -g 9216 -g_p_s 8 -r test- -busbw example/busbw.yaml

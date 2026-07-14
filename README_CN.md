@@ -125,7 +125,7 @@ astra-sim-alibabacloud 基于 [astra-sim](https://github.com/astra-sim/astra-sim
 
 SimAI 支持三种主要运行模式：
 
-**SimAI-Analytical** 通过使用总线带宽（busbw）抽象网络通信细节来估算集合通信时间，实现快速仿真。目前支持用户自定义 busbw，自动计算 busbw 功能即将推出。
+**SimAI-Analytical** 通过使用总线带宽（busbw）抽象网络通信细节来估算集合通信时间，实现快速仿真。当前开源二进制通过 `-nv`/`-nic`/`-n_p_s` 自动计算 busbw（默认方式，见下文）。注意：用户自定义 `busbw.yaml`（`-busbw`）在当前开源 analytical 二进制中尚未接线，该用法请参考早期 SimAI 版本。
 
 **SimAI-Simulation** 提供基于细粒度网络通信建模的全栈仿真。利用 NS-3 或其他网络模拟器（当前 NS-3 已开源）实现对所有通信行为的详细仿真，力求高保真还原真实训练环境。
 
@@ -186,14 +186,16 @@ $ ./scripts/build.sh -c ns3
 
 ## 使用 SimAI-Analytical
 
-```bash
-$ ./bin/SimAI_analytical -w example/workload_analytical.txt -g 9216 -g_p_s 8 -r test- -busbw example/busbw.yaml
-```
-
-若需自动计算总线带宽，请尝试：
+默认情况下，SimAI-Analytical 自动计算总线带宽：
 
 ```bash
 $ ./bin/SimAI_analytical -w ./example/workload_analytical.txt -g 9216 -nv 360 -nic 48.5 -n_p_s 8 -g_p_s 8 -r example-
+```
+
+> 注意：下面的 `-busbw example/busbw.yaml`（用户自定义 busbw）命令在当前开源 analytical 二进制中**不受支持**——`-busbw` 参数不会被解析，命令会打印用法并退出。此处仅作保留参考；手动 `busbw.yaml` 用法请参考早期 SimAI 版本。
+
+```bash
+$ ./bin/SimAI_analytical -w example/workload_analytical.txt -g 9216 -g_p_s 8 -r test- -busbw example/busbw.yaml
 ```
 
 ## 使用 SimAI-Simulation

@@ -126,7 +126,7 @@ astra-sim-alibabacloud is extended from [astra-sim](https://github.com/astra-sim
 
 SimAI supports three major operation modes to meet different simulation requirements:
 
-**SimAI-Analytical** offers fast simulation by abstracting network communication details using bus bandwidth (busbw) to estimate collective communication time. While it currently supports user-defined busbw, automatic busbw calculation feature is coming soon.
+**SimAI-Analytical** offers fast simulation by abstracting network communication details using bus bandwidth (busbw) to estimate collective communication time. The current open-source binary computes busbw automatically from `-nv`/`-nic`/`-n_p_s` (the default, shown below). Note: the user-defined `busbw.yaml` path (`-busbw`) is not wired in the current open-source analytical binary; refer to earlier SimAI versions for that workflow.
 
 **SimAI-Simulation** provides full-stack simulation with fine-grained network communication modeling. It leverages NS3 or other network simulators (NS3 currently open-sourced) to achieve detailed simulation of all communication behaviors, aiming for high-fidelity reproduction of actual training environments.
 
@@ -187,14 +187,16 @@ $ ./scripts/build.sh -c ns3
 
 ## Use SimAI-Analytical
 
-```bash
-$ ./bin/SimAI_analytical -w example/workload_analytical.txt -g 9216 -g_p_s 8 -r test- -busbw example/busbw.yaml
-```
-
-For calculating bus bandwidth automatically, please try the following command:
+By default, SimAI-Analytical calculates bus bandwidth automatically:
 
 ```bash
 $ ./bin/SimAI_analytical -w ./example/workload_analytical.txt -g 9216 -nv 360 -nic 48.5 -n_p_s 8 -g_p_s 8 -r example-
+```
+
+> Note: The `-busbw example/busbw.yaml` (user-defined busbw) command below is **not supported** by the current open-source analytical binary — the `-busbw` flag is not parsed, so the command prints usage and exits. It is kept here for reference; see earlier SimAI versions for the manual `busbw.yaml` workflow.
+
+```bash
+$ ./bin/SimAI_analytical -w example/workload_analytical.txt -g 9216 -g_p_s 8 -r test- -busbw example/busbw.yaml
 ```
 
 ## Use SimAI-Simulation
