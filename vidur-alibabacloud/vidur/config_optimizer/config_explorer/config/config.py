@@ -94,6 +94,54 @@ class SchedulerConfig:
         }
 
 
+@dataclass
+class PDNetworkConfig:
+    """One P/D deployment and network point in the design-space sweep."""
+
+    name: str = "mixed"
+    pd_node_ratio: float = 1.0
+    pd_p2p_comm_bandwidth: int = 800
+    rdma_bandwidth: int = 800
+    nvlink_bandwidth: int = 1600
+    pd_p2p_comm_dtype: str = "float16"
+
+    def get_key(self):
+        if self == PDNetworkConfig():
+            return ""
+        return (
+            f"{self.name}_pdr{self.pd_node_ratio:g}"
+            f"_pdbw{self.pd_p2p_comm_bandwidth}"
+            f"_rdbw{self.rdma_bandwidth}"
+            f"_nvbw{self.nvlink_bandwidth}"
+        )
+
+    def is_valid(self, num_replicas: int):
+        if not 0 < self.pd_node_ratio <= 1:
+            return False
+        if min(
+            self.pd_p2p_comm_bandwidth,
+            self.rdma_bandwidth,
+            self.nvlink_bandwidth,
+        ) <= 0:
+            return False
+        if self.pd_node_ratio == 1:
+            return True
+
+        num_prefill_replicas = int(num_replicas * self.pd_node_ratio)
+        return 0 < num_prefill_replicas < num_replicas
+
+    def to_config_dict(self):
+        return {
+            "replica_config_pd_node_ratio": self.pd_node_ratio,
+            "replica_config_pd_p2p_comm_bandwidth": (
+                self.pd_p2p_comm_bandwidth
+            ),
+            "replica_config_rdma_bandwidth": self.rdma_bandwidth,
+            "replica_config_nvlink_bandwidth": self.nvlink_bandwidth,
+            "replica_config_pd_p2p_comm_dtype": self.pd_p2p_comm_dtype,
+        }
+
+
 class JobConfig:
     def __init__(
         self,
@@ -104,6 +152,7 @@ class JobConfig:
         num_tensor_parallel_workers: int,
         num_pipeline_stages: int,
         batch_size: int,
+        pd_network_config: Optional[PDNetworkConfig] = None,
     ):
         self.model_config = model_config
         self.trace_config = trace_config
@@ -114,6 +163,7 @@ class JobConfig:
         self.num_workers = self.num_tensor_parallel_workers * self.num_pipeline_stages
         self.batch_size = batch_size * num_pipeline_stages
         self.num_replicas = self.cluster_config.num_gpus // self.num_workers
+        self.pd_network_config = pd_network_config or PDNetworkConfig()
 
         self.start_qps = self.trace_config.start_qps
 
@@ -124,19 +174,26 @@ class JobConfig:
                 self.num_tensor_parallel_workers
             )
             and self.num_tensor_parallel_workers <= self.cluster_config.gpus_per_node
+            and self.pd_network_config.is_valid(self.num_replicas)
         )
 
     def get_key(self):
+        pd_network_key = self.pd_network_config.get_key()
+        pd_network_suffix = (
+            f"_{pd_network_key}" if pd_network_key else ""
+        )
         return (
             f"{self.model_config.name}_{self.trace_config.get_key()}_{self.cluster_config.get_key()}_{self.scheduler_config.get_key()}"
             f"_tp{self.num_tensor_parallel_workers}_pp{self.num_pipeline_stages}_bsz{self.batch_size}"
+            f"{pd_network_suffix}"
         )
 
     def get_human_readable_name(self):
         return (
             f"Model: {self.model_config.name}, Trace: {self.trace_config.name}, Cluster: {self.cluster_config.device}, "
             f"Scheduler: {self.scheduler_config.scheduler}, TP: {self.num_tensor_parallel_workers}, "
-            f"PP: {self.num_pipeline_stages}, BSZ: {self.batch_size}, CS: {self.scheduler_config.chunk_size}, Hash: {self.get_hash()}"
+            f"PP: {self.num_pipeline_stages}, BSZ: {self.batch_size}, CS: {self.scheduler_config.chunk_size}, "
+            f"PD network: {self.pd_network_config.name}, Hash: {self.get_hash()}"
         )
 
     def get_hash(self):
@@ -148,6 +205,7 @@ class JobConfig:
             **self.trace_config.to_config_dict(),
             **self.cluster_config.to_config_dict(),
             **self.scheduler_config.to_config_dict(),
+            **self.pd_network_config.to_config_dict(),
             "replica_config_tensor_parallel_size": self.num_tensor_parallel_workers,
             "replica_config_num_pipeline_stages": self.num_pipeline_stages,
             "vllm_scheduler_config_batch_size_cap": self.batch_size,
@@ -169,6 +227,7 @@ class JobConfig:
             tp_dimension,
             pp_dimension,
             batch_size,
+            pd_network_config,
         ) in product(
             config["models"],
             config["traces"],
@@ -177,6 +236,7 @@ class JobConfig:
             config["tp_dimensions"],
             config["pp_dimensions"],
             config["batch_sizes"],
+            config.get("pd_networks", [{"name": "mixed"}]),
         ):
             job_config = cls(
                 ModelConfig(**model_config),
@@ -186,6 +246,7 @@ class JobConfig:
                 tp_dimension,
                 pp_dimension,
                 batch_size,
+                PDNetworkConfig(**pd_network_config),
             )
             if not job_config.is_valid():
                 continue
@@ -205,6 +266,10 @@ class JobConfig:
         # set pp_dimensions to 2 because it covers all the options
         pp_dimensions = [2]
 
+        pd_network_config = PDNetworkConfig(
+            **config.get("pd_networks", [{"name": "mixed"}])[0]
+        )
+
         for model_config, cluster_config, tp_dimension, pp_dimension in product(
             config["models"],
             config["clusters"],
@@ -219,6 +284,7 @@ class JobConfig:
                 tp_dimension,
                 pp_dimension,
                 batch_size,
+                pd_network_config,
             )
             if not job_config.is_valid():
                 continue
