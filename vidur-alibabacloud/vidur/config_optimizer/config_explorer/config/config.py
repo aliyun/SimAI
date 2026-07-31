@@ -113,6 +113,7 @@ class PDNetworkConfig:
             f"_pdbw{self.pd_p2p_comm_bandwidth}"
             f"_rdbw{self.rdma_bandwidth}"
             f"_nvbw{self.nvlink_bandwidth}"
+            f"_dtype{self.pd_p2p_comm_dtype}"
         )
 
     def is_valid(self, num_replicas: int):

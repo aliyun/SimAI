@@ -71,6 +71,15 @@ def test_legacy_config_keeps_single_mixed_mode_job():
     assert "_pdr" not in jobs[0].get_key()
 
 
+def test_pd_network_dtype_is_part_of_job_key():
+    float16 = PDNetworkConfig(name="pd-100g", pd_p2p_comm_dtype="float16")
+    fp8 = PDNetworkConfig(name="pd-100g", pd_p2p_comm_dtype="fp8")
+
+    assert float16.get_key() != fp8.get_key()
+    assert float16.to_config_dict()["replica_config_pd_p2p_comm_dtype"] == "float16"
+    assert fp8.to_config_dict()["replica_config_pd_p2p_comm_dtype"] == "fp8"
+
+
 def test_invalid_pd_split_or_bandwidth_is_rejected():
     assert not PDNetworkConfig(pd_node_ratio=0).is_valid(8)
     assert not PDNetworkConfig(pd_node_ratio=0.01).is_valid(8)
