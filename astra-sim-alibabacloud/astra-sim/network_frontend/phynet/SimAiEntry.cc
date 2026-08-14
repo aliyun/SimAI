@@ -13,7 +13,7 @@
 *limitations under the License.
 */
 
-#include"astra-sim/system/MockNcclLog.h"
+#include"SimCCL/mock/MockNcclLog.h"
 #ifdef PHY_RDMA
 #include"astra-sim/system/SimAiFlowModelRdma.hh"
 #endif

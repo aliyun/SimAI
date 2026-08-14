@@ -13,8 +13,8 @@
 *limitations under the License.
 */
 
-#ifndef __NCCL_TREE_FLOW_MODEL_HH__
-#define __NCCL_TREE_FLOW_MODEL_HH__
+#ifndef __NCCL_FLOW_MODEL_HH__
+#define __NCCL_FLOW_MODEL_HH__
 
 #include <assert.h>
 #include <math.h>
@@ -35,10 +35,10 @@
 #include "astra-sim/system/MemBus.hh"
 #include "astra-sim/system/MyPacket.hh"
 #include "astra-sim/system/topology/RingTopology.hh"
-#include  "astra-sim/system/MockNcclQps.h"
+#include  "SimCCL/mock/MockNcclQps.h"
 
 namespace AstraSim {
-class NcclTreeFlowModel : public Algorithm {
+class NcclFlowModel : public Algorithm {
  public:
   std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
   std::chrono::time_point<std::chrono::high_resolution_clock> end_time;
@@ -64,14 +64,16 @@ class NcclTreeFlowModel : public Algorithm {
   uint32_t m_channels;
   uint32_t len_channel;
   MockNccl::NcclQps* pQps;
+  int m_algorithm;   // NCCL algorithm (RING/TREE/NVLS/PAT), carried to flowTag for send_lat bucketing
+  int m_protocol;    // NCCL protocol (LL/LL128/Simple), carried to flowTag for send_lat bucketing
   std::condition_variable judge_exit_cv;
   std::mutex judge_exit_mutex;
   std::mutex judge_mutex;
   std::atomic<bool> judge_exit_flag;
-  NcclTreeFlowModel(){};
-  ~NcclTreeFlowModel(){};
+  NcclFlowModel(){};
+  ~NcclFlowModel(){};
 
-  NcclTreeFlowModel(
+  NcclFlowModel(
       ComType type,
       int id,
       int layer_num,
@@ -81,7 +83,9 @@ class NcclTreeFlowModel : public Algorithm {
       InjectionPolicy injection_policy,
       bool boost_mode,
       std::shared_ptr<MockNccl::FlowModels> ptr_flow_models,
-      int treechannels);
+      int treechannels,
+      int algorithm = -1,
+      int protocol = -1);
   virtual void run(EventType event, CallData* data);
   void process_stream_count(int channel_id);
   void release_packets(int channel_id, int flow_id, uint64_t message_size);

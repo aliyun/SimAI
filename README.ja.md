@@ -11,6 +11,9 @@
 
 ### 最近のアップデート
 
+- [2026/08] **SimAI 1.7 リリース！** 主な更新：
+  - [SimCCL](https://github.com/aliyun/SimCCL)：NCCL v2.30 に更新し、SimAI 本体リポジトリから分離。単独で flowmodel を生成してオフライン分析が可能です。
+
 - [2026/04] **SimAI 1.6 リリース！** 主な更新：
   - 推論シミュレーション向け GPU メモリモデリング（パラメータカウント＆KV Cache）。
   - Decode 時間推定の線形補間（最近傍探索の代替）。
@@ -44,6 +47,7 @@
 
 | 日付             | イベント                                                                  | 場所                     | 内容                                                      | 形式           |
 |:----------------:|:------------------------------------------------------------------------ |:----------------------- |:-------------------------------------------------------- |:-------------:|
+| 2026年8月14日    | SimAI 1.7                                                                | 🌐 オンライン            | SimAI 1.7 のリリース                                     | 💻 バーチャル  |
 | 2026年4月23日    | SimAI 1.6                                                                | 🌐 オンライン            | SimAI 1.6 のリリース                                     | 💻 バーチャル  |
 | 2025年12月30日   | SimAI 1.5                                                                | 🌐 オンライン            | SimAI 1.5 のリリース                                     | 💻 バーチャル  |
 | 2025年6月4日     | SimAIコミュニティ第1回ワークショップ                                      | 📍 北京大学              | コミュニティ貢献者による3つの講演                          | 🎓 現地        |
@@ -77,6 +81,7 @@
   - [セットアップ](#セットアップ)
   - [SimAI-Analyticalの使い方](#simai-analyticalの使い方)
   - [SimAI-Simulationの使い方](#simai-simulationの使い方)
+  - [SimCCL の使い方](#simccl-の使い方)
   - [マルチリクエスト推論シミュレーションの使い方](#マルチリクエスト推論シミュレーションの使い方)
 
 # SimAI 概要
@@ -118,7 +123,7 @@ astra-sim-alibabacloudは[astra-sim](https://github.com/astra-sim/astra-sim/tree
 
 SimAIは、さまざまなシミュレーション要件を満たすために、3つの主要な動作モードをサポートしています：
 
-**SimAI-Analytical**は、バス帯域幅（busbw）を使用して集合通信時間を見積もることにより、ネットワーク通信の詳細を抽象化し、高速なシミュレーションを提供します。現在、ユーザー定義のbusbwをサポートしていますが、自動busbw計算機能はまもなく登場予定です。
+**SimAI-Analytical**は、バス帯域幅（busbw）を使用して集合通信時間を見積もることにより、ネットワーク通信の詳細を抽象化し、高速なシミュレーションを提供します。現在のオープンソース版バイナリは `-nv`/`-nic`/`-n_p_s` から busbw を自動計算します（デフォルト、下記参照）。注意：ユーザー定義の `busbw.yaml`（`-busbw`）は現在のオープンソース版 analytical バイナリでは未接続です。この方法は以前の SimAI バージョンを参照してください。
 
 **SimAI-Simulation**は、きめ細かいネットワーク通信モデリングを備えたフルスタックシミュレーションを提供します。NS3や他のネットワークシミュレータ（現在はNS3がオープンソース化されています）を活用して、すべての通信動作を詳細にシミュレーションし、実際のトレーニング環境を高忠実に再現することを目指しています。
 
@@ -146,7 +151,7 @@ SimAIを基盤とした革新的な研究や拡張を奨励します。ディス
 
 # クイックスタート
 
-以下に簡単な例を示します。SimAIの完全なチュートリアルはこちらにあります：[**SimAI@Tutorial**](./docs/Tutorial.md)、[**aicb@Tutorial**](https://github.com/aliyun/aicb/blob/master/training/tutorial.md)、[SimCCL@Tutorial]、[ns-3-alibabacloud@Tutorial]
+以下に簡単な例を示します。SimAIの完全なチュートリアルはこちらにあります：[**SimAI@Tutorial**](./docs/Tutorial.md)、[**aicb@Tutorial**](https://github.com/aliyun/aicb/blob/master/training/tutorial.md)、[**SimCCL@Tutorial**](./SimCCL/README.md)、[**ns-3-alibabacloud@Tutorial**](https://github.com/aliyun/ns-3-alibabacloud)
 
 ## セットアップ
 
@@ -179,14 +184,16 @@ $ ./scripts/build.sh -c ns3
 
 ## SimAI-Analyticalの使い方
 
-```bash
-$ ./bin/SimAI_analytical -w example/workload_analytical.txt -g 9216 -g_p_s 8 -r test- -busbw example/busbw.yaml
-```
-
-バス帯域幅を自動で計算するには、次のコマンドを試してください：
+デフォルトでは、SimAI-Analytical はバス帯域幅を自動的に計算します：
 
 ```bash
 $ ./bin/SimAI_analytical -w ./example/workload_analytical.txt -g 9216 -nv 360 -nic 48.5 -n_p_s 8 -g_p_s 8 -r example-
+```
+
+> 注意：以下の `-busbw example/busbw.yaml`（ユーザー定義 busbw）コマンドは、現在のオープンソース版 analytical バイナリでは**サポートされていません**。`-busbw` は解析されず、コマンドは使用法を表示して終了します。参考のために残しています。手動の `busbw.yaml` の使い方は以前の SimAI バージョンを参照してください。
+
+```bash
+$ ./bin/SimAI_analytical -w example/workload_analytical.txt -g 9216 -g_p_s 8 -r test- -busbw example/busbw.yaml
 ```
 
 ## SimAI-Simulationの使い方
@@ -198,6 +205,28 @@ $ python3 ./astra-sim-alibabacloud/inputs/topo/gen_Topo_Template.py -topo Spectr
 # 実行
 $ AS_SEND_LAT=3 AS_NVLS_ENABLE=1 ./bin/SimAI_simulator -t 16 -w ./example/microAllReduce.txt -n ./Spectrum-X_128g_8gps_100Gbps_A100 -c astra-sim-alibabacloud/inputs/config/SimAI.conf
 ```
+
+## SimCCL の使い方
+
+SimCCL は、フルネットワークシミュレーションを実行せずに、集合通信フロー分解を独立して分析できます：
+
+```bash
+# SimCCL スタンドアロンバイナリのビルド
+$ cd SimCCL/standalone
+$ bash build.sh v2.30
+
+# 単一集合操作の分析
+$ ./build/simccl-standalone --op AllReduce --size 4194304 \
+    --nRanks 8 --nNodes 1 --gpus_per_node 8 --gpu_type H20
+
+# ワークロードファイルモード
+$ ./build/simccl-standalone -w ../../example/microAllReduce.txt \
+    --nRanks 16 --nNodes 2 --gpus_per_node 8 --gpu_type H20
+```
+
+出力：`ncclFlowModel_detailed_flows.csv` — 集合操作のポイントツーポイントフロー分解。
+
+詳細なドキュメントについては [SimCCL README](./SimCCL/README.md) を参照してください。
 
 ## マルチリクエスト推論シミュレーションの使い方
 

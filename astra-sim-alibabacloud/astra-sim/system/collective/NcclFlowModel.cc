@@ -19,10 +19,11 @@
 #endif
 #include<chrono>
 
-#include "NcclTreeFlowModel.hh"
+#include "NcclFlowModel.hh"
+#include "astra-sim/system/Sys.hh"
 #include "astra-sim/system/PacketBundle.hh"
 #include "astra-sim/system/RecvPacketEventHadndlerData.hh"
-#include "astra-sim/system/MockNcclLog.h"
+#include "SimCCL/mock/MockNcclLog.h"
 #ifdef PHY_RDMA
 #include "astra-sim/system/SimAiFlowModelRdma.hh"
 extern FlowPhyRdma flow_rdma; 
@@ -30,8 +31,8 @@ extern FlowPhyRdma flow_rdma;
 
 
 namespace AstraSim {
-std::atomic<bool> NcclTreeFlowModel::g_flow_inCriticalSection(false);
-NcclTreeFlowModel::NcclTreeFlowModel(
+std::atomic<bool> NcclFlowModel::g_flow_inCriticalSection(false);
+NcclFlowModel::NcclFlowModel(
     ComType type,
     int id,
     int layer_num,
@@ -41,7 +42,9 @@ NcclTreeFlowModel::NcclTreeFlowModel(
     InjectionPolicy injection_policy,
     bool boost_mode,
     std::shared_ptr<MockNccl::FlowModels> ptr_flow_models,
-    int treechannels)
+    int treechannels,
+    int algorithm,
+    int protocol)
     : Algorithm(layer_num){
   this->start_time = std::chrono::high_resolution_clock::now();
   this->end_time = std::chrono::high_resolution_clock::now();
@@ -55,6 +58,8 @@ NcclTreeFlowModel::NcclTreeFlowModel(
   this->name = Name::Ring;
   this->enabled = true;
   this->m_channels = treechannels;
+  this->m_algorithm = algorithm;
+  this->m_protocol = protocol;
   this->judge_exit_flag.store(false);
   this->judge_exit_mutex.unlock();
   this->judge_mutex.unlock();
@@ -86,7 +91,7 @@ NcclTreeFlowModel::NcclTreeFlowModel(
         if(pQps->peer_qps.count(std::make_pair(f.second.channel_id,std::make_pair(f.second.src,f.second.dest)))==0){
           pQps->peer_qps[std::make_pair(f.second.channel_id,std::make_pair(f.second.src,f.second.dest))]=1;
         }
-        NcclTreeFlowModel::FlowCriticalSection cs;
+        NcclFlowModel::FlowCriticalSection cs;
         this->_stream_count[f.second.channel_id] += 1;
         cs.ExitSection();
         assert(this->_flow_models.count(f.first) == 0);
@@ -119,7 +124,7 @@ NcclTreeFlowModel::NcclTreeFlowModel(
   }
 }
 
-void NcclTreeFlowModel::init_indegree_mapping(){
+void NcclFlowModel::init_indegree_mapping(){
   MockNccl::FlowModels::iterator tree_it;
   for(tree_it = _flow_models.begin();tree_it != _flow_models.end();tree_it++) {
     if(tree_it->second.src!=id) continue;
@@ -127,11 +132,11 @@ void NcclTreeFlowModel::init_indegree_mapping(){
   }
 }
 
-int NcclTreeFlowModel::get_non_zero_latency_packets() {
+int NcclFlowModel::get_non_zero_latency_packets() {
   return (nodes_in_ring - 1) * parallel_reduce * 1;
 }
 
-void NcclTreeFlowModel::run(EventType event, CallData* data) {
+void NcclFlowModel::run(EventType event, CallData* data) {
   BasicEventHandlerData* ehd = (BasicEventHandlerData*)data;
   MockNcclLog* NcclLog = MockNcclLog::getInstance();
   if (event == EventType::General) {
@@ -165,7 +170,7 @@ void NcclTreeFlowModel::run(EventType event, CallData* data) {
       }
     }
     assert(flow_exist == true);
-    NcclTreeFlowModel::FlowCriticalSection cs;
+    NcclFlowModel::FlowCriticalSection cs;
     free_packets[std::make_pair(channel_id, flowTag.sender_node)]--;
     bool tag = true;
     for (int i = 0; i < m_channels; i++) {
@@ -200,7 +205,7 @@ void NcclTreeFlowModel::run(EventType event, CallData* data) {
     }
     NcclLog->writeLog(NcclLogLevel::DEBUG,"next_flow_list.size %d",next_flow_list.size());
     for (int next_flow_id : next_flow_list) {
-      NcclTreeFlowModel::FlowCriticalSection cs;
+      NcclFlowModel::FlowCriticalSection cs;
       if (indegree_mapping.count(next_flow_id) == 0) {
         flow_exist = false;
         cs.ExitSection();
@@ -265,7 +270,7 @@ void NcclTreeFlowModel::run(EventType event, CallData* data) {
       }
       #ifdef PHY_MTP
       waiting_to_exit();
-      NcclLog->writeLog(NcclLogLevel::DEBUG, "NcclTreeFlowModel::waiting_to_exit end ");
+      NcclLog->writeLog(NcclLogLevel::DEBUG, "NcclFlowModel::waiting_to_exit end ");
       #endif
     }
   } else if(event == EventType::PacketSentFinshed){
@@ -278,7 +283,7 @@ void NcclTreeFlowModel::run(EventType event, CallData* data) {
     reduce(channel_id,sent_flow_id);
     bool flow_exist = next_flow_list.size() == 0 ? true : false;
     #ifndef PHY_MTP
-    NcclTreeFlowModel::FlowCriticalSection cs;
+    NcclFlowModel::FlowCriticalSection cs;
     pQps->peer_qps[std::make_pair(flowTag.channel_id,std::make_pair(flowTag.sender_node,flowTag.receiver_node))]=1;
     cs.ExitSection();
     if(pQps->peer_wating_tasks[std::make_pair(flowTag.channel_id,std::make_pair(flowTag.sender_node,flowTag.receiver_node))].size()>0){
@@ -294,7 +299,7 @@ void NcclTreeFlowModel::run(EventType event, CallData* data) {
   }
 }
 
-bool NcclTreeFlowModel::init_recv_ready() {
+bool NcclFlowModel::init_recv_ready() {
   std::map<std::pair<int,std::vector<int>>,std::vector<int>> recv_ready_flows; 
   for(auto flow : _flow_models){
     if(flow.second.src!=id)  continue;
@@ -330,7 +335,7 @@ bool NcclTreeFlowModel::init_recv_ready() {
   return true;
 }
 
-bool NcclTreeFlowModel::recv_ready(int channel_id, int flow_id) {
+bool NcclFlowModel::recv_ready(int channel_id, int flow_id) {
   std::vector<int>recv_prevs;
   auto flow_model = _flow_models[std::make_pair(channel_id,flow_id)];
   recv_prevs = flow_model.prev;
@@ -365,7 +370,7 @@ bool NcclTreeFlowModel::recv_ready(int channel_id, int flow_id) {
   return true;
 }
 
-void NcclTreeFlowModel::release_packets(int channel_id, int flow_id, uint64_t message_size) {
+void NcclFlowModel::release_packets(int channel_id, int flow_id, uint64_t message_size) {
   MockNcclLog* NcclLog = MockNcclLog::getInstance();
   if (NPU_to_MA == true) {
     (new PacketBundle(
@@ -395,23 +400,23 @@ void NcclTreeFlowModel::release_packets(int channel_id, int flow_id, uint64_t me
   NcclLog->writeLog(NcclLogLevel::DEBUG,"id:  %d finish release_packets",id);
 }
 
-void NcclTreeFlowModel::process_stream_count(int channel_id) {
+void NcclFlowModel::process_stream_count(int channel_id) {
   MockNcclLog*NcclLog = MockNcclLog::getInstance();
   #ifdef PHY_MTP
     send_packets--;
   #else
-  NcclTreeFlowModel::FlowCriticalSection cs;
+  NcclFlowModel::FlowCriticalSection cs;
   if (_stream_count[channel_id] > 0) {
     _stream_count[channel_id]--;
   }
-  NcclLog->writeLog(NcclLogLevel::DEBUG,"NcclTreeFlowModel::process_stream_count channel_id %d _stream_count %d",channel_id,_stream_count[channel_id]);
+  NcclLog->writeLog(NcclLogLevel::DEBUG,"NcclFlowModel::process_stream_count channel_id %d _stream_count %d",channel_id,_stream_count[channel_id]);
   if (_stream_count[channel_id] == 0 && stream->state != StreamState::Dead) 
     stream->changeState(StreamState::Zombie);
   cs.ExitSection();
   #endif
 }
 
-void NcclTreeFlowModel::reduce(int channel_id, int flow_id) {
+void NcclFlowModel::reduce(int channel_id, int flow_id) {
   process_stream_count(channel_id);
   #ifndef PHY_MTP
   if(!packets[std::make_pair(channel_id, flow_id)].empty()){
@@ -420,10 +425,10 @@ void NcclTreeFlowModel::reduce(int channel_id, int flow_id) {
   #endif
 }
 
-bool NcclTreeFlowModel::iteratable(int channel_id) {
+bool NcclFlowModel::iteratable(int channel_id) {
   MockNcclLog* NcclLog = MockNcclLog::getInstance();
   bool all_channel_finished = true, all_packets_freed = true;
-  NcclTreeFlowModel::FlowCriticalSection cs;
+  NcclFlowModel::FlowCriticalSection cs;
   for(int i = 0; i < m_channels; ++ i) {
     if(_stream_count.count(i) != 0 && _stream_count[i] != 0) all_channel_finished = false;
   }
@@ -442,7 +447,7 @@ bool NcclTreeFlowModel::iteratable(int channel_id) {
   return true;
 }
 
-void NcclTreeFlowModel::insert_packets(int channel_id, int flow_id) {
+void NcclFlowModel::insert_packets(int channel_id, int flow_id) {
   MockNcclLog* NcclLog = MockNcclLog::getInstance();
   assert(channel_id < m_channels);
   if (!enabled) {
@@ -510,7 +515,7 @@ void NcclTreeFlowModel::insert_packets(int channel_id, int flow_id) {
   Sys::sys_panic("should not inject nothing!");
 }
 
-bool NcclTreeFlowModel::ready(int channel_id, int flow_id) {
+bool NcclFlowModel::ready(int channel_id, int flow_id) {
   MockNcclLog* NcclLog = MockNcclLog::getInstance();
   MyPacket packet;
   {
@@ -519,7 +524,7 @@ bool NcclTreeFlowModel::ready(int channel_id, int flow_id) {
       stream->changeState(StreamState::Executing);
     }
     if (!enabled || packets[std::make_pair(channel_id, flow_id)].size() == 0 || _stream_count[channel_id] == 0) {
-      NcclLog->writeLog(NcclLogLevel::DEBUG,"NcclTreeFlowModel not ready!");
+      NcclLog->writeLog(NcclLogLevel::DEBUG,"NcclFlowModel not ready!");
       return false;
     }
     packet = packets[std::make_pair(channel_id, flow_id)].front();
@@ -582,6 +587,9 @@ bool NcclTreeFlowModel::ready(int channel_id, int flow_id) {
   snd_req.flowTag.sender_node = id;
   snd_req.flowTag.receiver_node = packet.preferred_dest;
   snd_req.flowTag.pQps = this->pQps;
+  snd_req.flowTag.algorithm = m_algorithm;
+  snd_req.flowTag.protocol = m_protocol;
+  snd_req.flowTag.gpus_per_node = Sys::all_generators[id] ? Sys::all_generators[id]->ngpus_per_node : -1;
   if (this->comType == ComType::All_Reduce_NVLS)
     snd_req.flowTag.nvls_on = true;
   else
@@ -605,7 +613,7 @@ bool NcclTreeFlowModel::ready(int channel_id, int flow_id) {
   return true;
 }
 
-void NcclTreeFlowModel::exit() {
+void NcclFlowModel::exit() {
   MockNcclLog* NcclLog = MockNcclLog::getInstance();
   #ifdef PHY_MTP
   auto now = std::chrono::system_clock::now();
@@ -615,7 +623,7 @@ void NcclTreeFlowModel::exit() {
           .count();
   NcclLog->writeLog(
       NcclLogLevel::DEBUG,
-      "NcclTreeFlowModel exit time %lld",
+      "NcclFlowModel exit time %lld",
       now_us);
   end_time = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
@@ -629,12 +637,12 @@ void NcclTreeFlowModel::exit() {
   }
   #endif
   stream->owner->proceed_to_next_vnet_baseline((StreamBaseline*)stream);
-  NcclLog->writeLog(NcclLogLevel::DEBUG,"NcclTreeFlowModel exit");
+  NcclLog->writeLog(NcclLogLevel::DEBUG,"NcclFlowModel exit");
   return;
 }
 
 #ifdef PHY_RDMA
-bool NcclTreeFlowModel::phy_iteratable(int channel_id){
+bool NcclFlowModel::phy_iteratable(int channel_id){
   MockNcclLog* NcclLog = MockNcclLog::getInstance();
   bool all_send_finished = true, all_recv_finished = true;
   bool exit_flag = true;
@@ -649,7 +657,7 @@ bool NcclTreeFlowModel::phy_iteratable(int channel_id){
   }
 }
 
-bool NcclTreeFlowModel::phy_ready(int channel_id,int flow_id) {
+bool NcclFlowModel::phy_ready(int channel_id,int flow_id) {
   MockNcclLog* NcclLog = MockNcclLog::getInstance();
   if (stream->state == StreamState::Created ||
       stream->state == StreamState::Ready) {
@@ -714,6 +722,9 @@ bool NcclTreeFlowModel::phy_ready(int channel_id,int flow_id) {
   snd_req.flowTag.sender_node = id;
   snd_req.flowTag.receiver_node = flow.dest;
   snd_req.flowTag.pQps = this->pQps;
+  snd_req.flowTag.algorithm = m_algorithm;
+  snd_req.flowTag.protocol = m_protocol;
+  snd_req.flowTag.gpus_per_node = Sys::all_generators[id] ? Sys::all_generators[id]->ngpus_per_node : -1;
   if (this->comType == ComType::All_Reduce_NVLS)
     snd_req.flowTag.nvls_on = true;
   else
@@ -737,10 +748,10 @@ bool NcclTreeFlowModel::phy_ready(int channel_id,int flow_id) {
   return true;
 }
 
-void NcclTreeFlowModel::waiting_to_exit() {
+void NcclFlowModel::waiting_to_exit() {
   MockNcclLog* NcclLog = MockNcclLog::getInstance();
   NcclLog->writeLog(
-      NcclLogLevel::DEBUG, "NcclTreeFlowModel::waiting_to_exit begin ");
+      NcclLogLevel::DEBUG, "NcclFlowModel::waiting_to_exit begin ");
   while (!judge_exit_flag) {
   };
   exit();

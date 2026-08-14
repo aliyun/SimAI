@@ -19,7 +19,7 @@
 #include<vector>
 
 #include "astra-sim/system/Sys.hh"
-#include "astra-sim/system/MockNcclLog.h"
+#include "SimCCL/mock/MockNcclLog.h"
 #include "astra-sim/system/AstraComputeAPI.hh"
 #include "astra-sim/system/AstraParamParse.hh"
 

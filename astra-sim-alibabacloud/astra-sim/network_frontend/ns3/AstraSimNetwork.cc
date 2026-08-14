@@ -17,7 +17,7 @@
 #include "astra-sim/system/Sys.hh"
 #include "astra-sim/system/RecvPacketEventHadndlerData.hh"
 #include "astra-sim/system/Common.hh"
-#include "astra-sim/system/MockNcclLog.h"
+#include "SimCCL/mock/MockNcclLog.h"
 #include "ns3/applications-module.h"
 #include "ns3/core-module.h"
 #include "ns3/csma-module.h"

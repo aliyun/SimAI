@@ -31,7 +31,7 @@
 
 #include"astra-sim/system/RecvPacketEventHadndlerData.hh"
 #include"astra-sim/system/AstraNetworkAPI.hh"
-#include"astra-sim/system/MockNcclQps.h"
+#include"SimCCL/mock/MockNcclQps.h"
 #include"astra-sim/system/SimAiPhyCommon.hh"
 
 using namespace std;

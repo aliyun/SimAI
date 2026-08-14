@@ -28,6 +28,7 @@ function cleanup {
     rm -rf "${NS3_DIR}"/simulation/build
     rm -rf "${NS3_DIR}"/simulation/cmake-cache
     rm -rf "${NS3_APPLICATION}"/astra-sim 
+    rm -rf "${NS3_APPLICATION}"/SimCCL
     cd "${SCRIPT_DIR:?}"
 }
 
@@ -51,6 +52,18 @@ function compile {
     cp "${ASTRA_SIM_DIR}"/network_frontend/ns3/*.h "${NS3_DIR}"/simulation/scratch/
     rm -rf "${NS3_APPLICATION}"/astra-sim 
     cp -r "${ASTRA_SIM_DIR}" "${NS3_APPLICATION}"/
+    # Copy versioned MockNccl translation layer into the ns3 app tree (flat layout).
+    # SIMAI_NCCL_VERSION selects which mock version to build (default: v2.30).
+    MOCK_VERSION="${SIMAI_NCCL_VERSION:-v2.30}"
+    MOCK_SRC="${SCRIPT_DIR}/../../../SimCCL/src/mock/${MOCK_VERSION}"
+    if [ ! -d "$MOCK_SRC" ]; then
+        echo "[ERROR] SimCCL mock version '${MOCK_VERSION}' not found at: ${MOCK_SRC}" >&2
+        echo "Supported versions: v2.20, v2.30" >&2
+        exit 1
+    fi
+    rm -rf "${NS3_APPLICATION}"/SimCCL
+    mkdir -p "${NS3_APPLICATION}"/SimCCL/mock
+    cp -r "$MOCK_SRC"/* "${NS3_APPLICATION}"/SimCCL/mock/
     cd "${NS3_DIR}/simulation"
     CC='gcc' CXX='g++' 
     ./ns3 configure -d debug --enable-mtp

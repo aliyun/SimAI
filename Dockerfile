@@ -8,8 +8,8 @@ RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 WORKDIR /workspace/SimAI
 
 # [Optional] Configure pip and uv to use Aliyun mirror for faster package downloads.
-RUN pip config set global.index-url http://mirrors.aliyun.com/pypi/simple
-RUN pip config set install.trusted-host mirrors.aliyun.com
+# Use HTTPS to avoid MITM during dependency download (no trusted-host needed with TLS).
+RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple
 ENV UV_DEFAULT_INDEX="https://mirrors.aliyun.com/pypi/simple"
 
 RUN pip install --no-cache-dir uv
@@ -26,7 +26,11 @@ RUN UV_TORCH_BACKEND=auto uv pip install -v --system --no-cache-dir --no-build-i
 # Copy the rest of the application source code into the image.
 COPY . .
 
-RUN mv ./workload_generator /usr/local/lib/python3.12/dist-packages &&\
-    mv ./utils /usr/local/lib/python3.12/dist-packages &&\
-    mv ./log_analyzer /usr/local/lib/python3.12/dist-packages
+# Move helper packages onto the Python site-packages path. Compute the path
+# dynamically so this does not break if the base image's Python minor version
+# or site-packages location changes.
+RUN SITE_PACKAGES="$(python3 -c 'import site; print(site.getsitepackages()[0])')" &&\
+    mv ./workload_generator "$SITE_PACKAGES" &&\
+    mv ./utils "$SITE_PACKAGES" &&\
+    mv ./log_analyzer "$SITE_PACKAGES"
 ENV PYTHONPATH=/workspace/SimAI:/workspace/SimAI/aicb:/workspace/SimAI/vidur:$PYTHONPATH

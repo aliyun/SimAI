@@ -45,8 +45,8 @@
 #include "ns3/mtp-interface.h"
 #endif
 #include <map>
-#include"astra-sim/system/MockNcclQps.h"
-#include "astra-sim/system/MockNcclLog.h"
+#include"SimCCL/mock/MockNcclQps.h"
+#include "SimCCL/mock/MockNcclLog.h"
 using namespace ns3;
 using namespace std;
 
@@ -125,7 +125,47 @@ void SendFlow(int src, int dst, uint64_t maxPacketCount,
   int flow_id = request->flowTag.current_flow_id;
   bool nvls_on = request->flowTag.nvls_on;
   int pg = 3, dport = 100;
-  int send_lat = 6000;
+
+  // send_lat bucketing: select latency based on (algorithm, protocol) from NCCL v2.30 tuning.
+  // Formula: send_lat_ns = (baseLatencies[algo][proto] + hwLatencies[hw][algo][proto]) * 1000
+  // Source: nccl-2.30/src/graph/tuning.cc L150-174
+  // Table value 0 = unsupported (algo, proto) combo → use default fallback.
+  // NVLINK table: for same-node (intra-node) communication
+  static const int send_lat_table_nvlink[7][3] = {
+    /* Tree:       baseLat(6.8,14,8.4)+hwLat(0.6,1.25,4) */  {7400, 15250, 12400},
+    /* Ring:       baseLat(6.6,14,8.4)+hwLat(0.6,1.9,3.4) */  {7200, 15900, 11800},
+    /* CollNetDir: baseLat(0)+hwLat(0,0,3.7)              */  {0, 0, 3700},
+    /* CollNetChn: baseLat(0)+hwLat(0,0,2.8)              */  {0, 0, 2800},
+    /* NVLS:       baseLat(0)+hwLat(0,0,25)               */  {0, 0, 25000},
+    /* NVLS_TREE:  baseLat(0)+hwLat(0,0,25)               */  {0, 0, 25000},
+    /* PAT:        baseLat(8)+hwLat(0,0,4), Simple-only   */  {0, 0, 12000},
+  };
+  // NET table: for cross-node (inter-node) communication
+  static const int send_lat_table_net[7][3] = {
+    /* Tree:       baseLat(6.8,14,8.4)+hwLat_NET(5,8.5,14)   */  {11800, 22500, 22400},
+    /* Ring:       baseLat(6.6,14,8.4)+hwLat_NET(2.7,4,14)    */  {9300, 18000, 22400},
+    /* CollNetDir: baseLat(0)+hwLat_NET(0,0,31)               */  {0, 0, 31000},
+    /* CollNetChn: baseLat(0)+hwLat_NET(0,0,30)               */  {0, 0, 30000},
+    /* NVLS:       baseLat(0)+hwLat_NET(0,0,18)               */  {0, 0, 18000},
+    /* NVLS_TREE:  baseLat(0)+hwLat_NET(0,0,20.9)             */  {0, 0, 20900},
+    /* PAT:        baseLat(8)+hwLat_NET(0,0,14), Simple-only  */  {0, 0, 22000},
+  };
+
+  int send_lat = 6000; // default fallback (6 μs)
+  int algo = request->flowTag.algorithm;
+  int proto = request->flowTag.protocol;
+  if (algo >= 0 && algo < 7 && proto >= 0 && proto < 3) {
+    // Dynamic link type detection: use gpus_per_node from flowTag (set by NcclFlowModel)
+    int gpus_per_node = request->flowTag.gpus_per_node;
+    if (gpus_per_node <= 0) gpus_per_node = 8; // fallback for v2.20 / backward compat
+    bool same_node = (src / gpus_per_node) == (dst / gpus_per_node);
+    const int (*table)[3] = same_node ? send_lat_table_nvlink : send_lat_table_net;
+    int table_val = table[algo][proto];
+    if (table_val > 0) { // 0 = unsupported combo, keep default
+      send_lat = table_val;
+    }
+  }
+  // AS_SEND_LAT env var overrides everything (highest priority, for A/B experiments)
   const char* send_lat_env = std::getenv("AS_SEND_LAT");
   if (send_lat_env) {
     try {
@@ -135,7 +175,7 @@ void SendFlow(int src, int dst, uint64_t maxPacketCount,
       exit(-1);
     }
   }
-  send_lat *= 1000;
+  send_lat *= 1000; // ns → ps (ns3 Time unit)
   flow_input.idx++;
   if(real_PacketCount == 0) real_PacketCount = 1;
     MockNcclLog* NcclLog = MockNcclLog::getInstance();

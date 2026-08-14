@@ -6,7 +6,7 @@ LICENSE file in the root directory of this source tree.
 #include "Layer.hh"
 #include "astra-sim/system/DataSet.hh"
 #include "astra-sim/system/IntData.hh"
-#include "astra-sim/system/MockNcclLog.h"
+#include "SimCCL/mock/MockNcclLog.h"
 #include "astra-sim/system/AstraParamParse.hh"
 // #ifdef ANALYTI
 #include "astra-sim/system/calbusbw.h"
@@ -417,7 +417,7 @@ LayerData Layer::report(
   for (auto& ml : net_message_latency) {
     layerData.avg_network_message_dealy.push_back(std::make_pair(i, ml / FREQ));
   }
-  if (seprate_log)
+  if (seprate_log && EndToEnd)
   {
     std::string data;
     std::pair<float, float> total_bw;
@@ -638,9 +638,9 @@ LayerData Layer::report(
     layerData.avg_network_message_dealy.push_back(std::make_pair(i, ml / FREQ));
    }
   #ifdef NS3_MPI
-  if (seprate_log)
+  if (seprate_log && EndToEnd)
   #else
-  if (seprate_log) 
+  if (seprate_log && EndToEnd) 
   #endif
   {
     std::string data;

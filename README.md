@@ -11,6 +11,9 @@
 
 ### Recent Updates
 
+- [2026/08] **SimAI 1.7 Released!** Key updates:
+  - [SimCCL](https://github.com/aliyun/SimCCL): Updated to NCCL v2.30, decoupled from the SimAI main repository, and able to generate the flow model standalone for offline analysis.
+
 - [2026/04] **SimAI 1.6 Released!** Key updates:
   - GPU memory modeling for inference simulation (parameter counting & KV cache).
   - Linear interpolation for decode time estimation (replacing nearest-neighbor).
@@ -44,6 +47,7 @@
 
 | Date             | Event                                                                    | Location                | Content                                                  | Type          |
 |:----------------:|:------------------------------------------------------------------------ |:----------------------- |:-------------------------------------------------------- |:-------------:|
+| Aug 14, 2026     | SimAI 1.7                                                                | 🌐 Online               | The release of SimAI 1.7                                 | 💻 Virtual    |
 | Apr 23, 2026     | SimAI 1.6                                                                | 🌐 Online               | The release of SimAI 1.6                                 | 💻 Virtual    |
 | Dec 30, 2025     | SimAI 1.5                                                                | 🌐 Online               | The release of SimAI 1.5                                 | 💻 Virtual    |
 | Jun 4, 2025      | The first workshop of the SimAI community                                | 📍 Peking University    | Three talks from community contributors                  | 🎓 On-site    |
@@ -77,6 +81,7 @@ See [Tutorial](./docs/Tutorial.md) for full documentation.
   - [Setup](#setup)
   - [Use SimAI-Analytical](#use-simai-analytical)
   - [Use SimAI-Simulation](#use-simai-simulation)
+  - [Use SimCCL](#use-simccl)
   - [Use Multi-requests Inference Simulation](#use-multi-requests-inference-simulation)
 
 # SimAI Overview
@@ -118,7 +123,7 @@ astra-sim-alibabacloud is extended from [astra-sim](https://github.com/astra-sim
 
 SimAI supports three major operation modes to meet different simulation requirements:
 
-**SimAI-Analytical** offers fast simulation by abstracting network communication details using bus bandwidth (busbw) to estimate collective communication time. While it currently supports user-defined busbw, automatic busbw calculation feature is coming soon.
+**SimAI-Analytical** offers fast simulation by abstracting network communication details using bus bandwidth (busbw) to estimate collective communication time. The current open-source binary computes busbw automatically from `-nv`/`-nic`/`-n_p_s` (the default, shown below). Note: the user-defined `busbw.yaml` path (`-busbw`) is not wired in the current open-source analytical binary; refer to earlier SimAI versions for that workflow.
 
 **SimAI-Simulation** provides full-stack simulation with fine-grained network communication modeling. It leverages NS3 or other network simulators (NS3 currently open-sourced) to achieve detailed simulation of all communication behaviors, aiming for high-fidelity reproduction of actual training environments.
 
@@ -146,7 +151,7 @@ We encourage innovative research and extensions based on SimAI. Welcome to join 
 
 # Quick Start
 
-Here are some simple examples. SimAI full tutorials can be found here: [**SimAI@Tutorial**](./docs/Tutorial.md), [**aicb@Tutorial**](https://github.com/aliyun/aicb/blob/master/training/tutorial.md), [SimCCL@Tutorial], [ns-3-alibabacloud@Tutorial]
+Here are some simple examples. SimAI full tutorials can be found here: [**SimAI@Tutorial**](./docs/Tutorial.md), [**aicb@Tutorial**](https://github.com/aliyun/aicb/blob/master/training/tutorial.md), [**SimCCL@Tutorial**](./SimCCL/README.md), [**ns-3-alibabacloud@Tutorial**](https://github.com/aliyun/ns-3-alibabacloud)
 
 ## Setup
 
@@ -179,14 +184,16 @@ $ ./scripts/build.sh -c ns3
 
 ## Use SimAI-Analytical
 
-```bash
-$ ./bin/SimAI_analytical -w example/workload_analytical.txt -g 9216 -g_p_s 8 -r test- -busbw example/busbw.yaml
-```
-
-For calculating bus bandwidth automatically, please try the following command:
+By default, SimAI-Analytical calculates bus bandwidth automatically:
 
 ```bash
 $ ./bin/SimAI_analytical -w ./example/workload_analytical.txt -g 9216 -nv 360 -nic 48.5 -n_p_s 8 -g_p_s 8 -r example-
+```
+
+> Note: The `-busbw example/busbw.yaml` (user-defined busbw) command below is **not supported** by the current open-source analytical binary — the `-busbw` flag is not parsed, so the command prints usage and exits. It is kept here for reference; see earlier SimAI versions for the manual `busbw.yaml` workflow.
+
+```bash
+$ ./bin/SimAI_analytical -w example/workload_analytical.txt -g 9216 -g_p_s 8 -r test- -busbw example/busbw.yaml
 ```
 
 ## Use SimAI-Simulation
@@ -198,6 +205,28 @@ $ python3 ./astra-sim-alibabacloud/inputs/topo/gen_Topo_Template.py -topo Spectr
 # Running
 $ AS_SEND_LAT=3 AS_NVLS_ENABLE=1 ./bin/SimAI_simulator -t 16 -w ./example/microAllReduce.txt -n ./Spectrum-X_128g_8gps_100Gbps_A100 -c astra-sim-alibabacloud/inputs/config/SimAI.conf
 ```
+
+## Use SimCCL
+
+SimCCL can be used independently to analyze collective communication flow decomposition without running full network simulation:
+
+```bash
+# Build SimCCL standalone binary
+$ cd SimCCL/standalone
+$ bash build.sh v2.30
+
+# Single collective operation analysis
+$ ./build/simccl-standalone --op AllReduce --size 4194304 \
+    --nRanks 8 --nNodes 1 --gpus_per_node 8 --gpu_type H20
+
+# Workload file mode
+$ ./build/simccl-standalone -w ../../example/microAllReduce.txt \
+    --nRanks 16 --nNodes 2 --gpus_per_node 8 --gpu_type H20
+```
+
+Output: `ncclFlowModel_detailed_flows.csv` — point-to-point flow decomposition of collective operations.
+
+For detailed documentation, see [SimCCL README](./SimCCL/README.md).
 
 ## Use Multi-requests Inference Simulation
 

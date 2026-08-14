@@ -11,6 +11,9 @@
 
 ### 近期更新
 
+- [2026/08] **SimAI 1.7 正式发布！** 主要更新：
+  - [SimCCL](https://github.com/aliyun/SimCCL)：更新到NCCL v2.30，与SimAI主仓库解耦，可独立生成flowmodel用于离线分析。
+
 - [2026/04] **SimAI 1.6 正式发布！** 主要更新：
   - 推理仿真 GPU 显存建模（参数计数与 KV Cache 管理）。
   - Decode 耗时线性插值估算（替代最近邻查找）。
@@ -43,14 +46,15 @@
 
 | 日期             | 活动                                                                     | 地点                    | 内容                                                     | 形式          |
 |:----------------:|:------------------------------------------------------------------------ |:----------------------- |:-------------------------------------------------------- |:-------------:|
-| Apr 23, 2026     | SimAI 1.6                                                                | 🌐 线上                 | SimAI 1.6 正式发布                                       | 💻 线上直播   |
-| Dec 30, 2025     | SimAI 1.5                                                                | 🌐 线上                 | SimAI 1.5 正式发布                                       | 💻 线上直播   |
+| Aug 14, 2026      | SimAI 1.7                                                                | 🌐 线上                 | SimAI 1.7 正式发布                                       | 💻 线上发布   |
+| Apr 23, 2026     | SimAI 1.6                                                                | 🌐 线上                 | SimAI 1.6 正式发布                                       | 💻 线上发布   |
+| Dec 30, 2025     | SimAI 1.5                                                                | 🌐 线上                 | SimAI 1.5 正式发布                                       | 💻 线上发布   |
 | Jun 4, 2025      | SimAI 社区第一届研讨会                                                   | 📍 北京大学             | 三场社区贡献者演讲                                       | 🎓 线下       |
 | May 24, 2025     | 第 28 届 Chinasys 研讨会                                                 | 📍 重庆大学             | SimAI 受邀演讲                                           | 🎓 线下       |
 | Dec 27, 2024     | SimAI 技术分享                                                           | 📍 北京航空航天大学     | SimAI 技术分享与交流                                     | 🎓 线下       |
 | Dec 6, 2024      | 香港科技大学技术研讨会                                                   | 📍 香港科技大学（广州） | SimAI 技术分享与交流                                     | 🎓 线下       |
 | Dec 5, 2024      | [Bench'24 会议](https://mp.weixin.qq.com/s/STic_E12xMhZRxhzK9wRnw)      | 📍 广州                 | SimAI 教程与深度技术专场                                 | 🎓 线下       |
-| Nov 26, 2024     | SimAI 社区直播                                                           | 🌐 线上                 | 互动技术交流与演示（400+ 参与者）                        | 💻 线上直播   |
+| Nov 26, 2024     | SimAI 社区直播                                                           | 🌐 线上                 | 互动技术交流与演示（400+ 参与者）                        | 💻 线上发布   |
 | Nov 15, 2024     | 技术研讨会                                                               | 📍 千岛湖               | SimAI 线下技术交流                                       | 🎯 线下       |
 | Oct 18, 2024     | 嘉宾讲座                                                                 | 📍 复旦大学             | SimAI 教程与公开课                                       | 🎓 线下       |
 | Sept 24-26, 2024 | CCF HPC China 2024                                                       | 📍 武汉                 | SimAI 介绍与技术报告                                     | 🎤 会议       |
@@ -76,6 +80,7 @@
   - [环境搭建](#环境搭建)
   - [使用 SimAI-Analytical](#使用-simai-analytical)
   - [使用 SimAI-Simulation](#使用-simai-simulation)
+  - [使用 SimCCL](#使用-simccl)
   - [使用多请求推理仿真](#使用多请求推理仿真)
 
 # SimAI 概述
@@ -117,7 +122,7 @@ astra-sim-alibabacloud 基于 [astra-sim](https://github.com/astra-sim/astra-sim
 
 SimAI 支持三种主要运行模式：
 
-**SimAI-Analytical** 通过使用总线带宽（busbw）抽象网络通信细节来估算集合通信时间，实现快速仿真。目前支持用户自定义 busbw，自动计算 busbw 功能即将推出。
+**SimAI-Analytical** 通过使用总线带宽（busbw）抽象网络通信细节来估算集合通信时间，实现快速仿真。当前开源二进制通过 `-nv`/`-nic`/`-n_p_s` 自动计算 busbw（默认方式，见下文）。注意：用户自定义 `busbw.yaml`（`-busbw`）在当前开源 analytical 二进制中尚未接线，该用法请参考早期 SimAI 版本。
 
 **SimAI-Simulation** 提供基于细粒度网络通信建模的全栈仿真。利用 NS-3 或其他网络模拟器（当前 NS-3 已开源）实现对所有通信行为的详细仿真，力求高保真还原真实训练环境。
 
@@ -145,7 +150,7 @@ SimAI 论文已被 NSDI'25 Spring 接收，详情请参阅：
 
 # 快速开始
 
-以下为简单示例。完整教程请参见：[**SimAI@Tutorial**](./docs/Tutorial.md)、[**aicb@Tutorial**](https://github.com/aliyun/aicb/blob/master/training/tutorial.md)、[SimCCL@Tutorial]、[ns-3-alibabacloud@Tutorial]
+以下为简单示例。完整教程请参见：[**SimAI@Tutorial**](./docs/Tutorial.md)、[**aicb@Tutorial**](https://github.com/aliyun/aicb/blob/master/training/tutorial.md)、[**SimCCL@Tutorial**](./SimCCL/README.md)、[**ns-3-alibabacloud@Tutorial**](https://github.com/aliyun/ns-3-alibabacloud)
 
 ## 环境搭建
 
@@ -178,14 +183,16 @@ $ ./scripts/build.sh -c ns3
 
 ## 使用 SimAI-Analytical
 
-```bash
-$ ./bin/SimAI_analytical -w example/workload_analytical.txt -g 9216 -g_p_s 8 -r test- -busbw example/busbw.yaml
-```
-
-若需自动计算总线带宽，请尝试：
+默认情况下，SimAI-Analytical 自动计算总线带宽：
 
 ```bash
 $ ./bin/SimAI_analytical -w ./example/workload_analytical.txt -g 9216 -nv 360 -nic 48.5 -n_p_s 8 -g_p_s 8 -r example-
+```
+
+> 注意：下面的 `-busbw example/busbw.yaml`（用户自定义 busbw）命令在当前开源 analytical 二进制中**不受支持**——`-busbw` 参数不会被解析，命令会打印用法并退出。此处仅作保留参考；手动 `busbw.yaml` 用法请参考早期 SimAI 版本。
+
+```bash
+$ ./bin/SimAI_analytical -w example/workload_analytical.txt -g 9216 -g_p_s 8 -r test- -busbw example/busbw.yaml
 ```
 
 ## 使用 SimAI-Simulation
@@ -197,6 +204,28 @@ $ python3 ./astra-sim-alibabacloud/inputs/topo/gen_Topo_Template.py -topo Spectr
 # 运行仿真
 $ AS_SEND_LAT=3 AS_NVLS_ENABLE=1 ./bin/SimAI_simulator -t 16 -w ./example/microAllReduce.txt -n ./Spectrum-X_128g_8gps_100Gbps_A100 -c astra-sim-alibabacloud/inputs/config/SimAI.conf
 ```
+
+## 使用 SimCCL
+
+SimCCL 可独立使用，无需运行完整网络仿真即可分析集合通信流分解：
+
+```bash
+# 编译 SimCCL 独立二进制
+$ cd SimCCL/standalone
+$ bash build.sh v2.30
+
+# 单个集合操作分析
+$ ./build/simccl-standalone --op AllReduce --size 4194304 \
+    --nRanks 8 --nNodes 1 --gpus_per_node 8 --gpu_type H20
+
+# 工作负载文件模式
+$ ./build/simccl-standalone -w ../../example/microAllReduce.txt \
+    --nRanks 16 --nNodes 2 --gpus_per_node 8 --gpu_type H20
+```
+
+输出：`ncclFlowModel_detailed_flows.csv` — 集合操作的点对点流分解。
+
+详细文档请参见 [SimCCL README](./SimCCL/README.md)。
 
 ## 使用多请求推理仿真
 
