@@ -11,11 +11,8 @@
 
 ### Recent Updates
 
-- [2026/07] **SimAI 1.7 Released!** Key updates:
-  - [SimCCL](https://github.com/aliyun/SimCCL) v2.30 mock: NCCL-style collective flow decomposition with Ring, PAT, and NVLS algorithm support.
-  - Protocol-aware selection (LL/LL128/Simple based on message size).
-  - SimCCL standalone binary for independent collective operation analysis (no GPU required).
-  - Per-(algorithm, protocol, link_type) send latency table for higher simulation fidelity.
+- [2026/08] **SimAI 1.7 Released!** Key updates:
+  - [SimCCL](https://github.com/aliyun/SimCCL): Updated to NCCL v2.30, decoupled from the SimAI main repository, and able to generate the flow model standalone for offline analysis.
 
 - [2026/04] **SimAI 1.6 Released!** Key updates:
   - GPU memory modeling for inference simulation (parameter counting & KV cache).
@@ -50,7 +47,7 @@
 
 | Date             | Event                                                                    | Location                | Content                                                  | Type          |
 |:----------------:|:------------------------------------------------------------------------ |:----------------------- |:-------------------------------------------------------- |:-------------:|
-| Jul 7, 2026      | SimAI 1.7                                                                | 🌐 Online               | The release of SimAI 1.7                                 | 💻 Virtual    |
+| Aug 14, 2026     | SimAI 1.7                                                                | 🌐 Online               | The release of SimAI 1.7                                 | 💻 Virtual    |
 | Apr 23, 2026     | SimAI 1.6                                                                | 🌐 Online               | The release of SimAI 1.6                                 | 💻 Virtual    |
 | Dec 30, 2025     | SimAI 1.5                                                                | 🌐 Online               | The release of SimAI 1.5                                 | 💻 Virtual    |
 | Jun 4, 2025      | The first workshop of the SimAI community                                | 📍 Peking University    | Three talks from community contributors                  | 🎓 On-site    |

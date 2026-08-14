@@ -2,7 +2,7 @@
 
 All notable changes to SimAI are documented in this file.
 
-## [1.7] - 2026-07-07
+## [1.7] - 2026-08-14
 
 - [SimCCL](https://github.com/aliyun/SimCCL) v2.30 mock: NCCL-style collective flow decomposition with Ring, PAT, and NVLS algorithm support.
 - Protocol-aware selection (LL/LL128/Simple based on message size).

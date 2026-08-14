@@ -129,4 +129,4 @@ Output: `build/simccl-standalone` (~300KB, no ns3 dependency, CPU-only)
 
 ---
 
-> Last edited: 2026-07-07
+> Last edited: 2026-08-14
