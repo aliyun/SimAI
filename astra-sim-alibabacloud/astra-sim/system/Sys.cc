@@ -1170,7 +1170,8 @@ CollectivePhase Sys::generate_collective_phase(
                     return vn;
           } else if(collective_implementation->type == CollectiveImplementationType::NcclFlowModel) {
               ParallelStrategy  comm_ps;
-              if (workload->current_state == Workload::LoopState::Forward_Pass){
+              if (workload->current_state == Workload::LoopState::Forward_Pass ||
+                  workload->current_state == Workload::LoopState::Forward_In_BackPass){
                 comm_ps = static_cast<ParallelStrategy> (workload->layers[workload->index]->fwd_pass_group_type);
               }
               else if(workload->current_state == Workload::LoopState::Input_Gradient){
@@ -1438,6 +1439,7 @@ std::shared_ptr<void> Sys::generate_flow_model(ParallelStrategy comm_ps, uint64_
     MockNccl::State current_state;
     switch (this->workload->current_state) {
       case Workload::LoopState::Forward_Pass:
+      case Workload::LoopState::Forward_In_BackPass:
         current_state = MockNccl::State::Forward_Pass;
         break;
       case Workload::LoopState::Input_Gradient:
@@ -1445,6 +1447,10 @@ std::shared_ptr<void> Sys::generate_flow_model(ParallelStrategy comm_ps, uint64_
         break;
       case Workload::LoopState::Weight_Gradient:
         current_state = MockNccl::State::Weight_Gradient;
+        break;
+      default:
+        std::cerr << "Warning: unhandled LoopState in generate_flow_model, defaulting to Forward_Pass" << std::endl;
+        current_state = MockNccl::State::Forward_Pass;
         break;
     }
     return  pComm->get_flow_model(data_size,collective_type,this->workload->index,current_state);
@@ -1460,6 +1466,11 @@ DataSet* Sys::generate_collective(
     SchedulingPolicy pref_scheduling,
     EventType event,
     Callable* layer_ptr ) {
+  if (size == 0) {
+    DataSet* dataset = new DataSet(0);
+    dataset->active = false;
+    return dataset;
+  }
   uint64_t chunk_size = determine_chunk_size(size, collective_type);
   if(id == 0) std::cout << "chunk size is: " << chunk_size << " , size is: " << size << " , layer_num is: " << layer_num << " , node: " << id << std::endl;
   uint64_t recommended_chunk_size = chunk_size;

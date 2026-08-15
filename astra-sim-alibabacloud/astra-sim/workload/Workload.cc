@@ -1134,7 +1134,7 @@ std::map<std::string, std::vector<bool>> Workload::decode_involved_dimensions(
   return result;
 }
 bool Workload::initialize_workload(std::string name) {
-  std::map<int, bool> chekpoints;
+  std::map<int, bool> checkpoints;
   std::map<int, bool> need_checkpoint_initiation;
   std::ifstream inFile;
   inFile.open(name);
@@ -1198,10 +1198,10 @@ bool Workload::initialize_workload(std::string name) {
           for(size_t i = 1; i < tokens.size(); i = i+1){
             if(tokens[i]=="checkpoints:"){
               int account = std::stoi(tokens[i+1]);
+              int j = 2;
               while(account-- >0){
-                int j = 2;
                 int layer = std::stoi(tokens[i+j]);
-                chekpoints[layer] = true;
+                checkpoints[layer] = true;
                 if (generator->id == 0) {
                   std::cout << layer << ", ";
                 }
@@ -1214,8 +1214,8 @@ bool Workload::initialize_workload(std::string name) {
                   std::cout << "layers initiating fwd_in_bckwd are: ";
                 }
                 int account = std::stoi(tokens[i+1]);
+                int j = 2;
                 while(account-- >0){
-                  int j = 2;
                   int layer = std::stoi(tokens[i+j]);
                   need_checkpoint_initiation[layer] = true;
                   if (generator->id == 0) {
@@ -1531,7 +1531,7 @@ bool Workload::initialize_workload(std::string name) {
         selected_involved_dimensions["wg"],
         wg_update_time,
         specific_policy);
-    if (chekpoints.find(i) != chekpoints.end()) {
+    if (checkpoints.find(i) != checkpoints.end()) {
       l->is_checkpoint = true;
     }
     if (need_checkpoint_initiation.find(i) !=
