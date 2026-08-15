@@ -66,7 +66,7 @@ function compile {
     cp -r "$MOCK_SRC"/* "${NS3_APPLICATION}"/SimCCL/mock/
     cd "${NS3_DIR}/simulation"
     CC='gcc' CXX='g++' 
-    ./ns3 configure -d debug --enable-mtp
+    ./ns3 configure -d optimized --enable-mtp -- -DCMAKE_CXX_FLAGS="-g -O2"
     ./ns3 build
 
     cd "${SCRIPT_DIR:?}"
