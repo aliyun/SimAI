@@ -6,6 +6,42 @@ Users can freely customize the topology according to their needs。
 import argparse
 import warnings
 
+def NVLink_Only(parameters):
+    if parameters['gpu'] % parameters['gpu_per_server'] != 0:
+        raise ValueError("NVLink-only topology requires gpu to be divisible by gpu_per_server")
+    servers = int(parameters['gpu'] / parameters['gpu_per_server'])
+    nv_switch_num = servers * parameters['nv_switch_per_server']
+    nodes = parameters['gpu'] + nv_switch_num
+    links = parameters['gpu'] * parameters['nv_switch_per_server']
+    file_name = parameters.get('output')
+    if not file_name:
+        file_name = str(parameters['gpu_type']) + "_" + str(parameters['gpu']) + "g_nvlink_only.topo"
+
+    with open(file_name, 'w') as f:
+        print(file_name)
+        first_line = (
+            str(nodes) + " " + str(parameters['gpu_per_server']) + " " +
+            str(nv_switch_num) + " 0 " + str(int(links)) + " " +
+            str(parameters['gpu_type'])
+        )
+        f.write(first_line)
+        f.write('\n')
+        f.write(" ".join(str(i) for i in range(parameters['gpu'], nodes)))
+        f.write(" \n")
+
+        for gpu_id in range(parameters['gpu']):
+            server_id = int(gpu_id / parameters['gpu_per_server'])
+            first_nv_switch = parameters['gpu'] + server_id * parameters['nv_switch_per_server']
+            for local_nv_switch in range(parameters['nv_switch_per_server']):
+                nv_switch_id = first_nv_switch + local_nv_switch
+                line = (
+                    str(gpu_id) + " " + str(nv_switch_id) + " " +
+                    str(parameters['nvlink_bw']) + " " + str(parameters['nv_latency']) +
+                    " " + str(parameters['error_rate'])
+                )
+                f.write(line)
+                f.write('\n')
+
 def Rail_Opti_SingleToR(parameters):
     nodes_per_asw = parameters['nics_per_aswitch']
     asw_switch_num_per_segment = parameters['gpu_per_server']
@@ -491,11 +527,18 @@ def main():
     parser.add_argument('-psn','--psw_switch_num',type=int,default=None,help='psw_switch_num, default 64')
     parser.add_argument('-apbw','--ap_bandwidth',type=str,default=None,help='asw to psw bandwidth,default 400Gbps')   
     parser.add_argument('-app','--asw_per_psw',type=int,default=None,help='asw for psw')
+    parser.add_argument('--no-asw', action='store_true', help='generate an NVSwitch-only topology without ASW switches')
+    parser.add_argument('--no-psw', action='store_true', help='generate an NVSwitch-only topology without PSW switches')
+    parser.add_argument('-o', '--output', type=str, default=None, help='output topology file path')
     args = parser.parse_args()
 
     default_parameters = []
     parameters = analysis_template(args, default_parameters)
-    if not parameters['rail_optimized']:
+    if parameters['no_asw'] and parameters['no_psw']:
+        NVLink_Only(parameters)
+    elif parameters['no_asw'] or parameters['no_psw']:
+        raise ValueError("--no-asw and --no-psw must be used together for NVLink-only topology")
+    elif not parameters['rail_optimized']:
         if parameters['dual_plane']:
             raise ValueError("Sorry, None Rail-Optimized Structure doesn't support Dual Plane")
         if parameters['dual_ToR']:
@@ -520,12 +563,16 @@ def analysis_template(args, default_parameters):
                           'gpu_per_server': 8, 'gpu_type': 'H100', 'nv_switch_per_server': 1, 
                           'nvlink_bw': '2880Gbps','nv_latency': '0.000025ms', 'latency': '0.0005ms',
                           'bandwidth': '400Gbps', 'asw_switch_num': 8,  'nics_per_aswitch': 64,
-                          'psw_switch_num': 64, 'ap_bandwidth': "400Gbps", 'asw_per_psw' : 64}
+                          'psw_switch_num': 64, 'ap_bandwidth': "400Gbps", 'asw_per_psw' : 64,
+                          'no_asw': False, 'no_psw': False, 'output': None}
     parameters = {}
     parameters['topology'] = args.topology
     parameters['rail_optimized'] = bool(args.ro)
     parameters['dual_ToR'] = bool(args.dt)
     parameters['dual_plane'] = bool(args.dp)
+    parameters['no_asw'] = bool(args.no_asw)
+    parameters['no_psw'] = bool(args.no_psw)
+    parameters['output'] = args.output
 
     
     if parameters['topology'] == 'Spectrum-X':
