@@ -112,6 +112,10 @@ void SendFlow(int src, int dst, uint64_t maxPacketCount,
   for(int index = 0 ;index<_QPS_PER_CONNECTION_;index++){
   uint64_t real_PacketCount = min(PacketCount,leftPacketCount);
   leftPacketCount-=real_PacketCount;
+  if(real_PacketCount == 0) {
+    NcclLog->writeLog(NcclLogLevel::DEBUG," [SendFlow] skipping 0-byte QP index  %d src  %d dst  %d flow_id  %d",index,src,dst,request->flowTag.current_flow_id);
+    continue;
+  }
   uint32_t port = portNumber[src][dst]++; 
     {
       #ifdef NS3_MTP
@@ -177,7 +181,6 @@ void SendFlow(int src, int dst, uint64_t maxPacketCount,
   }
   send_lat *= 1000; // ns → ps (ns3 Time unit)
   flow_input.idx++;
-  if(real_PacketCount == 0) real_PacketCount = 1;
     MockNcclLog* NcclLog = MockNcclLog::getInstance();
     NcclLog->writeLog(NcclLogLevel::DEBUG," [Packet sending event]  %dSendFlow to  %d channelid:  %d flow_id  %d srcip  %d dstip  %d size:  %llu at the tick:  %d",src,dst,tag,flow_id,serverAddress[src],serverAddress[dst],maxPacketCount,AstraSim::Sys::boostedTick());
     NcclLog->writeLog(NcclLogLevel::DEBUG," request->flowTag [Packet sending event]  %dSendFlow to  %d tag_id:  %d flow_id  %d srcip  %d dstip  %d size:  %llu at the tick:  %d",request->flowTag.sender_node,request->flowTag.receiver_node,request->flowTag.tag_id,request->flowTag.current_flow_id,serverAddress[src],serverAddress[dst],maxPacketCount,AstraSim::Sys::boostedTick());
@@ -289,7 +292,7 @@ void notify_sender_sending_finished(int sender_node, int receiver_node,
       task1 t2 = sentHash[make_pair(tag, make_pair(sender_node, receiver_node))];
       AstraSim::SendPacketEventHandlerData* ehd = (AstraSim::SendPacketEventHandlerData*) t2.fun_arg;
       ehd->flowTag=flowTag;   
-      if (t2.count == message_size) {
+      if (message_size >= t2.count) {
         sentHash.erase(make_pair(tag, make_pair(sender_node, receiver_node)));
         if (nodeHash.find(make_pair(sender_node, 0)) == nodeHash.end()) {
           nodeHash[make_pair(sender_node, 0)] = message_size;
