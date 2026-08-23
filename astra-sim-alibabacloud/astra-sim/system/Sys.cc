@@ -2107,7 +2107,7 @@ void Sys::handleEvent(void* arg) {
   }
 }
 
-AstraSim::timespec_t Sys::generate_time(int cycles) {
+AstraSim::timespec_t Sys::generate_time(uint64_t cycles) {   // [patch @sharding_simai] int→uint64_t
   timespec_t tmp = NI->sim_get_time();
   double addition = cycles * ((double)CLOCK_PERIOD);
   tmp.time_val = addition;

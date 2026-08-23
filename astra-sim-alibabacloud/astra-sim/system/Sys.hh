@@ -373,7 +373,7 @@ class Sys : public Callable {
   uint64_t determine_chunk_size(uint64_t size, ComType type);
   int get_priority(SchedulingPolicy pref_scheduling);
   static void handleEvent(void* arg);
-  timespec_t generate_time(int cycles);
+  timespec_t generate_time(uint64_t cycles);   // [patch @sharding_simai] int→uint64_t：大 cycle 數不再溢位成垃圾時間
 
   class sysCriticalSection
   {

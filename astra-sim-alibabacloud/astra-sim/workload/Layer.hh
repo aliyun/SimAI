@@ -59,6 +59,7 @@ class Layer : public Callable, public StreamStat {
 
   int lookup_table_size;
   int collective_counter;
+  int op_group_size = -1;  // [patch @sharding_simai] per-op TP group size; -1 = use global model_parallel_npu_group
 
   std::map<int, DataSet*> fwd_pass_datasets;
   std::list<Tick> started_waiting_for_fwd_pass;
@@ -107,7 +108,8 @@ class Layer : public Callable, public StreamStat {
       uint64_t weight_grad_comm_size,
       std::vector<bool> weight_grad_comm_involved_dimensions,
       Tick weight_grad_update_time,
-      ParallelismPolicy specific_policy);
+      ParallelismPolicy specific_policy,
+      int op_group_size = -1);  // [patch @sharding_simai] per-op TP group size
   void call(EventType event, CallData* mdata);
   Tick get_fwd_pass_compute();
   Tick get_input_grad_compute();

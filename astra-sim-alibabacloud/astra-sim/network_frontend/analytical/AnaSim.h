@@ -17,6 +17,7 @@
 #define __ANASIM_HH__
 #include<iostream>
 #include<queue>
+#include<vector>
 #include<list>
 #include<cstdint>
 
@@ -24,17 +25,28 @@ using namespace std;
 
 struct CallTask {
   uint64_t time;
+  uint64_t seq;                          // [patch @sharding_simai] 插入序：同時間事件保留 FIFO tie-break
   void (*fun_ptr)(void* fun_arg);
   void* fun_arg;
-  CallTask(uint64_t _time, void (*_fun_ptr)(void* _fun_arg), void* _fun_arg)
-      : time(_time), fun_ptr(_fun_ptr), fun_arg(_fun_arg) {};
+  CallTask(uint64_t _time, uint64_t _seq, void (*_fun_ptr)(void* _fun_arg), void* _fun_arg)
+      : time(_time), seq(_seq), fun_ptr(_fun_ptr), fun_arg(_fun_arg) {};
   ~CallTask(){}
+};
+
+// [patch @sharding_simai] min-heap（先 time 再 seq）。修 AnaSim::Run() 的 tick++ 空轉：
+//   原本 call_list 是 FIFO、Run() 用 tick++ 一格格爬到事件時間 → 事件亂序時 tick 追不上、
+//   爬到 2^64 才停 → tp=2 這種大延遲/亂序 config 卡幾小時。改成照時間排序處理即可。
+struct CallTaskCompare {
+  bool operator()(const CallTask& a, const CallTask& b) const {
+    return a.time != b.time ? a.time > b.time : a.seq > b.seq;
+  }
 };
 
 class AnaSim {
  private:
-  static queue<struct CallTask> call_list;
+  static priority_queue<struct CallTask, vector<struct CallTask>, CallTaskCompare> call_list;
   static uint64_t tick;
+  static uint64_t seq_counter;           // [patch @sharding_simai] 遞增插入序
 
  public:
   static double Now();

@@ -17,25 +17,16 @@
 #include"AnaSim.h"
 using namespace std;
 
-queue<struct CallTask> AnaSim::call_list = {};
+priority_queue<struct CallTask, vector<struct CallTask>, CallTaskCompare> AnaSim::call_list = {};
 uint64_t AnaSim::tick = 0;
+uint64_t AnaSim::seq_counter = 0;                     // [patch @sharding_simai]
 void AnaSim::Run() {
     while (!call_list.empty())
     {
-        CallTask calltask = call_list.front();
-        while (true) {
-          if (calltask.time != tick) {
-            tick++;
-          } else {
-            break;
-          }
-        }
-        
+        CallTask calltask = call_list.top();          // [patch] 取「時間最小」的事件（原本 FIFO front）
         call_list.pop();
-        // std::cout << "after pop call_list: " << call_list.size() << std::endl;
+        if (calltask.time > tick) tick = calltask.time;  // [patch] 直接跳到事件時間，不再 tick++ 一格格空轉
         calltask.fun_ptr(calltask.fun_arg);
-        
-        // sleep(calltask.delay);
     }
 }
 
@@ -45,7 +36,7 @@ void AnaSim::Schedule(
     void (*fun_ptr)(void* fun_arg),
     void* fun_arg) {
     uint64_t time = tick + delay;
-    CallTask calltask = CallTask(time,fun_ptr,fun_arg);
+    CallTask calltask = CallTask(time, seq_counter++, fun_ptr, fun_arg);   // [patch @sharding_simai]
     // std::cout << "before push all_list: " << call_list.size() << std::endl;
     call_list.push(calltask);
     // std::cout << "after push of call_list: " << call_list.size() << std::endl;

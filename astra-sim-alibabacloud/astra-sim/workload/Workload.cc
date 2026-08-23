@@ -1168,6 +1168,13 @@ bool Workload::initialize_workload(std::string name) {
     parallelismPolicy = decode_parallelsim(tokens[0]);
   }
 
+  // [patch @sharding_simai] header flag "op_tp: 1" => each workload line carries a trailing
+  //   per-op TP group-size column. Absent (old files) => 0 => 12-column parse unchanged.
+  int has_op_tp = 0;
+  for (size_t i = 0; i < tokens.size(); i++) {
+    if (tokens[i] == "op_tp:") has_op_tp = std::stoi(tokens[i+1]);
+  }
+
   if (parallelismPolicy == ParallelismPolicy::TransformerFwdInBckwd ||
       parallelismPolicy == ParallelismPolicy::Transformer) {
         for (size_t i = 1; i < tokens.size(); i = i+1){
@@ -1306,6 +1313,10 @@ bool Workload::initialize_workload(std::string name) {
     inFile >> wg_comm_size;
     Tick wg_update_time;
     inFile >> wg_update_time;
+
+    // [patch @sharding_simai] optional 13th column: per-op TP group size (-1 = use global)
+    int op_tp = -1;
+    if (has_op_tp) inFile >> op_tp;
 
     ParallelismPolicy specific_policy = ParallelismPolicy::None;
     std::map<std::string, std::vector<bool>> selected_involved_dimensions;
@@ -1528,7 +1539,8 @@ bool Workload::initialize_workload(std::string name) {
         wg_comm_size * generator->comm_scale,
         selected_involved_dimensions["wg"],
         wg_update_time,
-        specific_policy);
+        specific_policy,
+        op_tp);  // [patch @sharding_simai] per-op TP group size
     if (chekpoints.find(i) != chekpoints.end()) {
       l->is_checkpoint = true;
     }

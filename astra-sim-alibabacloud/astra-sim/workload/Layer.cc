@@ -43,8 +43,10 @@ Layer::Layer(
     uint64_t weight_grad_comm_size,
     std::vector<bool> weight_grad_comm_involved_dimensions,
     Tick weight_grad_update_time,
-    ParallelismPolicy specific_policy) {
+    ParallelismPolicy specific_policy,
+    int op_group_size) {
   this->id = id;
+  this->op_group_size = op_group_size;  // [patch @sharding_simai] per-op TP group size (-1 = global)
   this->layer_num = layer_num;
   this->generator = generator;
   this->workload = workload;
@@ -362,10 +364,12 @@ LayerData Layer::report(
   uint32_t pp_commsize = workload->pp_commsize;
   int GA = workload->GA;
   UserParam* param = UserParam::getInstance();
+  // [patch @sharding_simai] per-op TP group size (see analytical overload for rationale)
+  int eff_tp = (this->op_group_size > 0) ? this->op_group_size : TP_size;
   int input_grad_group_size =
-      input_grad_group_type == MockNccl::GroupType::EP ? EP_size : TP_size;
+      input_grad_group_type == MockNccl::GroupType::EP ? EP_size : eff_tp;
   int fwd_pass_group_size =
-      fwd_pass_group_type == MockNccl::GroupType::EP ? EP_size : TP_size;
+      fwd_pass_group_type == MockNccl::GroupType::EP ? EP_size : eff_tp;
   int weight_grad_group_size =
       weight_grad_group_type == MockNccl::GroupType::DP_EP ? DP_size / EP_size
                                                            : DP_size;
@@ -573,18 +577,23 @@ LayerData Layer::report(
   int weight_grad_group_size ;
   int input_grad_group_size ;
   UserParam* param = UserParam::getInstance();
+  // [patch @sharding_simai] per-op TP group size: fine-grained sharding (e.g. attn TP != ffn TP).
+  //   eff_tp overrides the global TP for THIS op's TP collectives only; must feed BOTH the
+  //   compute_time tp_size arg (bandwidth tier + size-1 guard) and nranks arg ((n-1)/n factor).
+  //   -1 (op_group_size default) -> eff_tp == TP_size -> byte-identical to unpatched behavior.
+  int eff_tp = (this->op_group_size > 0) ? this->op_group_size : TP_size;
   input_grad_group_size =
-        input_grad_group_type == MockNccl::GroupType::EP ? EP_size : TP_size;
+        input_grad_group_type == MockNccl::GroupType::EP ? EP_size : eff_tp;
     fwd_pass_group_size =
-        fwd_pass_group_type == MockNccl::GroupType::EP ? EP_size : TP_size;
+        fwd_pass_group_type == MockNccl::GroupType::EP ? EP_size : eff_tp;
     weight_grad_group_size =
         weight_grad_group_type == MockNccl::GroupType::DP_EP ? DP_size / EP_size
                                                              : DP_size;
   if(param->mode == ModeType::ANALYTICAL){
-    
-    total_fwd_comm = compute_time(fwd_pass_comm_type,TP_size,fwd_pass_group_size,fwd_pass_comm_size,fwd_pass_group_type,generator->all_gpus[0],EP_size);
+
+    total_fwd_comm = compute_time(fwd_pass_comm_type,eff_tp,fwd_pass_group_size,fwd_pass_comm_size,fwd_pass_group_type,generator->all_gpus[0],EP_size);
     total_weight_grad_comm = compute_time(weight_grad_comm_type,TP_size,weight_grad_group_size,weight_grad_comm_size,weight_grad_group_type,generator->all_gpus[0],EP_size);
-    total_input_grad_comm = compute_time(input_grad_comm_type,TP_size,input_grad_group_size,input_grad_comm_size,input_grad_group_type,generator->all_gpus[0],EP_size);
+    total_input_grad_comm = compute_time(input_grad_comm_type,eff_tp,input_grad_group_size,input_grad_comm_size,input_grad_group_type,generator->all_gpus[0],EP_size);
     total_waiting_for_fwd_comm = total_fwd_comm; //tp forward
     total_waiting_for_ig_comm = total_input_grad_comm;  //tp backward
     total_waiting_for_wg_comm = total_weight_grad_comm;
@@ -948,6 +957,13 @@ Tick Layer::compute_time(
   UserParam* param = UserParam::getInstance();
   Tick comp_time = 0;
   if (comtype == ComType::None) {
+    return 0;
+  }
+
+  // [patch @sharding_simai] size-1 TP 群組 = 沒有 tensor-parallel 通訊 → 時間 0。
+  //   否則 cal_busbw 對 size-1 群組會除以 (group-1)=0 → busbw=0 → time=size/0=INT64_MAX,
+  //   同時污染 Expose_TP_comm 和 pre_bubble_time（bubble 會累加這個通訊等待）。tp=1 真值就是 0。
+  if (group_type == MockNccl::GroupType::TP && tp_size <= 1) {
     return 0;
   }
 
