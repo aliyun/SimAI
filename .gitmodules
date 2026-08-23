@@ -4,7 +4,7 @@
 	branch = master
 [submodule "aicb"]
 	path = aicb
-	url = https://github.com/aliyun/aicb
+	url = git@github.com:habby1012/aicb.git
 	branch = master
 [submodule "ns-3-alibabacloud"]
 	path = ns-3-alibabacloud
