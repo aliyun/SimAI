@@ -55,10 +55,10 @@ class ConfigExplorer:
             ), "All nodes should have the same result"
 
     def run(self):
+        job_configs = JobConfig.generate_job_configs(self.config)
+
         if not self.args.skip_cache_warmup:
             self._warmup_cache()
-
-        job_configs = JobConfig.generate_job_configs(self.config)
 
         ray_parallel_runner = RayParallelRunner()
 
