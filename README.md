@@ -11,6 +11,8 @@
 
 ### Recent Updates
 
+- [2026/09] *Coming Soon*: CLEM -- Support for running large-scale CCL with a small number of GPUs for performance diagnosis and tuning, planned for the next release in September.
+
 - [2026/08] **SimAI 1.7 Released!** Key updates:
   - [SimCCL](https://github.com/aliyun/SimCCL): Updated to NCCL v2.30, decoupled from the SimAI main repository, and able to generate the flow model standalone for offline analysis.
 
@@ -28,8 +30,6 @@
 - [2025/11] [AICB](https://github.com/aliyun/aicb/tree/master) now supports generating **prefill/decode** inference workloads for **DeepSeek**, **Qwen3-MoE** and **Qwen3-Next**.
 
 - [2025/09] [AICB](https://github.com/aliyun/aicb/tree/master) now supports generating training workloads for DeepSeek. Thanks to [@parthpower](https://github.com/parthpower) for this contribution.
-
-- [2025/06] The code of SimCCL is first released in the branch [SimCCL](https://github.com/aliyun/SimAI/tree/SimCCL) and will be released in SimCCL repository soon.
 
 **We warmly welcome contributions from the community!** If you are interested in helping shape the future of SimAI, please feel free to open an issue to discuss your ideas or submit a pull request.
 
