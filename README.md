@@ -11,6 +11,10 @@
 
 ### Recent Updates
 
+- [2026/09] *Coming Soon*: CLEM -- Support for running large-scale CCL with a small number of GPUs for performance diagnosis and tuning, planned for the next release in September. The CLEM code is divided into the following two parts:
+  - The first part is located at https://github.com/aliyun/ns-3-alibabacloud, which contains the incremental development for ns-3.
+  - The second part is coming soon, which contains the adaptation for CCL to support running large-scale CCL with a small number of GPUs.
+
 - [2026/08] **SimAI 1.7 Released!** Key updates:
   - [SimCCL](https://github.com/aliyun/SimCCL): Updated to NCCL v2.30, decoupled from the SimAI main repository, and able to generate the flow model standalone for offline analysis.
 
