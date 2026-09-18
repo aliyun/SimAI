@@ -10,3 +10,7 @@
 	path = ns-3-alibabacloud
 	url = https://github.com/aliyun/ns-3-alibabacloud
 	branch = master
+[submodule "SimAI-CLEM"]
+	path = SimAI-CLEM
+	url = https://github.com/aliyun/SimAI-CLEM.git
+	branch = master
