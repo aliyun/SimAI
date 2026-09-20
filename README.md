@@ -11,7 +11,7 @@
 
 ### Recent Updates
 
-- [2026/09] SimAI-CLEM -- Support for running large-scale CCL with a small number of GPUs for performance diagnosis and tuning. The SimAI-CLEM code is divided into the following two parts:
+- [2026/09] SimAI-CLEM -- Support for running large-scale CCL with a small number of GPUs for performance diagnosis and tuning. For detailed instructions on running SimAI-CLEM, please refer to [https://github.com/aliyun/SimAI-CLEM](https://github.com/aliyun/SimAI-CLEM). The SimAI-CLEM code is divided into the following two parts:
   - The first part is located at https://github.com/aliyun/ns-3-alibabacloud/tree/dev/clem, which contains the incremental development for ns-3.
   - The second part is in SimAI-CLEM, which contains the adaptation for CCL to support running large-scale CCL with a small number of GPUs.
 
