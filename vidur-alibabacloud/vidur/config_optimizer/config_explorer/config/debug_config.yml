@@ -29,6 +29,22 @@ batch_sizes: [32, 64]
 tp_dimensions: [1, 2]
 pp_dimensions: [1, 2]
 
+# Optional P/D and fabric sweep. When omitted, the config explorer preserves
+# the previous mixed-serving defaults.
+pd_networks:
+  - name: mixed
+    pd_node_ratio: 1.0
+    pd_p2p_comm_bandwidth: 100
+    rdma_bandwidth: 100
+    nvlink_bandwidth: 100
+    pd_p2p_comm_dtype: float16
+  - name: pd-balanced-100g
+    pd_node_ratio: 0.5
+    pd_p2p_comm_bandwidth: 100
+    rdma_bandwidth: 100
+    nvlink_bandwidth: 900
+    pd_p2p_comm_dtype: float16
+
 models:
   - name: phi-2
     identifier: microsoft/phi-2
