@@ -1,0 +1,21 @@
+{
+    "num_layers": 61,
+    "dense_layer": 3,
+    "hidden_size": 7168,
+    "num_attention_heads": 128,
+    "vocab_size": 129280,
+    "d_kv_c": 512,
+    "d_q_c": 1536,
+    "d_r": 64,
+    "head_num": 128,
+    "d_q": 128,
+    "d_kv": 128,
+    "router_expert": 256,
+    "duped_expert": 32,
+    "shared_experts": 1,
+    "moe_router_topk": 8,
+    "expert_dim": 2048,
+    "num_experts": 288,
+    "computation_enable": true,
+    "add_bias_linear": false
+}

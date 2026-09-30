@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Data visualization report</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .chart-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .button-container {
+            margin-bottom: 10px;
+        }
+        .iter-button {
+            margin-right: 5px;
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .iter-button:hover {
+            background-color: #45a049;
+        }
+        .timeline-chart {
+            width: 100%;
+            height: 400px;
+        }
+        .ratio-pie {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Data visualization report</h1>
+    
+    <div class="chart-container">
+        <h2>Communication type pie chart</h2>
+        <div id="pie_chart" style="width:100%; height:400px;"></div>
+    </div>
+    
+    <div class="chart-container">
+        <h2>Communication type scatter</h2>
+        <div id="scatter_by_commtype" style="width:100%; height:600px;"></div>
+    </div>
+    
+    <div class="chart-container">
+        <h2>message size CDF</h2>
+        <div id="cdf_chart" style="width:100%; height:600px;"></div>
+    </div>
+    
+    <div class="chart-container">
+        <h2>Communication group scatter</h2>
+        <div id="scatter_by_group" style="width:100%; height:600px;"></div>
+    </div>
+    
+    <div class="chart-container">
+        <h2>Computation Communication Pattern</h2>
+        <div class="button-container">
+            {% for i in range(iteration_count) %}
+            <button class="iter-button" onclick="showIteration({{ i }})">Iteration {{ i + 1 }}</button>
+            {% endfor %}
+        </div>
+        <div id="timeline_chart" class="timeline-chart"></div>
+        <div id="ratio_pie" class="ratio-pie"></div>
+    </div>
+
+    <div class="chart-container">
+        <h2>Communication Domain: Rank Connectivity Graph</h2>
+        <div id="domain_graph" style="width:100%; height:550px;"></div>
+    </div>
+
+    <div class="chart-container">
+        <h2>Communication Domain: Message Size by Group</h2>
+        <div id="domain_bar" style="width:100%; height:450px;"></div>
+    </div>
+
+    <div class="chart-container">
+        <h2>Ratio Pie</h2>
+        <div id="all_ratio_pie" style="width:100%; height:400px;"></div>
+    </div>
+
+    <script>
+        var timelineCharts = {{ timeline_charts_js | safe }};
+        var ratioPies = {{ ratio_pies_js | safe }};
+        var currentIteration = 0;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            var pieChart = echarts.init(document.getElementById('pie_chart'));
+            pieChart.setOption({{ pie_chart_js | safe }});
+
+            var scatterByCommtype = echarts.init(document.getElementById('scatter_by_commtype'));
+            scatterByCommtype.setOption({{ scatter_by_commtype_js | safe }});
+
+            var cdfChart = echarts.init(document.getElementById('cdf_chart'));
+            cdfChart.setOption({{ cdf_chart_js | safe }});
+
+            var scatterByGroup = echarts.init(document.getElementById('scatter_by_group'));
+            scatterByGroup.setOption({{ scatter_by_group_js | safe }});
+
+            var domainGraph = echarts.init(document.getElementById('domain_graph'));
+            domainGraph.setOption({{ domain_graph_js | safe }});
+
+            var domainBar = echarts.init(document.getElementById('domain_bar'));
+            domainBar.setOption({{ domain_bar_js | safe }});
+
+            var allRatioPie = echarts.init(document.getElementById('all_ratio_pie'));
+            allRatioPie.setOption({{ all_ratio_pie | safe }});
+
+            showIteration(0);
+        });
+
+        function showIteration(iterIndex) {
+            var timelineChart = echarts.init(document.getElementById('timeline_chart'));
+            timelineChart.setOption(JSON.parse(timelineCharts[iterIndex]));
+
+            var ratioPie = echarts.init(document.getElementById('ratio_pie'));
+            ratioPie.setOption(JSON.parse(ratioPies[iterIndex]));
+
+            currentIteration = iterIndex;
+
+            var buttons = document.getElementsByClassName('iter-button');
+            for (var i = 0; i < buttons.length; i++) {
+                if (i === iterIndex) {
+                    buttons[i].style.backgroundColor = '#45a049';
+                } else {
+                    buttons[i].style.backgroundColor = '#4CAF50';
+                }
+            }
+        }
+
+        window.addEventListener('resize', function() {
+            pieChart.resize();
+            scatterByCommtype.resize();
+            cdfChart.resize();
+            scatterByGroup.resize();
+            domainGraph.resize();
+            domainBar.resize();
+            timelineChart.resize();
+            ratioPie.resize();
+            allRatioPie.resize();
+        });
+    </script>
+</body>
+</html>

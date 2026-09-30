@@ -1,0 +1,17 @@
+# requirements.txt
+
+# Core dependencies from PyPI
+transformers==4.57.1
+msgspec>=0.19.0
+blake3>=1.0.4
+fastapi==0.119.0
+openai==2.3.0
+py-cpuinfo>=9.0.0
+einops
+vllm==0.11.0
+
+# Dependencies installed from Git repositories
+git+https://github.com/fanshiqing/grouped_gemm@v1.0
+git+https://github.com/deepseek-ai/DeepGEMM.git@594953acce41793ae00a1233eb516044d604bcb6
+git+https://github.com/deepseek-ai/FlashMLA.git@1408756a88e52a25196b759eaf8db89d2b51b5a1
+git+https://github.com/flashinfer-ai/flashinfer.git@9c264c0b5ad76593d7d343f4a5711a4fa6fdc909

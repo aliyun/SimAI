@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"head -22 aicb/results/workload/A5-GPT13B-world_size64-tp8-pp1-ep1-gbs1024-mbs1-seq8192-MOE-False-GEMM-False-flash_attn-True.txt | sed '2s/8334/20/' > /tmp/test_20l.txt && python3 -c \\\"\\nim...",
+  "error": "Exit code 1\nhead: aicb/results/workload/A5-GPT13B-world_size64-tp8-pp1-ep1-gbs1024-mbs1-seq8192-MOE-False-GEMM-False-flash_attn-True.txt: No such file or directory\nTraceback (most recent call last):\n  File \"<string>\", line 4, in <module>\n    with open('lld.json') as f: lld = json.load(f)\n         ~~~~^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: 'lld.json'",
+  "timestamp": "2026-06-05T02:34:43.517Z",
+  "retry_count": 2
+}

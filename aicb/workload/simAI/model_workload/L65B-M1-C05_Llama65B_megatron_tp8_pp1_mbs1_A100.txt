@@ -1,0 +1,35 @@
+HYBRID_TRANSFORMER_FWD_IN_BCKWD	model_parallel_NPU_group: 8 checkpoints: 0 checkpoint_initiates: 0
+839
+grad_gather 	    -1	     1	      NONE	         0	4284000	      NONE	         0	     1	 ALLGATHER	         1	       100
+grad_param  	    -1	     1	      NONE	         0	7300000	      NONE	         0	     1	REDUCESCATTER	6236471296	       100
+layernorm   	    -1	     1	      NONE	         0	     1	 ALLREDUCE	2315808768	     1	      NONE	         0	       100
+embedding_grads	    -1	     1	      NONE	         0	     1	 ALLREDUCE	  65536000	     1	      NONE	         0	       100
+embedding_layer	    -1	382000	 ALLREDUCE	  65536000	     1	      NONE	         0	     1	      NONE	         0	       100
+attention_norm	    -1	1711000	 ALLREDUCE	  33554432	1500000	      NONE	         0	1500000	      NONE	         0	       100
+mlp_norm    	    -1	862000	 ALLREDUCE	  33554432	1200000	      NONE	         0	1200000	      NONE	         0	       100
+attention_norm	    -1	1711000	 ALLREDUCE	  33554432	1500000	      NONE	         0	1500000	      NONE	         0	       100
+mlp_norm    	    -1	862000	 ALLREDUCE	  33554432	1200000	      NONE	         0	1200000	      NONE	         0	       100
+attention_norm	    -1	1711000	 ALLREDUCE	  33554432	1500000	      NONE	         0	1500000	      NONE	         0	       100
+mlp_norm    	    -1	862000	 ALLREDUCE	  33554432	1200000	      NONE	         0	1200000	      NONE	         0	       100
+attention_norm	    -1	1711000	 ALLREDUCE	  33554432	1500000	      NONE	         0	1500000	      NONE	         0	       100
+mlp_norm    	    -1	862000	 ALLREDUCE	  33554432	1200000	      NONE	         0	1200000	      NONE	         0	       100
+attention_norm	    -1	1711000	 ALLREDUCE	  33554432	1500000	      NONE	         0	1500000	      NONE	         0	       100
+mlp_norm    	    -1	862000	 ALLREDUCE	  33554432	1200000	      NONE	         0	1200000	      NONE	         0	       100
+attention_norm	    -1	1711000	 ALLREDUCE	  33554432	1500000	      NONE	         0	1500000	      NONE	         0	       100
+mlp_norm    	    -1	862000	 ALLREDUCE	  33554432	1200000	      NONE	         0	1200000	      NONE	         0	       100
+attention_norm	    -1	1711000	 ALLREDUCE	  33554432	1500000	      NONE	         0	1500000	      NONE	         0	       100
+mlp_norm    	    -1	862000	 ALLREDUCE	  33554432	1200000	      NONE	         0	1200000	      NONE	         0	       100
+attention_norm	    -1	1711000	 ALLREDUCE	  33554432	1500000	      NONE	         0	1500000	      NONE	         0	       100
+mlp_norm    	    -1	862000	 ALLREDUCE	  33554432	1200000	      NONE	         0	1200000	      NONE	         0	       100
+attention_norm	    -1	1711000	 ALLREDUCE	  33554432	1500000	      NONE	         0	1500000	      NONE	         0	       100
+mlp_norm    	    -1	862000	 ALLREDUCE	  33554432	1200000	      NONE	         0	1200000	      NONE	         0	       100
+attention_norm	    -1	1711000	 ALLREDUCE	  33554432	1500000	      NONE	         0	1500000	      NONE	         0	       100
+mlp_norm    	    -1	862000	 ALLREDUCE	  33554432	1200000	      NONE	         0	1200000	      NONE	         0	       100
+attention_norm	    -1	1711000	 ALLREDUCE	  33554432	1500000	      NONE	         0	1500000	      NONE	         0	       100
+mlp_norm    	    -1	862000	 ALLREDUCE	  33554432	1200000	      NONE	         0	1200000	      NONE	         0	       100
+attention_norm	    -1	1711000	 ALLREDUCE	  33554432	1500000	      NONE	         0	1500000	      NONE	         0	       100
+mlp_norm    	    -1	862000	 ALLREDUCE	  33554432	1200000	      NONE	         0	1200000	      NONE	         0	       100
+embedding_norm	    -1	     1	 ALLREDUCE	 524288000	     1	      NONE	         0	     1	      NONE	         0	       100
+cross_entropy1	    -1	     1	 ALLREDUCE	      8192	     1	      NONE	         0	     1	      NONE	         0	       100
+cross_entropy2	    -1	     1	 ALLREDUCE	      8192	     1	      NONE	         0	     1	      NONE	         0	       100
+cross_entropy3	    -1	     1	 ALLREDUCE	      8192	     1	      NONE	         0	     1	      NONE	         0	       100

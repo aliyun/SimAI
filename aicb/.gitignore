@@ -1,0 +1,4 @@
+*__pycache__*
+*local*
+.ipynb_checkpoints
+.pytest_cache
