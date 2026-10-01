@@ -85,6 +85,7 @@ uint64_t link_down_time = 0;
 uint32_t link_down_A = 0, link_down_B = 0;
 
 uint32_t enable_trace = 1;
+uint32_t trace_node = 0;
 
 uint32_t buffer_size = 16;
 
@@ -658,6 +659,8 @@ bool ReadConf(string network_topo,string network_conf) {
         conf >> pint_log_base;
       } else if (key.compare("PINT_PROB") == 0) {
         conf >> pint_prob;
+      } else if (key.compare("TRACE_NODE") == 0) {
+        conf >> trace_node;
       }
       fflush(stdout);
     }
@@ -981,13 +984,13 @@ void SetupNetwork(void (*qp_finish)(FILE *, Ptr<RdmaQueuePair>),void (*send_fini
   }
 
   NodeContainer trace_nodes;
-  for (uint32_t i = 0; i < trace_num; i++) {
-    uint32_t nid;
-    tracef >> nid;
-    if (nid >= n.GetN()) {
-      continue;
-    }
-    trace_nodes = NodeContainer(trace_nodes, n.Get(nid));
+// The following code loops through all the nodes and writes them to the trajectory file.
+  // for (uint32_t i = 0; i < node_num; i++) {
+  //   trace_nodes = NodeContainer(trace_nodes, n.Get(i));
+  // }
+// The following code retrieves the trajectory data for the specified node.
+  if (trace_node < node_num) {
+    trace_nodes = NodeContainer(trace_nodes, n.Get(trace_node));
   }
 
   FILE *trace_output = fopen(trace_output_file.c_str(), "w");
