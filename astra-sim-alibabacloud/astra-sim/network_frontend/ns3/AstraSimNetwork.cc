@@ -84,6 +84,7 @@ public:
              << "\n";
       }
     }
+    finish_monitor("finished");
     exit(0);
     return 0;
   }
@@ -325,11 +326,15 @@ int main(int argc, char *argv[]) {
   std::cout << "simulator run " << std::endl;
 
   Simulator::Run();
+  // A finished workload leaves through sim_finish(); reaching this line means the
+  // event queue drained while some collectives were still waiting.
+  finish_monitor("incomplete");
+  std::cerr << "simulation stopped before the workload finished" << std::endl;
   Simulator::Stop(Seconds(2000000000));
   Simulator::Destroy();
   
   #ifdef NS3_MPI
   MpiInterface::Disable ();
   #endif
-  return 0;
+  return 2;
 }

@@ -165,17 +165,31 @@ void SendFlow(int src, int dst, uint64_t maxPacketCount,
       send_lat = table_val;
     }
   }
-  // AS_SEND_LAT env var overrides everything (highest priority, for A/B experiments)
-  const char* send_lat_env = std::getenv("AS_SEND_LAT");
-  if (send_lat_env) {
+  // AS_SEND_LAT env var overrides everything (highest priority, for A/B experiments).
+  // Unit: ns, same as the tables above. Parsed once; -1 means "not set, use table".
+  static const int send_lat_override = [NcclLog] {
+    const char* send_lat_env = std::getenv("AS_SEND_LAT");
+    if (!send_lat_env) {
+      std::cout << "send_lat: per-(algorithm, protocol, link) table, unit ns" << std::endl;
+      return -1;
+    }
+    int v = -1;
     try {
-      send_lat = std::stoi(send_lat_env);
-    } catch (const std::invalid_argument& e) {
+      v = std::stoi(send_lat_env);
+    } catch (const std::exception& e) {
+      v = -1;
+    }
+    if (v < 0) {
       NcclLog->writeLog(NcclLogLevel::ERROR,"send_lat set error");
+      std::cerr << "AS_SEND_LAT must be a non-negative integer in ns, got: " << send_lat_env << std::endl;
       exit(-1);
     }
+    std::cout << "send_lat: AS_SEND_LAT override = " << v << " ns" << std::endl;
+    return v;
+  }();
+  if (send_lat_override >= 0) {
+    send_lat = send_lat_override;
   }
-  send_lat *= 1000; // ns → ps (ns3 Time unit)
   flow_input.idx++;
   if(real_PacketCount == 0) real_PacketCount = 1;
     MockNcclLog* NcclLog = MockNcclLog::getInstance();
@@ -192,7 +206,7 @@ void SendFlow(int src, int dst, uint64_t maxPacketCount,
     MtpInterface::explicitCriticalSection cs;
     #endif
     ApplicationContainer appCon = clientHelper.Install(n.Get(src));
-    appCon.Start(Time(send_lat));
+    appCon.Start(NanoSeconds(send_lat));
     waiting_to_sent_callback[std::make_pair(request->flowTag.current_flow_id,std::make_pair(src,dst))]++;
     waiting_to_notify_receiver[std::make_pair(request->flowTag.current_flow_id,std::make_pair(src,dst))]++;
     #ifdef NS3_MTP
@@ -419,6 +433,8 @@ int main1(string network_topo,string network_conf) {
     return -1;
   SetConfig();
   SetupNetwork(qp_finish,send_finish);
+  if (enable_monitor)
+    schedule_monitor();
 
 std::cout << "Running Simulation.\n";
   fflush(stdout);

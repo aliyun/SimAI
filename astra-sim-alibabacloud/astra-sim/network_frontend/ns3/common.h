@@ -42,6 +42,8 @@
 #include <ns3/switch-node.h>
 #include <ns3/nvswitch-node.h>
 #include <atomic>
+#include <cerrno>
+#include <cstring>
 
 using namespace ns3;
 using namespace std;
@@ -101,6 +103,11 @@ string qlen_mon_file;
 string bw_mon_file;
 string rate_mon_file;
 string cnp_mon_file;
+string port_mon_file;
+string meta_mon_file;
+uint32_t enable_monitor = 0;
+FILE* meta_output = nullptr;
+int64_t qlen_last_tick = -1, bw_last_tick = -1, qp_last_tick = -1;
 string total_flow_file = "/root/astra-sim/extern/network_backend/ns3-interface/simulation/monitor_output/";
 FILE* total_flow_output = nullptr;
 
@@ -151,9 +158,10 @@ Ipv4Address node_id_to_ip(uint32_t id) {
 uint32_t ip_to_node_id(Ipv4Address ip) { return (ip.Get() >> 8) & 0xffff; }
 
 void get_pfc(FILE *fout, Ptr<QbbNetDevice> dev, uint32_t type) {
-  fprintf(fout, "%lu %u %u %u %u\n", Simulator::Now().GetTimeStep(),
+  fprintf(fout, "%lu,%u,%u,%u,%u\n", Simulator::Now().GetTimeStep(),
           dev->GetNode()->GetId(), dev->GetNode()->GetNodeType(),
           dev->GetIfIndex(), type);
+  fflush(fout);
 }
 
 struct QlenDistribution {
@@ -168,75 +176,138 @@ struct QlenDistribution {
   }
 };
 
+FILE* open_output_file(const string &path, const char *what){
+	FILE* f = fopen(path.c_str(), "w");
+	if(f == nullptr){
+		std::cerr << "cannot open " << what << " file '" << path << "': " << strerror(errno) << std::endl;
+		exit(1);
+	}
+	return f;
+}
+
+// Monitors reschedule themselves, so without a limit a stalled workload would never let the event queue drain.
+bool monitor_should_continue(uint32_t interval_us){
+	return Simulator::Now() + MicroSeconds(interval_us) <= MicroSeconds(mon_end);
+}
 void monitor_qlen(FILE* qlen_output, NodeContainer *n){
 	for (uint32_t i = 0; i < n->GetN(); i++){
-		if(n->Get(i)->GetNodeType() == 1){ 
+		if(n->Get(i)->GetNodeType() == 1){
 			Ptr<SwitchNode> sw = DynamicCast<SwitchNode>(n->Get(i));
 			sw->PrintSwitchQlen(qlen_output);
-		}else if(n->Get(i)->GetNodeType() == 2){ 
+		}else if(n->Get(i)->GetNodeType() == 2){
 			Ptr<NVSwitchNode> sw = DynamicCast<NVSwitchNode>(n->Get(i));
 			sw->PrintSwitchQlen(qlen_output);
 		}
 	}
-	Simulator::Schedule(MicroSeconds(qlen_mon_interval), &monitor_qlen, qlen_output, n);
+	fflush(qlen_output);
+	qlen_last_tick = Simulator::Now().GetTimeStep();
+	if(monitor_should_continue(qlen_mon_interval))
+		Simulator::Schedule(MicroSeconds(qlen_mon_interval), &monitor_qlen, qlen_output, n);
 }
 void monitor_bw(FILE* bw_output, NodeContainer *n){
 	for (uint32_t i = 0; i < n->GetN(); i++){
-		if(n->Get(i)->GetNodeType() == 1){ 
+		if(n->Get(i)->GetNodeType() == 1){
 			Ptr<SwitchNode> sw = DynamicCast<SwitchNode>(n->Get(i));
 			sw->PrintSwitchBw(bw_output, bw_mon_interval);
-		}else if(n->Get(i)->GetNodeType() == 2){ 
+		}else if(n->Get(i)->GetNodeType() == 2){
 			Ptr<NVSwitchNode> sw = DynamicCast<NVSwitchNode>(n->Get(i));
 			sw->PrintSwitchBw(bw_output, bw_mon_interval);
-		}else{ 
+		}else{
 			Ptr<Node> host = n->Get(i);
 			host->GetObject<RdmaDriver>()->m_rdma->PrintHostBW(bw_output, bw_mon_interval);
 		}
 	}
-	Simulator::Schedule(MicroSeconds(bw_mon_interval), &monitor_bw, bw_output, n);
+	fflush(bw_output);
+	bw_last_tick = Simulator::Now().GetTimeStep();
+	if(monitor_should_continue(bw_mon_interval))
+		Simulator::Schedule(MicroSeconds(bw_mon_interval), &monitor_bw, bw_output, n);
+}
+// First bandwidth sample: only record the counters, so that the first row covers one interval and not everything since t=0.
+void monitor_bw_start(FILE* bw_output, NodeContainer *n){
+	for (uint32_t i = 0; i < n->GetN(); i++){
+		if(n->Get(i)->GetNodeType() == 1){
+			DynamicCast<SwitchNode>(n->Get(i))->ResetBwBaseline();
+		}else if(n->Get(i)->GetNodeType() == 2){
+			DynamicCast<NVSwitchNode>(n->Get(i))->ResetBwBaseline();
+		}else{
+			n->Get(i)->GetObject<RdmaDriver>()->m_rdma->ResetBwBaseline();
+		}
+	}
+	bw_last_tick = Simulator::Now().GetTimeStep();
+	if(monitor_should_continue(bw_mon_interval))
+		Simulator::Schedule(MicroSeconds(bw_mon_interval), &monitor_bw, bw_output, n);
 }
 void monitor_qp_rate(FILE* rate_output, NodeContainer *n){
 	for(uint32_t i = 0; i < n->GetN(); i++){
-		if(n->Get(i)->GetNodeType() == 0){ 
+		if(n->Get(i)->GetNodeType() == 0){
 			Ptr<Node> host = n->Get(i);
 			host->GetObject<RdmaDriver>()->m_rdma->PrintQPRate(rate_output);
 		}
 	}
-	Simulator::Schedule(MicroSeconds(qp_mon_interval), &monitor_qp_rate, rate_output, n);
+	fflush(rate_output);
+	qp_last_tick = Simulator::Now().GetTimeStep();
+	if(monitor_should_continue(qp_mon_interval))
+		Simulator::Schedule(MicroSeconds(qp_mon_interval), &monitor_qp_rate, rate_output, n);
 }
-void monitor_qp_cnp_number(FILE* cnp_output, NodeContainer *n){
-	for(uint32_t i = 0; i < n->GetN(); i++){
-		if(n->Get(i)->GetNodeType() == 0){ 
-			Ptr<Node> host = n->Get(i);
-			host->GetObject<RdmaDriver>()->m_rdma->PrintQPCnpNumber(cnp_output);
+// Maps the node/port ids used by the monitor files to the links of the topology.
+void write_port_map(){
+	static const char* type_name[] = {"host", "switch", "nvswitch"};
+	FILE* port_output = open_output_file(port_mon_file, "port map");
+	fprintf(port_output, "node,port,peer,peer_port,rate_bps,delay_ns,kind\n");
+	for(uint32_t i = 0; i < n.GetN(); i++){
+		Ptr<Node> node = n.Get(i);
+		for(uint32_t j = 1; j < node->GetNDevices(); j++){
+			Ptr<QbbNetDevice> dev = DynamicCast<QbbNetDevice>(node->GetDevice(j));
+			Ptr<QbbChannel> channel = DynamicCast<QbbChannel>(dev->GetChannel());
+			Ptr<NetDevice> peer = channel->GetDevice(0) == dev ? channel->GetDevice(1) : channel->GetDevice(0);
+			fprintf(port_output, "%u,%u,%u,%u,%lu,%ld,%s-%s\n", node->GetId(), j, peer->GetNode()->GetId(), peer->GetIfIndex(),
+					dev->GetDataRate().GetBitRate(), channel->GetDelay().GetTimeStep(),
+					type_name[node->GetNodeType()], type_name[peer->GetNode()->GetNodeType()]);
 		}
 	}
-	Simulator::Schedule(MicroSeconds(qp_mon_interval), &monitor_qp_cnp_number, cnp_output, n);
+	fclose(port_output);
 }
 void schedule_monitor(){
-	FILE* qlen_output = fopen(qlen_mon_file.c_str(), "w"); 
-	assert(qlen_output != nullptr);
-	fprintf(qlen_output, "%s, %s, %s, %s, %s, %s\n", "time", "sw_id", "port_id", "q_id", "q_len", "port_len");
+	if(mon_end <= mon_start || qlen_mon_interval == 0 || bw_mon_interval == 0 || qp_mon_interval == 0){
+		std::cerr << "invalid monitor setting: MON_END must be greater than MON_START and all intervals must be positive" << std::endl;
+		exit(1);
+	}
+	meta_output = open_output_file(meta_mon_file, "monitor meta");
+	write_port_map();
+
+	FILE* qlen_output = open_output_file(qlen_mon_file, "queue monitor");
+	fprintf(qlen_output, "time_ns,node,port,queue,qlen_bytes,port_bytes\n");
 	fflush(qlen_output);
 	Simulator::Schedule(MicroSeconds(mon_start), &monitor_qlen, qlen_output, &n);
 
-	FILE* bw_output = fopen(bw_mon_file.c_str(), "w");
-	assert(bw_output != nullptr);
-	fprintf(bw_output, "%s, %s, %s, %s\n", "time", "node_id", "port_id", "bandwidth");
+	FILE* bw_output = open_output_file(bw_mon_file, "bandwidth monitor");
+	fprintf(bw_output, "time_ns,node,port,bw_gbps\n");
 	fflush(bw_output);
-	Simulator::Schedule(MicroSeconds(mon_start), &monitor_bw, bw_output, &n);
+	Simulator::Schedule(MicroSeconds(mon_start), &monitor_bw_start, bw_output, &n);
 
-	FILE* rate_output = fopen(rate_mon_file.c_str(), "w");
-	assert(rate_output != nullptr);
-	fprintf(rate_output, "%s, %s, %s, %s, %s, %s, %s\n", "time", "src", "dst", "sport", "dport", "size", "curr_rate");
+	FILE* rate_output = open_output_file(rate_mon_file, "rate monitor");
+	fprintf(rate_output, "time_ns,src,dst,sport,dport,size_bytes,rate_bps\n");
 	fflush(rate_output);
 	Simulator::Schedule(MicroSeconds(mon_start), &monitor_qp_rate, rate_output, &n);
 
-	FILE* cnp_output = fopen(cnp_mon_file.c_str(), "w");
-	assert(cnp_output != nullptr);
-	fprintf(cnp_output, "%s, %s, %s, %s, %s, %s, %s\n", "time", "src", "dst", "sport", "dport", "size", "cnp_number");
+	FILE* cnp_output = open_output_file(cnp_mon_file, "cnp monitor");
+	fprintf(cnp_output, "time_ns,src,dst,sport,dport,size_bytes,cnp_total\n");
 	fflush(cnp_output);
-	Simulator::Schedule(MicroSeconds(mon_start), &monitor_qp_cnp_number, cnp_output, &n);
+	for(uint32_t i = 0; i < n.GetN(); i++){
+		if(n.Get(i)->GetNodeType() == 0 || n.Get(i)->GetNodeType() == 2)
+			n.Get(i)->GetObject<RdmaDriver>()->m_rdma->m_cnp_output = cnp_output;
+	}
+}
+// Records how the run ended and which time span the monitor files cover; analysis needs both.
+void finish_monitor(const char* status){
+	if(meta_output == nullptr)
+		return;
+	fprintf(meta_output, "key,value\nstatus,%s\nend_ns,%ld\n", status, Simulator::Now().GetTimeStep());
+	fprintf(meta_output, "mon_start_ns,%ld\nmon_end_ns,%ld\n", MicroSeconds(mon_start).GetTimeStep(), MicroSeconds(mon_end).GetTimeStep());
+	fprintf(meta_output, "qlen_interval_ns,%ld\nbw_interval_ns,%ld\nqp_interval_ns,%ld\n", MicroSeconds(qlen_mon_interval).GetTimeStep(), MicroSeconds(bw_mon_interval).GetTimeStep(), MicroSeconds(qp_mon_interval).GetTimeStep());
+	fprintf(meta_output, "qlen_last_tick_ns,%ld\nbw_last_tick_ns,%ld\nqp_last_tick_ns,%ld\n", qlen_last_tick, bw_last_tick, qp_last_tick);
+	fclose(meta_output);
+	meta_output = nullptr;
 }
 
 void CalculateRoute(Ptr<Node> host) {
@@ -443,12 +514,6 @@ void TakeDownLink(NodeContainer n, Ptr<Node> a, Ptr<Node> b) {
   }
 }
 
-string get_output_file_name(string config_file, string output_file){
-	auto idx = config_file.find_last_of('/');
-	string ans = output_file.substr(0, output_file.length()-4) + config_file.substr(idx+7);
-	return ans;
-}
-
 uint64_t get_nic_rate(NodeContainer &n) {
   for (uint32_t i = 0; i < n.GetN(); i++)
     if (n.Get(i)->GetNodeType() == 0)
@@ -626,16 +691,18 @@ bool ReadConf(string network_topo,string network_conf) {
         conf >> buffer_size;
       } else if (key.compare("QLEN_MON_FILE") == 0){
 				conf >> qlen_mon_file;
-				qlen_mon_file = get_output_file_name(network_conf, qlen_mon_file);
 			}else if(key.compare("BW_MON_FILE") == 0){
 				conf >> bw_mon_file;
-				bw_mon_file = get_output_file_name(network_conf, bw_mon_file);
 			}else if(key.compare("RATE_MON_FILE") == 0){
 				conf >> rate_mon_file;
-				rate_mon_file = get_output_file_name(network_conf, rate_mon_file);
 			}else if(key.compare("CNP_MON_FILE") == 0){
 				conf >> cnp_mon_file;
-				cnp_mon_file = get_output_file_name(network_conf, cnp_mon_file);
+			}else if(key.compare("PORT_MON_FILE") == 0){
+				conf >> port_mon_file;
+			}else if(key.compare("META_MON_FILE") == 0){
+				conf >> meta_mon_file;
+			}else if(key.compare("ENABLE_MONITOR") == 0){
+				conf >> enable_monitor;
 			}else if (key.compare("MON_START") == 0){
 				conf >> mon_start;
 			}else if (key.compare("MON_END") == 0){
@@ -762,7 +829,9 @@ void SetupNetwork(void (*qp_finish)(FILE *, Ptr<RdmaQueuePair>),void (*send_fini
   rem->SetAttribute("ErrorRate", DoubleValue(error_rate_per_link));
   rem->SetAttribute("ErrorUnit", StringValue("ERROR_UNIT_PACKET"));
 
-  FILE *pfc_file = fopen(pfc_output_file.c_str(), "w");
+  FILE *pfc_file = open_output_file(pfc_output_file, "PFC output");
+  fprintf(pfc_file, "time_ns,node,node_type,port,type\n");
+  fflush(pfc_file);
 
   QbbHelper qbb;
   Ipv4AddressHelper ipv4;
@@ -893,8 +962,8 @@ void SetupNetwork(void (*qp_finish)(FILE *, Ptr<RdmaQueuePair>),void (*send_fini
   }
 
 #if ENABLE_QP
-  FILE *fct_output = fopen(fct_output_file.c_str(), "w");
-  FILE *send_output = fopen(send_output_file.c_str(), "w");
+  FILE *fct_output = open_output_file(fct_output_file, "FCT output");
+  FILE *send_output = open_output_file(send_output_file, "send output");
   for (uint32_t i = 0; i < node_num; i++) {
     if (n.Get(i)->GetNodeType() == 0 || n.Get(i)->GetNodeType() == 2) { 
       Ptr<RdmaHw> rdmaHw = CreateObject<RdmaHw>();
@@ -990,7 +1059,7 @@ void SetupNetwork(void (*qp_finish)(FILE *, Ptr<RdmaQueuePair>),void (*send_fini
     trace_nodes = NodeContainer(trace_nodes, n.Get(nid));
   }
 
-  FILE *trace_output = fopen(trace_output_file.c_str(), "w");
+  FILE *trace_output = open_output_file(trace_output_file, "trace output");
   if (enable_trace)
     qbb.EnableTracing(trace_output, trace_nodes);
 

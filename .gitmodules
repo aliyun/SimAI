@@ -8,8 +8,8 @@
 	branch = master
 [submodule "ns-3-alibabacloud"]
 	path = ns-3-alibabacloud
-	url = https://github.com/aliyun/ns-3-alibabacloud
-	branch = master
+	url = https://github.com/zy-potato/ns-3-alibabacloud-e2e.git
+	branch = e2e-main
 [submodule "SimAI-CLEM"]
 	path = SimAI-CLEM
 	url = https://github.com/aliyun/SimAI-CLEM.git
